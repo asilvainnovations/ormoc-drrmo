@@ -56,8 +56,8 @@ export function RunPage() {
       <PageHeader title={run.title} back="/protocols"
         subtitle={`${run.context_type === 'drill' ? 'Drill. ' : ''}Started ${fmtDateTime(run.started_at)}. ${done} of ${steps.length} steps closed.`}
         actions={active && <>
-          <Button variant="secondary" onClick={() => setAbortOpen(true)}>Stop</Button>
-          <Button onClick={complete}>Complete</Button>
+          <Button tip="Stop this run early. You will be asked why" variant="secondary" onClick={() => setAbortOpen(true)}>Stop</Button>
+          <Button tip="Finish the run. All critical steps must be closed first" onClick={complete}>Complete</Button>
         </>} />
       {run.status === 'completed' && <Notice tone="ok" title="Completed">{`Completed ${fmtDateTime(run.completed_at)}.`}</Notice>}
       {run.status === 'aborted' && <Notice tone="bad" title="Stopped">{run.abort_reason}</Notice>}
@@ -87,13 +87,13 @@ export function RunPage() {
                         {(id, d) => <Textarea id={id} aria-describedby={d} rows={2} value={notes[s.id] ?? ''} onChange={(e) => setNotes((n) => ({ ...n, [s.id]: e.target.value }))} />}
                       </Field>
                       <div className="flex flex-wrap gap-2">
-                        <Button icon={Check} onClick={() => setStep(s, 'done')}>Done</Button>
-                        <Button variant="secondary" icon={SkipForward} onClick={() => setStep(s, 'skipped')}>Skip</Button>
-                        <Button variant="quiet" icon={CircleSlash} onClick={() => setStep(s, 'not_applicable')}>Not applicable</Button>
+                        <Button tip="Mark this step done" icon={Check} onClick={() => setStep(s, 'done')}>Done</Button>
+                        <Button tip="Skip this step. A reason is required" variant="secondary" icon={SkipForward} onClick={() => setStep(s, 'skipped')}>Skip</Button>
+                        <Button tip="Mark this step as not applicable to this situation" variant="quiet" icon={CircleSlash} onClick={() => setStep(s, 'not_applicable')}>Not applicable</Button>
                       </div>
                     </div>
                   )}
-                  {active && closed && <Button className="mt-2" variant="quiet" icon={Undo2} onClick={() => setStep(s, 'pending')}>Reopen</Button>}
+                  {active && closed && <Button tip="Reopen this step to change it" className="mt-2" variant="quiet" icon={Undo2} onClick={() => setStep(s, 'pending')}>Reopen</Button>}
                 </div>
               </div>
             </li>
@@ -101,7 +101,7 @@ export function RunPage() {
         })}
       </ol>
       <Sheet open={abortOpen} onClose={() => setAbortOpen(false)} title="Stop this protocol"
-        footer={<><Button variant="secondary" onClick={() => setAbortOpen(false)}>Keep running</Button><Button variant="danger" disabled={!abortWhy.trim()} onClick={abort}>Stop protocol</Button></>}>
+        footer={<><Button tip="Go back to the run" variant="secondary" onClick={() => setAbortOpen(false)}>Keep running</Button><Button tip="Stop the run with the reason given" variant="danger" disabled={!abortWhy.trim()} onClick={abort}>Stop protocol</Button></>}>
         <Field label="Reason" hint="Recorded in the run history.">{(id, d) => <Textarea id={id} aria-describedby={d} value={abortWhy} onChange={(e) => setAbortWhy(e.target.value)} />}</Field>
       </Sheet>
     </div>

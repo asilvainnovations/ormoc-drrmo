@@ -52,7 +52,7 @@ export function ProtocolsPage() {
           <List>
             {data.running.map((r) => {
               const c = data.stepCounts.get(r.id);
-              return <ListRow key={r.id} to={`/protocols/run/${r.id}`} title={r.title} meta={`Started ${relative(r.started_at)}`}
+              return <ListRow tip="Continue this run" key={r.id} to={`/protocols/run/${r.id}`} title={r.title} meta={`Started ${relative(r.started_at)}`}
                 trailing={c && <Badge tone="info">{c.total - c.open} of {c.total} done</Badge>} />;
             })}
           </List>
@@ -61,29 +61,29 @@ export function ProtocolsPage() {
       {Array.from(groups.entries()).map(([cat, ts]) => (
         <Section key={cat} title={CATEGORY[cat]}>
           <List>
-            {ts.map((t) => <ListRow key={t.id} onClick={() => setOpen(t)} title={t.title} meta={t.trigger_text}
+            {ts.map((t) => <ListRow tip="See the steps and start this protocol" key={t.id} onClick={() => setOpen(t)} title={t.title} meta={t.trigger_text}
               trailing={t.status === 'draft' ? <Badge tone="warn">Draft</Badge> : <Badge tone="ok">Approved</Badge>} />)}
           </List>
         </Section>
       ))}
       {data && data.recent.length > 0 && (
         <Section title="Recent runs">
-          <List>{data.recent.map((r) => <ListRow key={r.id} to={`/protocols/run/${r.id}`} title={r.title} meta={relative(r.started_at)}
+          <List>{data.recent.map((r) => <ListRow tip="Open the record of this run" key={r.id} to={`/protocols/run/${r.id}`} title={r.title} meta={relative(r.started_at)}
             trailing={<Badge tone={r.status === 'completed' ? 'ok' : 'bad'}>{r.status === 'completed' ? 'Completed' : 'Stopped'}</Badge>} />)}</List>
         </Section>
       )}
       <Sheet open={!!open} onClose={() => setOpen(null)} title={open?.title ?? ''}
         footer={open && (canOperate(roles)
           ? <div className="flex flex-wrap items-center gap-3">
-              <Checkbox checked={drill} onChange={() => setDrill((d) => !d)}>This is a drill</Checkbox>
-              <Button icon={Play} size="lg" onClick={() => start(open)}>{drill ? 'Start drill' : 'Start protocol'}</Button>
+              <Checkbox tip="Tick for an exercise. The run is recorded as a drill, which counts as evidence of testing" checked={drill} onChange={() => setDrill((d) => !d)}>This is a drill</Checkbox>
+              <Button tip="Start now. Each step records who closed it and when" icon={Play} size="lg" onClick={() => start(open)}>{drill ? 'Start drill' : 'Start protocol'}</Button>
             </div>
           : <p className="text-sm text-muted">Duty officers and EOC staff start protocols.</p>)}>
         {open && <>
           <p>{open.purpose}</p>
           <p className="text-sm text-muted"><span className="font-semibold text-ink">When: </span>{open.trigger_text}</p>
           <p className="text-sm text-muted"><span className="font-semibold text-ink">Usually run by: </span>{ROLE_LABEL[open.owner_role]}</p>
-          {doc && <p className="text-sm">Procedure source: <TextLink to={`/library/doc/${doc.id}`}>{doc.code} {doc.title}</TextLink></p>}
+          {doc && <p className="text-sm">Procedure source: <TextLink tip="Open the manual section this protocol comes from" to={`/library/doc/${doc.id}`}>{doc.code} {doc.title}</TextLink></p>}
           <ol className="space-y-2">
             {steps.map((s) => (
               <li key={s.id} className="flex gap-3">
