@@ -406,46 +406,137 @@ def lit(v):
     return "'" + str(v).replace("'", "''") + "'"
 
 
-def upsert(table, rows, key, cols=None, cast=None):
+# The Supabase SQL editor rejects long scripts, so the seed is also written as parts:
+# each part is one transaction under these limits, and large tables are split by rows.
+PART_MAX_LINES = 400
+PART_MAX_BYTES = 100_000
+
+
+def row_sql(r, cols, cast):
+    return '(' + ','.join(lit(r.get(c)) + cast.get(c, '') for c in cols) + ')'
+
+
+def upsert_chunks(table, rows, key, cols=None, cast=None, conflict=True):
+    """Insert statements for one table, split so each stays well inside one part."""
     if not rows:
-        return ''
+        return []
     cols = cols or list(rows[0].keys())
     cast = cast or {}
-    vals = ',\n'.join('(' + ','.join(lit(r.get(c)) + cast.get(c, '') for c in cols) + ')' for r in rows)
-    keys = key if isinstance(key, list) else [key]
-    upd = [c for c in cols if c not in keys]
-    action = ('do update set ' + ', '.join(f'{c} = excluded.{c}' for c in upd)) if upd else 'do nothing'
-    return f'insert into public.{table} ({",".join(cols)}) values\n{vals}\non conflict ({",".join(keys)}) {action};\n\n'
+    if conflict:
+        keys = key if isinstance(key, list) else [key]
+        upd = [c for c in cols if c not in keys]
+        action = ('do update set ' + ', '.join(f'{c} = excluded.{c}' for c in upd)) if upd else 'do nothing'
+        tail = f'\non conflict ({",".join(keys)}) {action};\n\n'
+    else:
+        tail = ';\n\n'
+    head = f'insert into public.{table} ({",".join(cols)}) values\n'
+    budget_lines, budget_bytes = PART_MAX_LINES - 20, PART_MAX_BYTES - 8_000
+    chunks, cur, lines, size = [], [], 0, 0
+    for r in rows:
+        t = row_sql(r, cols, cast)
+        n, b = t.count('\n') + 1, len(t.encode())
+        if cur and (lines + n > budget_lines or size + b > budget_bytes):
+            chunks.append(cur); cur, lines, size = [], 0, 0
+        cur.append(t); lines += n; size += b
+    if cur:
+        chunks.append(cur)
+    return [(table, head + ',\n'.join(c) + tail) for c in chunks]
+
+
+def replace_links_by_indicator(links):
+    """indicator_requirements, chunked by whole indicators. Each chunk first deletes the
+    links of its own indicators and then inserts them, so any part can be re-run alone
+    without touching rows another part loaded."""
+    by_ind = {}
+    for r in links:
+        by_ind.setdefault(r['indicator_id'], []).append(r)
+    budget = PART_MAX_LINES - 40
+    groups, cur, n = [], [], 0
+    for ind, rows in by_ind.items():
+        if cur and n + len(rows) > budget:
+            groups.append(cur); cur, n = [], 0
+        cur.append(ind); n += len(rows)
+    if cur:
+        groups.append(cur)
+    out = []
+    for g in groups:
+        rows = [r for ind in g for r in by_ind[ind]]
+        delete = ('delete from public.indicator_requirements where indicator_id in ('
+                  + ','.join(lit(i) for i in g) + ');\n')
+        (_, ins), = upsert_chunks('indicator_requirements', rows, ['indicator_id', 'mr_id'])
+        out.append(('indicator_requirements', delete + ins))
+    return out
+
+
+def statements(o):
+    st = []
+    st += upsert_chunks('iat_parts', o['parts'], 'code')
+    st += upsert_chunks('iat_domains', o['domains'], 'code')
+    st += upsert_chunks('iat_indicators', o['indicators'], 'id')
+    st += upsert_chunks('master_requirements', o['master_requirements'], 'id')
+    st += replace_links_by_indicator(o['indicator_requirements'])
+    # The crosswalk has no natural key, so it is replaced whole: delete and insert stay in
+    # one statement group, which therefore always lands in one part.
+    cw = upsert_chunks('framework_crosswalk', o['crosswalk'], None,
+                       cols=['framework', 'ref', 'subject', 'treatment', 'indicators', 'note', 'sort'], conflict=False)
+    assert len(cw) == 1, 'framework_crosswalk no longer fits one part; give it a key and chunk it'
+    st.append(('framework_crosswalk', 'delete from public.framework_crosswalk;\n' + cw[0][1]))
+    st += upsert_chunks('offices', o['offices'], 'id', cast={'id': '::uuid'})
+    st += upsert_chunks('indicator_lead_offices', o['indicator_lead_offices'], ['indicator_id', 'office_id'], cast={'office_id': '::uuid'})
+    st += upsert_chunks('hazards', o['hazards'], 'code')
+    st += upsert_chunks('moo_documents', o['moo_documents'], 'id',
+                        cols=['id', 'manual', 'kind', 'code', 'title', 'summary', 'status', 'sort'], cast={'id': '::uuid'})
+    st += upsert_chunks('moo_versions', o['moo_versions'], 'id', cast={'id': '::uuid', 'document_id': '::uuid'})
+    st += upsert_chunks('moo_document_indicators', o['moo_document_indicators'], ['document_id', 'indicator_id'], cast={'document_id': '::uuid'})
+    st += upsert_chunks('protocol_templates', o['protocol_templates'], 'id',
+                        cast={'id': '::uuid', 'document_id': '::uuid', 'owner_role': '::public.app_role'})
+    st += upsert_chunks('protocol_steps', o['protocol_steps'], 'id', cast={'id': '::uuid', 'template_id': '::uuid'})
+    st += upsert_chunks('aa_action_templates', o['aa_action_templates'], 'id', cast={'id': '::uuid'})
+    return st
+
+
+CHECK_SQL = """-- Expected: 140 | 18 | 935 | 71 | 9 | 54 | 29
+select (select count(*) from public.iat_indicators)         as indicators,
+       (select count(*) from public.master_requirements)    as requirements,
+       (select count(*) from public.indicator_requirements) as indicator_links,
+       (select count(*) from public.framework_crosswalk)    as crosswalk,
+       (select count(*) from public.protocol_templates)     as protocols,
+       (select count(*) from public.protocol_steps)         as protocol_steps,
+       (select count(*) from public.aa_action_templates)    as aa_actions;
+"""
+
+HEADER = ('-- GENERATED by scripts/generate_seed.py from reference/*.xlsx — do not edit by hand.\n'
+          '-- Reference data only. No personal data. Protocols and AA items are DRAFT for CDRRMO validation.\n')
 
 
 def write_sql(o):
-    sql = ['-- GENERATED by scripts/generate_seed.py from reference/*.xlsx — do not edit by hand.\n',
-           '-- Reference data only. No personal data. Protocols and AA items are DRAFT for CDRRMO validation.\n',
-           'begin;\n\n']
-    sql.append(upsert('iat_parts', o['parts'], 'code'))
-    sql.append(upsert('iat_domains', o['domains'], 'code'))
-    sql.append(upsert('iat_indicators', o['indicators'], 'id'))
-    sql.append(upsert('master_requirements', o['master_requirements'], 'id'))
-    sql.append('delete from public.indicator_requirements;\n')
-    sql.append(upsert('indicator_requirements', o['indicator_requirements'], ['indicator_id', 'mr_id']))
-    sql.append('delete from public.framework_crosswalk;\n')
-    cols = ['framework', 'ref', 'subject', 'treatment', 'indicators', 'note', 'sort']
-    sql.append('insert into public.framework_crosswalk (' + ','.join(cols) + ') values\n' +
-               ',\n'.join('(' + ','.join(lit(c.get(k)) for k in cols) + ')' for c in o['crosswalk']) + ';\n\n')
-    sql.append(upsert('offices', o['offices'], 'id', cast={'id': '::uuid'}))
-    sql.append(upsert('indicator_lead_offices', o['indicator_lead_offices'], ['indicator_id', 'office_id'], cast={'office_id': '::uuid'}))
-    sql.append(upsert('hazards', o['hazards'], 'code'))
-    sql.append(upsert('moo_documents', o['moo_documents'], 'id',
-                      cols=['id', 'manual', 'kind', 'code', 'title', 'summary', 'status', 'sort'], cast={'id': '::uuid'}))
-    sql.append(upsert('moo_versions', o['moo_versions'], 'id', cast={'id': '::uuid', 'document_id': '::uuid'}))
-    sql.append(upsert('moo_document_indicators', o['moo_document_indicators'], ['document_id', 'indicator_id'], cast={'document_id': '::uuid'}))
-    sql.append(upsert('protocol_templates', o['protocol_templates'], 'id',
-                      cast={'id': '::uuid', 'document_id': '::uuid', 'owner_role': '::public.app_role'}))
-    sql.append(upsert('protocol_steps', o['protocol_steps'], 'id', cast={'id': '::uuid', 'template_id': '::uuid'}))
-    sql.append(upsert('aa_action_templates', o['aa_action_templates'], 'id', cast={'id': '::uuid'}))
-    sql.append('commit;\n')
-    (ROOT / 'supabase' / 'seed').mkdir(parents=True, exist_ok=True)
-    (ROOT / 'supabase' / 'seed' / 'seed.sql').write_text(''.join(sql))
+    st = statements(o)
+    seed_dir = ROOT / 'supabase' / 'seed'
+    seed_dir.mkdir(parents=True, exist_ok=True)
+    (seed_dir / 'seed.sql').write_text(HEADER + 'begin;\n\n' + ''.join(t for _, t in st) + 'commit;\n')
+
+    # Pack statements into parts, in order (parents before children).
+    parts, cur, lines, size = [], [], 0, 0
+    for tbl, t in st:
+        n, b = t.count('\n'), len(t.encode())
+        if cur and (lines + n > PART_MAX_LINES - 12 or size + b > PART_MAX_BYTES - 2_000):
+            parts.append(cur); cur, lines, size = [], 0, 0
+        cur.append((tbl, t)); lines += n; size += b
+    parts.append(cur)
+    part_dir = seed_dir / 'parts'
+    part_dir.mkdir(exist_ok=True)
+    for old in part_dir.glob('*.sql'):
+        old.unlink()
+    total = len(parts)
+    for i, part in enumerate(parts, 1):
+        tables = list(dict.fromkeys(tbl for tbl, _ in part))
+        body = (HEADER + f'-- Part {i} of {total}: {", ".join(tables)}\n'
+                f'-- Run the parts in order in the Supabase SQL editor. A part can be run again safely.\n'
+                'begin;\n\n' + ''.join(t for _, t in part) + 'commit;\n')
+        if i == total:
+            body += '\n' + CHECK_SQL
+        (part_dir / f'{i:02d}_seed.sql').write_text(body)
+    print(f'seed: {len(st)} statements in {total} parts')
 
 
 if __name__ == '__main__':
