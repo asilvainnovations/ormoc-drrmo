@@ -30,7 +30,7 @@ export function SettingsPage() {
           <p className="mb-3 text-sm text-muted">Choose which roles the demo user holds. The real system enforces the same rules on the server.</p>
           <div className="grid gap-2 sm:grid-cols-2">
             {ALL_ROLES.map((r) => (
-              <Checkbox key={r} className="flex" checked={roles.includes(r)} onChange={() => void setDemoRoles(roles.includes(r) ? roles.filter((x) => x !== r) : [...roles, r])}>
+              <Checkbox tip={`Demo only: act as ${ROLE_LABEL[r]}`} key={r} className="flex" checked={roles.includes(r)} onChange={() => void setDemoRoles(roles.includes(r) ? roles.filter((x) => x !== r) : [...roles, r])}>
                 {ROLE_LABEL[r]}
               </Checkbox>
             ))}
@@ -39,14 +39,14 @@ export function SettingsPage() {
       )}
       <Section title="This device">
         <List>
-          <ListRow to="/settings/sync" title="Sync and offline data" meta="What is waiting to send, and anything the server refused" />
-          {has('admin') && <ListRow to="/settings/users" title="Users and roles" meta="Grant or remove roles" />}
-          {has('admin') && <ListRow to="/settings/barangays" title="Barangay list" meta="Import the barangays with their PSGC codes" />}
-          <ListRow to="/settings/about" title="About and data privacy" />
+          <ListRow tip="See what is waiting to send and anything the server refused" to="/settings/sync" title="Sync and offline data" meta="What is waiting to send, and anything the server refused" />
+          {has('admin') && <ListRow tip="Invite-only accounts: grant roles or deactivate people" to="/settings/users" title="Users and roles" meta="Grant or remove roles" />}
+          {has('admin') && <ListRow tip="Load or update the barangay list from the PSA PSGC file" to="/settings/barangays" title="Barangay list" meta="Import the barangays with their PSGC codes" />}
+          <ListRow tip="Version, data privacy and where the data is held" to="/settings/about" title="About and data privacy" />
         </List>
       </Section>
       {!env.demo && (
-        <Button variant="secondary" icon={LogOut} busy={busy} onClick={async () => {
+        <Button tip="Sign out and erase this device’s copy of the data" variant="secondary" icon={LogOut} busy={busy} onClick={async () => {
           setBusy(true);
           try { await signOut(); } catch (e) { toast((e as Error).message, 'bad'); } finally { setBusy(false); }
         }}>Sign out and clear this device</Button>
@@ -73,7 +73,7 @@ export function SyncPage() {
     <div className="page">
       <PageHeader title="Sync and offline data" back="/settings"
         subtitle={env.demo ? 'Demo mode: nothing is sent to a server.' : `${online ? 'Online' : 'Offline'}. ${sync.lastSyncAt ? `Last synced ${relative(sync.lastSyncAt)}.` : 'Not synced yet.'}`}
-        actions={!env.demo && <Button icon={RefreshCw} busy={sync.status === 'syncing'} disabled={!online} onClick={() => syncNow({ forceReference: true })}>Sync now</Button>} />
+        actions={!env.demo && <Button tip="Send waiting changes and fetch the latest data now" icon={RefreshCw} busy={sync.status === 'syncing'} disabled={!online} onClick={() => syncNow({ forceReference: true })}>Sync now</Button>} />
       {sync.status === 'error' && <Notice tone="bad" title="Sync stopped">{sync.message}</Notice>}
       {sync.status === 'signed_out' && <Notice tone="warn" title="Signed out">Sign in again to send your changes.</Notice>}
       <Section title={`Waiting to send (${data?.outbox.length ?? 0})`}>
@@ -85,7 +85,7 @@ export function SyncPage() {
           <List>{data.failed.map((f) => <li key={f.id} className="py-3">
             <p className="font-semibold">{f.label}</p><p className="text-sm text-bad">{f.error}</p>
             <p className="text-xs text-muted">{fmtDateTime(f.at)}. The record shows the server copy again.</p>
-            <Button className="mt-1" variant="quiet" onClick={() => db.failed.delete(f.id!)}>Dismiss</Button></li>)}</List>
+            <Button tip="Remove this message from the list" className="mt-1" variant="quiet" onClick={() => db.failed.delete(f.id!)}>Dismiss</Button></li>)}</List>
         ) : <p className="text-muted">None.</p>}
       </Section>
       <Section title={`Edited by someone else first (${data?.conflicts.length ?? 0})`}>
@@ -94,8 +94,8 @@ export function SyncPage() {
             <p className="font-semibold">{c.label}</p>
             <p className="text-sm text-muted">Another person saved this record before your change arrived. The record now shows their version.</p>
             <div className="mt-2 flex flex-wrap gap-2">
-              <Button variant="secondary" onClick={() => retryConflict(c.id!)}>Apply my change on top</Button>
-              <Button variant="quiet" onClick={() => db.conflicts.delete(c.id!)}>Keep theirs</Button>
+              <Button tip="Save your version over the other person’s change" variant="secondary" onClick={() => retryConflict(c.id!)}>Apply my change on top</Button>
+              <Button tip="Keep the other person’s version and discard yours" variant="quiet" onClick={() => db.conflicts.delete(c.id!)}>Keep theirs</Button>
             </div></li>)}</List>
         ) : <p className="text-muted">None.</p>}
       </Section>
@@ -126,14 +126,14 @@ export function UsersPage() {
   return (
     <div className="page">
       <PageHeader title="Users and roles" back="/settings" subtitle="Invite staff from the Supabase dashboard (Authentication). They appear here as soon as they are invited. Changes need a connection."
-        actions={<Button onClick={load}>Load users</Button>} />
+        actions={<Button tip="Fetch the list of users and their roles" onClick={load}>Load users</Button>} />
       {!rows ? <EmptyState title="Load the user list" /> : rows.map((u) => (
         <Section key={u.id} title={u.full_name || u.id}
-          action={u.is_active ? <Button variant="quiet" size="md" onClick={() => setActive(u.id, false)}>Deactivate</Button>
-            : <Button variant="secondary" onClick={() => setActive(u.id, true)}>Reactivate</Button>}>
+          action={u.is_active ? <Button tip="Remove this person’s access. Their records stay" variant="quiet" size="md" onClick={() => setActive(u.id, false)}>Deactivate</Button>
+            : <Button tip="Give this person access again" variant="secondary" onClick={() => setActive(u.id, true)}>Reactivate</Button>}>
           {!u.is_active && <Notice tone="warn">Deactivated. This person can no longer see or change anything. Their past entries stay.</Notice>}
           <div className="flex flex-wrap gap-2">{ALL_ROLES.map((r) => (
-            <Checkbox key={r} checked={u.roles.includes(r)} onChange={() => toggle(u.id, r, u.roles.includes(r))}>{ROLE_LABEL[r]}</Checkbox>))}</div>
+            <Checkbox tip={`${u.roles.includes(r) ? 'Remove' : 'Grant'} the ${ROLE_LABEL[r]} role`} key={r} checked={u.roles.includes(r)} onChange={() => toggle(u.id, r, u.roles.includes(r))}>{ROLE_LABEL[r]}</Checkbox>))}</div>
         </Section>
       ))}
     </div>
@@ -188,7 +188,7 @@ export function BarangaysAdminPage() {
           <input type="file" accept=".csv,text/csv" className="sr-only" onChange={async (e) => { const f = e.target.files?.[0]; if (f) setText(await f.text()); }} />
         </label>
         {errors.length > 0 && <Notice tone="bad" title="Fix these lines first"><ul className="list-disc pl-5">{errors.slice(0, 10).map((x) => <li key={x}>{x}</li>)}</ul></Notice>}
-        <Button busy={busy} disabled={!text.trim()} onClick={run}>Import barangays</Button>
+        <Button tip="Check the list and save the barangays" busy={busy} disabled={!text.trim()} onClick={run}>Import barangays</Button>
       </div>
     </div>
   );
@@ -204,7 +204,7 @@ export function AboutPage() {
         <h2 className="text-lg font-bold">Data privacy</h2>
         <p>The City Government of Ormoc controls the data (RA 10173). The platform stores staff names, positions and offices, operational records and aggregate counts. It does not store the names of affected persons, evacuees, beneficiaries or informants. Evidence files are kept in a private store and opened only through short-lived links.</p>
         <p>Records are kept on this device so the app works without a signal. Signing out clears this device.</p>
-        <p className="text-sm text-muted"><TextLink to="/library/requirements">Master requirements</TextLink> describe what the platform must do.</p>
+        <p className="text-sm text-muted"><TextLink tip="Open the master requirements" to="/library/requirements">Master requirements</TextLink> describe what the platform must do.</p>
       </div>
     </div>
   );
