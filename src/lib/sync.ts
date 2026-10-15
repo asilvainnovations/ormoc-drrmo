@@ -120,7 +120,7 @@ async function pushRpc(item: OutboxItem): Promise<'done' | 'stop'> {
 async function pushUpload(item: OutboxItem): Promise<'done' | 'stop'> {
   const f = await db.files.get(item.fileId!);
   if (!f) return 'done';
-  const { error } = await client!.storage.from('evidence').upload(item.path!, f.blob, { contentType: f.type, upsert: false });
+  const { error } = await client!.storage.from(item.bucket ?? 'evidence').upload(item.path!, f.blob, { contentType: f.type, upsert: false });
   if (error) {
     const msg = error.message ?? '';
     if (/exists|duplicate/i.test(msg)) return 'done';       // replayed upload

@@ -88,10 +88,10 @@ export async function callOnline<T>(fn: string, args: Record<string, unknown>, w
 }
 
 /** Keep a file on the device and queue its upload to the private evidence bucket. */
-export async function queueUpload(file: File, path: string, fileId: string): Promise<void> {
+export async function queueUpload(file: File, path: string, fileId: string, bucket: 'evidence' | 'vault' = 'evidence'): Promise<void> {
   await db.files.put({ id: fileId, blob: file, name: file.name, type: file.type, createdAt: now() });
   if (env.demo) return;
-  await db.outbox.add({ kind: 'upload', fileId, path, label: `Upload ${file.name}`, createdAt: now(), attempts: 0 });
+  await db.outbox.add({ kind: 'upload', fileId, path, bucket, label: `Upload ${file.name}`, createdAt: now(), attempts: 0 });
   scheduleSync();
 }
 
@@ -99,12 +99,12 @@ export async function queueUpload(file: File, path: string, fileId: string): Pro
  * Open an evidence file: the copy on this device if there is one (works offline),
  * otherwise a five-minute signed link from the private bucket.
  */
-export async function evidenceFileUrl(evidenceId: string, path: string): Promise<string> {
+export async function evidenceFileUrl(evidenceId: string, path: string, bucket: 'evidence' | 'vault' = 'evidence'): Promise<string> {
   const local = await db.files.get(evidenceId);
   if (local) return URL.createObjectURL(local.blob);
   if (env.demo) throw new Error('This file was added on another device.');
   if (!navigator.onLine || !supabase) throw new NeedsConnectionError('Opening this file');
-  const { data, error } = await supabase.storage.from('evidence').createSignedUrl(path, 300);
+  const { data, error } = await supabase.storage.from(bucket).createSignedUrl(path, 300);
   if (error || !data) throw new Error(error?.message ?? 'The file could not be opened.');
   return data.signedUrl;
 }

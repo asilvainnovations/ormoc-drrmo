@@ -13,6 +13,7 @@ export interface OutboxItem {
   args?: Record<string, unknown>;
   fileId?: string;
   path?: string;
+  bucket?: 'evidence' | 'vault';     // storage bucket for uploads (evidence when absent)
   label: string;                     // human description for the Sync screen
   createdAt: string;
   attempts: number;
@@ -63,6 +64,8 @@ export class DrrmDB extends Dexie {
   aa_actions!: Table<T.AaAction, string>;
   aa_fund_years!: Table<T.AaFundYear, number>;
   aa_disbursements!: Table<T.AaDisbursement, string>;
+  // document vault
+  vault_documents!: Table<T.VaultDocument, string>;
   // local only
   outbox!: Table<OutboxItem, number>;
   failed!: Table<FailedItem, number>;
@@ -113,6 +116,8 @@ export class DrrmDB extends Dexie {
       files: 'id',
       meta: 'key',
     });
+    // v2 (1.1): Document Vault.
+    this.version(2).stores({ vault_documents: 'id, category, ref_key, status, *indicator_ids, updated_at' });
   }
 }
 

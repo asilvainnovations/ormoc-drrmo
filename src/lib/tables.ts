@@ -57,10 +57,12 @@ export const TABLES: TableConfig[] = [
   { name: 'aa_actions', pk: 'id', cursor: 'updated_at', write: 'update',
     omit: [...STAMPS, 'done_by', 'done_at', 'declaration_id', 'pdra_id', 'template_id', 'title', 'sector', 'lead_office', 'timing'] },
   { name: 'aa_fund_years', pk: 'fiscal_year', cursor: 'updated_at', write: 'upsert', omit: ['updated_at'] },
+  // document vault (rows only reach vault roles; RLS returns nothing to others)
+  { name: 'vault_documents', pk: 'id', cursor: 'updated_at', write: 'upsert', omit: [...STAMPS, 'uploaded_by'] },
   { name: 'aa_disbursements', pk: 'id', cursor: 'updated_at', write: 'upsert', omit: [...STAMPS, 'created_by', 'lead_hours', 'tranche'] },
 ];
 
 export const TABLE = Object.fromEntries(TABLES.map((t) => [t.name, t])) as Record<string, TableConfig>;
 
 /** Tables pushed to the UI live through Supabase Realtime. */
-export const REALTIME_TABLES = ['eoc_activations', 'logbook_entries', 'sitreps', 'barangay_reports', 'resource_requests', 'declarations', 'aa_actions'];
+export const REALTIME_TABLES = ['eoc_activations', 'logbook_entries', 'sitreps', 'barangay_reports', 'resource_requests', 'declarations', 'aa_actions', 'vault_documents'];
