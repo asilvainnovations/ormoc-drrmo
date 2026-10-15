@@ -40,7 +40,8 @@ src/
   styles/         design tokens and base CSS
 supabase/
   migrations/     schema, RLS, triggers, RPCs, views (apply in order)
-  seed/seed.sql   reference data generated from the IAT v1.1 and Traceability v1.1 workbooks
+  seed/seed.sql   reference data generated from the IAT v1.1 and Traceability v1.1 workbooks (for psql)
+  seed/parts/     the same data in parts small enough for the Supabase SQL editor
   tests/          SQL rule and security suite (plus a local-only Supabase stub)
 scripts/          seed generator, test runners
 reference/        the source workbooks
@@ -60,7 +61,7 @@ docs/             system design, design system, architecture decision records
 | `npm run test:db` | Rebuild a local Postgres database from the migrations and run the 105 rule and security checks. Needs `PGHOST`, `PGPORT` and `PGUSER` for a local superuser |
 | `npm run test:it` | Integration tests through real PostgREST. Needs the same plus `POSTGREST_BIN` (PostgREST 12) |
 | `npm run test:e2e` | Playwright on phone and desktop sizes, with axe and offline checks. Runs against `npm run preview` |
-| `npm run seed:generate` | Regenerate `supabase/seed/seed.sql` and `src/data/reference.json` from `reference/*.xlsx` |
+| `npm run seed:generate` | Regenerate `supabase/seed/seed.sql`, `supabase/seed/parts/` and `src/data/reference.json` from `reference/*.xlsx` |
 | `npm run check` | Typecheck, unit tests and build |
 
 ## Changing reference data

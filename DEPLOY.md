@@ -6,7 +6,7 @@ Time needed: about half a day, plus the time to invite staff.
 
 ## 0. Before you start
 
-- [ ] A City email account for the platform owner (for example, `drrm-platform@ormoc.gov.ph`), not a personal address.
+- [ ] A City email account to **own** the Supabase, Netlify and GitHub accounts (for example, `drrm-platform@ormoc.gov.ph`). This is about who owns and pays for the service. It does not limit who can sign in to the app: any invited address can, including personal and consultant addresses (section 4).
 - [ ] A password manager or vault for the database password and keys.
 - [ ] The DPO has reviewed the privacy notice text (Settings → About) and the cross-border transfer to Singapore ([ADR-002](docs/adr/002-hosting-and-privacy.md)).
 - [ ] A workstation with Node 20+, Git and `psql` (PostgreSQL 15+ client).
@@ -30,7 +30,7 @@ Time needed: about half a day, plus the time to invite staff.
 
 Authentication → Providers → Email:
 
-- **Allow new users to sign up: off.** Staff are invited, never self-registered.
+- **Allow new users to sign up: off.** People are invited, never self-registered. An invitation can go to any email address (City, personal or consultant). The app does not check the domain. Someone who was never invited is told so on the sign-in screen.
 - Confirm email: on. Minimum password length: 10.
 
 Authentication → URL Configuration:
@@ -41,6 +41,20 @@ Authentication → URL Configuration:
 Authentication → SMTP: set the City's mail server or a transactional mail service. The built-in sender is rate-limited and is not meant for production invites.
 
 ## 3. Create the database
+
+There are two ways to do this. Both give the same result.
+
+### Option A: Supabase SQL editor (no tools to install)
+
+The SQL editor rejects long scripts, so the reference data comes in seven parts in `supabase/seed/parts/`. Each part is under 400 lines and 400 rows.
+
+1. **Migrations.** In SQL Editor → New query, paste and run each file in `supabase/migrations/` in name order, one at a time (`…000100_core.sql` first, `…000700_record_integrity.sql` last). Wait for "Success" before the next. Run each migration once only.
+2. **Reference data.** Paste and run `supabase/seed/parts/01_seed.sql`, then `02_seed.sql`, and so on to `07_seed.sql`. Use the parts, not `supabase/seed/seed.sql`, which is the same data in one file for `psql`.
+3. Part 7 ends with a check query. It should return **140 | 18 | 935 | 71 | 9 | 54 | 29**.
+
+Each part runs as a single transaction, so a part that fails changes nothing. A part can be run again at any time, on its own, and it only replaces its own rows. If a part fails or you lose your place, run that part again and carry on from there.
+
+### Option B: `psql` from a workstation
 
 Use the **Session pooler** connection string from Project Settings → Database (it works over IPv4). Run, in order:
 
@@ -53,9 +67,15 @@ done
 psql "$DB_URL" -v ON_ERROR_STOP=1 -q -f supabase/seed/seed.sql
 ```
 
+`psql` has no length limit, so it takes the whole seed in one file.
+
+### Either way
+
 Do **not** run anything in `supabase/tests/`. The stub there imitates Supabase for local testing only.
 
-The migrations can also be applied with the Supabase CLI (`supabase link`, then `supabase db push`) if the City prefers. Either way, apply them in file order, once.
+The migrations can also be applied with the Supabase CLI (`supabase link`, then `supabase db push`) if the City prefers. However they are applied, apply them in file order, once.
+
+When the workbooks change, `npm run seed:generate` rewrites both `seed.sql` and the parts (the number of parts can change). Load all of the new parts again, in order, rather than mixing old and new ones.
 
 Check the result:
 
@@ -86,7 +106,20 @@ where email = 'cdrrmo.head@ormoc.gov.ph';
 update public.profiles set full_name = 'Full Name', position = 'CDRRM Officer' where id = (select id from auth.users where email = 'cdrrmo.head@ormoc.gov.ph');
 ```
 
-From here the administrator invites other staff in the dashboard and assigns roles in the app (Settings → Users and roles).
+From here the administrator invites other staff in the dashboard and assigns roles in the app (Settings → Users and roles). A person who signs in before getting a role sees a notice asking them to contact the administrator.
+
+### Platform developer access
+
+The platform developer (Alvin M. Silva, `alvin.silva@cognitioplus.com`) needs to sign in to set up and support the platform. The access is given by the City and is time-boxed:
+
+1. Authentication → Users → **Invite user** → `alvin.silva@cognitioplus.com`.
+2. In the SQL editor, open and run block 1 of [`supabase/admin/developer_access.sql`](supabase/admin/developer_access.sql). It sets the profile and grants `admin` for the setup period. The script stops with a clear message if the address has not been invited yet.
+3. When setup ends, run block 2. It removes `admin` and keeps `author`, `assessor` and `viewer` for drafting, testing and support.
+4. At turnover, run block 3. It removes every role and deactivates the account. Past entries and the audit trail stay.
+
+The `admin` role passes every role check, including approving SOP versions and recording declaration steps. Those acts belong to City officials, so the developer does not perform them, and the City should move to block 2 as soon as setup is complete. Every change the developer makes is in the audit log.
+
+Personal data note for the DPO: the developer's name and email are held like any staff account's (section 9).
 
 | Role | Give to |
 |---|---|
@@ -113,7 +146,29 @@ Classification takes one or more of `urban`, `coastal`, `riverine` and `upland`,
 
 ## 6. Publish the app
 
-### Option A: Vercel (City-owned team)
+### Option A: Netlify (City-owned team)
+
+`netlify.toml` in the repository root already sets the build command (`npm run build`), the output folder (`dist`), Node 20, the single-page fallback, caching rules and the security headers. Nothing needs to be typed in the build settings.
+
+1. Sign in to Netlify with the City email and create a team named "City Government of Ormoc".
+2. **Add new site → Import an existing project → GitHub**. Authorise Netlify for the repository only (not the whole GitHub account) and pick the repository.
+3. On the build screen, leave the detected settings as they are. Under **Environment variables**, add:
+   - `VITE_SUPABASE_URL` = Project URL
+   - `VITE_SUPABASE_ANON_KEY` = anon / publishable key
+
+   Never add the service_role key. These values are built into the app, so a change needs a new deploy (Deploys → Trigger deploy → Deploy site).
+4. Deploy. The site opens at `https://<name>.netlify.app`. Rename it under Site configuration → Change site name (for example, `ormoc-drrm`).
+5. **Domain:** Domain management → Add a domain (for example, `drrm.ormoc.gov.ph`). Add the CNAME record Netlify shows at the City's DNS host. HTTPS is issued automatically.
+6. **Supabase:** put the final address in Authentication → URL Configuration (Site URL and Redirect URLs, step 2). Sign-in links and invites fail until this matches.
+7. **Previews (optional):** pull requests get deploy previews. Add their address pattern (`https://deploy-preview-*--<name>.netlify.app`) to the Supabase Redirect URLs, or point previews at a separate test Supabase project by setting different values for the "Deploy Previews" context.
+
+Check after the first deploy:
+
+- Open a deep link such as `/eoc/log` directly. It should load the app, not a Netlify 404.
+- Look at the response headers of the home page (browser dev tools → Network). `content-security-policy` should be present.
+- The home page should **not** show the "Demo mode" notice, and the status band should not say "Demo". If it does, the environment variables were missing at build time; add them and redeploy.
+
+### Option B: Vercel (City-owned team)
 
 1. Create a Vercel team under the City email and import the Git repository.
 2. Add environment variables for Production and Preview:
@@ -122,13 +177,13 @@ Classification takes one or more of `urban`, `coastal`, `riverine` and `upland`,
 3. Deploy. `vercel.json` sets the single-page fallback, caching and security headers, including a Content-Security-Policy that allows only this site and `*.supabase.co`.
 4. Add the City domain (for example, `drrm.ormoc.gov.ph`) and update the Site URL in step 2.
 
-### Option B: a City web server
+### Option C: a City web server
 
 ```bash
 VITE_SUPABASE_URL=... VITE_SUPABASE_ANON_KEY=... npm ci && npm run build   # output in dist/
 ```
 
-Serve `dist/` over HTTPS. Send unknown paths to `/index.html`. Serve `sw.js` with `Cache-Control: no-cache`. Copy the headers from `vercel.json`. Example for nginx:
+Serve `dist/` over HTTPS. Send unknown paths to `/index.html`. Serve `sw.js` with `Cache-Control: no-cache`. Copy the headers from `netlify.toml`. Example for nginx:
 
 ```nginx
 location / { try_files $uri /index.html; }
@@ -149,7 +204,8 @@ location /assets/ { add_header Cache-Control "public, max-age=31536000, immutabl
 
 - The anon key is public by design; RLS enforces access. The service_role key and the database password are secrets.
 - **At turnover:**
-  - Remove the consultant from the Supabase organisation and the Vercel team.
+  - Run block 3 of `supabase/admin/developer_access.sql` to remove the developer's app access.
+  - Remove the consultant from the Supabase organisation, the Netlify or Vercel team and the GitHub repository.
   - Rotate the database password.
   - If any secret was ever shared, rotate the API keys too (Project Settings → API). Then update the two environment variables and redeploy.
 - Review the roles list each quarter. Deactivate leavers in Settings → Users and roles; their records and audit trail remain.
