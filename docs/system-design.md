@@ -164,7 +164,7 @@ The integration suite found two defects that the fake client could not show, and
 
 - **Reference notes.** The plain-language notes in `src/data/references.ts` are for orientation. They need validation by the CDRRMO with the City Legal Office. Citations inside manual section text (the "Basis" lines) are not yet tappable.
 
-- **Barangay list.** The 110 Ormoc barangays need importing from the PSA PSGC file (Settings → Barangays → Import CSV) before operations use.
+- **Barangay list.** Ormoc’s 85 barangays (PSA PSGC, 4th quarter 2022 update) need importing from the PSA masterlist (Settings → Barangays → Import CSV) before operations use.
 - **Protocol validation.** The 9 protocols are drafts. Each needs validation by the CDRRMO and the owning office, then approval in the Library.
 - **Pending national guidance.** NDRRMC guidelines on anticipatory action triggers and DBM–COA rules on AA fund use and liquidation are expected under the IRR. Update `aa_rules` and the AA checklist when they are issued.
 - **Manual content.** The 19 manual sections hold skeleton text until the drafting and validation weeks.
