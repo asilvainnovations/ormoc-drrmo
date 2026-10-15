@@ -2,7 +2,7 @@
   "name": "ormoc-drrm-ops",
   "private": true,
   "version": "1.0.0",
-  "description": "Ormoc City CDRRMO & EOC Operations Platform \u2013 mobile-first PWA",
+  "description": "Ormoc City CDRRMO & EOC Operations Platform – mobile-first PWA",
   "type": "module",
   "engines": {
     "node": ">=20"
@@ -21,7 +21,9 @@
     "test:it": "bash scripts/it_test.sh"
   },
   "dependencies": {
-    "@fontsource-variable/atkinson-hyperlegible-next": "5.2.6",
+    "@fontsource-variable/montserrat": "5.3.0",
+    "@fontsource-variable/roboto-condensed": "5.3.0",
+    "@fontsource/poppins": "5.3.0",
     "@supabase/supabase-js": "2.45.4",
     "clsx": "2.1.1",
     "dexie": "4.0.8",

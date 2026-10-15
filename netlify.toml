@@ -1,5 +1,6 @@
 # Netlify deployment for the Ormoc DRRM Operations Platform.
-# Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in Site configuration → Environment variables.
+# Set VITE_SUPABASE_URL and VITE_SUPABASE_PUBLISHABLE_KEY (or, on older projects, VITE_SUPABASE_ANON_KEY)
+# in Site configuration → Environment variables.
 # Without them the build runs in demo mode (data stays in the browser).
 
 [build]

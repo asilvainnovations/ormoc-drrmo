@@ -12,7 +12,7 @@ export default defineConfig({
       injectRegister: false,
       includeAssets: ['icons/*.svg', 'icons/*.png'],
       manifest: {
-        name: 'Ormoc DRRM Operations',
+        name: 'Ormoc City DRRM and Emergency Operations',
         short_name: 'DRRM Ops',
         description: 'CDRRMO and EOC operations, assessment and manuals for the City of Ormoc',
         lang: 'en-PH',
@@ -20,8 +20,8 @@ export default defineConfig({
         scope: '/',
         display: 'standalone',
         orientation: 'any',
-        background_color: '#F5F7F6',
-        theme_color: '#173039',
+        background_color: '#EEF5FB',
+        theme_color: '#0F3D66',
         icons: [
           { src: '/icons/icon-192.png', sizes: '192x192', type: 'image/png' },
           { src: '/icons/icon-512.png', sizes: '512x512', type: 'image/png' },
@@ -33,7 +33,13 @@ export default defineConfig({
         ],
       },
       workbox: {
-        globPatterns: ['**/*.{js,css,html,svg,png,woff2}'],
+        globPatterns: ['**/*.{js,css,html,svg,png,webp,woff2}'],
+        // The original logo and banner files are kept for print and reuse, but are too large to
+        // ship to every phone; the app uses the compressed copies in /brand.
+        globIgnores: ['App_Banner.png', 'Ormoc_City_Logo.png', 'Ormoc_CDRRMO_Logo.png', 'brand/*.jpg',
+          // Latin is all the app needs; other script subsets still load on demand if ever used.
+          '**/*-{cyrillic,cyrillic-ext,greek,greek-ext,vietnamese,devanagari,math,symbols,latin-ext}-*.woff2',
+          'brand/*-512.webp', 'brand/*-64.webp'],
         navigateFallback: '/index.html',
         navigateFallbackDenylist: [/^\/auth\//],
         // Supabase API calls are never cached by the service worker; the app keeps its own

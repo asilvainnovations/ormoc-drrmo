@@ -23,7 +23,7 @@ Time needed: about half a day, plus the time to invite staff.
    - The paid plan includes daily backups. Add Point-in-Time Recovery if the budget allows.
 4. Under Project Settings → API, note:
    - the **Project URL**
-   - the **anon / publishable key** (safe in the browser; RLS protects data)
+   - the **publishable key** (`sb_publishable_…`; older projects show an anon key instead). It is safe in the browser; RLS protects the data
    - the **service_role / secret key** (never put it in the app or in Git; keep it in the vault)
 
 ## 2. Configure sign-in
@@ -48,7 +48,7 @@ There are two ways to do this. Both give the same result.
 
 The SQL editor rejects long scripts, so the reference data comes in seven parts in `supabase/seed/parts/`. Each part is under 400 lines and 400 rows.
 
-1. **Migrations.** In SQL Editor → New query, paste and run each file in `supabase/migrations/` in name order, one at a time (`…000100_core.sql` first, `…000700_record_integrity.sql` last). Wait for "Success" before the next. Run each migration once only.
+1. **Migrations.** In SQL Editor → New query, paste and run each file in `supabase/migrations/` in name order, one at a time (`…000100_core.sql` first, `20261016000800_document_vault.sql` last). Wait for "Success" before the next. Run each migration once only.
 2. **Reference data.** Paste and run `supabase/seed/parts/01_seed.sql`, then `02_seed.sql`, and so on to `07_seed.sql`. Use the parts, not `supabase/seed/seed.sql`, which is the same data in one file for `psql`.
 3. Part 7 ends with a check query. It should return **140 | 18 | 935 | 71 | 9 | 54 | 29**.
 
@@ -84,13 +84,17 @@ select (select count(*) from iat_indicators)      as indicators,    -- 140
        (select count(*) from master_requirements) as requirements,  -- 18
        (select count(*) from protocol_templates)  as protocols,     -- 9
        (select count(*) from aa_action_templates) as aa_actions,    -- 29
-       (select count(*) from storage.buckets where id = 'evidence') as bucket;  -- 1
+       (select count(*) from storage.buckets where id in ('evidence', 'vault')) as buckets;  -- 2
 ```
 
 Then, in the dashboard:
 
 - **Advisors → Security.** It should report no tables without RLS.
 - **Database → Publications → `supabase_realtime`.** It should list the EOC tables.
+
+### Updating an existing database to 1.1
+
+If the database was created before 16 October 2026, run only the new migration, `supabase/migrations/20261016000800_document_vault.sql`, once. It adds the Document Vault table and its private `vault` bucket. Nothing else changes, and the seed does not need to be loaded again.
 
 ## 4. First administrator and the CDRRMO Head
 
@@ -153,10 +157,10 @@ Classification takes one or more of `urban`, `coastal`, `riverine` and `upland`,
 1. Sign in to Netlify with the City email and create a team named "City Government of Ormoc".
 2. **Add new site → Import an existing project → GitHub**. Authorise Netlify for the repository only (not the whole GitHub account) and pick the repository.
 3. On the build screen, leave the detected settings as they are. Under **Environment variables**, add:
-   - `VITE_SUPABASE_URL` = Project URL
-   - `VITE_SUPABASE_ANON_KEY` = anon / publishable key
+   - `VITE_SUPABASE_URL` = Project URL, for example `https://jmctsspadywjcbbqwweh.supabase.co` (no slash at the end)
+   - `VITE_SUPABASE_PUBLISHABLE_KEY` = the publishable key (`sb_publishable_…`)
 
-   Never add the service_role key. These values are built into the app, so a change needs a new deploy (Deploys → Trigger deploy → Deploy site).
+   The app also accepts the older name `VITE_SUPABASE_ANON_KEY`, for projects that still use an anon key. If both are set, the publishable key is used. Never add the service_role key. These values are built into the app, so a change needs a new deploy (Deploys → Trigger deploy → Deploy site).
 4. Deploy. The site opens at `https://<name>.netlify.app`. Rename it under Site configuration → Change site name (for example, `ormoc-drrm`).
 5. **Domain:** Domain management → Add a domain (for example, `drrm.ormoc.gov.ph`). Add the CNAME record Netlify shows at the City's DNS host. HTTPS is issued automatically.
 6. **Supabase:** put the final address in Authentication → URL Configuration (Site URL and Redirect URLs, step 2). Sign-in links and invites fail until this matches.
@@ -173,14 +177,14 @@ Check after the first deploy:
 1. Create a Vercel team under the City email and import the Git repository.
 2. Add environment variables for Production and Preview:
    - `VITE_SUPABASE_URL` = Project URL
-   - `VITE_SUPABASE_ANON_KEY` = anon / publishable key
+   - `VITE_SUPABASE_PUBLISHABLE_KEY` = publishable key (or `VITE_SUPABASE_ANON_KEY` on older projects)
 3. Deploy. `vercel.json` sets the single-page fallback, caching and security headers, including a Content-Security-Policy that allows only this site and `*.supabase.co`.
 4. Add the City domain (for example, `drrm.ormoc.gov.ph`) and update the Site URL in step 2.
 
 ### Option C: a City web server
 
 ```bash
-VITE_SUPABASE_URL=... VITE_SUPABASE_ANON_KEY=... npm ci && npm run build   # output in dist/
+VITE_SUPABASE_URL=... VITE_SUPABASE_PUBLISHABLE_KEY=... npm ci && npm run build   # output in dist/
 ```
 
 Serve `dist/` over HTTPS. Send unknown paths to `/index.html`. Serve `sw.js` with `Cache-Control: no-cache`. Copy the headers from `netlify.toml`. Example for nginx:

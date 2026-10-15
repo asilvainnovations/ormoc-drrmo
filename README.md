@@ -8,6 +8,10 @@ A mobile-first, offline-capable web app (PWA) for the City Disaster Risk Reducti
 - **EOC.** Covers the White / Blue / Red alert level, an append-only logbook, SitReps, barangay status (counts only), and resource requests.
 - **Anticipatory action (RA 12287 and IRR).** Records the PDRA and the declaration timeline with its legal deadlines. It holds the 29-item AA checklist and enforces the fund cap (10% of the 70% LDRRMF) and the 30% / 70% tranche limits.
 
+- **Document Vault.** One register of the laws, guidelines, City issuances, plans and records gathered for Document Review. Each document is linked to the indicators it evidences. The vault includes a Document Review checklist and a catalogue of the cited references, each explained in plain language. It is open to assessors, validators, administrators and CDRRMO staff.
+
+Every button, tab, card, link and field has a tooltip. Every cited law or guideline (for example "RA 10121 Sec. 21") opens a short note when tapped.
+
 It works with no signal. Entries are saved on the device and sent when a connection returns.
 
 ## Try it in demo mode
@@ -27,7 +31,7 @@ Demo mode is what to use in validation workshops and training.
 
 ## Connect to the City's Supabase project
 
-Copy `.env.example` to `.env` and fill in the project URL and the anon (publishable) key. See [DEPLOY.md](DEPLOY.md) for creating the City-owned project, applying the database, inviting staff and publishing the app.
+Copy `.env.example` to `.env` and fill in `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY` (or `VITE_SUPABASE_ANON_KEY` on older projects). See [DEPLOY.md](DEPLOY.md) for creating the City-owned project, applying the database, inviting staff and publishing the app.
 
 ## Project layout
 
@@ -58,9 +62,10 @@ docs/             system design, design system, architecture decision records
 | `npm run build` | Typecheck and production build to `dist/` |
 | `npm run preview` | Serve the build on port 4173 |
 | `npm test` | Unit tests, including the scoring parity test against SQL |
-| `npm run test:db` | Rebuild a local Postgres database from the migrations and run the 105 rule and security checks. Needs `PGHOST`, `PGPORT` and `PGUSER` for a local superuser |
+| `npm run test:db` | Rebuild a local Postgres database from the migrations and run the 128 rule and security checks. Needs `PGHOST`, `PGPORT` and `PGUSER` for a local superuser |
 | `npm run test:it` | Integration tests through real PostgREST. Needs the same plus `POSTGREST_BIN` (PostgREST 12) |
 | `npm run test:e2e` | Playwright on phone and desktop sizes, with axe and offline checks. Runs against `npm run preview` |
+| `python3 scripts/brand_assets.py` | Rebuild the circular seals, banner copies and app icons from the originals in `public/` |
 | `npm run seed:generate` | Regenerate `supabase/seed/seed.sql`, `supabase/seed/parts/` and `src/data/reference.json` from `reference/*.xlsx` |
 | `npm run check` | Typecheck, unit tests and build |
 
