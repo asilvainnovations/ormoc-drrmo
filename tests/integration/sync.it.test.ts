@@ -126,4 +126,21 @@ describe('operations through PostgREST', () => {
     expect(await db.protocol_templates.count()).toBe(9);
     expect(await db.moo_versions.where('status').equals('draft').count()).toBe(0);   // drafts are hidden from viewers
   });
+
+  it('syncs a vault document for an assessor and hides it from a viewer', async () => {
+    await signIn('assessor@it.local');
+    const id = uuid();
+    await save('vault_documents', { _new: true, id, title: 'EO creating the City EOC', category: 'city_issuance', ref_key: null, doc_number: 'EO No. 1, s. 2026',
+      issuer: 'Office of the City Mayor', doc_date: '2026-01-15', summary: null, indicator_ids: ['B1.1', 'A1.1'], storage_path: null, file_name: null, mime_type: null,
+      size_bytes: null, url: null, location: 'CDRRMO records room', status: 'current', superseded_by: null, uploaded_by: 'spoofed', version: 1 }, 'vault');
+    expect(await push()).toBe(true);
+    expect(await db.failed.count()).toBe(0);
+    expect(sql(`select uploaded_by || '|' || indicator_ids::text from public.vault_documents where id = '${id}'`)).toBe('00000000-0000-0000-0000-0000000000b1|{A1.1,B1.1}');
+    await client.auth.signOut();
+    await signIn('viewer@it.local');
+    await db.delete(); await db.open();
+    await pull(['vault_documents'], true);
+    expect(await db.vault_documents.count()).toBe(0);
+  });
 });
+
