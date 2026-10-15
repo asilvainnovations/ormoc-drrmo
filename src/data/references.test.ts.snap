@@ -1,0 +1,11 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`citations > recognizes the instruments behind almost every citation in the data 1`] = `
+Set {
+  "DOF-BTr NIP",
+  "hazard maps",
+  "ETC cluster",
+  "NAP rules",
+  "climate change expenditure tagging guidelines",
+}
+`;
