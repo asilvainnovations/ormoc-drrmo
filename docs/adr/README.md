@@ -10,4 +10,5 @@ Each record states a decision, why it was made, and what it costs. Change a deci
 | [004](004-rbac-and-rls.md) | Ten City roles enforced by Postgres row-level security and triggers | Accepted |
 | [005](005-single-source-scoring.md) | IAT scoring rules live in SQL; the client mirrors them under a parity test | Accepted |
 | [006](006-online-only-authority-actions.md) | Actions that carry legal authority require a live connection | Accepted |
-| [007](007-design-system.md) | Token-based design system; status band; reserved level colours | Accepted |
+| [007](007-design-system.md) | Token-based design system; status band; reserved level colours | Accepted (colour and type amended by 008) |
+| [008](008-city-identity.md) | City identity: seals, banner, light blue, gray and orange; Montserrat, Poppins, Roboto Condensed; tooltips everywhere | Accepted |

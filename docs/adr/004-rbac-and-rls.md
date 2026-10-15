@@ -16,4 +16,4 @@ Who may score, validate, approve an SOP, change the EOC level or release anticip
 
 ## Consequences
 - The UI hides what a role cannot do, but the database is the authority. Refusals reach the user as failed items with the reason.
-- 105 SQL checks in `supabase/tests/10_rules_and_security.sql` run every rule as each role on a real Postgres.
+- 128 SQL checks in `supabase/tests/10_rules_and_security.sql` run every rule as each role on a real Postgres.
