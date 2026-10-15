@@ -2,7 +2,7 @@ import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
 
 // WCAG 2.1 AA automated checks on the main screens (serious and critical issues fail the run).
-const PAGES = ['/', '/assess', '/protocols', '/eoc', '/eoc/log', '/eoc/aa', '/eoc/aa/pdra/new', '/eoc/aa/funds', '/library', '/library/trace', '/library/requirements', '/settings', '/settings/sync'];
+const PAGES = ['/', '/assess', '/protocols', '/eoc', '/eoc/log', '/eoc/aa', '/eoc/aa/pdra/new', '/eoc/aa/funds', '/library', '/library/trace', '/library/requirements', '/library/crosswalk', '/settings', '/settings/sync', '/vault', '/vault/review', '/vault/references'];
 
 for (const path of PAGES) {
   test(`axe ${path}`, async ({ page }) => {
