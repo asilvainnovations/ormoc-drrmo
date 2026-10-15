@@ -1,3 +1,5 @@
+import { tip } from '@/components/Tooltip';
+import { checkBarangayList, ORMOC_BARANGAY_COUNT } from '@/domain/barangays';
 import { useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { LogOut, RefreshCw, Upload } from 'lucide-react';
@@ -161,11 +163,17 @@ export function BarangaysAdminPage() {
   const count = useLiveQuery(() => db.barangays.count(), [], 0);
   const [text, setText] = useState('');
   const [errors, setErrors] = useState<string[]>([]);
+  const [warnings, setWarnings] = useState<string[]>([]);
+  const [confirmed, setConfirmed] = useState(false);
   const [busy, setBusy] = useState(false);
   const run = async () => {
     const { rows, errors: errs } = parseBarangayCsv(text);
     setErrors(errs);
     if (errs.length || rows.length === 0) return;
+    // A list that does not look like the current PSA masterlist needs an explicit confirmation.
+    const w = checkBarangayList(rows);
+    setWarnings(w);
+    if (w.length && !confirmed) return;
     setBusy(true);
     try {
       if (supabase) {
@@ -173,20 +181,27 @@ export function BarangaysAdminPage() {
         if (error) throw new Error(error.message);
       }
       await db.barangays.bulkPut(rows.map((r) => ({ ...r, version: 1 })));
-      toast(`${rows.length} barangays imported`); setText('');
+      toast(`${rows.length} barangays imported`); setText(''); setWarnings([]); setConfirmed(false);
     } catch (e) { toast((e as Error).message, 'bad'); } finally { setBusy(false); }
   };
   return (
     <div className="page">
-      <PageHeader title="Barangay list" back="/settings" subtitle={`${count} barangays loaded. Use the official PSA PSGC codes for the City of Ormoc.`} />
+      <PageHeader title="Barangay list" back="/settings" subtitle={`${count} of ${ORMOC_BARANGAY_COUNT} barangays loaded. Use the current PSA PSGC masterlist for the City of Ormoc.`} />
       <div className="max-w-3xl space-y-4">
         <Field label="Paste CSV" hint={<>Columns: <code>psgc,name,classification,population,lat,lng</code>. Classification uses <code>;</code> between values, for example <code>coastal;urban</code>. Only PSGC and name are required.</>}>
-          {(id, d) => <Textarea id={id} aria-describedby={d} rows={10} value={text} onChange={(e) => setText(e.target.value)} />}
+          {(id, d) => <Textarea id={id} aria-describedby={d} rows={10} value={text} onChange={(e) => { setText(e.target.value); setWarnings([]); setConfirmed(false); }} />}
         </Field>
-        <label className="inline-flex min-h-tap cursor-pointer items-center gap-2 font-semibold underline">
+        <label {...tip('Load the CSV file downloaded or prepared from the PSA PSGC masterlist')} className="inline-flex min-h-tap cursor-pointer items-center gap-2 font-semibold underline">
           <Upload className="h-4 w-4" aria-hidden />Or choose a CSV file
-          <input type="file" accept=".csv,text/csv" className="sr-only" onChange={async (e) => { const f = e.target.files?.[0]; if (f) setText(await f.text()); }} />
+          <input type="file" accept=".csv,text/csv" className="sr-only" onChange={async (e) => { const f = e.target.files?.[0]; if (f) { setText(await f.text()); setWarnings([]); setConfirmed(false); } }} />
         </label>
+        <Notice tone="info" title="Use the current list">Ormoc has {ORMOC_BARANGAY_COUNT} barangays since the PSA 4th quarter 2022 update. The former numbered Poblacion barangays are now Barangays South, East and West (City Ordinance No. 052, s. 2021, ratified on 8 October 2022), and Barangay 29 is Barangay North. Lists showing 110 barangays are out of date.</Notice>
+        {warnings.length > 0 && (
+          <Notice tone="warn" title="This does not look like the current PSA list">
+            <ul className="list-disc pl-5">{warnings.map((x) => <li key={x}>{x}</li>)}</ul>
+            <Checkbox className="mt-3" checked={confirmed} onChange={() => setConfirmed((c) => !c)} tip="Tick only if you have checked this list against the current PSA PSGC masterlist">I have checked this list against the current PSA masterlist. Import it anyway.</Checkbox>
+          </Notice>
+        )}
         {errors.length > 0 && <Notice tone="bad" title="Fix these lines first"><ul className="list-disc pl-5">{errors.slice(0, 10).map((x) => <li key={x}>{x}</li>)}</ul></Notice>}
         <Button tip="Check the list and save the barangays" busy={busy} disabled={!text.trim()} onClick={run}>Import barangays</Button>
       </div>
