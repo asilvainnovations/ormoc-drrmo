@@ -50,6 +50,9 @@ export function TodayPage() {
         <Link to="/settings" className="inline-flex h-tap w-tap items-center justify-center rounded-control hover:bg-sunken lg:hidden" aria-label="Settings"><Settings className="h-5 w-5" aria-hidden /></Link>
       </header>
 
+      {!env.demo && roles.length === 0 && (
+        <Notice tone="warn" title="Your account has no roles yet">You are signed in, but the system administrator has not assigned you a role, so there is nothing to show. Ask them to assign one in Settings → Users and roles.</Notice>
+      )}
       {env.demo && <Notice tone="info" title="Demo mode">Nothing is sent to a server. Data stays in this browser. Change your demo roles in Settings to see what each role can do.</Notice>}
 
       {decl && (
