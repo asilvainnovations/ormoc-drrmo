@@ -392,6 +392,60 @@ select tests.login('00000000-0000-0000-0000-00000000000a');
 select tests.expect_ok('and can be reactivated',
   $$update public.profiles set is_active = true where id = '00000000-0000-0000-0000-000000000010'$$);
 
+-- ================================================ Document Vault =============
+select tests.login('00000000-0000-0000-0000-00000000000b');  -- assessor
+select tests.expect_ok('an assessor adds a document linked to indicators',
+  $$insert into public.vault_documents (id, title, category, ref_key, indicator_ids) values
+    ('70000000-0000-0000-0000-000000000001', 'LDRRMF Investment Plan 2026', 'plan', 'JMC 2013-1', array['A4.6','A3.5','A3.5'])$$);
+select tests.expect_eq('links are de-duplicated and sorted',
+  (select indicator_ids::text from public.vault_documents where id = '70000000-0000-0000-0000-000000000001'), '{A3.5,A4.6}');
+select tests.expect_eq('the uploader is the signed-in user',
+  (select uploaded_by::text from public.vault_documents where id = '70000000-0000-0000-0000-000000000001'), '00000000-0000-0000-0000-00000000000b');
+select tests.expect_error('an unknown indicator is refused',
+  $$insert into public.vault_documents (title, category, indicator_ids) values ('Bad link', 'record', array['Z9.9'])$$, '23503');
+update public.vault_documents set uploaded_by = '00000000-0000-0000-0000-000000000011', version = version where id = '70000000-0000-0000-0000-000000000001';
+select tests.expect_eq('the uploader cannot be spoofed',
+  (select uploaded_by::text from public.vault_documents where id = '70000000-0000-0000-0000-000000000001'), '00000000-0000-0000-0000-00000000000b');
+select tests.expect_error('only https links are accepted',
+  $$insert into public.vault_documents (title, category, url) values ('Insecure link', 'law', 'http://example.org/ra10121')$$, '23514');
+select tests.expect_error('documents cannot be deleted',
+  $$delete from public.vault_documents where id = '70000000-0000-0000-0000-000000000001'$$, '42501');
+select tests.expect_ok('the uploader attaches the file into the document folder',
+  $$insert into storage.objects (bucket_id, name, owner) values ('vault', '70000000-0000-0000-0000-000000000001/ldrrmfip-2026.pdf', auth.uid())$$);
+select tests.expect_ok('the file path is recorded',
+  $$update public.vault_documents set storage_path = '70000000-0000-0000-0000-000000000001/ldrrmfip-2026.pdf', version = version where id = '70000000-0000-0000-0000-000000000001'$$);
+select tests.expect_error('an attached file cannot be swapped',
+  $$update public.vault_documents set storage_path = '70000000-0000-0000-0000-000000000001/other.pdf', version = version where id = '70000000-0000-0000-0000-000000000001'$$, '42501');
+select tests.expect_error('a file path outside the document folder is refused',
+  $$insert into public.vault_documents (id, title, category, storage_path) values ('70000000-0000-0000-0000-000000000002', 'Misfiled', 'record', 'someone-else/file.pdf')$$, '23514');
+
+select tests.login('00000000-0000-0000-0000-00000000000c');  -- validator (evaluator)
+select tests.expect_rows('a validator reads the vault', $$select count(*) from public.vault_documents$$, 1);
+select tests.expect_rows('a validator cannot change someone else''s document',
+  $$with u as (update public.vault_documents set title = 'Changed' where id = '70000000-0000-0000-0000-000000000001' returning 1) select count(*) from u$$, 0);
+select tests.expect_error('nor upload into its folder',
+  $$insert into storage.objects (bucket_id, name, owner) values ('vault', '70000000-0000-0000-0000-000000000001/x.pdf', auth.uid())$$, '42501');
+
+select tests.login('00000000-0000-0000-0000-000000000011');  -- CDRRMO Head
+select tests.expect_ok('the CDRRMO Head marks a document superseded',
+  $$update public.vault_documents set status = 'superseded', version = version where id = '70000000-0000-0000-0000-000000000001'$$);
+
+select tests.login('00000000-0000-0000-0000-00000000000e');  -- duty officer (CDRRMO staff)
+select tests.expect_rows('CDRRMO staff read the vault', $$select count(*) from public.vault_documents$$, 1);
+select tests.expect_rows('and its files', $$select count(*) from storage.objects where bucket_id = 'vault'$$, 1);
+
+select tests.login('00000000-0000-0000-0000-00000000000a');  -- admin
+select tests.expect_rows('an admin reads the vault', $$select count(*) from public.vault_documents$$, 1);
+
+select tests.login('00000000-0000-0000-0000-000000000010');  -- viewer
+select tests.expect_rows('a viewer cannot see the vault', $$select count(*) from public.vault_documents$$, 0);
+select tests.expect_rows('nor its files', $$select count(*) from storage.objects where bucket_id = 'vault'$$, 0);
+select tests.expect_error('nor add to it', $$insert into public.vault_documents (title, category) values ('Viewer doc', 'other')$$, '42501');
+select tests.login('00000000-0000-0000-0000-000000000012');  -- author
+select tests.expect_rows('manual authors are not vault users', $$select count(*) from public.vault_documents$$, 0);
+select tests.login('00000000-0000-0000-0000-00000000000f');  -- lead office focal
+select tests.expect_rows('lead office focal persons are not vault users', $$select count(*) from public.vault_documents$$, 0);
+
 reset role;
 select tests.expect_eq('audit trail recorded', ((select count(*) from public.audit_log) > 50)::text, 'true');
 \o
