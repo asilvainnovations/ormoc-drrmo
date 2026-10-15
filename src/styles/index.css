@@ -1,4 +1,9 @@
-@import '@fontsource-variable/atkinson-hyperlegible-next';
+/* Fonts are self-hosted (CSP font-src 'self'; works offline). Latin subsets only. */
+@import '@fontsource-variable/montserrat/wght.css';
+@import '@fontsource/poppins/latin-400.css';
+@import '@fontsource/poppins/latin-500.css';
+@import '@fontsource/poppins/latin-600.css';
+@import '@fontsource-variable/roboto-condensed/wght.css';
 @import './tokens.css';
 @tailwind base;
 @tailwind components;
@@ -6,9 +11,11 @@
 
 @layer base {
   html { -webkit-text-size-adjust: 100%; }
-  body { @apply bg-paper text-ink font-sans antialiased; font-feature-settings: 'tnum' 1; }
+  body { @apply bg-paper text-ink font-sans antialiased; }
   :focus-visible { outline: 3px solid rgb(var(--focus)); outline-offset: 2px; }
-  h1, h2, h3 { text-wrap: balance; }
+  h1, h2, h3 { @apply font-display; text-wrap: balance; letter-spacing: -0.01em; }
+  /* Figures line up in tables, timers and counts. */
+  .font-data, time, td { font-variant-numeric: tabular-nums; }
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
   }
@@ -21,7 +28,29 @@
   .prose-doc p, .prose-doc li { @apply max-w-prose leading-7; }
   .prose-doc ul { @apply mb-3 list-disc pl-5; }
   .prose-doc ol { @apply mb-3 list-decimal pl-5; }
-  .prose-doc blockquote { @apply my-3 border-l-4 border-line pl-3 text-muted; }
+  .prose-doc blockquote { @apply my-3 border-l-4 border-accent pl-3 text-muted; }
   .prose-doc table { @apply my-3 w-full border-collapse text-sm; }
   .prose-doc th, .prose-doc td { @apply border border-line px-2 py-1 text-left align-top; }
+
+  /* The City banner behind every signed-in screen. Content surfaces stay opaque, and the
+     veil keeps the page wash dominant, so text contrast is the same as on plain paper. */
+  .app-backdrop { @apply pointer-events-none fixed inset-0 -z-10 bg-paper; }
+  .app-backdrop::before {
+    content: ''; position: absolute; inset: 0;
+    background: image-set(url('/brand/app-banner-1600.webp') type('image/webp'), url('/brand/app-banner-1600.jpg') type('image/jpeg')) center top / cover no-repeat;
+    opacity: var(--backdrop-opacity); filter: saturate(0.8);
+  }
+  .app-backdrop::after {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(to bottom, rgb(var(--paper) / 0.55), rgb(var(--paper) / 0.9) 40%, rgb(var(--paper)) 80%);
+  }
+  @media (max-width: 640px) {
+    .app-backdrop::before { background-image: image-set(url('/brand/app-banner-800.webp') type('image/webp'), url('/brand/app-banner-800.jpg') type('image/jpeg')); }
+  }
+
+  /* Floating tooltip (see components/Tooltip.tsx). */
+  .tip-bubble {
+    @apply pointer-events-none fixed z-[60] max-w-[18rem] rounded-control bg-ink px-3 py-2 text-sm leading-5 text-paper shadow-raised;
+  }
+  .tip-bubble[data-kind='ref'] { @apply pointer-events-auto max-w-[22rem] border-l-4 border-accent-bright; }
 }

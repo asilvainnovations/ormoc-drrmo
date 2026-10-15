@@ -1,45 +1,59 @@
-/* Design tokens — Ormoc DRRM Operations
-   Ink slate for actions; White / Blue / Red reserved for EOC activation level;
-   a single green progression for maturity bands. Values are "R G B" triplets. */
+/* Design tokens — Ormoc DRRM Operations (v1.1 City palette)
+   Light blue for the page and selections, navy for text and primary actions, gray for
+   structure, orange as the brand accent (active marks, focus, seal rings).
+   White / Blue / Red stay reserved for the EOC activation level. The EOC Blue is a vivid
+   royal blue so it is never confused with the brand blues. Values are "R G B" triplets.
+   Contrast of every text and control pair is checked for WCAG 2.1 AA (light and dark). */
 :root {
-  --paper: 245 247 246;      /* #F5F7F6 app background */
+  --paper: 238 245 251;      /* #EEF5FB light-blue page wash */
   --surface: 255 255 255;
-  --sunken: 236 240 238;     /* #ECF0EE inputs, wells */
-  --ink: 23 48 57;           /* #173039 text and primary actions */
-  --muted: 84 104 110;       /* #54686E secondary text (AA on paper) */
-  --line: 211 219 216;       /* #D3DBD8 dividers */
-  --action: 23 48 57;
+  --sunken: 227 235 242;     /* #E3EBF2 gray-blue wells and hover */
+  --ink: 19 40 61;           /* #13283D navy text */
+  --muted: 81 96 110;        /* #51606E gray secondary text (5.9:1 on paper) */
+  --line: 201 213 224;       /* #C9D5E0 dividers */
+  --action: 15 61 102;       /* #0F3D66 navy primary button */
   --on-action: 255 255 255;
+  --sky: 47 134 200;         /* #2F86C8 light-blue brand (marks, icons) */
+  --sky-soft: 220 238 251;   /* #DCEEFB selected and highlighted rows */
+  --accent: 214 104 18;      /* #D66812 orange accent for active marks (3:1+ on white) */
+  --accent-bright: 240 122 26; /* #F07A1A decorative orange (rings, stripes; never text) */
+  --accent-ink: 168 74 5;    /* #A84A05 orange text, when orange must be read */
   --on-strong: 255 255 255;  /* text on ok / warn / bad / info fills */
   --on-level: 255 255 255;   /* text on the Blue and Red level bands */
-  --scrim: 0 0 0;            /* dialog backdrop */
-  --focus: 30 79 191;
+  --scrim: 7 22 38;          /* dialog backdrop (navy) */
+  --focus: 209 96 12;        /* #D1600C orange focus ring */
 
-  --ok: 14 118 74;   --ok-soft: 222 242 232;
-  --warn: 160 84 0;  --warn-soft: 253 240 222;
-  --bad: 180 35 24;  --bad-soft: 252 232 230;
-  --info: 30 79 191; --info-soft: 228 236 252;
+  --ok: 11 112 70;   --ok-soft: 221 242 231;
+  --warn: 122 86 0;  --warn-soft: 251 240 211;   /* ochre, kept apart from the brand orange */
+  --bad: 180 35 24;  --bad-soft: 252 231 229;
+  --info: 31 100 168; --info-soft: 223 237 250;
 
-  --lvl-white: 233 237 235;  --lvl-white-ink: 23 48 57;
-  --lvl-blue: 22 74 186;     /* #164ABA */
-  --lvl-red: 177 30 22;      /* #B11E16 */
+  --lvl-white: 255 255 255;  --lvl-white-ink: 19 40 61;
+  --lvl-blue: 30 63 194;     /* #1E3FC2 EOC Blue */
+  --lvl-red: 177 30 22;      /* #B11E16 EOC Red */
 
-  --mat-0: 226 232 229; --mat-1: 196 216 207; --mat-2: 140 184 166; --mat-3: 63 135 109; --mat-4: 22 86 64;
+  /* Maturity: one light-to-dark blue ramp (magnitude, not status). */
+  --mat-0: 227 235 242; --mat-1: 190 218 240; --mat-2: 122 180 224; --mat-3: 47 134 200; --mat-4: 15 61 102;
+  --backdrop-opacity: 0.09;
   color-scheme: light;
 }
 @media (prefers-color-scheme: dark) {
   :root {
-    --paper: 13 24 28; --surface: 21 35 40; --sunken: 28 44 50;
-    --ink: 228 236 233; --muted: 158 177 182; --line: 44 62 68;
-    --action: 228 236 233; --on-action: 13 24 28; --focus: 125 160 255;
-    --on-strong: 13 24 28;   /* status fills are light in dark mode, so their text is dark */
-    --ok: 88 199 143;  --ok-soft: 18 52 38;
-    --warn: 240 168 74; --warn-soft: 58 40 14;
-    --bad: 255 128 116; --bad-soft: 66 22 20;
-    --info: 140 172 255; --info-soft: 24 36 70;
-    --lvl-white: 36 52 58; --lvl-white-ink: 228 236 233;
-    --lvl-blue: 43 99 222; --lvl-red: 196 42 32;
-    --mat-0: 44 62 68; --mat-1: 50 90 78; --mat-2: 60 125 103; --mat-3: 84 170 139; --mat-4: 140 214 184;
+    --paper: 10 22 34; --surface: 17 34 58; --sunken: 24 45 72;
+    --ink: 230 238 246; --muted: 162 179 196; --line: 37 64 95;
+    --action: 140 200 242; --on-action: 10 22 34;
+    --sky: 120 186 238; --sky-soft: 22 52 84;
+    --accent: 255 148 70; --accent-bright: 255 148 70; --accent-ink: 255 168 104;
+    --focus: 255 148 70; --scrim: 0 0 0;
+    --on-strong: 10 22 34;   /* status fills are light in dark mode, so their text is dark */
+    --ok: 95 207 151;  --ok-soft: 18 58 42;
+    --warn: 242 192 96; --warn-soft: 61 48 16;
+    --bad: 255 138 126; --bad-soft: 69 32 29;
+    --info: 141 190 245; --info-soft: 22 48 79;
+    --lvl-white: 17 34 58; --lvl-white-ink: 230 238 246;
+    --lvl-blue: 46 85 224; --lvl-red: 196 42 32;
+    --mat-0: 37 64 95; --mat-1: 33 82 128; --mat-2: 47 120 180; --mat-3: 92 164 225; --mat-4: 160 210 246;
+    --backdrop-opacity: 0.14;
     color-scheme: dark;
   }
 }
