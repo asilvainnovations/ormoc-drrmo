@@ -61,7 +61,7 @@ export function DocumentPage() {
     <div className="page">
       <PageHeader title={`${doc.code} ${doc.title}`} back="/library"
         subtitle={<span className="flex flex-wrap items-center gap-2"><Badge tone={doc.status === 'approved' ? 'ok' : 'neutral'}>{DOC_STATUS[doc.status]}</Badge>{doc.summary}</span>}
-        actions={isAuthor && <Button icon={FilePen} onClick={startEdit}>New version</Button>} />
+        actions={isAuthor && <Button tip="Write a new draft version of this section. Published versions stay unchanged" icon={FilePen} onClick={startEdit}>New version</Button>} />
       <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_20rem] lg:gap-10">
         <article>
           {shown ? (
@@ -73,11 +73,11 @@ export function DocumentPage() {
               {shown.status !== 'approved' && current && <Notice tone="info">You are reading a draft. The approved text is {current.label}.</Notice>}
               {shown.review_note && <Notice tone="warn" title="Reviewer's note">{shown.review_note}</Notice>}
               <Markdown source={shown.body_md} />
-              {isAuthor && shown.status === 'draft' && <div className="mt-6"><Button onClick={() => setStatus(shown, 'in_review')}>Submit for review</Button></div>}
+              {isAuthor && shown.status === 'draft' && <div className="mt-6"><Button tip="Send this draft to the CDRRMO Head for review" onClick={() => setStatus(shown, 'in_review')}>Submit for review</Button></div>}
               {has('cdrrmo_head') && shown.status === 'in_review' && (
                 <div className="mt-6 space-y-3 rounded-control border border-line p-4">
                   <Field label="Review note" optional>{(fid) => <Textarea id={fid} value={reviewNote} onChange={(e) => setReviewNote(e.target.value)} />}</Field>
-                  <div className="flex flex-wrap gap-2"><Button onClick={() => setStatus(shown, 'approved')}>Approve and publish</Button><Button variant="secondary" onClick={() => setStatus(shown, 'rejected')}>Return to author</Button></div>
+                  <div className="flex flex-wrap gap-2"><Button tip="Approve and publish. It becomes the current version and cannot be changed" onClick={() => setStatus(shown, 'approved')}>Approve and publish</Button><Button tip="Send back to the author for changes" variant="secondary" onClick={() => setStatus(shown, 'rejected')}>Return to author</Button></div>
                 </div>
               )}
             </>
@@ -85,27 +85,27 @@ export function DocumentPage() {
         </article>
         <aside className="space-y-6">
           <Section title="Versions">
-            <List>{versions.map((v) => <ListRow key={v.id} onClick={() => setViewId(v.id)} title={v.label} meta={v.change_note ?? undefined}
+            <List>{versions.map((v) => <ListRow tip="Show this version" key={v.id} onClick={() => setViewId(v.id)} title={v.label} meta={v.change_note ?? undefined}
               trailing={<Badge tone={v.status === 'approved' ? 'ok' : 'neutral'}>{DOC_STATUS[v.status]}</Badge>} />)}</List>
           </Section>
           <Section title="Indicators this section answers">
             <ul className="space-y-2">{data.indicators.map((i) => {
               const r = data.byInd.get(i!.id);
               return <li key={i!.id} className="text-sm">
-                {data.cycle ? <TextLink to={`/assess/${data.cycle.id}/i/${encodeURIComponent(i!.id)}`}>{i!.id}</TextLink> : <span className="font-semibold">{i!.id}</span>}
+                {data.cycle ? <TextLink tip="Open this indicator in the current assessment" to={`/assess/${data.cycle.id}/i/${encodeURIComponent(i!.id)}`}>{i!.id}</TextLink> : <span className="font-semibold">{i!.id}</span>}
                 {r && <Badge className="ml-2">{r.is_na ? 'NA' : `Score ${r.score ?? '–'}`}</Badge>}
                 <span className="block text-muted">{i!.statement}</span></li>;
             })}</ul>
           </Section>
           {data.protocols.length > 0 && (
             <Section title="Protocols from this section">
-              <ul className="space-y-1">{data.protocols.map((p) => <li key={p.id}><TextLink to="/protocols">{p.title}</TextLink></li>)}</ul>
+              <ul className="space-y-1">{data.protocols.map((p) => <li key={p.id}><TextLink tip={`Open ${p.title} in Protocols`} to="/protocols">{p.title}</TextLink></li>)}</ul>
             </Section>
           )}
         </aside>
       </div>
       <Sheet open={!!edit} onClose={() => setEdit(null)} title={`New version of ${doc.code}`}
-        footer={<><Button variant="secondary" onClick={() => setEdit(null)}>Cancel</Button><Button disabled={!edit?.label.trim()} onClick={persist}>Save draft</Button></>}>
+        footer={<><Button tip="Close without saving" variant="secondary" onClick={() => setEdit(null)}>Cancel</Button><Button tip="Save as a draft version" disabled={!edit?.label.trim()} onClick={persist}>Save draft</Button></>}>
         {edit && <>
           <Field label="Version label">{(fid) => <Input id={fid} value={edit.label} onChange={(e) => setEdit({ ...edit, label: e.target.value })} />}</Field>
           <Field label="Text" hint="Markdown: # heading, ## subheading, - list item, **bold**.">{(fid, d) => <Textarea id={fid} aria-describedby={d} rows={16} className="font-sans" value={edit.body} onChange={(e) => setEdit({ ...edit, body: e.target.value })} />}</Field>

@@ -21,7 +21,7 @@ export function LibraryPage() {
           <Section key={m} title={title}>
             <List>
               {data?.docs.filter((d) => d.manual === m).map((d) => (
-                <ListRow key={d.id} to={`/library/doc/${d.id}`} title={`${d.code} ${d.title}`}
+                <ListRow tip="Open this section: current text, versions and linked indicators" key={d.id} to={`/library/doc/${d.id}`} title={`${d.code} ${d.title}`}
                   meta={`${data.count.get(d.id) ?? 0} indicator gap(s) route here`}
                   trailing={<Badge tone={d.status === 'approved' ? 'ok' : d.status === 'in_review' ? 'info' : 'neutral'}>{DOC_STATUS[d.status]}</Badge>} />
               ))}

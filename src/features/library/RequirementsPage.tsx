@@ -1,3 +1,4 @@
+import { RefText } from '@/components/RefText';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '@/lib/db';
 import { Badge, PageHeader, Tabs } from '@/components/ui';
@@ -21,7 +22,7 @@ export function RequirementsPage() {
             <p className="mt-1 max-w-prose">{m.statement}</p>
             <dl className="mt-3 grid gap-3 text-sm sm:grid-cols-2">
               <div><dt className="text-muted">Indicators covered</dt><dd>{m.iat_coverage} ({data.n.get(m.id) ?? 0} linked)</dd></div>
-              <div><dt className="text-muted">Source</dt><dd>{m.source_basis}</dd></div>
+              <div><dt className="text-muted">Source</dt><dd><RefText text={m.source_basis} /></dd></div>
               <div><dt className="text-muted">Manual output</dt><dd>{m.moo_output}</dd></div>
               <div><dt className="text-muted">Platform requirement</dt><dd>{m.platform_req}</dd></div>
               {m.escalation_rule && <div className="sm:col-span-2"><dt className="text-muted">Escalation rule</dt><dd>{m.escalation_rule}</dd></div>}

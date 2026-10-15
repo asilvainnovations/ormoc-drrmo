@@ -1,3 +1,4 @@
+import { tip } from '@/components/Tooltip';
 import { useMemo, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '@/lib/db';
@@ -35,7 +36,7 @@ export function TracePage() {
           <option value="UNDRR Scorecard">UNDRR Scorecard</option><option value="Interface">Part C interface</option></Select>}</Field>
       </div>
       <p className="mb-2 text-sm text-muted">{rows.length} indicator(s){data?.cycle ? `. Scores from ${data.cycle.name}.` : '.'}</p>
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto rounded-control" tabIndex={0} role="region" aria-label="Traceability table" {...tip('Scroll sideways to see every column')}>
         <table className="w-full min-w-[44rem] border-collapse text-sm">
           <caption className="sr-only">Indicator traceability</caption>
           <thead><tr className="border-b border-line text-left"><th className="py-2 pr-3">Indicator</th><th className="py-2 pr-3">Requirements</th><th className="py-2 pr-3">Manual sections</th><th className="py-2">Score</th></tr></thead>
@@ -46,7 +47,7 @@ export function TracePage() {
                 <tr key={i.id} className="border-b border-line align-top">
                   <td className="py-2 pr-3"><span className="font-bold">{i.id}</span> <span className="text-muted">{i.type === 'M' ? 'M' : 'GP'}, w{i.weight}</span><span className="block max-w-md">{i.statement}</span></td>
                   <td className="py-2 pr-3"><span className="flex max-w-[12rem] flex-wrap gap-1">{data!.mrBy.get(i.id)?.map((m) => <Badge key={m}>{m}</Badge>)}</span></td>
-                  <td className="py-2 pr-3">{data!.docBy.get(i.id)?.map((d) => <TextLink block key={d.id} to={`/library/doc/${d.id}`}>{d.code}</TextLink>)}</td>
+                  <td className="py-2 pr-3">{data!.docBy.get(i.id)?.map((d) => <TextLink tip="Open this manual section" block key={d.id} to={`/library/doc/${d.id}`}>{d.code}</TextLink>)}</td>
                   <td className="py-2">{r ? (r.is_na ? 'NA' : r.score ?? '–') : '–'}</td>
                 </tr>
               );
