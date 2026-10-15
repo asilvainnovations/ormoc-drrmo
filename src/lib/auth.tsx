@@ -82,7 +82,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     },
     sendMagicLink: async (email) => {
       const { error } = await supabase!.auth.signInWithOtp({ email, options: { shouldCreateUser: false, emailRedirectTo: window.location.origin } });
-      if (error) throw new Error(error.message);
+      // Sign-up is invite-only, so an address that was never invited gets "Signups not allowed".
+      if (error) throw new Error(/signups? not allowed|user not found/i.test(error.message)
+        ? 'This email address has not been invited. Ask the system administrator to invite it, then try again.' : error.message);
     },
     signOut: async () => {
       if (env.demo) return;
