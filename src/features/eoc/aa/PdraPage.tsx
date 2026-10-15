@@ -80,7 +80,7 @@ export function PdraNewPage() {
           <fieldset className="mt-4">
             <legend className="font-semibold">Sectors at risk</legend>
             <div className="mt-2 flex flex-wrap gap-2">{SECTORS.map((s) => (
-              <Checkbox key={s} checked={f.sectors.includes(s)} onChange={() => toggle('sectors', s)}>{s}</Checkbox>))}</div>
+              <Checkbox tip={`Tick if the ${s} sector is exposed`} key={s} checked={f.sectors.includes(s)} onChange={() => toggle('sectors', s)}>{s}</Checkbox>))}</div>
           </fieldset>
           <div className="mt-4 space-y-4">
             <Field label="Cascading or compound hazards" optional>{(id) => <Textarea id={id} value={f.cascading_risks} onChange={(e) => setF({ ...f, cascading_risks: e.target.value })} />}</Field>
@@ -111,7 +111,7 @@ export function PdraNewPage() {
           {f.decision === 'local_early_action' && <Notice tone="info" title="City early action">The anticipatory action checklist will load for this PDRA. For flash floods and landslides, also run the flash flood early action protocol.</Notice>}
           {problem && f.decision === 'request_declaration' && <p role="alert" className="mt-2 font-semibold text-bad">{problem}</p>}
         </Section>
-        <Button size="lg" busy={busy} disabled={!f.forecast_source.trim()} onClick={submit}>Record PDRA</Button>
+        <Button tip="Save the PDRA and its decision. A declaration request opens if you chose one" size="lg" busy={busy} disabled={!f.forecast_source.trim()} onClick={submit}>Record PDRA</Button>
       </div>
     </div>
   );
@@ -135,7 +135,7 @@ export function PdraViewPage() {
           ['Conducted', fmtDateTime(p.conducted_at)], ['Impact', IMPACT[p.impact_class]], ['Lead time at PDRA', duration(hoursBetween(p.conducted_at, p.expected_impact_at))],
           ['Sectors at risk', p.sectors_at_risk.join(', ') || '—'], ['Barangays', p.affected_barangays.length ? `${p.affected_barangays.length} selected` : '—']]} />
         {p.summary && <p className="max-w-prose">{p.summary}</p>}
-        {data.decl && <Notice tone="info" title="Declaration">This PDRA led to a declaration request. <TextLink to={`/eoc/aa/d/${data.decl.id}`}>Open it</TextLink>.</Notice>}
+        {data.decl && <Notice tone="info" title="Declaration">This PDRA led to a declaration request. <TextLink tip="Open the declaration that came from this PDRA" to={`/eoc/aa/d/${data.decl.id}`}>Open it</TextLink>.</Notice>}
         {data.actions.length > 0 && <ChecklistSection actions={data.actions} />}
       </div>
     </div>

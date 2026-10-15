@@ -23,8 +23,8 @@ export function AaHomePage() {
     <div className="page">
       <PageHeader title="Anticipatory action" subtitle="RA 12287 and its IRR: pre-disaster risk assessment, State of Imminent Disaster, anticipatory actions, funds and reporting."
         actions={<>
-          {has('cdrrmo_head', 'eoc_manager', 'eoc_staff') && <ButtonLink to="/eoc/aa/pdra/new" variant="primary" icon={Plus}>New PDRA</ButtonLink>}
-          <ButtonLink to="/eoc/aa/funds" icon={Wallet}>AA funds</ButtonLink>
+          {has('cdrrmo_head', 'eoc_manager', 'eoc_staff') && <ButtonLink tip="Record a pre-disaster risk assessment for a forecast hazard" to="/eoc/aa/pdra/new" variant="primary" icon={Plus}>New PDRA</ButtonLink>}
+          <ButtonLink tip="See the anticipatory action fund for the year: the 10% cap and the 30%/70% tranches" to="/eoc/aa/funds" icon={Wallet}>AA funds</ButtonLink>
         </>} />
       <Tabs items={EOC_TABS} />
       <Notice tone="warn" title="Pending national guidelines">
@@ -34,7 +34,7 @@ export function AaHomePage() {
         {live.length === 0 ? <EmptyState title="No declaration in progress" body="A declaration starts from a PDRA that finds severe impacts with at least 3 days of lead time." /> : (
           <List>{live.map((d) => {
             const dl = nextDeadline(d, now);
-            return <ListRow key={d.id} to={`/eoc/aa/d/${d.id}`} tone={dl?.overdue ? 'bad' : undefined}
+            return <ListRow tip="Open this declaration: its next step, deadline, checklist and funds" key={d.id} to={`/eoc/aa/d/${d.id}`} tone={dl?.overdue ? 'bad' : undefined}
               title={`${data!.hazards.get(d.hazard_code) ?? d.hazard_code}`}
               meta={dl ? `${dl.label}: ${fmtDateTime(dl.due)} (${dl.overdue ? 'overdue by ' : 'in '}${duration(dl.hoursLeft)})` : `Expected impact ${fmtDateTime(d.expected_impact_at)}`}
               trailing={<Badge tone={d.status === 'declared' ? 'bad' : 'info'}>{DECL_STATUS[d.status]}</Badge>} />;
@@ -43,14 +43,14 @@ export function AaHomePage() {
       </Section>
       <Section title="Pre-disaster risk assessments">
         {data?.pdras.length === 0 ? <EmptyState title="No PDRA recorded" /> : (
-          <List>{data?.pdras.map((p) => <ListRow key={p.id} to={`/eoc/aa/pdra/${p.id}`} title={`${data.hazards.get(p.hazard_code) ?? p.hazard_code}: ${p.forecast_source}`}
+          <List>{data?.pdras.map((p) => <ListRow tip="Open this PDRA record" key={p.id} to={`/eoc/aa/pdra/${p.id}`} title={`${data.hazards.get(p.hazard_code) ?? p.hazard_code}: ${p.forecast_source}`}
             meta={`${fmtDateTime(p.conducted_at)}. Impact ${IMPACT[p.impact_class].toLowerCase()}, expected ${fmtDateTime(p.expected_impact_at)}`}
             trailing={<Badge>{DECISION[p.decision].label}</Badge>} />)}</List>
         )}
       </Section>
       {past.length > 0 && (
         <Section title="Closed declarations">
-          <List>{past.map((d) => <ListRow key={d.id} to={`/eoc/aa/d/${d.id}`} title={data!.hazards.get(d.hazard_code) ?? d.hazard_code}
+          <List>{past.map((d) => <ListRow tip="Open this past declaration and its report" key={d.id} to={`/eoc/aa/d/${d.id}`} title={data!.hazards.get(d.hazard_code) ?? d.hazard_code}
             meta={d.eo_number ?? undefined} trailing={<Badge>{DECL_STATUS[d.status]}</Badge>} />)}</List>
         </Section>
       )}

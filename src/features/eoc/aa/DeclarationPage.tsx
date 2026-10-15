@@ -96,27 +96,27 @@ export function DeclarationPage() {
       <div className="grid gap-8 lg:grid-cols-[minmax(0,28rem)_minmax(0,1fr)] lg:gap-10">
         <ol className="relative before:absolute before:bottom-4 before:left-4 before:top-4 before:w-px before:bg-line" aria-label="Declaration steps">
           <Step n={1} title="Pre-disaster risk assessment" state="done">
-            {data.pdra ? <p className="text-sm"><TextLink to={`/eoc/aa/pdra/${data.pdra.id}`}>{data.pdra.forecast_source}</TextLink>, {fmtDateTime(data.pdra.conducted_at)}</p>
+            {data.pdra ? <p className="text-sm"><TextLink tip="Open the PDRA this declaration is based on" to={`/eoc/aa/pdra/${data.pdra.id}`}>{data.pdra.forecast_source}</TextLink>, {fmtDateTime(data.pdra.conducted_at)}</p>
               : <p className="text-sm text-muted">{adopted ? 'Adopted from a higher-level declaration.' : 'No PDRA linked.'}</p>}
           </Step>
           <Step n={2} title="Request to RDRRMC VIII" state={adopted ? 'skipped' : d.requested_at ? 'done' : d.status === 'draft' ? 'current' : 'future'}>
             {d.requested_at && <p className="text-sm">Sent {fmtDateTime(d.requested_at)}. Recommendation due {fmtDateTime(d.rdrrmc_due_at)}.</p>}
             {d.status === 'draft' && actor && <>
               <p className="text-sm text-muted">The CDRRMC coordinates with RDRRMC VIII, which must recommend within {params.rdrrmc_reply_hours} hours (IRR Rule III Sec. 2).</p>
-              <div className="flex flex-wrap gap-2"><Button onClick={() => go('requested')}>Record request sent</Button>
-                <Button variant="secondary" onClick={() => go('declared', { origin: 'adopted_provincial', eo_number: input.eo_number ?? null })}>Adopt the provincial declaration</Button></div>
+              <div className="flex flex-wrap gap-2"><Button tip="Record that the CDRRMC request went to RDRRMC VIII. Starts the 24-hour reply clock" onClick={() => go('requested')}>Record request sent</Button>
+                <Button tip="Use the Province of Leyte or Region VIII declaration that already covers Ormoc" variant="secondary" onClick={() => go('declared', { origin: 'adopted_provincial', eo_number: input.eo_number ?? null })}>Adopt the provincial declaration</Button></div>
             </>}
           </Step>
           <Step n={3} title="RDRRMC recommendation" state={adopted ? 'skipped' : d.rdrrmc_responded_at ? 'done' : d.status === 'requested' ? 'current' : 'future'}>
             {d.rdrrmc_reference && <p className="text-sm">{d.status === 'not_recommended' ? 'Not recommended' : 'Recommended'}: {d.rdrrmc_reference}, {fmtDateTime(d.rdrrmc_responded_at)}</p>}
             {d.status === 'requested' && actor && <>
               {field('rdrrmc_reference', 'Recommendation reference', 'Resolution or memo number.')}
-              <div className="flex flex-wrap gap-2"><Button onClick={() => go('recommended')}>Recommended</Button><Button variant="secondary" onClick={() => go('not_recommended')}>Not recommended</Button></div>
+              <div className="flex flex-wrap gap-2"><Button tip="Record that RDRRMC VIII recommends the declaration" onClick={() => go('recommended')}>Recommended</Button><Button tip="Record that RDRRMC VIII does not recommend it. The City may still act early under its own authority" variant="secondary" onClick={() => go('not_recommended')}>Not recommended</Button></div>
             </>}
           </Step>
           <Step n={4} title="Mayor's Executive Order" state={reached('declared') ? 'done' : d.status === 'recommended' ? 'current' : 'future'}>
             {d.declared_at && <p className="text-sm">{d.eo_number ? `${d.eo_number}, ` : ''}declared {fmtDateTime(d.declared_at)}.</p>}
-            {d.status === 'recommended' && actor && <>{field('eo_number', 'Executive Order number')}<Button onClick={() => go('declared')}>Record declaration</Button></>}
+            {d.status === 'recommended' && actor && <>{field('eo_number', 'Executive Order number')}<Button tip="Record the Mayor’s Executive Order declaring the State of Imminent Disaster" onClick={() => go('declared')}>Record declaration</Button></>}
           </Step>
           <Step n={5} title="Anticipatory actions and funds" state={d.status === 'declared' ? 'current' : reached('lifted') ? 'done' : 'future'}>
             {reached('declared') && <p className="text-sm">{data.actions.filter((a) => a.status !== 'pending' && a.status !== 'in_progress').length} of {data.actions.length} actions closed. ₱{fmtPeso(used)} disbursed.</p>}
@@ -128,7 +128,7 @@ export function DeclarationPage() {
                 options={[{ value: 'hazard_occurred', label: 'The hazard occurred', detail: 'Shift to response and early recovery.' },
                   { value: 'impacts_not_met', label: 'Projected impacts not met', detail: 'Per the latest PDRA. Unused LDRRMF AA funds return to the Special Trust Fund.' }]} />
               {field('lifting_basis', 'Basis', 'Advisory, incident report, SitRep or PDRA reference.')}
-              <Button onClick={() => go('lifted')}>Record lifting</Button>
+              <Button tip="Record the lifting. Starts the 45-day deadline for the report to OCD" onClick={() => go('lifted')}>Record lifting</Button>
             </>}
           </Step>
           <Step n={7} title={`Report to OCD within ${params.report_days} days`} state={d.report_submitted_at ? 'done' : d.status === 'lifted' ? 'current' : 'future'}>
@@ -137,25 +137,25 @@ export function DeclarationPage() {
               <p className="text-sm text-muted">Cover the declaration status, AA fund use and estimated economic and social costs minimized (RA 12287 Sec. 8).</p>
               {field('costs_minimized_note', 'Estimated costs minimized', undefined, true)}
               {field('report_reference', 'Report reference')}
-              <Button onClick={recordReport}>Record report sent</Button>
+              <Button tip="Record that the post-declaration report was sent to OCD" onClick={recordReport}>Record report sent</Button>
             </>}
           </Step>
           {['draft', 'requested', 'recommended', 'not_recommended'].includes(d.status) && actor && (
-            <li className="pl-12 pt-2"><Button variant="quiet" onClick={() => go('withdrawn')}>Withdraw this request</Button></li>
+            <li className="pl-12 pt-2"><Button tip="Withdraw this request, for example when the forecast changes" variant="quiet" onClick={() => go('withdrawn')}>Withdraw this request</Button></li>
           )}
         </ol>
 
         <div>
           {data.actions.length > 0 ? <ChecklistSection actions={data.actions} /> : reached('declared') ? (
-            <Section title="Anticipatory actions"><Button onClick={async () => toast(`${await loadChecklist({ declarationId: d.id }, d.hazard_code)} actions loaded`)}>Load the checklist</Button></Section>
+            <Section title="Anticipatory actions"><Button tip="Add the anticipatory action checklist (from IRR Rule IV) for this hazard" onClick={async () => toast(`${await loadChecklist({ declarationId: d.id }, d.hazard_code)} actions loaded`)}>Load the checklist</Button></Section>
           ) : <Section title="Anticipatory actions"><p className="text-muted">The IRR Rule IV checklist loads when the declaration is recorded.</p></Section>}
-          <Section title="Funds released" action={d.status === 'declared' && has('cdrrmo_head') && <Button variant="secondary" icon={Plus} onClick={() => setFundOpen(true)}>Record disbursement</Button>}>
+          <Section title="Funds released" action={d.status === 'declared' && has('cdrrmo_head') && <Button tip="Record a release of anticipatory action funds. The tranche limits are checked" variant="secondary" icon={Plus} onClick={() => setFundOpen(true)}>Record disbursement</Button>}>
             {data.disb.length === 0 ? <p className="text-muted">No disbursement recorded.</p> : (
               <List>{data.disb.map((x) => <ListRow key={x.id} title={`₱${fmtPeso(Number(x.amount))} ${x.purpose}`}
                 meta={`${SOURCE[x.source]}. Intervention ${fmtDateTime(x.intervention_at)}`}
                 trailing={x.source === 'ldrrmf_aa' && <Badge>{x.tranche === 'beyond_threshold' ? 'Beyond 3 days' : 'Within 3 days'}</Badge>} />)}</List>
             )}
-            <p className="mt-2 text-sm"><TextLink to="/eoc/aa/funds">See the fund status for the year</TextLink></p>
+            <p className="mt-2 text-sm"><TextLink tip="Open the fund status for the year" to="/eoc/aa/funds">See the fund status for the year</TextLink></p>
           </Section>
         </div>
       </div>
@@ -182,7 +182,7 @@ function FundSheet({ open, onClose, decl, existing, years }: { open: boolean; on
   };
   return (
     <Sheet open={open} onClose={onClose} title="Record disbursement"
-      footer={<><Button variant="secondary" onClick={onClose}>Cancel</Button><Button disabled={!!problem || !(amount > 0) || !f.purpose.trim()} onClick={add}>Record disbursement</Button></>}>
+      footer={<><Button tip="Close without recording" variant="secondary" onClick={onClose}>Cancel</Button><Button tip="Record this disbursement" disabled={!!problem || !(amount > 0) || !f.purpose.trim()} onClick={add}>Record disbursement</Button></>}>
       <Field label="Source">{(id) => <Select id={id} value={f.source} onChange={(e) => setF({ ...f, source: e.target.value as FundSource })}>
         {Object.entries(SOURCE).map(([k, v]) => <option key={k} value={k}>{v}</option>)}</Select>}</Field>
       <div className="grid grid-cols-2 gap-3">
