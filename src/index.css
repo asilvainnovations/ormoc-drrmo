@@ -1,0 +1,27 @@
+@import '@fontsource-variable/atkinson-hyperlegible-next';
+@import './tokens.css';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html { -webkit-text-size-adjust: 100%; }
+  body { @apply bg-paper text-ink font-sans antialiased; font-feature-settings: 'tnum' 1; }
+  :focus-visible { outline: 3px solid rgb(var(--focus)); outline-offset: 2px; }
+  h1, h2, h3 { text-wrap: balance; }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  }
+}
+@layer components {
+  .page { @apply mx-auto w-full max-w-page px-4 pb-28 pt-4 lg:px-8 lg:pb-12; }
+  .prose-doc h1 { @apply mb-3 text-2xl font-bold; }
+  .prose-doc h2 { @apply mb-2 mt-6 text-xl font-bold; }
+  .prose-doc h3 { @apply mb-2 mt-4 text-lg font-bold; }
+  .prose-doc p, .prose-doc li { @apply max-w-prose leading-7; }
+  .prose-doc ul { @apply mb-3 list-disc pl-5; }
+  .prose-doc ol { @apply mb-3 list-decimal pl-5; }
+  .prose-doc blockquote { @apply my-3 border-l-4 border-line pl-3 text-muted; }
+  .prose-doc table { @apply my-3 w-full border-collapse text-sm; }
+  .prose-doc th, .prose-doc td { @apply border border-line px-2 py-1 text-left align-top; }
+}
