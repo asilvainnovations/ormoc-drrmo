@@ -1,3 +1,4 @@
+import { tip } from '@/components/Tooltip';
 import { useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import clsx from 'clsx';
@@ -58,19 +59,20 @@ export function BoardPage() {
         {activation && <p className="mt-2 text-sm opacity-90">Since {fmtDateTime(activation.started_at)}. {activation.reason}</p>}
         {canChangeLevel(roles) && (
           <div className="mt-4">
-            <Button variant="secondary" onClick={() => setOpen(true)} className="!border-transparent !bg-surface !text-ink">Change level</Button>
+            <Button tip="Raise or lower the EOC alert level (EOC Manager or CDRRMO Head; needs a connection)" variant="secondary" onClick={() => setOpen(true)} className="!border-transparent !bg-surface !text-ink">Change level</Button>
             {!env.demo && !online && <p className="mt-2 text-sm">Changing the level needs a connection.</p>}
           </div>
         )}
       </section>
 
       <div className="grid gap-8 lg:grid-cols-2 lg:gap-10">
-        <Section title="Logbook" action={<TextLink size="sm" to="/eoc/log">All entries</TextLink>}>
+        <Section title="Logbook" action={<TextLink tip="Open the full EOC logbook" size="sm" to="/eoc/log">All entries</TextLink>}>
           {operator && (
             <form className="mb-3 flex gap-2" onSubmit={(e) => { e.preventDefault(); void log(); }}>
               <label htmlFor="quick-log" className="sr-only">New logbook entry</label>
-              <Input id="quick-log" placeholder="What happened, who decided, what was sent" value={entry} onChange={(e) => setEntry(e.target.value)} />
-              <Button type="submit" icon={Send} aria-label="Add to logbook" disabled={!entry.trim()}><span className="hidden sm:inline">Log</span></Button>
+              <Input id="quick-log" placeholder="What happened, who decided, what was sent" value={entry} onChange={(e) => setEntry(e.target.value)}
+                {...tip('Type a quick logbook note. The time and your name are added when you log it. No names of affected persons')} />
+              <Button tip="Add this note to the logbook with the current time" type="submit" icon={Send} aria-label="Add to logbook" disabled={!entry.trim()}><span className="hidden sm:inline">Log</span></Button>
             </form>
           )}
           <List>
@@ -79,7 +81,7 @@ export function BoardPage() {
           {data?.log.length === 0 && <p className="text-muted">No entries yet.</p>}
         </Section>
 
-        <Section title="Barangays" action={<TextLink size="sm" to="/eoc/barangays">Report status</TextLink>}>
+        <Section title="Barangays" action={<TextLink tip="See every barangay and record a status report" size="sm" to="/eoc/barangays">Report status</TextLink>}>
           {data && data.barangayCount === 0 ? (
             <Notice tone="info">No barangay list loaded. An administrator imports the 110 barangays with their PSGC codes in Settings.</Notice>
           ) : (
@@ -93,16 +95,16 @@ export function BoardPage() {
           )}
         </Section>
 
-        <Section title="Open resource requests" action={<TextLink size="sm" to="/eoc/requests">All requests</TextLink>}>
+        <Section title="Open resource requests" action={<TextLink tip="See and update all resource requests" size="sm" to="/eoc/requests">All requests</TextLink>}>
           {data?.open.length === 0 ? <p className="text-muted">None open.</p> : (
-            <List>{data?.open.map((r) => <ListRow key={r.id} to="/eoc/requests" title={`${r.quantity} ${r.unit} ${r.item}`} meta={`${r.requesting_party}, ${relative(r.requested_at)}`}
+            <List>{data?.open.map((r) => <ListRow tip={`Open the request for ${r.item}`} key={r.id} to="/eoc/requests" title={`${r.quantity} ${r.unit} ${r.item}`} meta={`${r.requesting_party}, ${relative(r.requested_at)}`}
               trailing={<span className="flex flex-col items-end gap-1"><Badge tone={r.priority === 'life_safety' ? 'bad' : 'neutral'}>{PRIORITY[r.priority]}</Badge><Badge>{REQUEST_STATUS[r.status]}</Badge></span>} />)}</List>
           )}
         </Section>
 
-        <Section title="Latest SitRep" action={<TextLink size="sm" to="/eoc/sitreps">SitReps</TextLink>}>
+        <Section title="Latest SitRep" action={<TextLink tip="See all situation reports" size="sm" to="/eoc/sitreps">SitReps</TextLink>}>
           {data?.sitrep ? (
-            <List><ListRow to={`/eoc/sitreps/${data.sitrep.id}`} title={data.sitrep.seq ? `SitRep No. ${data.sitrep.seq}` : 'Draft SitRep'}
+            <List><ListRow tip="Open the latest situation report" to={`/eoc/sitreps/${data.sitrep.id}`} title={data.sitrep.seq ? `SitRep No. ${data.sitrep.seq}` : 'Draft SitRep'}
               meta={`Period to ${fmtDateTime(data.sitrep.period_end)}`} trailing={<Badge tone={data.sitrep.status === 'approved' ? 'ok' : data.sitrep.status === 'submitted' ? 'info' : 'neutral'}>{SITREP_STATUS[data.sitrep.status]}</Badge>} /></List>
           ) : <p className="text-muted">No SitRep yet.</p>}
         </Section>
@@ -131,7 +133,7 @@ function LevelSheet({ open, onClose, current, onSubmit }: { open: boolean; onClo
   };
   return (
     <Sheet open={open} onClose={onClose} title="Change EOC level"
-      footer={<><Button variant="secondary" onClick={onClose}>Cancel</Button><Button busy={busy} disabled={!lv || !reason.trim()} onClick={go}>Change level</Button></>}>
+      footer={<><Button tip="Close without changing the level" variant="secondary" onClick={onClose}>Cancel</Button><Button tip="Change the level now. It is logged with your name, the time and the reason" busy={busy} disabled={!lv || !reason.trim()} onClick={go}>Change level</Button></>}>
       <ChoiceGroup legend="New level" value={lv} onChange={setLv} options={(['white', 'blue', 'red'] as EocLevel[]).map((l) => ({
         value: l, label: LEVEL_INFO[l].name, detail: LEVEL_INFO[l].meaning, disabled: l === current, disabledReason: 'Current level' }))} />
       <Field label="Reason" hint="Recorded in the logbook and shown in the status band.">{(id, d) => <Textarea id={id} aria-describedby={d} value={reason} onChange={(e) => setReason(e.target.value)} />}</Field>

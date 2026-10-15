@@ -35,7 +35,7 @@ export function LogbookPage() {
   return (
     <div className="page">
       <PageHeader title="Logbook" subtitle="Entries cannot be edited or deleted. Record a correction instead."
-        actions={canOperate(roles) && <Button onClick={() => setOpen(true)}>New entry</Button>} />
+        actions={canOperate(roles) && <Button tip="Write a new logbook entry. The time is recorded automatically" onClick={() => setOpen(true)}>New entry</Button>} />
       <Tabs items={EOC_TABS} />
       <div className="mb-4 max-w-xs">
         <Field label="Show">{(id) => (
@@ -45,14 +45,14 @@ export function LogbookPage() {
       </div>
       <List>
         {rows.map((r) => (
-          <ListRow key={r.id} onClick={canOperate(roles) && r.category !== 'level_change' ? () => { setCorrecting(r); setOpen(true); } : undefined}
+          <ListRow tip={canOperate(roles) && r.category !== 'level_change' ? 'Write a correction to this entry. The original stays in the log' : undefined} key={r.id} onClick={canOperate(roles) && r.category !== 'level_change' ? () => { setCorrecting(r); setOpen(true); } : undefined}
             title={<span className={corrected.has(r.id) ? 'text-muted line-through' : ''}>{r.entry}</span>}
             meta={`${fmtDateTime(r.occurred_at)}${r.author && people.get(r.author) ? `, ${people.get(r.author)!.full_name}` : ''}`}
             trailing={<Badge tone={r.category === 'correction' ? 'warn' : r.category === 'level_change' ? 'info' : 'neutral'}>{LOG_CATEGORY[r.category]}</Badge>} />
         ))}
       </List>
       <Sheet open={open} onClose={() => { setOpen(false); setCorrecting(null); }} title={correcting ? 'Correct an entry' : 'New logbook entry'}
-        footer={<><Button variant="secondary" onClick={() => { setOpen(false); setCorrecting(null); }}>Cancel</Button><Button disabled={!text.trim()} onClick={submit}>{correcting ? 'Log correction' : 'Log entry'}</Button></>}>
+        footer={<><Button tip="Close without saving" variant="secondary" onClick={() => { setOpen(false); setCorrecting(null); }}>Cancel</Button><Button tip={correcting ? 'Save the correction as a new entry linked to the original' : 'Save the entry. It cannot be edited later, only corrected'} disabled={!text.trim()} onClick={submit}>{correcting ? 'Log correction' : 'Log entry'}</Button></>}>
         {correcting && <p className="rounded-control bg-sunken p-3 text-sm">Correcting: {correcting.entry}</p>}
         {!correcting && <Field label="Category">{(id) => (
           <Select id={id} value={cat} onChange={(e) => setCat(e.target.value as LogCategory)}>

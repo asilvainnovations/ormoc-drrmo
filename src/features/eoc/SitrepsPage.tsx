@@ -30,10 +30,10 @@ export function SitrepsPage() {
   return (
     <div className="page">
       <PageHeader title="Situation reports" subtitle="Numbered when submitted. Approved SitReps are locked."
-        actions={canOperate(roles) && <Button icon={Plus} onClick={create}>New SitRep</Button>} />
+        actions={canOperate(roles) && <Button tip="Start a new situation report draft for this operational period" icon={Plus} onClick={create}>New SitRep</Button>} />
       <Tabs items={EOC_TABS} />
       {rows.length === 0 ? <EmptyState title="No SitReps yet" body="Start one each operational period during an activation." /> : (
-        <List>{rows.map((s) => <ListRow key={s.id} to={`/eoc/sitreps/${s.id}`} title={s.seq ? `SitRep No. ${s.seq}` : 'Draft SitRep'}
+        <List>{rows.map((s) => <ListRow tip="Open this situation report" key={s.id} to={`/eoc/sitreps/${s.id}`} title={s.seq ? `SitRep No. ${s.seq}` : 'Draft SitRep'}
           meta={`${fmtDateTime(s.period_start)} to ${fmtDateTime(s.period_end)}`}
           trailing={<Badge tone={s.status === 'approved' ? 'ok' : s.status === 'submitted' ? 'info' : 'neutral'}>{SITREP_STATUS[s.status]}</Badge>} />)}</List>
       )}
@@ -79,7 +79,7 @@ export function SitrepEditor() {
     <div className="page">
       <PageHeader title={s.seq ? `SitRep No. ${s.seq}` : 'Draft SitRep'} back="/eoc/sitreps"
         subtitle={<Badge tone={s.status === 'approved' ? 'ok' : s.status === 'submitted' ? 'info' : 'neutral'}>{SITREP_STATUS[s.status]}</Badge>}
-        actions={<Button variant="secondary" icon={Printer} onClick={() => window.print()}>Print</Button>} />
+        actions={<Button tip="Print this SitRep or save it as PDF" variant="secondary" icon={Printer} onClick={() => window.print()}>Print</Button>} />
       {s.status === 'approved' && <Notice tone="ok" title="Approved">{`Approved ${fmtDateTime(s.approved_at)}. Issue the next SitRep for new information.`}</Notice>}
       <div className="max-w-3xl">
         <Section title="Reporting period">
@@ -95,7 +95,7 @@ export function SitrepEditor() {
             <Field label="Needs and gaps">{(i) => <Textarea id={i} rows={3} disabled={!editable} value={form.needs ?? ''} onChange={(e) => setForm({ ...form, needs: e.target.value })} />}</Field>
           </div>
         </Section>
-        <Section title="Figures" action={editable && <Button variant="quiet" onClick={pullEvac}>Fill from barangay reports</Button>}>
+        <Section title="Figures" action={editable && <Button tip="Fill the evacuation figures from the latest barangay reports" variant="quiet" onClick={pullEvac}>Fill from barangay reports</Button>}>
           <p className="mb-3 text-sm text-muted">Aggregate counts only. Leave blank if not yet known; enter 0 only when confirmed.</p>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
             {COUNTS.map(([k, label]) => (
@@ -106,9 +106,9 @@ export function SitrepEditor() {
         </Section>
         {editable && (
           <div className="flex flex-wrap gap-2">
-            <Button onClick={() => persist()}>Save</Button>
-            {s.status === 'draft' && <Button variant="secondary" onClick={() => persist('submitted')}>Submit</Button>}
-            {s.status === 'submitted' && canChangeLevel(roles) && <Button variant="secondary" onClick={() => persist('approved')}>Approve</Button>}
+            <Button tip="Save your changes to this draft" onClick={() => persist()}>Save</Button>
+            {s.status === 'draft' && <Button tip="Submit for the EOC Manager to approve. It gets its SitRep number now" variant="secondary" onClick={() => persist('submitted')}>Submit</Button>}
+            {s.status === 'submitted' && canChangeLevel(roles) && <Button tip="Approve this SitRep for sending. Approved SitReps cannot be changed" variant="secondary" onClick={() => persist('approved')}>Approve</Button>}
           </div>
         )}
       </div>

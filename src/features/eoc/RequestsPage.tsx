@@ -55,7 +55,7 @@ export function RequestsPage() {
         </div>
         {next.length > 0 && (
           <div className="mt-2 flex flex-wrap gap-2">
-            {next.map((s) => <Button key={s} variant={s === 'rejected' ? 'quiet' : 'secondary'} onClick={() => (s === 'rejected' ? setDeciding({ r, to: s }) : move(r, s))}>{REQUEST_VERB[s]}</Button>)}
+            {next.map((s) => <Button tip={s === 'rejected' ? 'Reject this request. You will be asked for the reason' : `Move this request to: ${REQUEST_VERB[s]}`} key={s} variant={s === 'rejected' ? 'quiet' : 'secondary'} onClick={() => (s === 'rejected' ? setDeciding({ r, to: s }) : move(r, s))}>{REQUEST_VERB[s]}</Button>)}
           </div>
         )}
         <p className="mt-1 text-xs text-muted">{[r.approved_at && `Approved ${fmtDateTime(r.approved_at)}`, r.mobilized_at && `mobilized ${fmtDateTime(r.mobilized_at)}`, r.delivered_at && `delivered ${fmtDateTime(r.delivered_at)}`].filter(Boolean).join(', ')}</p>
@@ -66,12 +66,12 @@ export function RequestsPage() {
   return (
     <div className="page">
       <PageHeader title="Resource requests" subtitle="Requested, approved, mobilized, delivered, demobilized. Only the EOC Manager approves or rejects."
-        actions={canOperate(roles) && <Button icon={Plus} onClick={() => setOpen(true)}>New request</Button>} />
+        actions={canOperate(roles) && <Button tip="Record a new request for resources (vehicles, equipment, relief, teams)" icon={Plus} onClick={() => setOpen(true)}>New request</Button>} />
       <Tabs items={EOC_TABS} />
       <Section title={`Open (${active.length})`}>{active.length ? <List>{active.map(row)}</List> : <EmptyState title="No open requests" />}</Section>
       {closed.length > 0 && <Section title="Closed"><List>{closed.slice(0, 30).map(row)}</List></Section>}
       <Sheet open={open} onClose={() => setOpen(false)} title="New resource request"
-        footer={<><Button variant="secondary" onClick={() => setOpen(false)}>Cancel</Button><Button disabled={!form.item.trim() || !form.requesting_party.trim() || !(Number(form.quantity) > 0)} onClick={create}>Record request</Button></>}>
+        footer={<><Button tip="Close without saving" variant="secondary" onClick={() => setOpen(false)}>Cancel</Button><Button tip="Save the request. The EOC Manager approves it" disabled={!form.item.trim() || !form.requesting_party.trim() || !(Number(form.quantity) > 0)} onClick={create}>Record request</Button></>}>
         <Field label="Requested by" hint="Office, barangay or incident commander.">{(id, d) => <Input id={id} aria-describedby={d} value={form.requesting_party} onChange={(e) => setForm({ ...form, requesting_party: e.target.value })} />}</Field>
         <Field label="Item">{(id) => <Input id={id} value={form.item} onChange={(e) => setForm({ ...form, item: e.target.value })} />}</Field>
         <div className="grid grid-cols-2 gap-3">
@@ -82,7 +82,7 @@ export function RequestsPage() {
           options={[{ value: 'life_safety', label: 'Life safety' }, { value: 'urgent', label: 'Urgent' }, { value: 'routine', label: 'Routine' }]} />
       </Sheet>
       <Sheet open={!!deciding} onClose={() => setDeciding(null)} title="Reject request"
-        footer={<><Button variant="secondary" onClick={() => setDeciding(null)}>Cancel</Button><Button variant="danger" disabled={!note.trim()} onClick={() => deciding && move(deciding.r, deciding.to, note)}>Reject request</Button></>}>
+        footer={<><Button tip="Close without rejecting" variant="secondary" onClick={() => setDeciding(null)}>Cancel</Button><Button tip="Reject the request with the reason given" variant="danger" disabled={!note.trim()} onClick={() => deciding && move(deciding.r, deciding.to, note)}>Reject request</Button></>}>
         <Field label="Reason">{(id) => <Textarea id={id} value={note} onChange={(e) => setNote(e.target.value)} />}</Field>
       </Sheet>
     </div>

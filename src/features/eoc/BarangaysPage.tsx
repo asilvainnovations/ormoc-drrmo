@@ -55,7 +55,7 @@ export function BarangaysPage() {
           <List>
             {list.map((b) => {
               const r = data!.latest.get(b.psgc);
-              return <ListRow key={b.psgc} onClick={canOperate(roles) ? () => setTarget(b) : undefined} title={b.name}
+              return <ListRow tip={canOperate(roles) ? `Record a new status report for ${b.name}` : undefined} key={b.psgc} onClick={canOperate(roles) ? () => setTarget(b) : undefined} title={b.name}
                 meta={r ? `${relative(r.reported_at)}${r.persons_evacuated ? `, ${r.families_evacuated} families / ${r.persons_evacuated} persons evacuated` : ''}${r.remarks ? `. ${r.remarks}` : ''}` : 'No report'}
                 trailing={r ? <Badge tone={CONDITION_TONE[r.condition]}>{CONDITION[r.condition]}</Badge> : undefined} />;
             })}
@@ -63,7 +63,7 @@ export function BarangaysPage() {
         </>
       )}
       <Sheet open={!!target} onClose={() => setTarget(null)} title={`Report: ${target?.name ?? ''}`}
-        footer={<><Button variant="secondary" onClick={() => setTarget(null)}>Cancel</Button><Button onClick={report}>Record report</Button></>}>
+        footer={<><Button tip="Close without saving" variant="secondary" onClick={() => setTarget(null)}>Cancel</Button><Button tip="Save this report. It works offline and sends when you reconnect" onClick={report}>Record report</Button></>}>
         <ChoiceGroup legend="Condition" value={form.condition} onChange={(v) => setForm({ ...form, condition: v })} columns={2}
           options={(Object.keys(CONDITION) as BarangayCondition[]).map((c) => ({ value: c, label: CONDITION[c] }))} />
         <div className="grid grid-cols-2 gap-3">
