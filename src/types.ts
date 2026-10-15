@@ -131,3 +131,11 @@ export interface AaDisbursement extends Versioned {
 }
 
 export interface Profile { id: string; full_name: string; position: string | null; office_id: string | null; is_active: boolean; version?: number }
+
+export type VaultCategory = 'law' | 'irr' | 'issuance' | 'framework' | 'city_issuance' | 'plan' | 'report' | 'record' | 'other';
+export interface VaultDocument extends Versioned {
+  title: string; category: VaultCategory; ref_key: string | null; doc_number: string | null; issuer: string | null;
+  doc_date: string | null; summary: string | null; indicator_ids: string[]; storage_path: string | null; file_name: string | null;
+  mime_type: string | null; size_bytes: number | null; url: string | null; location: string | null;
+  status: 'current' | 'superseded' | 'draft'; superseded_by: string | null; uploaded_by: string | null;
+}

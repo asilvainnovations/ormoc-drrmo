@@ -3,6 +3,7 @@ import { BrowserRouter, Navigate, Route, Routes, useLocation } from 'react-route
 import { AuthProvider, useAuth } from '@/lib/auth';
 import { ToastProvider } from '@/components/Toast';
 import { AppShell } from '@/components/AppShell';
+import { TooltipLayer } from '@/components/Tooltip';
 import { Loading, PageHeader } from '@/components/ui';
 import { bootstrapReference, requestPersistentStorage } from '@/lib/bootstrap';
 import { startSync } from '@/lib/sync';
@@ -16,6 +17,7 @@ const ProtocolRoutes = lazy(() => import('@/features/protocols/routes'));
 const EocRoutes = lazy(() => import('@/features/eoc/routes'));
 const LibraryRoutes = lazy(() => import('@/features/library/routes'));
 const SettingsRoutes = lazy(() => import('@/features/settings/routes'));
+const VaultRoutes = lazy(() => import('@/features/vault/routes'));
 
 
 function RequireAuth({ children }: { children: ReactNode }) {
@@ -33,7 +35,9 @@ function Boot({ children }: { children: ReactNode }) {
     void requestPersistentStorage();
     bootstrapReference().then(() => setOk(true)).catch((e: Error) => setErr(e.message));
   }, []);
-  useEffect(() => (ok ? startSync() : undefined), [ok]);
+  const { userId } = useAuth();
+  // Sync (and its realtime connection) runs only for a signed-in user, and restarts per user.
+  useEffect(() => (ok && userId ? startSync() : undefined), [ok, userId]);
   if (err) return <div className="page"><p role="alert" className="font-semibold text-bad">The app could not open its local storage: {err}. Check that the browser allows site data.</p></div>;
   if (!ok) return <Loading />;
   return <>{children}</>;
@@ -54,12 +58,14 @@ export function App() {
                 <Route path="eoc/*" element={<Suspense fallback={<Loading />}><EocRoutes /></Suspense>} />
                 <Route path="library/*" element={<Suspense fallback={<Loading />}><LibraryRoutes /></Suspense>} />
                 <Route path="settings/*" element={<Suspense fallback={<Loading />}><SettingsRoutes /></Suspense>} />
+                <Route path="vault/*" element={<Suspense fallback={<Loading />}><VaultRoutes /></Suspense>} />
                 <Route path="*" element={<div className="page"><PageHeader title="Page not found" subtitle="Use the menu to go to a section." /></div>} />
               </Route>
             </Routes>
           </Boot>
         </AuthProvider>
       </ToastProvider>
+      <TooltipLayer />
     </BrowserRouter>
   );
 }
