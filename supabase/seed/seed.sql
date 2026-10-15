@@ -197,7 +197,7 @@ insert into public.master_requirements (id,title,statement,source_basis,iat_cove
 ('MR-18','Framework alignment: UNDRR Disaster Resilience Scorecard','Keep each Scorecard-derived indicator traceable to its DRSC criterion so results can feed MCR2030 and Sendai reporting; Scorecard criteria not adopted stay for a city-wide Scorecard workshop and are not scored.','UNDRR DRSC Detailed Level Assessment (2017); IAT v1.1 Crosswalk','A2.10; A4.9; A5.7; A5.8; A5.9; A7.6; A7.8; A7.9; A9.5; A10.2; A10.9; B5.7; B6.6; C1.1; C1.2; C1.3; C1.4; C2.1; C2.2; C2.3; C3.1; C3.2; C5.1','DRSC reference in each indicator; Framework_Crosswalk sheet','§2 Background and method; Crosswalk annex','MOO Ch.7 M&E and reporting','Framework crosswalk view; external framework tags on indicators','framework_refs; indicator_framework_links','Deferred criteria are not scored','Medium',18)
 on conflict (id) do update set title = excluded.title, statement = excluded.statement, source_basis = excluded.source_basis, iat_coverage = excluded.iat_coverage, evidence = excluded.evidence, sa_output = excluded.sa_output, moo_output = excluded.moo_output, platform_req = excluded.platform_req, data_entities = excluded.data_entities, escalation_rule = excluded.escalation_rule, priority = excluded.priority, sort = excluded.sort;
 
-delete from public.indicator_requirements;
+delete from public.indicator_requirements where indicator_id in ('A1.1','A1.2','A1.3','A1.4','A1.5','A1.6','A1.7','A1.8','A2.1','A2.2','A2.3','A2.4','A2.5','A2.6','A2.7','A2.8','A2.9','A2.10','A3.1','A3.2','A3.3','A3.4','A3.5','A3.6','A3.7','A4.1','A4.2','A4.3','A4.4','A4.5','A4.6','A4.7','A4.8','A4.9','A5.1','A5.2','A5.3','A5.4','A5.5','A5.6','A5.7','A5.8','A5.9','A6.1','A6.2','A6.3','A6.4','A6.5','A6.6','A6.7','A7.1','A7.2','A7.3','A7.4','A7.5');
 insert into public.indicator_requirements (indicator_id,mr_id) values
 ('A1.1','MR-02'),
 ('A1.1','MR-01'),
@@ -558,7 +558,11 @@ insert into public.indicator_requirements (indicator_id,mr_id) values
 ('A7.5','MR-12'),
 ('A7.5','MR-13'),
 ('A7.5','MR-14'),
-('A7.5','MR-15'),
+('A7.5','MR-15')
+on conflict (indicator_id,mr_id) do nothing;
+
+delete from public.indicator_requirements where indicator_id in ('A7.6','A7.7','A7.8','A7.9','A8.1','A8.2','A8.3','A8.4','A8.5','A8.6','A8.7','A8.8','A8.9','A9.1','A9.2','A9.3','A9.4','A9.5','A10.1','A10.2','A10.3','A10.4','A10.5','A10.6','A10.7','A10.8','A10.9','B1.1','B1.2','B1.3','B1.4','B1.5','B2.1','B2.2','B2.3','B2.4','B2.5','B2.6','B2.7','B3.1','B3.2','B3.3','B3.4','B3.5','B3.6','B4.1','B4.2','B4.3','B4.4','B4.5','B4.6','B5.1','B5.2','B5.3','B5.4');
+insert into public.indicator_requirements (indicator_id,mr_id) values
 ('A7.6','MR-04'),
 ('A7.6','MR-09'),
 ('A7.6','MR-16'),
@@ -913,7 +917,11 @@ insert into public.indicator_requirements (indicator_id,mr_id) values
 ('B5.4','MR-12'),
 ('B5.4','MR-13'),
 ('B5.4','MR-14'),
-('B5.4','MR-15'),
+('B5.4','MR-15')
+on conflict (indicator_id,mr_id) do nothing;
+
+delete from public.indicator_requirements where indicator_id in ('B5.5','B5.6','B5.7','B6.1','B6.2','B6.3','B6.4','B6.5','B6.6','B7.1','B7.2','B7.3','B7.4','B7.5','B7.6','C1.1','C1.2','C1.3','C1.4','C2.1','C2.2','C2.3','C3.1','C3.2','C3.3','C4.1','C4.2','C4.3','C4.4','C5.1');
+insert into public.indicator_requirements (indicator_id,mr_id) values
 ('B5.5','MR-07'),
 ('B5.5','MR-01'),
 ('B5.5','MR-12'),
@@ -1671,7 +1679,10 @@ insert into public.moo_versions (id,document_id,label,body_md,change_note,status
 - **B4.6** (GP, weight 1) Responder welfare in EOC: rest cycles, meals, MHPSS, family support  
   *Basis:* RA 11036; good practice
 - **B7.1** (M, weight 3) Written EOC SOPs/ Manual approved and disseminated to all EOC staff  
-  *Basis:* NDRRMC EOC Guidelines','Generated from IAT v1.1','draft'),
+  *Basis:* NDRRMC EOC Guidelines','Generated from IAT v1.1','draft')
+on conflict (id) do update set document_id = excluded.document_id, label = excluded.label, body_md = excluded.body_md, change_note = excluded.change_note, status = excluded.status;
+
+insert into public.moo_versions (id,document_id,label,body_md,change_note,status) values
 ('f7ab1636-e4a2-5bd3-b710-eb5b1d5d1a22'::uuid,'a0cad148-d5ee-5805-bf81-4b86fbf1aeac'::uuid,'v0.1 skeleton','# EOC Ch.6 – Information Management and Reporting
 
 > Skeleton generated from IAT v1.1. Replace each requirement with the City''s procedure, standard or form.
