@@ -4,7 +4,7 @@ import reference from '@/data/reference.json';
 import { db, getMeta, setMeta } from './db';
 import { DEFAULT_AA_PARAMS } from '@/domain/aa';
 
-export const REFERENCE_VERSION = 'iat-1.1/2026-10-15';
+export const REFERENCE_VERSION = 'iat-1.1/2026-10-16-85brgy';
 
 type Ref = typeof reference;
 const R = reference as Ref;
