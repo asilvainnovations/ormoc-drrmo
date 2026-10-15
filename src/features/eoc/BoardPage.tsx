@@ -83,7 +83,7 @@ export function BoardPage() {
 
         <Section title="Barangays" action={<TextLink tip="See every barangay and record a status report" size="sm" to="/eoc/barangays">Report status</TextLink>}>
           {data && data.barangayCount === 0 ? (
-            <Notice tone="info">No barangay list loaded. An administrator imports the 110 barangays with their PSGC codes in Settings.</Notice>
+            <Notice tone="info">No barangay list loaded. An administrator imports Ormoc’s 85 barangays with their PSGC codes in Settings.</Notice>
           ) : (
             <>
               <p className="mb-2 text-muted">{affected.length} reporting a condition. Evacuated: {evac?.fam ?? 0} families, {evac?.per ?? 0} persons.</p>
