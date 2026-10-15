@@ -69,9 +69,9 @@ export function CycleOverview() {
       <PageHeader title={cycle.name} back="/assess"
         subtitle={<span className="flex flex-wrap items-center gap-2"><Badge>{CYCLE_STATUS[cycle.status]}</Badge>{`${results.answered} of ${results.total} answered`}</span>}
         actions={<>
-          <ButtonLink to={`/assess/${cycle.id}/actions`} icon={ListTodo}>Action plan</ButtonLink>
-          <Button variant="secondary" icon={Download} onClick={exportCsv}>Export CSV</Button>
-          {canAdvance && <Button onClick={advance}>{CYCLE_NEXT_LABEL[cycle.status]}</Button>}
+          <ButtonLink tip="The improvement plan: every gap ranked by priority, with owners and dates" to={`/assess/${cycle.id}/actions`} icon={ListTodo}>Action plan</ButtonLink>
+          <Button tip="Download all scores, evidence counts and gaps as a spreadsheet file" variant="secondary" icon={Download} onClick={exportCsv}>Export CSV</Button>
+          {canAdvance && <Button tip="Move the cycle to its next stage" onClick={advance}>{CYCLE_NEXT_LABEL[cycle.status]}</Button>}
         </>} />
       <Meter value={results.answered} max={results.total} label="Indicators answered" />
       {cycle.status === 'final' && <Notice tone="ok" title="Final results">This cycle is closed. Open a new cycle for the next annual self-assessment.</Notice>}

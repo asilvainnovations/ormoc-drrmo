@@ -2,6 +2,7 @@
 // one colour; band and value are always written beside the bar (never colour alone).
 import { Link } from 'react-router-dom';
 import type { Domain } from '@/types';
+import { tip } from '@/components/Tooltip';
 import type { ResultRow } from '@/domain/scoring';
 
 const pct = (v: number) => `${(v / 4) * 100}%`;
@@ -23,7 +24,7 @@ export function MaturityChart({ domains, results, hrefFor, caption }: {
           return (
             <li key={d.code}>
               <Link to={hrefFor(d.code)}
-                title={v === null ? `${d.name}: not scored yet` : `${d.name}: ${v.toFixed(2)} ${r.band}, ${r.scored} of ${r.indicators} scored`}
+                {...tip(v === null ? `${d.name}: not scored yet. Open the domain to score its indicators` : `${d.name}: maturity ${v.toFixed(2)} (${r.band}), ${r.scored} of ${r.indicators} scored. Open the domain`)}
                 className="group grid min-h-tap grid-cols-[6.5rem_1fr] items-center gap-x-3 rounded-control px-1 py-1 hover:bg-sunken sm:grid-cols-[15rem_1fr]">
                 <span className="min-w-0">
                   <span className="block text-sm font-bold">{d.code}</span>

@@ -12,6 +12,7 @@ import { Sheet } from '@/components/Sheet';
 import { useToast } from '@/components/Toast';
 import { gapPriorityScore, priorityBand } from '@/domain/scoring';
 import type { Action } from '@/types';
+import { tip } from '@/components/Tooltip';
 import { useCycleData, isEditable } from './data';
 
 const STATUS: Record<Action['status'], string> = { not_started: 'Not started', ongoing: 'Ongoing', done: 'Done', dropped: 'Dropped' };
@@ -61,16 +62,16 @@ export function ActionPlanPage() {
               <li key={i.id} className="py-3">
                 <div className="flex flex-wrap items-start justify-between gap-2">
                   <div className="min-w-0">
-                    <Link to={`/assess/${data.cycle.id}/i/${encodeURIComponent(i.id)}`} className="font-semibold underline-offset-2 hover:underline">
+                    <Link to={`/assess/${data.cycle.id}/i/${encodeURIComponent(i.id)}`} {...tip('Open this indicator to review its evidence and score')} className="font-semibold underline-offset-2 hover:underline">
                       <span className="mr-2 text-muted">{i.id}</span>{i.statement}</Link>
                     <p className="mt-1 flex flex-wrap gap-1.5"><Badge tone={pr === 'High' ? 'bad' : 'warn'}>{pr}, {gps}</Badge><Badge>Score {r?.score}</Badge><Badge>{i.moo_chapter}</Badge></p>
                   </div>
-                  {canEdit && <Button variant="secondary" icon={Plus} onClick={() => start(i.id, r?.recommended_action ?? null)}>Action</Button>}
+                  {canEdit && <Button tip="Add an improvement action for this gap" variant="secondary" icon={Plus} onClick={() => start(i.id, r?.recommended_action ?? null)}>Action</Button>}
                 </div>
                 {(byInd.get(i.id) ?? []).length > 0 && (
                   <List className="ml-0 mt-2 border-l-2 border-line pl-3">
                     {byInd.get(i.id)!.map((a) => (
-                      <ListRow key={a.id} onClick={canEdit ? () => setEditing(a) : undefined} title={a.action}
+                      <ListRow tip={canEdit ? 'Edit this action: owner, target date and status' : undefined} key={a.id} onClick={canEdit ? () => setEditing(a) : undefined} title={a.action}
                         meta={[offices.find((o) => o.id === a.responsible_office_id)?.code, a.target_date && `by ${fmtDate(a.target_date)}`, a.budget_source].filter(Boolean).join(', ')}
                         trailing={<Badge tone={a.status === 'done' ? 'ok' : 'neutral'}>{STATUS[a.status]}</Badge>} />
                     ))}
@@ -82,7 +83,7 @@ export function ActionPlanPage() {
         </Section>
       )}
       <Sheet open={!!editing} onClose={() => setEditing(null)} title={editing?.version === 0 ? 'Add action' : 'Edit action'}
-        footer={<><Button variant="secondary" onClick={() => setEditing(null)}>Cancel</Button><Button disabled={!editing?.action.trim()} onClick={persist}>Save action</Button></>}>
+        footer={<><Button tip="Close without saving" variant="secondary" onClick={() => setEditing(null)}>Cancel</Button><Button tip="Save this action" disabled={!editing?.action.trim()} onClick={persist}>Save action</Button></>}>
         {editing && <>
           <Field label="Action">{(id) => <Textarea id={id} value={editing.action} onChange={(e) => setEditing({ ...editing, action: e.target.value })} />}</Field>
           <Field label="Responsible office">{(id) => (

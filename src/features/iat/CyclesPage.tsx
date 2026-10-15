@@ -42,16 +42,16 @@ export function CyclesPage() {
   return (
     <div className="page">
       <PageHeader title="Institutional assessment" subtitle="IAT v1.1: 125 core indicators (Parts A and B) and 15 interface indicators (Part C)."
-        actions={canCreate && <Button icon={Plus} onClick={() => setOpen(true)}>New cycle</Button>} />
+        actions={canCreate && <Button tip="Start a new assessment cycle, for example the annual reassessment" icon={Plus} onClick={() => setOpen(true)}>New cycle</Button>} />
       <Section title="Assessment cycles">
         {rows && rows.length === 0 ? (
           <EmptyState title="No assessment cycle yet"
             body="Start a cycle for the baseline assessment. Each indicator is scored 0 to 4 against evidence, then validated with CDRRMO management."
-            action={canCreate && <Button icon={Plus} onClick={() => setOpen(true)}>Start the baseline</Button>} />
+            action={canCreate && <Button tip="Start the first assessment, the baseline for the Manual of Operations" icon={Plus} onClick={() => setOpen(true)}>Start the baseline</Button>} />
         ) : (
           <List>
             {rows?.map(({ c, res }) => (
-              <ListRow key={c.id} to={`/assess/${c.id}`} title={c.name}
+              <ListRow tip="Open this cycle: progress, results and domains" key={c.id} to={`/assess/${c.id}`} title={c.name}
                 meta={`${res.answered} of ${res.total} indicators answered${res.imi.maturityIndex !== null ? `, maturity ${res.imi.maturityIndex.toFixed(2)} (${res.imi.band})` : ''}`}
                 trailing={<Badge tone={c.status === 'final' ? 'ok' : c.status === 'validation' ? 'info' : 'neutral'}>{CYCLE_STATUS[c.status]}</Badge>} />
             ))}
@@ -59,7 +59,7 @@ export function CyclesPage() {
         )}
       </Section>
       <Sheet open={open} onClose={() => setOpen(false)} title="New assessment cycle"
-        footer={<><Button variant="secondary" onClick={() => setOpen(false)}>Cancel</Button><Button busy={busy} disabled={!name.trim()} onClick={create}>Create cycle</Button></>}>
+        footer={<><Button tip="Close without creating" variant="secondary" onClick={() => setOpen(false)}>Cancel</Button><Button tip="Create the cycle with all 140 indicators" busy={busy} disabled={!name.trim()} onClick={create}>Create cycle</Button></>}>
         <Field label="Name">{(id) => <Input id={id} value={name} onChange={(e) => setName(e.target.value)} />}</Field>
         <Field label="Notes" optional hint="Scope, team or anything the validators should know.">{(id, d) => <Textarea id={id} aria-describedby={d} value={notes} onChange={(e) => setNotes(e.target.value)} />}</Field>
       </Sheet>

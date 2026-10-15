@@ -13,6 +13,9 @@ import { useToast } from '@/components/Toast';
 import { EVIDENCE_CAP, EVIDENCE_LABEL, SCORE_LEVELS, complianceStatus, gapPriorityScore, priorityBand, scoreBlockReason } from '@/domain/scoring';
 import type { Evidence, EvidenceKind, EvidenceStrength, Response } from '@/types';
 import { useCycleData, isEditable } from './data';
+import { tip } from '@/components/Tooltip';
+import { RefText } from '@/components/RefText';
+import { VaultForIndicator } from '@/features/vault/VaultPages';
 import { EVIDENCE_KIND, RESPONSE_STATUS } from './labels';
 
 const VERBAL_KINDS: EvidenceKind[] = ['interview', 'fgd'];
@@ -104,22 +107,24 @@ export function IndicatorPage() {
         <div>
           <p className="mb-4 max-w-prose text-lg leading-7">{ind.statement}</p>
           <KeyValue items={[
-            ['Standard or reference', ind.reference], ['Means of verification', ind.means_of_verification],
+            ['Standard or reference', <RefText key="ref" text={ind.reference} />], ['Means of verification', ind.means_of_verification],
             ['Methods', ind.methods], [isC ? 'Lead office' : 'Feeds manual chapter', isC ? ind.lead_office : ind.moo_chapter],
           ]} />
 
-          <Section title="Evidence" className="mt-8" action={editable && <Button variant="secondary" icon={Plus} onClick={() => setEvOpen(true)}>Add evidence</Button>}>
+          <Section title="Evidence" className="mt-8" action={editable && <Button tip="Record a document, observation, test or interview that supports the score" variant="secondary" icon={Plus} onClick={() => setEvOpen(true)}>Add evidence</Button>}>
             <p className="mb-3 text-sm text-muted">The score cannot exceed what the strongest evidence supports. Interviews alone cap it at 2.</p>
             {evidence.length === 0 ? <p className="text-muted">No evidence recorded. Add the document, observation or interview that supports the score.</p> : (
               <List>
                 {evidence.map((e) => (
-                  <ListRow key={e.id} title={e.title} onClick={e.storage_path ? () => openFile(e) : undefined}
+                  <ListRow tip={e.storage_path ? 'Open the attached file' : undefined} key={e.id} title={e.title} onClick={e.storage_path ? () => openFile(e) : undefined}
                     meta={`${EVIDENCE_KIND[e.kind]}${e.doc_date ? `, dated ${fmtDate(e.doc_date)}` : ''}${e.source ? `, from ${e.source}` : ''}${e.storage_path ? '. Open the attached file' : ''}`}
                     trailing={<Badge tone={EVIDENCE_CAP[e.strength] >= 3 ? 'ok' : 'neutral'}>Supports up to {EVIDENCE_CAP[e.strength]}</Badge>} />
                 ))}
               </List>
             )}
           </Section>
+
+          <VaultForIndicator indicatorId={ind.id} />
 
           <Section title="Score">
             {!canAnswer && <Notice tone="info">{isC ? `Scored by the lead office (${ind.lead_office}) or the assessment team.` : 'Only the assessment team scores this indicator.'}</Notice>}
@@ -137,9 +142,9 @@ export function IndicatorPage() {
             {error && <p role="alert" className="mt-3 font-semibold text-bad">{error}</p>}
             {editable && (
               <div className="mt-5 flex flex-wrap gap-2">
-                <Button busy={busy} onClick={() => persist()}>Save</Button>
-                {has('assessor', 'lead_office_focal') && resp?.status !== 'validated' && <Button variant="secondary" onClick={() => persist('provisional')}>Submit for validation</Button>}
-                {has('validator', 'cdrrmo_head') && <Button variant="secondary" icon={ShieldCheck} onClick={() => persist('validated')}>Validate</Button>}
+                <Button tip="Save your score and notes as a draft" busy={busy} onClick={() => persist()}>Save</Button>
+                {has('assessor', 'lead_office_focal') && resp?.status !== 'validated' && <Button tip="Send this score to a validator to check against the evidence" variant="secondary" onClick={() => persist('provisional')}>Submit for validation</Button>}
+                {has('validator', 'cdrrmo_head') && <Button tip="Confirm this score. Validated scores are locked" variant="secondary" icon={ShieldCheck} onClick={() => persist('validated')}>Validate</Button>}
               </div>
             )}
           </Section>
@@ -156,10 +161,10 @@ export function IndicatorPage() {
           <div>
             <h2 className="mb-2 font-bold">Traceability</h2>
             <p className="text-sm text-muted">Master requirements</p>
-            <p className="mb-3 flex flex-wrap gap-1.5 pt-1">{links?.mrs.map((m) => <Link key={m.mr_id} to={`/library/requirements#${m.mr_id}`}><Badge>{m.mr_id}</Badge></Link>)}</p>
+            <p className="mb-3 flex flex-wrap gap-1.5 pt-1">{links?.mrs.map((m) => <Link key={m.mr_id} to={`/library/requirements#${m.mr_id}`} {...tip(`Open master requirement ${m.mr_id}`)}><Badge>{m.mr_id}</Badge></Link>)}</p>
             <p className="text-sm text-muted">Manual sections that must answer this gap</p>
             <ul className="mt-1 space-y-1">{links?.docs.filter(Boolean).map((d) => (
-              <li key={d!.id}><TextLink to={`/library/doc/${d!.id}`}>{d!.code} {d!.title}</TextLink></li>
+              <li key={d!.id}><TextLink tip="Open the manual section this indicator feeds" to={`/library/doc/${d!.id}`}>{d!.code} {d!.title}</TextLink></li>
             ))}</ul>
           </div>
         </aside>
@@ -200,7 +205,7 @@ function EvidenceSheet({ open, onClose, cycleId, indicatorId, existing }: { open
 
   return (
     <Sheet open={open} onClose={onClose} title="Add evidence"
-      footer={<><Button variant="secondary" onClick={onClose}>Cancel</Button><Button busy={busy} disabled={!title.trim()} onClick={add}>Add evidence</Button></>}>
+      footer={<><Button tip="Close without adding" variant="secondary" onClick={onClose}>Cancel</Button><Button tip="Add this evidence. The score cap updates at once" busy={busy} disabled={!title.trim()} onClick={add}>Add evidence</Button></>}>
       <Field label="Type of evidence">{(id) => (
         <Select id={id} value={kind} onChange={(e) => setKind(e.target.value as EvidenceKind)}>
           {Object.entries(EVIDENCE_KIND).map(([k, v]) => <option key={k} value={k}>{v}</option>)}

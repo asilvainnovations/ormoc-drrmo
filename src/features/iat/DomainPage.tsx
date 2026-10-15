@@ -22,7 +22,7 @@ export function DomainPage() {
           const gps = resp && !resp.is_na ? gapPriorityScore(resp.score, i.weight, i.type, d.part) : null;
           const pr = priorityBand(gps);
           return (
-            <ListRow key={i.id} to={`/assess/${cycleId}/i/${encodeURIComponent(i.id)}`}
+            <ListRow tip="Open this indicator to add evidence and score it" key={i.id} to={`/assess/${cycleId}/i/${encodeURIComponent(i.id)}`}
               leading={<span className="inline-flex h-10 w-10 items-center justify-center rounded-control bg-sunken text-lg font-bold" aria-label={resp?.is_na ? 'Not applicable' : resp?.score != null ? `Score ${resp.score}` : 'Not scored'}>
                 {resp?.is_na ? 'NA' : resp?.score ?? '–'}</span>}
               title={<span><span className="mr-2 text-muted">{i.id}</span>{i.statement}</span>}
