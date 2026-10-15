@@ -72,6 +72,7 @@ There is no custom application server. The rules live in SQL so they hold for ev
 | Protocols | `/protocols` | `protocol_templates`, `protocol_steps`, `protocol_runs`, `protocol_run_steps` | 9 draft protocols (54 steps) for CDRRMO validation; runs work offline; critical steps and required notes block completion |
 | EOC | `/eoc` | `eoc_activations`, `logbook_entries`, `sitreps`, `barangay_reports`, `resource_requests` | Level board (White / Blue / Red), append-only logbook with corrections, SitRep numbering on submit, barangay counts only, forward-only request flow |
 | Anticipatory action | `/eoc/aa` | `pdra_sessions`, `declarations`, `aa_actions`, `aa_fund_years`, `aa_disbursements`, `aa_rules` | PDRA decision; declaration timeline per IRR; 29 AA checklist templates from IRR Rule IV; fund cap and tranche guard |
+| Document Vault | `/vault` | `vault_documents` (+ private `vault` bucket) | Register of laws, guidelines, City issuances, plans and records; each linked to indicators; Document Review checklist with request list download; reference catalogue. Assessors, validators, admin and CDRRMO staff only. Documents are superseded, never deleted |
 | Settings | `/settings` | `profiles`, `user_roles`, `barangays` | Sync status and conflict review; users and roles (admin, online); barangay list import (PSGC CSV); about and privacy |
 
 ## 5. Data model (summary)
@@ -139,9 +140,9 @@ The platform provides **the means** for each requirement. The MOO and EOC Manual
 | MR-09 | Responder safety and welfare, inclusion | IAT indicators and MOO sections; duty handover protocol. No roster or fatigue module (future) |
 | MR-10 | Digital continuity, alternate EOC, protected data | Offline-first PWA; City-owned hosting; backups; portable to self-hosting; audit log |
 | MR-11 | Recovery, learning, AARs, reassessment | Annual IAT cycles compared over time; action plan tracking; lifting and report protocol |
-| MR-12 | Evidence standard | Evidence gate enforced in SQL; evidence kinds and strengths |
+| MR-12 | Evidence standard | Evidence gate enforced in SQL; evidence kinds and strengths; Document Vault register for Document Review |
 | MR-13 | Scoring and priority engine | SQL views; TypeScript mirror with parity test (ADR-005) |
-| MR-14 | Traceability | `v_traceability`; indicator ↔ MR ↔ manual section screens |
+| MR-14 | Traceability | `v_traceability`; indicator ↔ MR ↔ manual section screens; vault document ↔ indicator links; reference notes on every citation |
 | MR-15 | Governance, privacy, annual reuse | RLS, audit log, privacy notice, versioned cycles |
 | MR-16 | RA 12287 and IRR | `aa_rules`, declaration guard, tranche guard, deadlines, 29 IRR-based actions |
 | MR-17 | Part C interface indicators | Lead-office answering; Interface Index kept apart from the IMI |
@@ -151,15 +152,17 @@ The platform provides **the means** for each requirement. The MOO and EOC Manual
 
 | Suite | What it proves | Command |
 |---|---|---|
-| SQL rules and security (105 checks) | Every rule and RLS policy, run as each role on Postgres 16 | `scripts/db_test.sh` |
-| Unit (63) | Scoring, AA rules, ids, sync engine with a fake client, CSV import; TS = SQL scoring parity | `npm test` |
-| Integration (7) | Real supabase-js → PostgREST 12 → Postgres: evidence gate, conflict, RLS refusal, offline protocol ids, logbook replay, AA checklist ids, viewer pull | `npm run test:it` |
-| End-to-end (Playwright, phone and desktop) | Main journeys in demo mode; offline open and logbook save; dark mode contrast | `npm run e2e` |
+| SQL rules and security (128 checks) | Every rule and RLS policy, run as each role on Postgres 16 | `scripts/db_test.sh` |
+| Unit (68) | Scoring, AA rules, ids, sync engine with a fake client, CSV import, citation parsing against every reference in the data; TS = SQL scoring parity | `npm test` |
+| Integration (8) | Real supabase-js → PostgREST 12 → Postgres: evidence gate, conflict, RLS refusal, offline protocol ids, logbook replay, AA checklist ids, viewer pull, vault sync and access | `npm run test:it` |
+| End-to-end (Playwright, phone and desktop) | Main journeys in demo mode; offline open and logbook save; dark mode contrast; vault journey; reference notes; tooltip on every control of 21 screens, hover, keyboard and long press | `npm run test:e2e` |
 | Accessibility (axe, WCAG 2.1 AA) | No serious or critical violations on every main screen | part of `npm run e2e` |
 
 The integration suite found two defects that the fake client could not show, and both are fixed. First, version conflicts used SQLSTATE 40001, which PostgREST retries forever. Second, append-only rows were sent with a `version` column that does not exist.
 
 ## 10. Open items
+
+- **Reference notes.** The plain-language notes in `src/data/references.ts` are for orientation. They need validation by the CDRRMO with the City Legal Office. Citations inside manual section text (the "Basis" lines) are not yet tappable.
 
 - **Barangay list.** The 110 Ormoc barangays need importing from the PSA PSGC file (Settings → Barangays → Import CSV) before operations use.
 - **Protocol validation.** The 9 protocols are drafts. Each needs validation by the CDRRMO and the owning office, then approval in the Library.
