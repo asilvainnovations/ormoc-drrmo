@@ -1,20 +1,25 @@
 import { NavLink, Link, Outlet } from 'react-router-dom';
 import clsx from 'clsx';
-import { BookOpen, ClipboardCheck, House, ListChecks, RadioTower, Settings, CloudOff, RefreshCw, AlertTriangle, Check, MonitorSmartphone } from 'lucide-react';
+import { BookOpen, ClipboardCheck, FolderLock, House, ListChecks, RadioTower, Settings, CloudOff, RefreshCw, AlertTriangle, Check, MonitorSmartphone } from 'lucide-react';
 import { LEVEL_INFO } from '@/domain/eoc';
 import { useActiveDeclaration, useEocStatus, useNow, usePending } from '@/lib/hooks';
 import { useSyncState } from '@/lib/sync';
 import { duration, fmtTime, relative } from '@/lib/time';
 import { hoursBetween } from '@/domain/aa';
 import { env } from '@/lib/env';
+import { useAuth } from '@/lib/auth';
+import { canUseVault } from '@/features/vault/access';
 import { UpdatePrompt } from './UpdatePrompt';
+import { tip } from './Tooltip';
+import { BrandLockup } from './Brand';
 
 const NAV = [
-  { to: '/', label: 'Today', icon: House, end: true },
-  { to: '/assess', label: 'Assess', icon: ClipboardCheck },
-  { to: '/protocols', label: 'Protocols', icon: ListChecks },
-  { to: '/eoc', label: 'EOC', icon: RadioTower },
-  { to: '/library', label: 'Library', icon: BookOpen },
+  { to: '/', label: 'Today', icon: House, end: true, tip: 'Your day: alerts, quick actions, running protocols and latest log' },
+  { to: '/assess', label: 'Assess', icon: ClipboardCheck, tip: 'Institutional Assessment Tool: score indicators with evidence and plan improvements' },
+  { to: '/protocols', label: 'Protocols', icon: ListChecks, tip: 'Step-by-step CDRRMO procedures you can run live or as drills' },
+  { to: '/eoc', label: 'EOC', icon: RadioTower, tip: 'Emergency Operations Center: level, logbook, SitReps, requests and anticipatory action' },
+  { to: '/library', label: 'Library', icon: BookOpen, tip: 'The Manual of Operations and EOC Manual, with traceability to the indicators' },
+  { to: '/vault', label: 'Vault', icon: FolderLock, tip: 'Document Vault: laws, guidelines and documents for Document Review', vault: true },
 ];
 
 /** The signature element: activation level, any declaration in force, and data freshness. */
@@ -40,9 +45,9 @@ export function StatusBand() {
   return (
     <div className={clsx('sticky top-0 z-30 pt-[env(safe-area-inset-top)]', tone)}>
       <div className="mx-auto flex max-w-page items-center gap-3 px-4 py-2 lg:px-8">
-        <Link to="/eoc" className="min-w-0 flex-1 rounded-control">
+        <Link to="/eoc" {...tip('Open the EOC board. The band shows the current alert level and any declaration in force')} className="min-w-0 flex-1 rounded-control">
           <p className="text-sm leading-5 sm:text-base">
-            <span className="font-bold">EOC {info.name} level</span><span className="hidden sm:inline">, {detail.charAt(0).toLowerCase() + detail.slice(1)}</span>
+            <span className="font-data text-[1.0625rem] font-bold uppercase tracking-wide">EOC {info.name} level</span><span className="hidden sm:inline">, {detail.charAt(0).toLowerCase() + detail.slice(1)}</span>
           </p>
           <p className="text-xs leading-5 sm:hidden">{detail}</p>
           {decl && (
@@ -52,7 +57,7 @@ export function StatusBand() {
             </p>
           )}
         </Link>
-        <Link to="/settings/sync" aria-label={`Sync: ${syncText}`} className="inline-flex min-h-tap shrink-0 items-center gap-1.5 self-start rounded-control px-2 text-xs font-semibold sm:self-center sm:text-sm">
+        <Link to="/settings/sync" aria-label={`Sync: ${syncText}`} {...tip('Sync status. Open to see what is waiting to send or needs your attention')} className="inline-flex min-h-tap shrink-0 items-center gap-1.5 self-start rounded-control px-2 font-data text-sm font-semibold sm:self-center">
           <SyncIcon className={clsx('h-4 w-4', sync.status === 'syncing' && 'animate-spin')} aria-hidden />
           <span className="sm:hidden">{syncShort}</span><span className="hidden sm:inline">{syncText}</span>
         </Link>
@@ -62,28 +67,30 @@ export function StatusBand() {
 }
 
 export function AppShell() {
+  const { has } = useAuth();
+  const nav = NAV.filter((n) => !n.vault || canUseVault(has));
   return (
-    <div className="min-h-dvh lg:pl-56">
-      <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:left-2 focus:top-2 focus:z-50 focus:rounded-control focus:bg-surface focus:px-3 focus:py-2">Skip to content</a>
+    <div className="min-h-dvh lg:pl-60">
+      <div className="app-backdrop" aria-hidden />
+      <a href="#main" {...tip('Skip the menu and go to the page content')} className="sr-only focus:not-sr-only focus:fixed focus:left-2 focus:top-2 focus:z-50 focus:rounded-control focus:bg-surface focus:px-3 focus:py-2">Skip to content</a>
       {/* Desktop rail */}
-      <nav aria-label="Main" className="fixed inset-y-0 left-0 z-40 hidden w-56 flex-col border-r border-line bg-surface lg:flex">
-        <div className="px-5 py-5">
-          <p className="text-lg font-bold leading-6">Ormoc DRRM Operations</p>
-          <p className="text-sm text-muted">CDRRMO and EOC</p>
+      <nav aria-label="Main" className="fixed inset-y-0 left-0 z-40 hidden w-60 flex-col border-r border-line bg-surface lg:flex">
+        <div className="border-b border-line px-4 pb-4 pt-5">
+          <BrandLockup size={44} stacked />
         </div>
-        <ul className="flex-1 space-y-1 px-3">
-          {NAV.map(({ to, label, icon: Icon, end }) => (
+        <ul className="flex-1 space-y-1 px-3 pt-3">
+          {nav.map(({ to, label, icon: Icon, end, tip: t }) => (
             <li key={to}>
-              <NavLink to={to} end={end} className={({ isActive }) => clsx('flex min-h-tap items-center gap-3 rounded-control px-3 font-semibold',
-                isActive ? 'bg-ink text-paper' : 'text-ink hover:bg-sunken')}>
+              <NavLink to={to} end={end} {...tip(t)} className={({ isActive }) => clsx('flex min-h-tap items-center gap-3 rounded-control border-l-4 px-3 font-semibold',
+                isActive ? 'border-accent bg-sky-soft text-ink' : 'border-transparent text-ink hover:bg-sky-soft/60')}>
                 <Icon className="h-5 w-5" aria-hidden />{label}
               </NavLink>
             </li>
           ))}
         </ul>
         <div className="px-3 pb-4">
-          <NavLink to="/settings" className={({ isActive }) => clsx('flex min-h-tap items-center gap-3 rounded-control px-3 font-semibold',
-            isActive ? 'bg-ink text-paper' : 'text-ink hover:bg-sunken')}>
+          <NavLink to="/settings" {...tip('Sync, users and roles, barangay list, about and privacy, sign out')} className={({ isActive }) => clsx('flex min-h-tap items-center gap-3 rounded-control border-l-4 px-3 font-semibold',
+            isActive ? 'border-accent bg-sky-soft text-ink' : 'border-transparent text-ink hover:bg-sky-soft/60')}>
             <Settings className="h-5 w-5" aria-hidden />Settings
           </NavLink>
         </div>
@@ -95,13 +102,13 @@ export function AppShell() {
 
       {/* Phone tab bar: thumb reach */}
       <nav aria-label="Main" className="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-surface pb-safe-b lg:hidden">
-        <ul className="grid grid-cols-5">
-          {NAV.map(({ to, label, icon: Icon, end }) => (
+        <ul className={clsx('grid', nav.length === 6 ? 'grid-cols-6' : 'grid-cols-5')}>
+          {nav.map(({ to, label, icon: Icon, end, tip: t }) => (
             <li key={to}>
-              <NavLink to={to} end={end} className={({ isActive }) => clsx('flex min-h-[3.5rem] flex-col items-center justify-center gap-0.5 text-xs font-semibold',
+              <NavLink to={to} end={end} {...tip(t)} className={({ isActive }) => clsx('flex min-h-[3.5rem] flex-col items-center justify-center gap-0.5 font-data text-[0.8125rem] font-semibold',
                 isActive ? 'text-ink' : 'text-muted')}>
                 {({ isActive }) => (<>
-                  <span className={clsx('flex h-7 w-12 items-center justify-center rounded-full', isActive && 'bg-sunken')}><Icon className="h-5 w-5" aria-hidden /></span>
+                  <span className={clsx('flex h-7 w-11 items-center justify-center rounded-full', isActive && 'bg-sky-soft text-action ring-1 ring-accent')}><Icon className="h-5 w-5" aria-hidden /></span>
                   {label}
                 </>)}
               </NavLink>

@@ -1,6 +1,7 @@
 // Bottom sheet on phones, centred dialog on larger screens. Uses <dialog> for
 // native focus trapping, Esc handling and an inert background.
 import { useEffect, useRef, type ReactNode } from 'react';
+import { tip } from './Tooltip';
 import { X } from 'lucide-react';
 
 export function Sheet({ open, onClose, title, children, footer }: {
@@ -21,7 +22,7 @@ export function Sheet({ open, onClose, title, children, footer }: {
         <div className="flex max-h-[88dvh] flex-col">
           <div className="flex items-center justify-between gap-3 border-b border-line px-4 py-3">
             <h2 id="sheet-title" className="text-lg font-bold">{title}</h2>
-            <button type="button" onClick={onClose} className="inline-flex h-tap w-tap items-center justify-center rounded-control hover:bg-sunken" aria-label="Close">
+            <button type="button" onClick={onClose} {...tip('Close this panel (Esc)')} className="inline-flex h-tap w-tap items-center justify-center rounded-control hover:bg-sunken" aria-label="Close">
               <X className="h-5 w-5" aria-hidden />
             </button>
           </div>

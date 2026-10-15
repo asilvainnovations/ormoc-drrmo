@@ -13,8 +13,8 @@ export function UpdatePrompt() {
           {needRefresh ? 'A new version is ready. Finish what you are typing, then reload.' : 'The app is saved on this device and works offline.'}
         </p>
         <div className="flex gap-2">
-          {needRefresh && <Button onClick={() => updateServiceWorker(true)}>Reload</Button>}
-          <Button variant="quiet" onClick={() => { setNeedRefresh(false); setOfflineReady(false); }}>Dismiss</Button>
+          {needRefresh && <Button tip="Load the new version now. Finish any entry you are typing first" onClick={() => updateServiceWorker(true)}>Reload</Button>}
+          <Button tip="Keep using this version. The update installs next time you open the app" variant="quiet" onClick={() => { setNeedRefresh(false); setOfflineReady(false); }}>Dismiss</Button>
         </div>
       </div>
     </div>
