@@ -59,7 +59,7 @@ insert into public.moo_versions (id,document_id,label,body_md,change_note,status
   *Basis:* NDRRMC CP guidelines; OCD CP Manual
 - **A3.4** (M, weight 2) Public Service Continuity Plan (PSCP) prepared covering CDRRMO and essential city services  
   *Basis:* NDRRMC/OCD PSCP Guidebook
-- **A3.7** (GP, weight 2) Barangay DRRM plans (110 barangays) reviewed/consolidated by CDRRMO  
+- **A3.7** (GP, weight 2) Barangay DRRM plans (85 barangays) reviewed/consolidated by CDRRMO  
   *Basis:* RA 10121 Sec. 12(c)(6); DILG MC on BDRRM
 - **A5.1** (M, weight 3) Updated hazard maps for all priority hazards (MGB, PHIVOLCS, PAGASA, GeoRiskPH/HazardHunterPH) at barangay scale  
   *Basis:* RA 10121 Sec. 12(c)(3); NDRRMP
@@ -171,7 +171,7 @@ insert into public.moo_versions (id,document_id,label,body_md,change_note,status
   *Basis:* RA 10121 Sec. 12(c)(12), Sec. 14
 - **A7.2** (M, weight 2) Participation in quarterly Nationwide Simultaneous Earthquake Drill (NSED) and hazard-specific drills with evaluation  
   *Basis:* NDRRMC NSED guidelines
-- **A7.3** (GP, weight 2) BDRRMC functionality across 110 barangays assessed (e.g., Listo si KAP) with support plan for low-functioning barangays  
+- **A7.3** (GP, weight 2) BDRRMC functionality across 85 barangays assessed (e.g., Listo si KAP) with support plan for low-functioning barangays  
   *Basis:* RA 10121; DILG MC 2025-035 (Listo si KAP)
 - **A7.7** (GP, weight 1) Schools, hospitals and critical facilities included in preparedness planning and drills  
   *Basis:* DepEd/DOH DRRM policies; Safe Schools/Hospitals
@@ -319,7 +319,7 @@ insert into public.moo_versions (id,document_id,label,body_md,change_note,status
   *Basis:* NDCC MC No. 12, s. 2008; NDRRM Plan Response pillar
 - **B3.1** (M, weight 3) Redundant communications: VHF/UHF radio, HF, satellite phone, landline, mobile, internet (min. 3 independent channels)  
   *Basis:* NDRRMC EOC Guidelines; NTC frequency assignment
-- **B3.2** (M, weight 2) Radio network covering all 110 barangays and responders, with call signs and net-control procedure  
+- **B3.2** (M, weight 2) Radio network covering all 85 barangays and responders, with call signs and net-control procedure  
   *Basis:* NTC licensing; ETC cluster
 - **B3.3** (GP, weight 2) Backup internet (secondary ISP/satellite) and continuity of digital systems  
   *Basis:* Good practice; DICT
