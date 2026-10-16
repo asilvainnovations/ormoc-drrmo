@@ -8,7 +8,6 @@ import { cycleResults } from '@/domain/scoring';
 import { nextDeadline } from '@/domain/aa';
 import { canOperate } from '@/domain/eoc';
 import { duration, fmtDateTime, fmtLongDate, fmtTime, manilaHour, relative } from '@/lib/time';
-import { env } from '@/lib/env';
 import { Badge, List, ListRow, Meter, Notice, Section, TextLink } from '@/components/ui';
 import { DECL_STATUS } from '@/features/eoc/aa/labels';
 import { tip } from '@/components/Tooltip';
@@ -19,7 +18,7 @@ import { CYCLE_STATUS } from '@/features/iat/labels';
 const greeting = (h: number) => (h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening');
 
 export function TodayPage() {
-  const { profile, roles, has } = useAuth();
+  const { profile, roles, has, offlineIdentity } = useAuth();
   const now = useNow();
   const decl = useActiveDeclaration();
   const data = useLiveQuery(async () => {
@@ -55,10 +54,7 @@ export function TodayPage() {
         <Link to="/settings" {...tip('Settings: sync, users and roles, about, sign out')} className="inline-flex h-tap w-tap items-center justify-center rounded-control hover:bg-sunken lg:hidden" aria-label="Settings"><Settings className="h-5 w-5" aria-hidden /></Link>
       </header>
 
-      {!env.demo && roles.length === 0 && (
-        <Notice tone="warn" title="Your account has no roles yet">You are signed in, but the system administrator has not assigned you a role, so there is nothing to show. Ask them to assign one in Settings → Users and roles.</Notice>
-      )}
-      {env.demo && <Notice tone="info" title="Demo mode">Nothing is sent to a server. Data stays in this browser. Change your demo roles in Settings to see what each role can do.</Notice>}
+      {offlineIdentity && <Notice tone="info" title="Working offline">You are using the last sign-in on this device. Your entries are kept here and sent when the connection returns.</Notice>}
 
       {decl && (
         <Link to={`/eoc/aa/d/${decl.id}`} {...tip('Open the declaration: next legal step, anticipatory action checklist and funds')} className="mb-6 block rounded-sheet border-2 border-bad bg-bad-soft p-4 hover:opacity-95">
