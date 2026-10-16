@@ -1,7 +1,8 @@
 -- Platform developer access (time-boxed).
 --
--- Run in the Supabase SQL editor by the City's administrator, AFTER inviting the
--- developer's email in Authentication -> Users -> Invite user.
+-- Run in the Supabase SQL editor by the City's administrator, AFTER the developer has
+-- created an account in the app with this email and confirmed it (or after inviting the
+-- email in Authentication -> Users -> Invite user).
 -- This file is not a migration: never put it in supabase/migrations/.
 --
 -- Change the address in all three blocks if a different developer is given access.
@@ -21,7 +22,7 @@ declare
 begin
   select id into v_id from auth.users where lower(email) = lower(v_email);
   if v_id is null then
-    raise exception 'No account for %. Invite it first (Authentication -> Users -> Invite user).', v_email;
+    raise exception 'No account for %. Create it first in the app (Create an account), or invite it (Authentication -> Users -> Invite user).', v_email;
   end if;
   update public.profiles
      set full_name = 'Alvin M. Silva', position = 'Platform developer (consultant)', is_active = true
