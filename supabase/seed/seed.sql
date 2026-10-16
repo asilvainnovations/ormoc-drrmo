@@ -58,7 +58,7 @@ insert into public.iat_indicators (id,domain,statement,reference,type,weight,mea
 ('A3.4','A3','Public Service Continuity Plan (PSCP) prepared covering CDRRMO and essential city services','NDRRMC/OCD PSCP Guidebook','M',2,'PSCP; BIA; essential functions list','DR','MOO Ch.3 / EOC Ch.7',null,'{}'::text[],'Unchanged',22),
 ('A3.5','A3','Annual LDRRMF Investment Plan (LDRRMFIP) prepared, approved and consistent with LDRRMP','JMC 2013-1','M',3,'LDRRMFIP; CDRRMC resolution','DR','MOO Ch.5 Financing',null,'{}'::text[],'Unchanged',23),
 ('A3.6','A3','Evacuation plan with mapped routes, safe zones, centers and pre-emptive evacuation triggers per barangay','RA 10121; RA 12076; DILG Operation L!sto','M',3,'Evacuation maps; plans per barangay','DR, OBS','MOO Ch.4 / EOC Ch.3',null,'{}'::text[],'Unchanged',24),
-('A3.7','A3','Barangay DRRM plans (110 barangays) reviewed/consolidated by CDRRMO','RA 10121 Sec. 12(c)(6); DILG MC on BDRRM','GP',2,'Consolidated BDRRMP status matrix','DR','MOO Ch.3',null,'{}'::text[],'Unchanged',25),
+('A3.7','A3','Barangay DRRM plans (85 barangays) reviewed/consolidated by CDRRMO','RA 10121 Sec. 12(c)(6); DILG MC on BDRRM','GP',2,'Consolidated BDRRMP status matrix','DR','MOO Ch.3',null,'{}'::text[],'Unchanged',25),
 ('A4.1','A4','LDRRMF set at not less than 5% of estimated revenue from regular sources','RA 10121 Sec. 21; JMC 2013-1','M',3,'Annual budget; LDRRMF computation','DR','MOO Ch.5 Financing',null,'{}'::text[],'Unchanged',26),
 ('A4.2','A4','70% Mitigation/Preparedness and 30% Quick Response Fund (QRF) allocation observed','RA 10121 Sec. 21; JMC 2013-1','M',3,'Appropriation ordinance; LDRRMFIP','DR','MOO Ch.5',null,'{}'::text[],'Unchanged',27),
 ('A4.3','A4','Unexpended LDRRMF transferred to Special Trust Fund and used within 5 years','RA 10121 Sec. 21; COA Circular 2012-002','M',2,'STF ledger; COA reports','DR','MOO Ch.5',null,'{}'::text[],'Unchanged',28),
@@ -86,7 +86,7 @@ insert into public.iat_indicators (id,domain,statement,reference,type,weight,mea
 ('A6.7','A6','Templates and channels for public notice of a State of Imminent Disaster and of the anticipatory actions required, incl. sector-specific impact-based advisories and reach to geographically isolated barangays','RA 12287 IRR (2026) Rule IV Sec. 2','M',2,'Advisory templates; dissemination log','DR','MOO Ch.4 / EOC Ch.5',null,array['RA 12287 / anticipatory action']::text[],'Added in v1.1',50),
 ('A7.1','A7','Annual training program for city personnel, BDRRMCs, schools and communities implemented','RA 10121 Sec. 12(c)(12), Sec. 14','M',2,'Training calendar; reports; attendance','DR','MOO Ch.6 Capacity Development',null,'{}'::text[],'Unchanged',51),
 ('A7.2','A7','Participation in quarterly Nationwide Simultaneous Earthquake Drill (NSED) and hazard-specific drills with evaluation','NDRRMC NSED guidelines','M',2,'Drill reports; evaluation forms','DR','MOO Ch.6',null,'{}'::text[],'Unchanged',52),
-('A7.3','A7','BDRRMC functionality across 110 barangays assessed (e.g., Listo si KAP) with support plan for low-functioning barangays','RA 10121; DILG MC 2025-035 (Listo si KAP)','GP',2,'BDRRMC functionality matrix','DR, FGD','MOO Ch.6',null,'{}'::text[],'Unchanged',53),
+('A7.3','A7','BDRRMC functionality across 85 barangays assessed (e.g., Listo si KAP) with support plan for low-functioning barangays','RA 10121; DILG MC 2025-035 (Listo si KAP)','GP',2,'BDRRMC functionality matrix','DR, FGD','MOO Ch.6',null,'{}'::text[],'Unchanged',53),
 ('A7.4','A7','Permanent evacuation center(s) planned/established and existing ECs meet minimum standards (WASH, privacy, PWD access, child-friendly space)','RA 12076 (Ligtas Pinoy Centers Act); RA 10821; DSWD standards','M',3,'EC inventory & audit; site inspection','DR, OBS','MOO Ch.4 / EOC Ch.6',null,'{}'::text[],'Unchanged',54),
 ('A7.5','A7','Prepositioned relief stocks/food packs and non-food items with inventory and replenishment triggers','RA 10121; DSWD-LGU protocols; Operation L!sto','M',2,'Stock inventory; warehouse inspection','OBS, DR','EOC Ch.6 Logistics',null,'{}'::text[],'Unchanged',55),
 ('A7.6','A7','Inclusive DRRM: GAD, PWD, senior citizen, children, IP considerations embedded in plans and services, with vulnerable-sector representatives confirming they were engaged','RA 9710; RA 7277 as amended; RA 9994; RA 10821; RA 8371; RA 12287 IRR (2026) Rule IV Sec. 1(a); UNDRR DRSC 7.2.2','M',2,'Plans; GAD-tagged budget; inclusion checklist; sector representatives'' confirmation (FGD)','DR, FGD','MOO Ch.3 / Ch.4',null,array['RA 12287 / anticipatory action','UNDRR Scorecard']::text[],'Revised in v1.1',56),
@@ -129,7 +129,7 @@ insert into public.iat_indicators (id,domain,statement,reference,type,weight,mea
 ('B2.6','B2','Physical security and access control (ID, visitor log, CCTV)','Good practice','GP',1,'Access log; observation','OBS','EOC Ch.3',null,'{}'::text[],'Unchanged',93),
 ('B2.7','B2','Designated and equipped alternate EOC with relocation procedure','PSCP Guidebook; NDRRMC EOC Guidelines','M',2,'Alternate site plan; relocation drill','DR, OBS','EOC Ch.3 / Ch.7',null,'{}'::text[],'Unchanged',94),
 ('B3.1','B3','Redundant communications: VHF/UHF radio, HF, satellite phone, landline, mobile, internet (min. 3 independent channels)','NDRRMC EOC Guidelines; NTC frequency assignment','M',3,'Comms inventory; radio net test','OBS, TST','EOC Ch.4 Communications',null,'{}'::text[],'Unchanged',95),
-('B3.2','B3','Radio network covering all 110 barangays and responders, with call signs and net-control procedure','NTC licensing; ETC cluster','M',2,'Coverage test; frequency licenses','TST, DR','EOC Ch.4',null,'{}'::text[],'Unchanged',96),
+('B3.2','B3','Radio network covering all 85 barangays and responders, with call signs and net-control procedure','NTC licensing; ETC cluster','M',2,'Coverage test; frequency licenses','TST, DR','EOC Ch.4',null,'{}'::text[],'Unchanged',96),
 ('B3.3','B3','Backup internet (secondary ISP/satellite) and continuity of digital systems','Good practice; DICT','GP',2,'ISP contracts; failover test','OBS, TST','EOC Ch.4',null,'{}'::text[],'Unchanged',97),
 ('B3.4','B3','Communications plan/ directory (agencies, barangays, clusters) updated within last 6 months','NDRRMC EOC Guidelines','M',2,'Directory; version date','DR','EOC Ch.4',null,'{}'::text[],'Unchanged',98),
 ('B3.5','B3','Cybersecurity and information security measures for EOC systems','RA 10173; DICT National Cybersecurity Plan','GP',1,'Password/access policy; backups','KII, OBS','EOC Ch.4',null,'{}'::text[],'Unchanged',99),
@@ -1368,7 +1368,7 @@ insert into public.moo_versions (id,document_id,label,body_md,change_note,status
   *Basis:* NDRRMC CP guidelines; OCD CP Manual
 - **A3.4** (M, weight 2) Public Service Continuity Plan (PSCP) prepared covering CDRRMO and essential city services  
   *Basis:* NDRRMC/OCD PSCP Guidebook
-- **A3.7** (GP, weight 2) Barangay DRRM plans (110 barangays) reviewed/consolidated by CDRRMO  
+- **A3.7** (GP, weight 2) Barangay DRRM plans (85 barangays) reviewed/consolidated by CDRRMO  
   *Basis:* RA 10121 Sec. 12(c)(6); DILG MC on BDRRM
 - **A5.1** (M, weight 3) Updated hazard maps for all priority hazards (MGB, PHIVOLCS, PAGASA, GeoRiskPH/HazardHunterPH) at barangay scale  
   *Basis:* RA 10121 Sec. 12(c)(3); NDRRMP
@@ -1480,7 +1480,7 @@ insert into public.moo_versions (id,document_id,label,body_md,change_note,status
   *Basis:* RA 10121 Sec. 12(c)(12), Sec. 14
 - **A7.2** (M, weight 2) Participation in quarterly Nationwide Simultaneous Earthquake Drill (NSED) and hazard-specific drills with evaluation  
   *Basis:* NDRRMC NSED guidelines
-- **A7.3** (GP, weight 2) BDRRMC functionality across 110 barangays assessed (e.g., Listo si KAP) with support plan for low-functioning barangays  
+- **A7.3** (GP, weight 2) BDRRMC functionality across 85 barangays assessed (e.g., Listo si KAP) with support plan for low-functioning barangays  
   *Basis:* RA 10121; DILG MC 2025-035 (Listo si KAP)
 - **A7.7** (GP, weight 1) Schools, hospitals and critical facilities included in preparedness planning and drills  
   *Basis:* DepEd/DOH DRRM policies; Safe Schools/Hospitals
@@ -1628,7 +1628,7 @@ insert into public.moo_versions (id,document_id,label,body_md,change_note,status
   *Basis:* NDCC MC No. 12, s. 2008; NDRRM Plan Response pillar
 - **B3.1** (M, weight 3) Redundant communications: VHF/UHF radio, HF, satellite phone, landline, mobile, internet (min. 3 independent channels)  
   *Basis:* NDRRMC EOC Guidelines; NTC frequency assignment
-- **B3.2** (M, weight 2) Radio network covering all 110 barangays and responders, with call signs and net-control procedure  
+- **B3.2** (M, weight 2) Radio network covering all 85 barangays and responders, with call signs and net-control procedure  
   *Basis:* NTC licensing; ETC cluster
 - **B3.3** (GP, weight 2) Backup internet (secondary ISP/satellite) and continuity of digital systems  
   *Basis:* Good practice; DICT
