@@ -6,7 +6,7 @@ import { save, saveMany } from '@/lib/store';
 import { uuid } from '@/lib/ids';
 import { useAuth } from '@/lib/auth';
 import { useAaParams } from '@/lib/hooks';
-import { hoursBetween, pdraDecisionProblem } from '@/domain/aa';
+import { hoursBetween, pdraDecisionProblem, rawHoursBetween } from '@/domain/aa';
 import { duration, fmtDateTime, fromLocalInput, toLocalInput } from '@/lib/time';
 import { Badge, Button, Checkbox, ChoiceGroup, Field, Input, KeyValue, Loading, Notice, PageHeader, Section, Select, Textarea, TextLink } from '@/components/ui';
 import { useToast } from '@/components/Toast';
@@ -29,7 +29,7 @@ export function PdraNewPage() {
   const [q, setQ] = useState('');
   const [busy, setBusy] = useState(false);
   const conductedAt = useMemo(() => new Date().toISOString(), []);
-  const lead = hoursBetween(conductedAt, fromLocalInput(f.expected_impact_at));
+  const lead = rawHoursBetween(conductedAt, fromLocalInput(f.expected_impact_at));
   const hazard = ref?.hazards.find((h) => h.code === f.hazard_code);
   const problem = pdraDecisionProblem({ impact_class: f.impact_class, decision: f.decision, expected_impact_at: fromLocalInput(f.expected_impact_at), conducted_at: conductedAt, decision_basis: f.decision_basis }, params);
   const eligible = f.impact_class === 'severe' && lead >= params.min_declaration_lead_hours;
@@ -37,6 +37,9 @@ export function PdraNewPage() {
   if (!has('cdrrmo_head', 'eoc_manager', 'eoc_staff')) return <div className="page"><PageHeader title="New PDRA" back="/eoc/aa" /><Notice>Only the CDRRMO Head and EOC staff record PDRAs.</Notice></div>;
 
   const submit = async () => {
+    // The PDRA is recorded as held now, when it is saved, not when the form was opened.
+    const conductedAt = new Date().toISOString();
+    const problem = pdraDecisionProblem({ impact_class: f.impact_class, decision: f.decision, expected_impact_at: fromLocalInput(f.expected_impact_at), conducted_at: conductedAt, decision_basis: f.decision_basis }, params);
     if (problem) { toast(problem, 'bad'); return; }
     if (new Date(fromLocalInput(f.expected_impact_at)) <= new Date(fromLocalInput(f.forecast_issued_at))) { toast('The expected impact must be after the forecast was issued.', 'bad'); return; }
     setBusy(true);

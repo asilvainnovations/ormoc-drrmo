@@ -167,15 +167,17 @@ export function DeclarationPage() {
 function FundSheet({ open, onClose, decl, existing, years }: { open: boolean; onClose: () => void; decl: Declaration; existing: AaDisbursement[]; years: import('@/types').AaFundYear[] }) {
   const params = useAaParams();
   const toast = useToast();
-  const [f, setF] = useState({ source: 'ldrrmf_aa' as FundSource, amount: '', purpose: '', intervention_at: toLocalInput(), fiscal_year: String(new Date().getFullYear()), obligation_ref: '' });
+  const [f, setF] = useState({ source: 'ldrrmf_aa' as FundSource, amount: '', purpose: '', intervention_at: toLocalInput(), obligation_ref: '' });
+  // The fiscal year follows the intervention date in Manila time (the server derives it the same way).
+  const fiscalYear = Number(f.intervention_at.slice(0, 4));
   const amount = Number(f.amount);
-  const year = years.find((y) => y.fiscal_year === Number(f.fiscal_year));
+  const year = years.find((y) => y.fiscal_year === fiscalYear);
   const iso = fromLocalInput(f.intervention_at);
   const { lead, tranche } = trancheOf(decl.expected_impact_at, iso, params);
-  const problem = f.amount ? disbursementProblem({ source: f.source, amount, intervention_at: iso, fiscal_year: Number(f.fiscal_year) }, decl, year, existing, params) : null;
+  const problem = f.amount ? disbursementProblem({ source: f.source, amount, intervention_at: iso, fiscal_year: fiscalYear }, decl, year, existing, params) : null;
   const add = async () => {
     if (problem || !f.purpose.trim()) return;
-    const row: AaDisbursement & { _new: true } = { _new: true, id: uuid(), declaration_id: decl.id, fiscal_year: Number(f.fiscal_year), source: f.source, amount, purpose: f.purpose.trim(),
+    const row: AaDisbursement & { _new: true } = { _new: true, id: uuid(), declaration_id: decl.id, fiscal_year: fiscalYear, source: f.source, amount, purpose: f.purpose.trim(),
       intervention_at: iso, lead_hours: lead, tranche, obligation_ref: f.obligation_ref.trim() || null, version: 1 };
     await save('aa_disbursements', row, `Disbursement ₱${fmtPeso(amount)}`);
     onClose(); toast('Disbursement recorded');
@@ -187,7 +189,7 @@ function FundSheet({ open, onClose, decl, existing, years }: { open: boolean; on
         {Object.entries(SOURCE).map(([k, v]) => <option key={k} value={k}>{v}</option>)}</Select>}</Field>
       <div className="grid grid-cols-2 gap-3">
         <Field label="Amount (₱)">{(id) => <Input id={id} inputMode="decimal" value={f.amount} onChange={(e) => setF({ ...f, amount: e.target.value.replace(/[^\d.]/g, '') })} />}</Field>
-        <Field label="Fiscal year">{(id) => <Input id={id} inputMode="numeric" value={f.fiscal_year} onChange={(e) => setF({ ...f, fiscal_year: e.target.value })} />}</Field>
+        <Field label="Fiscal year" hint="From the intervention date.">{(id, d) => <Input id={id} aria-describedby={d} value={String(fiscalYear || '')} readOnly />}</Field>
       </div>
       <Field label="Purpose">{(id) => <Input id={id} value={f.purpose} onChange={(e) => setF({ ...f, purpose: e.target.value })} />}</Field>
       <Field label="When the intervention is carried out" hint={lead >= 0 ? `${duration(lead)} before expected impact: ${tranche === 'beyond_threshold' ? 'beyond' : 'within'} the 3-day threshold.` : 'After the expected impact.'}>
