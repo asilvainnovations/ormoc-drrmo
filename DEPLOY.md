@@ -6,10 +6,10 @@ Time needed: about half a day, plus the time to invite staff.
 
 ## 0. Before you start
 
-- [ ] A City email account to **own** the Supabase, Netlify and GitHub accounts (for example, `drrm-platform@ormoc.gov.ph`). This is about who owns and pays for the service. It does not limit who can sign in to the app: any invited address can, including personal and consultant addresses (section 4).
+- [ ] A City email account to **own** the Supabase, Netlify and GitHub accounts (for example, `drrm-platform@ormoc.gov.ph`). This is about who owns and pays for the service. It does not limit who can sign in to the app: any email address can, including personal and consultant addresses (sections 2 and 4).
 - [ ] A password manager or vault for the database password and keys.
 - [ ] The DPO has reviewed the privacy notice text (Settings → About) and the cross-border transfer to Singapore ([ADR-002](docs/adr/002-hosting-and-privacy.md)).
-- [ ] A workstation with Node 20+, Git and `psql` (PostgreSQL 15+ client).
+- [ ] A workstation with Node 22+, Git and `psql` (PostgreSQL 15+ client).
 
 ## 1. Create the Supabase project (City-owned)
 
@@ -28,17 +28,33 @@ Time needed: about half a day, plus the time to invite staff.
 
 ## 2. Configure sign-in
 
-Authentication → Providers → Email:
+People create their own accounts; an administrator approves each one by granting a role (Settings → Users and roles). Until then the account sees nothing: the database returns no rows to an account without a role (migration 0009). Staff can also still be invited.
 
-- **Allow new users to sign up: off.** People are invited, never self-registered. An invitation can go to any email address (City, personal or consultant). The app does not check the domain. Someone who was never invited is told so on the sign-in screen.
-- Confirm email: on. Minimum password length: 10.
+Authentication → Sign In / Providers → Email:
+
+- **Allow new users to sign up: on.**
+- **Confirm email: on.** An administrator cannot grant a role to an unconfirmed address.
+- **Minimum password length: 10**, with letters and digits. Turn on **leaked password protection** if the plan offers it.
 
 Authentication → URL Configuration:
 
-- **Site URL:** the app address (for example, `https://drrm.ormoc.gov.ph`)
-- **Redirect URLs:** the same address, plus any preview address you use
+- **Site URL:** the app address (for example, `https://drrm.ormoc.gov.ph`).
+- **Redirect URLs:** add `https://<each app address>/**`: the custom domain AND the `netlify.app` address, plus `https://deploy-preview-*--<name>.netlify.app/**` if previews use this project. The app sends people back to the exact address they used; one that is not listed falls back to the Site URL and the link fails.
 
-Authentication → SMTP: set the City's mail server or a transactional mail service. The built-in sender is rate-limited and is not meant for production invites.
+Authentication → Emails → Templates. Change the link in these four templates so that every link works on any device, including an iPhone home-screen app (which does not share storage with Safari):
+
+| Template | Link |
+|---|---|
+| Confirm signup | `{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=signup` |
+| Invite user | `{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=invite` |
+| Magic Link | `{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=magiclink` |
+| Reset Password | `{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=recovery` |
+
+With the default templates links still work, but only when opened in the same browser where they were requested.
+
+Authentication → SMTP: **required** once sign-up is open. Set the City's mail server or a transactional mail service. The built-in sender is limited to a few emails an hour and is not meant for production.
+
+Authentication → Rate Limits: keep the defaults or lower them. Consider **Attack Protection → CAPTCHA** (hCaptcha or Turnstile) if the sign-up form attracts spam; tell the developer, because the app must then send the CAPTCHA token.
 
 ## 3. Create the database
 
@@ -48,11 +64,11 @@ There are two ways to do this. Both give the same result.
 
 The SQL editor rejects long scripts, so the reference data comes in seven parts in `supabase/seed/parts/`. Each part is under 400 lines and 400 rows.
 
-1. **Migrations.** In SQL Editor → New query, paste and run each file in `supabase/migrations/` in name order, one at a time (`…000100_core.sql` first, `20261016000800_document_vault.sql` last). Wait for "Success" before the next. Run each migration once only.
+1. **Migrations.** In SQL Editor → New query, paste and run each file in `supabase/migrations/` in name order, one at a time (`…000100_core.sql` first, `20261016000900_accounts_and_integrity.sql` last). Wait for "Success" before the next. Run each migration once only.
 2. **Reference data.** Paste and run `supabase/seed/parts/01_seed.sql`, then `02_seed.sql`, and so on to `07_seed.sql`. Use the parts, not `supabase/seed/seed.sql`, which is the same data in one file for `psql`.
 3. Part 7 ends with a check query. It should return **140 | 18 | 935 | 71 | 9 | 54 | 29**.
 
-Each part runs as a single transaction, so a part that fails changes nothing. A part can be run again at any time, on its own, and it only replaces its own rows. If a part fails or you lose your place, run that part again and carry on from there.
+Each part runs as a single transaction, so a part that fails changes nothing. During setup a part can be run again on its own, and it only replaces its own rows. If a part fails or you lose your place, run that part again and carry on from there. **After go-live, do not re-run part 6**: it rewrites the manual text and would replace versions the CDRRMO Head has approved since.
 
 ### Option B: `psql` from a workstation
 
@@ -92,13 +108,15 @@ Then, in the dashboard:
 - **Advisors → Security.** It should report no tables without RLS.
 - **Database → Publications → `supabase_realtime`.** It should list the EOC tables.
 
-### Updating an existing database to 1.1
+### Updating an existing database
 
-If the database was created before 16 October 2026, run only the new migration, `supabase/migrations/20261016000800_document_vault.sql`, once. It adds the Document Vault table and its private `vault` bucket. Nothing else changes, and the seed does not need to be loaded again.
+- **To 1.1** (database created before 16 October 2026): run `supabase/migrations/20261016000800_document_vault.sql` once. It adds the Document Vault table and its private `vault` bucket.
+- **To 1.2:** run `supabase/migrations/20261016000900_accounts_and_integrity.sql` once, **before** turning sign-up on (section 2). It makes accounts without a role read nothing, adds the administrator's account list, and locks finalised and approved records.
+- **85 barangays:** if the seed was loaded before the 85-barangay correction, run parts `01_seed.sql` and `06_seed.sql` once more, but only if no manual version has been approved yet. Otherwise ask the developer for a one-off update of the three indicator texts (A3.7, A7.3, B3.2).
 
 ## 4. First administrator and the CDRRMO Head
 
-1. Authentication → Users → **Invite user** for the City ICT administrator and for the CDRRMO Head.
+1. The City ICT administrator and the CDRRMO Head create their accounts in the app (Create an account) and confirm their email. (Authentication → Users → **Invite user** also works.)
 2. In the SQL editor:
 
 ```sql
@@ -110,13 +128,13 @@ where email = 'cdrrmo.head@ormoc.gov.ph';
 update public.profiles set full_name = 'Full Name', position = 'CDRRM Officer' where id = (select id from auth.users where email = 'cdrrmo.head@ormoc.gov.ph');
 ```
 
-From here the administrator invites other staff in the dashboard and assigns roles in the app (Settings → Users and roles). A person who signs in before getting a role sees a notice asking them to contact the administrator.
+From here staff create their own accounts, and the administrator approves them in the app (Settings → Users and roles): accounts waiting for approval are listed first, with the email they confirmed. Check who the person is (for example with their office) before granting a role. Declining is deactivating. A person waiting for approval sees only a waiting page.
 
 ### Platform developer access
 
 The platform developer (Alvin M. Silva, `alvin.silva@cognitioplus.com`) needs to sign in to set up and support the platform. The access is given by the City and is time-boxed:
 
-1. Authentication → Users → **Invite user** → `alvin.silva@cognitioplus.com`.
+1. The developer creates an account in the app with `alvin.silva@cognitioplus.com` and confirms it (or the City invites that address from Authentication → Users).
 2. In the SQL editor, open and run block 1 of [`supabase/admin/developer_access.sql`](supabase/admin/developer_access.sql). It sets the profile and grants `admin` for the setup period. The script stops with a clear message if the address has not been invited yet.
 3. When setup ends, run block 2. It removes `admin` and keeps `author`, `assessor` and `viewer` for drafting, testing and support.
 4. At turnover, run block 3. It removes every role and deactivates the account. Past entries and the audit trail stay.
@@ -139,7 +157,7 @@ Personal data note for the DPO: the developer's name and email are held like any
 
 ## 5. Barangays
 
-Sign in as admin and go to Settings → Barangays → Import CSV. Load the 110 Ormoc barangays from the PSA PSGC file, one per line:
+Sign in as admin and go to Settings → Barangays → Import CSV. Load Ormoc’s 85 barangays from the PSA PSGC masterlist, one per line. Since the PSA 4th quarter 2022 update, the former numbered Poblacion barangays are South, East and West (28 merged under City Ordinance No. 052, s. 2021, ratified on 8 October 2022), and Barangay 29 is North:
 
 ```
 psgc,name,classification,population,lat,lng
@@ -152,7 +170,7 @@ Classification takes one or more of `urban`, `coastal`, `riverine` and `upland`,
 
 ### Option A: Netlify (City-owned team)
 
-`netlify.toml` in the repository root already sets the build command (`npm run build`), the output folder (`dist`), Node 20, the single-page fallback, caching rules and the security headers. Nothing needs to be typed in the build settings.
+`netlify.toml` in the repository root already sets the build command (`npm run build`), the output folder (`dist`), Node 22, the single-page fallback, caching rules and the security headers. Nothing needs to be typed in the build settings.
 
 1. Sign in to Netlify with the City email and create a team named "City Government of Ormoc".
 2. **Add new site → Import an existing project → GitHub**. Authorise Netlify for the repository only (not the whole GitHub account) and pick the repository.
@@ -160,7 +178,7 @@ Classification takes one or more of `urban`, `coastal`, `riverine` and `upland`,
    - `VITE_SUPABASE_URL` = Project URL, for example `https://jmctsspadywjcbbqwweh.supabase.co` (no slash at the end)
    - `VITE_SUPABASE_PUBLISHABLE_KEY` = the publishable key (`sb_publishable_…`)
 
-   The app also accepts the older name `VITE_SUPABASE_ANON_KEY`, for projects that still use an anon key. If both are set, the publishable key is used. Never add the service_role key. These values are built into the app, so a change needs a new deploy (Deploys → Trigger deploy → Deploy site).
+   The app also accepts the older name `VITE_SUPABASE_ANON_KEY`, for projects that still use an anon key. If both are set, the publishable key is used. Never add the service_role key: the build stops if it sees a secret key. These values are built into the app, so a change needs a new deploy (Deploys → Trigger deploy → Deploy site). A deploy with a missing or mistyped value fails with a message saying which one.
 4. Deploy. The site opens at `https://<name>.netlify.app`. Rename it under Site configuration → Change site name (for example, `ormoc-drrm`).
 5. **Domain:** Domain management → Add a domain (for example, `drrm.ormoc.gov.ph`). Add the CNAME record Netlify shows at the City's DNS host. HTTPS is issued automatically.
 6. **Supabase:** put the final address in Authentication → URL Configuration (Site URL and Redirect URLs, step 2). Sign-in links and invites fail until this matches.
@@ -170,7 +188,7 @@ Check after the first deploy:
 
 - Open a deep link such as `/eoc/log` directly. It should load the app, not a Netlify 404.
 - Look at the response headers of the home page (browser dev tools → Network). `content-security-policy` should be present.
-- The home page should **not** show the "Demo mode" notice, and the status band should not say "Demo". If it does, the environment variables were missing at build time; add them and redeploy.
+- Create a test account from the sign-in page: the confirmation email should arrive, its link should open the app at the waiting page, and the account should appear under Settings → Users and roles for the administrator. Deactivate the test account afterwards.
 
 ### Option B: Vercel (City-owned team)
 
@@ -201,6 +219,8 @@ location /assets/ { add_header Cache-Control "public, max-age=31536000, immutabl
 - [ ] Turn on airplane mode, add a logbook entry, turn it off, and confirm the entry reaches the server (Settings → Sync shows nothing waiting).
 - [ ] Raise the EOC to Blue and back to White on a test day. Confirm the logbook recorded both.
 - [ ] Viewer account: confirm it cannot create or change records.
+- [ ] A new, unapproved account: confirm it sees only the waiting page, on a phone and a computer.
+- [ ] Password reset: request one and set a new password through the emailed link.
 - [ ] Back up: confirm a daily backup exists (Database → Backups).
 - [ ] Record who holds admin, the database password and the service key, in the City's ICT asset register.
 
@@ -212,7 +232,7 @@ location /assets/ { add_header Cache-Control "public, max-age=31536000, immutabl
   - Remove the consultant from the Supabase organisation, the Netlify or Vercel team and the GitHub repository.
   - Rotate the database password.
   - If any secret was ever shared, rotate the API keys too (Project Settings → API). Then update the two environment variables and redeploy.
-- Review the roles list each quarter. Deactivate leavers in Settings → Users and roles; their records and audit trail remain.
+- Review the roles list each quarter, and the accounts waiting for approval each week (decline ones nobody recognises). Deactivate leavers in Settings → Users and roles; their records and audit trail remain.
 
 ## 9. Data protection notes for the DPO
 
@@ -223,7 +243,8 @@ location /assets/ { add_header Cache-Control "public, max-age=31536000, immutabl
 
 ## 10. Updating the platform
 
-- **Schema changes.** Never edit a migration that has been applied. Add a new file `supabase/migrations/<timestamp>_<name>.sql`. Run `npm run test:db` and `npm run test:it` locally, apply it to production with `psql`, then deploy the app.
+- **Schema changes.** Never edit a migration that has been applied. Add a new file `supabase/migrations/<timestamp>_<name>.sql`. Run `npm run test:db`, `npm run test:it` and `npm run test:e2e` locally (GitHub Actions runs them on every push), apply it to production with `psql`, then deploy the app.
+- **Uploading through the GitHub website** drops file permissions and can drop hidden files (`.github/`, `.env.example`, `.gitignore`). Prefer `git push`; if you upload, check that those files are still there.
 - **Reference data (IAT or traceability workbooks).** Follow the steps in the README.
 - **National guidance pending under the RA 12287 IRR.** When the NDRRMC guidelines on triggers and the DBM–COA rules on AA fund use and liquidation are issued:
   - Update `aa_rules` (admin, SQL editor). Changes are audited.

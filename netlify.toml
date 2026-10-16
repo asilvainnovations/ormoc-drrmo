@@ -1,16 +1,23 @@
 # Netlify deployment for the Ormoc DRRM Operations Platform.
 # Set VITE_SUPABASE_URL and VITE_SUPABASE_PUBLISHABLE_KEY (or, on older projects, VITE_SUPABASE_ANON_KEY)
 # in Site configuration → Environment variables.
-# Without them the build runs in demo mode (data stays in the browser).
+# Without valid values the build stops with a message (there is no demo mode).
 
 [build]
   command = "npm run build"
   publish = "dist"
 
 [build.environment]
-  NODE_VERSION = "20"
+  NODE_VERSION = "22"
   # The PWA build never needs a browser; skip Playwright's download on install.
   PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD = "1"
+
+# A build file that no longer exists (an old tab after a deploy) must be a 404, not the app shell
+# served as JavaScript and cached for a year.
+[[redirects]]
+  from = "/assets/*"
+  to = "/404.html"
+  status = 404
 
 # Single-page app: any path that is not a real file opens the app shell.
 # Netlify serves existing files first, so assets, sw.js and the manifest are unaffected.

@@ -1,11 +1,11 @@
 {
   "name": "ormoc-drrm-ops",
   "private": true,
-  "version": "1.0.0",
+  "version": "1.2.0",
   "description": "Ormoc City CDRRMO & EOC Operations Platform – mobile-first PWA",
   "type": "module",
   "engines": {
-    "node": ">=20"
+    "node": ">=22"
   },
   "scripts": {
     "dev": "vite",
@@ -14,8 +14,8 @@
     "typecheck": "tsc -b --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:db": "scripts/db_test.sh",
-    "test:e2e": "playwright test",
+    "test:db": "bash scripts/db_test.sh",
+    "test:e2e": "bash scripts/e2e_test.sh",
     "seed:generate": "python3 scripts/generate_seed.py",
     "check": "npm run typecheck && npm run test && npm run build",
     "test:it": "bash scripts/it_test.sh"

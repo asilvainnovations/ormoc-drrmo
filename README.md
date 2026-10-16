@@ -14,24 +14,20 @@ Every button, tab, card, link and field has a tooltip. Every cited law or guidel
 
 It works with no signal. Entries are saved on the device and sent when a connection returns.
 
-## Try it in demo mode
+## Accounts
+
+Anyone can create an account with an email address and a password. The account sees nothing until a system administrator approves it by granting a role (Settings → Users and roles). Invited staff, sign-in links by email and password reset all work too. See [ADR-009](docs/adr/009-open-signup-and-live-data.md).
+
+## Run it
+
+The app always works against a Supabase project; there is no demo mode. Copy `.env.example` to `.env` and fill in `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY` (or `VITE_SUPABASE_ANON_KEY` on older projects), then:
 
 ```bash
 npm ci
 npm run dev        # http://localhost:5173
 ```
 
-With no Supabase settings in `.env`, the app runs in **demo mode**:
-
-- Everything stays in the browser.
-- Server actions are simulated.
-- Under Settings you can switch roles to see what each one can do.
-
-Demo mode is what to use in validation workshops and training.
-
-## Connect to the City's Supabase project
-
-Copy `.env.example` to `.env` and fill in `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY` (or `VITE_SUPABASE_ANON_KEY` on older projects). See [DEPLOY.md](DEPLOY.md) for creating the City-owned project, applying the database, inviting staff and publishing the app.
+For training and validation workshops, use a separate training Supabase project with test accounts, never the production one. A production build without valid settings stops with a message. See [DEPLOY.md](DEPLOY.md) for creating the City-owned project, applying the database, opening sign-up and publishing the app.
 
 ## Project layout
 
@@ -62,9 +58,9 @@ docs/             system design, design system, architecture decision records
 | `npm run build` | Typecheck and production build to `dist/` |
 | `npm run preview` | Serve the build on port 4173 |
 | `npm test` | Unit tests, including the scoring parity test against SQL |
-| `npm run test:db` | Rebuild a local Postgres database from the migrations and run the 128 rule and security checks. Needs `PGHOST`, `PGPORT` and `PGUSER` for a local superuser |
+| `npm run test:db` | Rebuild a local Postgres database from the migrations and run the 172 rule and security checks. Needs `PGHOST`, `PGPORT` and `PGUSER` for a local superuser |
 | `npm run test:it` | Integration tests through real PostgREST. Needs the same plus `POSTGREST_BIN` (PostgREST 12) |
-| `npm run test:e2e` | Playwright on phone and desktop sizes, with axe and offline checks. Runs against `npm run preview` |
+| `npm run test:e2e` | Playwright on phone and desktop sizes against the production build, PostgREST and a fresh local database with every migration: sign-up and approval, journeys, axe and offline checks. Needs the same as `test:it` |
 | `python3 scripts/brand_assets.py` | Rebuild the circular seals, banner copies and app icons from the originals in `public/` |
 | `npm run seed:generate` | Regenerate `supabase/seed/seed.sql`, `supabase/seed/parts/` and `src/data/reference.json` from `reference/*.xlsx` |
 | `npm run check` | Typecheck, unit tests and build |
