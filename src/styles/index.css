@@ -54,3 +54,98 @@
   }
   .tip-bubble[data-kind='ref'] { @apply pointer-events-auto max-w-[22rem] border-l-4 border-accent-bright; }
 }
+
+/* ========================================
+    ENHANCED PLATFORM BADGES
+   ======================================== */
+
+/* Primary Bolt Badge Selectors */
+#bolt-badge, 
+.bolt-badge,
+[data-bolt-badge],
+[id*="bolt"][id*="badge"],
+[class*="bolt"][class*="badge"] {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  position: absolute !important;
+  left: -9999px !important;
+  top: -9999px !important;
+  height: 0 !important;
+  width: 0 !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  clip-path: inset(50%) !important;
+  white-space: nowrap !important;
+}
+
+/* Iframe-based badges */
+iframe[src*="bolt"],
+iframe[src*="badge"],
+iframe[title*="bolt"],
+iframe[title*="badge"],
+iframe[data-bolt],
+iframe.badge {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  height: 0 !important;
+  width: 0 !important;
+}
+
+/* Fixed position badges (common placement) */
+[style*="position: fixed"][style*="bottom"],
+[style*="position:fixed"][style*="bottom"],
+div[style*="z-index: 999"],
+div[style*="z-index:999"],
+div[style*="z-index: 9999"],
+a[href*="bolt.new"],
+a[href*="bolt.diy"] {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+}
+
+/* Additional common badge patterns */
+[data-badge="bolt"],
+[data-platform="bolt"],
+[data-branding="bolt"],
+.platform-badge,
+.builder-badge,
+.powered-by-badge,
+[class*="made-in"],
+[class*="powered-by"],
+[class*="built-with"] {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+/* Bottom-right corner elements (typical badge placement) */
+body > div:last-child[style*="position: fixed"],
+body > div:last-child[style*="position:fixed"],
+body > a:last-child[style*="position: fixed"],
+body > a:last-child[style*="position:fixed"] {
+  display: none !important;
+}
+
+/* SVG-based badges */
+svg[data-badge],
+svg[class*="badge"],
+svg[id*="badge"] {
+  display: none !important;
+  visibility: hidden !important;
+}
+
+/* Watermark and attribution elements */
+[data-watermark],
+[data-attribution],
+.watermark,
+.attribution {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+}
