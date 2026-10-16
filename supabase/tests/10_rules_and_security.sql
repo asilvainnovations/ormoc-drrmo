@@ -191,7 +191,7 @@ select tests.expect_eq('IMI equals Part A when only Part A is scored',
   (select maturity_index::text from public.v_cycle_results where cycle_id = '10000000-0000-0000-0000-000000000002' and grp = 'A'));
 
 -- Closed cycles are read-only.
-reset role;
+reset role; select set_config('request.jwt.claim.sub', '', false);
 update public.assessment_cycles set status = 'final', version = version where id = '10000000-0000-0000-0000-000000000002';
 select tests.login('00000000-0000-0000-0000-00000000000c');
 select tests.expect_error('final cycle cannot be edited',
@@ -445,6 +445,132 @@ select tests.login('00000000-0000-0000-0000-000000000012');  -- author
 select tests.expect_rows('manual authors are not vault users', $$select count(*) from public.vault_documents$$, 0);
 select tests.login('00000000-0000-0000-0000-00000000000f');  -- lead office focal
 select tests.expect_rows('lead office focal persons are not vault users', $$select count(*) from public.vault_documents$$, 0);
+
+-- ===================================================== v1.2 accounts ========
+-- Open sign-up: a new account reads nothing until an administrator grants a role.
+reset role; select set_config('request.jwt.claim.sub', '', false);
+insert into auth.users (id, email, raw_user_meta_data, email_confirmed_at) values
+ ('00000000-0000-0000-0000-000000000020', 'new@test.local', '{"full_name":"Applicant"}', now()),
+ ('00000000-0000-0000-0000-000000000021', 'unconfirmed@test.local', '{}', null);
+select tests.login('00000000-0000-0000-0000-000000000020');
+select tests.expect_eq('a new account is not an active user', app.is_active_user()::text, 'false');
+select tests.expect_rows('it sees only its own profile', $$select count(*) from public.profiles$$, 1);
+select tests.expect_rows('no assessment cycles', $$select count(*) from public.assessment_cycles$$, 0);
+select tests.expect_rows('no responses', $$select count(*) from public.responses$$, 0);
+select tests.expect_rows('no evidence', $$select count(*) from public.evidence$$, 0);
+select tests.expect_rows('no logbook', $$select count(*) from public.logbook_entries$$, 0);
+select tests.expect_rows('no SitReps', $$select count(*) from public.sitreps$$, 0);
+select tests.expect_rows('no declarations', $$select count(*) from public.declarations$$, 0);
+select tests.expect_rows('no AA funds', $$select count(*) from public.aa_fund_years$$, 0);
+select tests.expect_rows('no manual documents', $$select count(*) from public.moo_documents$$, 0);
+select tests.expect_rows('no evidence files', $$select count(*) from storage.objects$$, 0);
+select tests.expect_eq('it can read its own account status', (public.my_account() ->> 'roles'), '[]');
+select tests.expect_ok('it can fill in its name while pending',
+  $$update public.profiles set full_name = 'Juan Dela Cruz', position = 'Engineer II', version = 1 where id = '00000000-0000-0000-0000-000000000020'$$);
+select tests.expect_error('it cannot list accounts', $$select * from public.admin_list_accounts()$$, '42501');
+select tests.expect_error('nor grant itself a role', $$insert into public.user_roles (user_id, role) values ('00000000-0000-0000-0000-000000000020', 'viewer')$$, '42501');
+
+select tests.login('00000000-0000-0000-0000-00000000000a');  -- admin
+select tests.expect_eq('admin sees pending accounts first, with their email',
+  ((select email from public.admin_list_accounts() limit 1) in ('new@test.local', 'unconfirmed@test.local'))::text, 'true');
+select tests.expect_error('a role needs a confirmed email',
+  $$insert into public.user_roles (user_id, role) values ('00000000-0000-0000-0000-000000000021', 'viewer')$$, '42501');
+select tests.expect_ok('approving = granting a role',
+  $$insert into public.user_roles (user_id, role) values ('00000000-0000-0000-0000-000000000020', 'viewer')$$);
+select tests.expect_eq('the grant records who approved',
+  (select granted_by::text from public.user_roles where user_id = '00000000-0000-0000-0000-000000000020'), '00000000-0000-0000-0000-00000000000a');
+select tests.expect_error('an admin cannot remove their own admin role',
+  $$delete from public.user_roles where user_id = '00000000-0000-0000-0000-00000000000a' and role = 'admin'$$, '42501');
+select tests.expect_error('nor deactivate themselves',
+  $$update public.profiles set is_active = false, version = version where id = '00000000-0000-0000-0000-00000000000a'$$, '42501');
+
+select tests.login('00000000-0000-0000-0000-000000000020');
+select tests.expect_eq('after approval the account is active', app.is_active_user()::text, 'true');
+select tests.expect_error('and its name is changed by an administrator',
+  $$update public.profiles set full_name = 'CDRRMO Head', version = 2 where id = '00000000-0000-0000-0000-000000000020'$$, '42501');
+
+-- Assessment cycles: finalising and deleting.
+select tests.login('00000000-0000-0000-0000-00000000000b');  -- assessor
+insert into public.assessment_cycles (id, name, cycle_year, created_by) values
+  ('10000000-0000-0000-0000-000000000009', 'v1.2 checks', 2026, '00000000-0000-0000-0000-000000000011');
+select tests.expect_eq('created_by is the signed-in user, not what the client sent',
+  (select created_by::text from public.assessment_cycles where id = '10000000-0000-0000-0000-000000000009'), '00000000-0000-0000-0000-00000000000b');
+select tests.expect_error('an assessor cannot finalise a cycle',
+  $$update public.assessment_cycles set status = 'final', version = 1 where id = '10000000-0000-0000-0000-000000000009'$$, '42501');
+select tests.expect_error('an assessor cannot reopen a final cycle',
+  $$update public.assessment_cycles set status = 'draft', version = version where id = '10000000-0000-0000-0000-000000000002'$$, '42501');
+select tests.expect_rows('nor delete one (admin only)',
+  $$with d as (delete from public.assessment_cycles where id = '10000000-0000-0000-0000-000000000002' returning 1) select count(*) from d$$, 0);
+insert into public.responses (id, cycle_id, indicator_id, validated_by, validated_at) values
+  ('20000000-0000-0000-0000-000000000009', '10000000-0000-0000-0000-000000000009', 'A1.1', '00000000-0000-0000-0000-00000000000c', now());
+select tests.expect_eq('a client cannot pre-fill validation stamps',
+  (select coalesce(validated_by::text, 'null') from public.responses where id = '20000000-0000-0000-0000-000000000009'), 'null');
+select tests.expect_error('a response cannot be moved to another cycle',
+  $$update public.responses set cycle_id = '10000000-0000-0000-0000-000000000001', version = 1 where id = '20000000-0000-0000-0000-000000000009'$$, '42501');
+insert into public.evidence (id, response_id, kind, strength, title) values
+  ('30000000-0000-0000-0000-000000000009', '20000000-0000-0000-0000-000000000009', 'document', 'approved_in_use', 'EO 2026-01');
+update public.responses set score = 3, status = 'provisional', version = 1 where id = '20000000-0000-0000-0000-000000000009';
+select tests.login('00000000-0000-0000-0000-00000000000c');  -- validator
+update public.responses set status = 'validated', version = 2 where id = '20000000-0000-0000-0000-000000000009';
+select tests.login('00000000-0000-0000-0000-00000000000b');
+select tests.expect_error('evidence behind a validated score is locked',
+  $$update public.evidence set kind = 'photo', strength = 'partial', title = 'swapped', version = 1 where id = '30000000-0000-0000-0000-000000000009'$$, '42501');
+select tests.expect_error('and cannot be added to',
+  $$insert into public.evidence (response_id, kind, strength, title) values ('20000000-0000-0000-0000-000000000009', 'document', 'approved_in_use', 'extra')$$, '42501');
+select tests.login('00000000-0000-0000-0000-00000000000a');
+select tests.expect_error('even an admin cannot delete a cycle with validated scores',
+  $$delete from public.assessment_cycles where id = '10000000-0000-0000-0000-000000000009'$$, '42501');
+
+-- Manual text.
+select tests.login('00000000-0000-0000-0000-000000000012');  -- author
+insert into public.moo_versions (id, document_id, label, body_md)
+values ('a0000000-0000-0000-0000-000000000009', (select id from public.moo_documents where code = 'EOC Ch.2'), 'v0.3 draft', '# not approved');
+select tests.expect_error('an author cannot make a draft the current text',
+  $$update public.moo_documents set current_version_id = 'a0000000-0000-0000-0000-000000000009', version = version where code = 'EOC Ch.2'$$, '42501');
+select tests.expect_rows('nor delete an approved version',
+  $$with d as (delete from public.moo_versions where id = 'a0000000-0000-0000-0000-000000000001' returning 1) select count(*) from d$$, 0);
+select tests.expect_rows('nor delete a document',
+  $$with d as (delete from public.moo_documents where code = 'EOC Ch.2' returning 1) select count(*) from d$$, 0);
+
+-- Resource requests and attribution.
+select tests.login('00000000-0000-0000-0000-00000000000e');  -- duty officer
+select tests.expect_error('a request cannot be created already approved',
+  $$insert into public.resource_requests (requesting_party, item, quantity, status) values ('Brgy Cogon', 'Fuel', 2000, 'approved')$$, '42501');
+insert into public.sitreps (id, period_start, period_end, situation, prepared_by, approved_by, approved_at)
+values ('60000000-0000-0000-0000-000000000009', now() - interval '6 hours', now(), 'v1.2', '00000000-0000-0000-0000-000000000011', '00000000-0000-0000-0000-000000000011', now());
+select tests.expect_eq('SitRep attribution is the server''s',
+  (select prepared_by::text || '/' || coalesce(approved_by::text, 'null') from public.sitreps where id = '60000000-0000-0000-0000-000000000009'),
+  '00000000-0000-0000-0000-00000000000e/null');
+
+-- Declarations: PDRA, lead time, fixed facts, server clocks.
+select tests.login('00000000-0000-0000-0000-000000000011');  -- CDRRMO Head
+insert into public.declarations (id, hazard_code, expected_impact_at) values
+  ('80000000-0000-0000-0000-000000000009', 'tropical_cyclone', now() + interval '6 hours');
+select tests.expect_error('a City request needs a PDRA that decided to request a declaration',
+  $$update public.declarations set status = 'requested', version = 1 where id = '80000000-0000-0000-0000-000000000009'$$, '23514');
+insert into public.pdra_sessions (id, hazard_code, forecast_source, forecast_issued_at, expected_impact_at, conducted_at, impact_class, decision, decision_basis)
+values ('70000000-0000-0000-0000-000000000009', 'tropical_cyclone', 'PAGASA TCB #1', now() - interval '5 days', now() + interval '6 hours',
+        now() - interval '4 days', 'severe', 'request_declaration', 'backdated PDRA');
+update public.declarations set pdra_id = '70000000-0000-0000-0000-000000000009', version = 1 where id = '80000000-0000-0000-0000-000000000009';
+select tests.expect_error('lead time is measured when the request is sent, on server time',
+  $$update public.declarations set status = 'requested', version = 2 where id = '80000000-0000-0000-0000-000000000009'$$, '23514');
+insert into public.pdra_sessions (id, hazard_code, forecast_source, forecast_issued_at, expected_impact_at, impact_class, decision, decision_basis)
+values ('70000000-0000-0000-0000-00000000000a', 'tropical_cyclone', 'PAGASA TCB #2', now() - interval '1 hour', now() + interval '100 hours', 'severe', 'request_declaration', 'v1.2');
+insert into public.declarations (id, pdra_id, hazard_code, expected_impact_at) values
+  ('80000000-0000-0000-0000-00000000000a', '70000000-0000-0000-0000-00000000000a', 'tropical_cyclone', now() + interval '100 hours');
+update public.declarations set status = 'requested', requested_at = '2026-01-01', version = 1 where id = '80000000-0000-0000-0000-00000000000a';
+select tests.expect_eq('a request time older than a day is replaced by the server time',
+  (select (requested_at > now() - interval '1 minute')::text from public.declarations where id = '80000000-0000-0000-0000-00000000000a'), 'true');
+select tests.expect_error('the expected impact is fixed once requested',
+  $$update public.declarations set expected_impact_at = now() + interval '30 days', version = 2 where id = '80000000-0000-0000-0000-00000000000a'$$, '42501');
+select tests.expect_ok('and recorded times do not move',
+  $$update public.declarations set requested_at = now() - interval '2 hours', rdrrmc_due_at = now() + interval '9 days', version = 2 where id = '80000000-0000-0000-0000-00000000000a'$$);
+select tests.expect_eq('the RDRRMC clock still runs from the original time',
+  (select extract(epoch from (rdrrmc_due_at - requested_at))::int::text from public.declarations where id = '80000000-0000-0000-0000-00000000000a'), '86400');
+
+-- AA funds.
+select tests.expect_error('an allocation cannot drop below what was disbursed',
+  $$update public.aa_fund_years set aa_allocation = 1000, version = version where fiscal_year = 2026$$, '23514');
 
 reset role;
 select tests.expect_eq('audit trail recorded', ((select count(*) from public.audit_log) > 50)::text, 'true');

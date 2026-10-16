@@ -14,7 +14,9 @@ create table if not exists auth.users (
   id uuid primary key,
   email text unique,
   raw_user_meta_data jsonb default '{}'::jsonb,
-  created_at timestamptz default now()
+  created_at timestamptz default now(),
+  email_confirmed_at timestamptz default now(),   -- test users count as confirmed unless a test says otherwise
+  last_sign_in_at timestamptz
 );
 
 -- Same resolution order as Supabase: legacy single claim, then the JSON claims PostgREST sets.
