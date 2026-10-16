@@ -113,7 +113,7 @@ Conflicts and refusals are listed under Settings → Sync with the server's reas
 
 ## 7. Security and privacy
 
-- Sign-in uses Supabase Auth. New accounts have no roles until an admin grants them.
+- Sign-in uses Supabase Auth. Anyone can create an account (email confirmed); it reads nothing until an administrator grants a role, which is the approval step (ADR-009). The administrator sees the verified email, and grants only to confirmed addresses.
 - RLS is enabled on every table. SECURITY DEFINER helpers use a fixed `search_path`. Grants are minimal: the logbook allows insert and select only.
 - Record locks:
   - Validated responses, approved SOP versions, approved SitReps, and closed protocol runs with their step snapshots cannot be edited.
@@ -121,7 +121,8 @@ Conflicts and refusals are listed under Settings → Sync with the server's reas
   - Evidence cannot be moved to another response.
 - Evidence files sit in a private bucket. They are opened from the device copy when there is one, otherwise through a five-minute signed URL.
 - Personal data is limited to staff identity and role. The platform holds no names of affected persons, evacuees, beneficiaries or informants, and screens remind users of this (ADR-002).
-- Signing out clears the local database on that device.
+- Signing out clears the local database on that device, also offline. Queued changes carry the account that made them and are sent only under that account; a different account signing in removes the previous account's synced copy first.
+- Who-did-what columns (created by, prepared by, validated by, done by) are set by the server, never by the client. Legal clocks for declarations use server time (a device time is accepted only within the last 24 hours).
 
 ## 8. Traceability to the master requirements
 
@@ -152,11 +153,11 @@ The platform provides **the means** for each requirement. The MOO and EOC Manual
 
 | Suite | What it proves | Command |
 |---|---|---|
-| SQL rules and security (128 checks) | Every rule and RLS policy, run as each role on Postgres 16 | `scripts/db_test.sh` |
-| Unit (68) | Scoring, AA rules, ids, sync engine with a fake client, CSV import, citation parsing against every reference in the data; TS = SQL scoring parity | `npm test` |
-| Integration (8) | Real supabase-js → PostgREST 12 → Postgres: evidence gate, conflict, RLS refusal, offline protocol ids, logbook replay, AA checklist ids, viewer pull, vault sync and access | `npm run test:it` |
-| End-to-end (Playwright, phone and desktop) | Main journeys in demo mode; offline open and logbook save; dark mode contrast; vault journey; reference notes; tooltip on every control of 21 screens, hover, keyboard and long press | `npm run test:e2e` |
-| Accessibility (axe, WCAG 2.1 AA) | No serious or critical violations on every main screen | part of `npm run e2e` |
+| SQL rules and security (172 checks) | Every rule and RLS policy, run as each role on Postgres 16 | `scripts/db_test.sh` |
+| Unit (81) | Scoring, AA rules, ids, sync engine with a fake client, CSV import, citation parsing against every reference in the data; TS = SQL scoring parity | `npm test` |
+| Integration (11) | Real supabase-js → PostgREST 12 → Postgres: evidence gate, conflict, RLS refusal, offline protocol ids, logbook replay, AA checklist ids, viewer pull, vault sync and access, repeated edits, keyset paging past 1,000 rows, a pending account reads nothing | `npm run test:it` |
+| End-to-end (Playwright, phone and desktop) | Against real migrations and RLS through PostgREST: sign-up, email confirmation, waiting for approval, approval by an administrator, password reset, sign-out; main journeys; offline open and logbook save; dark mode contrast; vault journey; reference notes; tooltip on every control of 21 screens, hover, keyboard and long press | `npm run test:e2e` |
+| Accessibility (axe, WCAG 2.1 AA) | No serious or critical violations on every main screen | part of `npm run test:e2e` |
 
 The integration suite found two defects that the fake client could not show, and both are fixed. First, version conflicts used SQLSTATE 40001, which PostgREST retries forever. Second, append-only rows were sent with a `version` column that does not exist.
 
