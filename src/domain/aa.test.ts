@@ -16,13 +16,20 @@ describe('PDRA decision (RA 12287 Sec. 6)', () => {
   it('needs severe impact', () => expect(pdraDecisionProblem({ ...p, impact_class: 'moderate', expected_impact_at: at(96) })).toMatch(/severe/));
   it('needs 72 hours', () => expect(pdraDecisionProblem({ ...p, expected_impact_at: at(48) })).toMatch(/48 hours/));
   it('accepts severe with 3 days', () => expect(pdraDecisionProblem({ ...p, expected_impact_at: at(72) })).toBeNull());
+  it('does not round 71.96 hours up to 72 (the server compares the exact value)', () =>
+    expect(pdraDecisionProblem({ ...p, expected_impact_at: at(71.96) })).toMatch(/Only 71.9 hours/));
   it('ignores other decisions', () => expect(pdraDecisionProblem({ ...p, decision: 'local_early_action', expected_impact_at: at(6) })).toBeNull());
 });
 
 describe('declaration steps', () => {
   it('sets the 24-hour RDRRMC clock', () => {
-    const patch = advanceDeclaration(decl(), 'requested', {}, base);
+    const patch = advanceDeclaration(decl({ pdra_id: 'p' }), 'requested', {}, base);
     expect(patch.rdrrmc_due_at).toBe(at(24));
+  });
+  it('a City request needs its PDRA and 72 hours left when it is sent (as the server checks)', () => {
+    expect(() => advanceDeclaration(decl(), 'requested', {}, base)).toThrow(/PDRA/);
+    expect(() => advanceDeclaration(decl({ pdra_id: 'p', expected_impact_at: at(71.96) }), 'requested', {}, base)).toThrow(/Only 71.9 hours/);
+    expect(advanceDeclaration(decl({ pdra_id: 'p', expected_impact_at: at(72) }), 'requested', {}, base).status).toBe('requested');
   });
   it('blocks a city declaration without recommendation', () => {
     expect(() => advanceDeclaration(decl(), 'declared', { eo_number: 'EO 1' }, base)).toThrow(/RDRRMC recommendation/);

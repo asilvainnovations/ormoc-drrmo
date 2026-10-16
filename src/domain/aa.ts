@@ -18,6 +18,11 @@ const r1 = (n: number) => Math.round((n + Number.EPSILON) * 10) / 10;
 
 export const hoursBetween = (fromIso: string | Date, toIso: string | Date) =>
   r1((new Date(toIso).getTime() - new Date(fromIso).getTime()) / HOUR);
+/** Unrounded hours: legal thresholds compare this value, exactly as the server does. */
+export const rawHoursBetween = (fromIso: string | Date, toIso: string | Date) =>
+  (new Date(toIso).getTime() - new Date(fromIso).getTime()) / HOUR;
+/** Hours left, shown without ever rounding up past a threshold (71.96 h shows as 71.9). */
+export const floorHours = (h: number) => Math.floor(h * 10) / 10;
 
 /** Maximum AA allocation: 10% of the 70% LDRRMF. */
 export const aaCap = (ldrrmfTotal: number, p = DEFAULT_AA_PARAMS) => r2(ldrrmfTotal * 0.7 * p.aa_share_of_ldrrmf_70);
@@ -25,9 +30,9 @@ export const aaCap = (ldrrmfTotal: number, p = DEFAULT_AA_PARAMS) => r2(ldrrmfTo
 export function pdraDecisionProblem(input: { impact_class: ImpactClass; decision: PdraDecision; expected_impact_at: string; conducted_at: string; decision_basis?: string | null }, p = DEFAULT_AA_PARAMS): string | null {
   if (input.decision !== 'request_declaration') return null;
   if (input.impact_class !== 'severe') return 'A State of Imminent Disaster needs impacts classified as severe. Choose city early action instead.';
-  const lead = hoursBetween(input.conducted_at, input.expected_impact_at);
+  const lead = rawHoursBetween(input.conducted_at, input.expected_impact_at);
   if (lead < p.min_declaration_lead_hours) {
-    return `Only ${lead} hours of lead time remain; a declaration needs at least ${p.min_declaration_lead_hours}. Use city early action under the City's own authority.`;
+    return `Only ${floorHours(lead)} hours of lead time remain; a declaration needs at least ${p.min_declaration_lead_hours}. Use city early action under the City's own authority.`;
   }
   if (!input.decision_basis?.trim()) return 'Record the basis for requesting a declaration.';
   return null;
@@ -51,6 +56,13 @@ export function advanceDeclaration(d: Declaration, to: DeclarationStatus, input:
   switch (to) {
     case 'requested':
       if (d.origin !== 'city_request') throw new Error('Adopted declarations are not requested from the RDRRMC.');
+      if (!d.pdra_id) throw new Error('A City request needs a PDRA that found severe impacts and decided to request a declaration.');
+      {
+        const left = rawHoursBetween(now, d.expected_impact_at);
+        if (left < p.min_declaration_lead_hours) {
+          throw new Error(`Only ${floorHours(left)} hours of lead time remain; a declaration needs at least ${p.min_declaration_lead_hours}. Use city early action under the City's own authority.`);
+        }
+      }
       patch.requested_at = iso;
       patch.rdrrmc_due_at = new Date(now.getTime() + p.rdrrmc_reply_hours * HOUR).toISOString();
       break;
