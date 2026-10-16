@@ -1,15 +1,13 @@
 import { NavLink, Link, Outlet } from 'react-router-dom';
 import clsx from 'clsx';
-import { BookOpen, ClipboardCheck, FolderLock, House, ListChecks, RadioTower, Settings, CloudOff, RefreshCw, AlertTriangle, Check, MonitorSmartphone } from 'lucide-react';
+import { BookOpen, ClipboardCheck, FolderLock, House, ListChecks, RadioTower, Settings, CloudOff, RefreshCw, AlertTriangle, Check } from 'lucide-react';
 import { LEVEL_INFO } from '@/domain/eoc';
 import { useActiveDeclaration, useEocStatus, useNow, usePending } from '@/lib/hooks';
 import { useSyncState } from '@/lib/sync';
 import { duration, fmtTime, relative } from '@/lib/time';
 import { hoursBetween } from '@/domain/aa';
-import { env } from '@/lib/env';
 import { useAuth } from '@/lib/auth';
 import { canUseVault } from '@/features/vault/access';
-import { UpdatePrompt } from './UpdatePrompt';
 import { tip } from './Tooltip';
 import { BrandLockup } from './Brand';
 
@@ -34,8 +32,7 @@ export function StatusBand() {
 
   // Full text on wider screens; a short form on phones so nothing is truncated.
   let syncText: string; let syncShort: string; let SyncIcon = Check;
-  if (env.demo) { syncText = 'Demo: data stays on this device'; syncShort = 'Demo'; SyncIcon = MonitorSmartphone; }
-  else if (sync.status === 'offline') { syncText = pending.outbox ? `Offline, ${pending.outbox} waiting` : 'Offline'; syncShort = pending.outbox ? `Offline, ${pending.outbox}` : 'Offline'; SyncIcon = CloudOff; }
+  if (sync.status === 'offline') { syncText = pending.outbox ? `Offline, ${pending.outbox} waiting` : 'Offline'; syncShort = pending.outbox ? `Offline, ${pending.outbox}` : 'Offline'; SyncIcon = CloudOff; }
   else if (sync.status === 'syncing') { syncText = 'Syncing'; syncShort = 'Syncing'; SyncIcon = RefreshCw; }
   else if (pending.failed || pending.conflicts) { syncText = `${pending.failed + pending.conflicts} need attention`; syncShort = `${pending.failed + pending.conflicts} to check`; SyncIcon = AlertTriangle; }
   else if (pending.outbox) { syncText = `${pending.outbox} waiting`; syncShort = `${pending.outbox} waiting`; SyncIcon = RefreshCw; }
@@ -97,7 +94,6 @@ export function AppShell() {
       </nav>
 
       <StatusBand />
-      <UpdatePrompt />
       <main id="main" tabIndex={-1} className="outline-none"><Outlet /></main>
 
       {/* Phone tab bar: thumb reach */}
