@@ -37,11 +37,11 @@ test('references: a citation opens a plain-language note', async ({ page }) => {
   await expect(note).toHaveCount(0);
 });
 
-test('the vault is closed to roles outside the list', async ({ page }) => {
-  await page.goto('/settings');
-  for (const r of ['CDRRMO Head', 'EOC Manager', 'Assessor', 'Validator']) await page.getByLabel(new RegExp(`^${r}`)).uncheck();
-  await page.getByLabel(/^Viewer/).check();
+test.describe('as a viewer', () => {
+  test.use({ storageState: 'e2e/.auth/viewer.json' });
+  test('the vault is closed to roles outside the list', async ({ page }) => {
   await page.goto('/vault');
   await expect(page.getByText('Not available for your role')).toBeVisible();
   await expect(page.getByRole('link', { name: 'Vault' })).toHaveCount(0);
+});
 });
