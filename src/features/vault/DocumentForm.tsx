@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '@/lib/db';
-import { save, queueUpload } from '@/lib/store';
+import { save, queueUpload, uploadProblem, fileType } from '@/lib/store';
 import { uuid } from '@/lib/ids';
 import { Button, Field, Input, Select, Textarea } from '@/components/ui';
 import { Sheet } from '@/components/Sheet';
@@ -13,7 +13,6 @@ import { INSTRUMENTS } from '@/data/references';
 import type { VaultCategory, VaultDocument } from '@/types';
 import { CATEGORY, CATEGORY_TIP } from './labels';
 
-const MAX_BYTES = 25 * 1024 * 1024;
 const ACCEPT = '.pdf,.jpg,.jpeg,.png,.webp,.heic,.doc,.docx,.xls,.xlsx,.pptx,.txt';
 
 export interface Prefill { indicatorIds?: string[]; refKey?: string }
@@ -40,7 +39,7 @@ export function DocumentForm({ open, onClose, editing, prefill, onSaved }: {
   const ids = f.indicators.split(/[\s,;]+/).map((x) => x.trim().toUpperCase()).filter(Boolean);
   const unknown = ids.filter((x) => !known.has(x));
   const urlBad = f.url.trim() !== '' && !/^https:\/\//i.test(f.url.trim());
-  const fileBad = file && file.size > MAX_BYTES ? 'The file is larger than 25 MB.' : null;
+  const fileBad = file && !editing?.storage_path ? uploadProblem(file, 'vault') : null;
   const problem = !f.title.trim() ? 'Give the document a title.' : unknown.length ? `Unknown indicator: ${unknown.join(', ')}` : urlBad ? 'Links must start with https://' : fileBad;
 
   const submit = async () => {
@@ -55,7 +54,7 @@ export function DocumentForm({ open, onClose, editing, prefill, onSaved }: {
         doc_date: f.doc_date || null, summary: f.summary.trim() || null, indicator_ids: Array.from(new Set(ids)).sort(), url: f.url.trim() || null,
         location: f.location.trim() || null, storage_path: path,
         file_name: file && !editing?.storage_path ? file.name : editing?.file_name ?? null,
-        mime_type: file && !editing?.storage_path ? file.type || null : editing?.mime_type ?? null,
+        mime_type: file && !editing?.storage_path ? fileType(file) || null : editing?.mime_type ?? null,
         size_bytes: file && !editing?.storage_path ? file.size : editing?.size_bytes ?? null,
       };
       // Record first: the server only accepts a file into the folder of an existing record.
