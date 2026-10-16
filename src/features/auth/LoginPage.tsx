@@ -1,61 +1,161 @@
-import { useState, type FormEvent } from 'react';
-import { Navigate, useLocation, useNavigate } from 'react-router-dom';
-import { useAuth } from '@/lib/auth';
-import { env } from '@/lib/env';
-import { Button, Field, Input, Notice } from '@/components/ui';
-import { BrandLockup } from '@/components/Brand';
+import { useEffect, useState, type FormEvent } from 'react';
+import { Navigate, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
+import { MIN_PASSWORD, passwordProblem, useAuth } from '@/lib/auth';
+import { Button, Checkbox, Field, Input, Notice } from '@/components/ui';
 import { tip } from '@/components/Tooltip';
+import { AuthLayout, formCard } from './AuthLayout';
+
+type Mode = 'signin' | 'signup' | 'forgot';
+
+const MODES: { mode: Mode; label: string; tip: string }[] = [
+  { mode: 'signin', label: 'Have an account', tip: 'Sign in to an account you already have' },
+  { mode: 'signup', label: 'New account', tip: 'New here? Create an account. An administrator approves it before you see City records' },
+];
 
 export function LoginPage() {
-  const { userId, ready, signInWithPassword, sendMagicLink } = useAuth();
-  const nav = useNavigate();
+  const { userId, ready } = useAuth();
   const loc = useLocation() as { state?: { from?: string } };
+  const [params, setParams] = useSearchParams();
+  const mode = (['signin', 'signup', 'forgot'].includes(params.get('mode') ?? '') ? params.get('mode') : 'signin') as Mode;
+  const setMode = (m: Mode) => setParams(m === 'signin' ? {} : { mode: m }, { replace: true });
+
+  if (ready && userId) return <Navigate to={loc.state?.from ?? '/'} replace />;
+
+  return (
+    <AuthLayout title="Ormoc City DRRM and Emergency Operations"
+      intro="For CDRRMO, EOC and partner office staff of the City of Ormoc. Any email address can be used, including a personal one.">
+      {mode !== 'forgot' && (
+        <div role="group" aria-label="Account" className="mt-8 grid grid-cols-2 gap-1 rounded-control border border-line bg-sunken p-1">
+          {MODES.map((m) => (
+            <button key={m.mode} type="button" aria-pressed={mode === m.mode} onClick={() => setMode(m.mode)} {...tip(m.tip)}
+              className={`min-h-tap rounded-control px-3 font-semibold ${mode === m.mode ? 'bg-surface text-ink shadow-raised' : 'text-muted hover:text-ink'}`}>{m.label}</button>
+          ))}
+        </div>
+      )}
+      {mode === 'signin' && <SignInForm onForgot={() => setMode('forgot')} from={loc.state?.from} />}
+      {mode === 'signup' && <SignUpForm onSignIn={() => setMode('signin')} />}
+      {mode === 'forgot' && <ForgotForm onBack={() => setMode('signin')} />}
+    </AuthLayout>
+  );
+}
+
+function SignInForm({ onForgot, from }: { onForgot: () => void; from?: string }) {
+  const { signInWithPassword, sendMagicLink, resendConfirmation } = useAuth();
+  const nav = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [sent, setSent] = useState(false);
-
-  if (env.demo || (ready && userId)) return <Navigate to={loc.state?.from ?? '/'} replace />;
+  const [sent, setSent] = useState<string | null>(null);
+  const unconfirmed = error?.startsWith('Confirm your email');
 
   const submit = async (e: FormEvent) => {
-    e.preventDefault(); setBusy(true); setError(null);
+    e.preventDefault(); setBusy(true); setError(null); setSent(null);
     try {
-      if (password) { await signInWithPassword(email.trim(), password); nav(loc.state?.from ?? '/', { replace: true }); }
-      else { await sendMagicLink(email.trim()); setSent(true); }
+      if (password) { await signInWithPassword(email.trim(), password); nav(from ?? '/', { replace: true }); }
+      else { await sendMagicLink(email.trim()); setSent(`If ${email.trim()} has an account, a sign-in link is on its way. Open it on this device.`); }
     } catch (err) { setError((err as Error).message); } finally { setBusy(false); }
+  };
+  const resend = async () => {
+    setBusy(true);
+    try { await resendConfirmation(email.trim()); setError(null); setSent(`We sent the confirmation link to ${email.trim()} again.`); }
+    catch (err) { setError((err as Error).message); } finally { setBusy(false); }
   };
 
   return (
-    <div className="min-h-dvh bg-paper lg:grid lg:grid-cols-[minmax(0,1.35fr)_minmax(24rem,1fr)]">
-      {/* The City banner. Navy behind it matches the artwork's edges when it is letterboxed. */}
-      <div className="relative overflow-hidden bg-banner lg:sticky lg:top-0 lg:flex lg:h-dvh lg:items-center">
-        <div aria-hidden className="absolute inset-0 hidden scale-110 bg-cover bg-center opacity-40 blur-2xl lg:block" style={{ backgroundImage: "url('/brand/app-banner-800.webp')" }} />
-        <picture className="relative block w-full">
-          <source type="image/webp" srcSet="/brand/app-banner-800.webp 800w, /brand/app-banner-1600.webp 1600w" sizes="(min-width: 1024px) 58vw, 100vw" />
-          <img src="/brand/app-banner-800.jpg" srcSet="/brand/app-banner-800.jpg 800w, /brand/app-banner-1600.jpg 1600w" sizes="(min-width: 1024px) 58vw, 100vw"
-            alt="DRRM and Emergency Operations Platform: prepare before, respond together, recover stronger, build safer communities"
-            width={1600} height={916} className="block h-auto w-full lg:max-h-dvh lg:object-contain" fetchPriority="high" />
-        </picture>
-        <div className="h-1.5 w-full bg-accent-bright lg:absolute lg:inset-y-0 lg:right-0 lg:h-auto lg:w-1.5" aria-hidden />
-      </div>
+    <form onSubmit={submit} className={formCard} noValidate aria-label="Sign in">
+      {sent && <Notice tone="ok" title="Check your email">{sent}</Notice>}
+      <Field label="Email" error={error}>
+        {(id, d) => <Input id={id} aria-describedby={d} type="email" autoComplete="email" inputMode="email" required value={email} onChange={(e) => setEmail(e.target.value)} {...tip('The email address of your account')} />}
+      </Field>
+      {unconfirmed && <Button type="button" variant="secondary" busy={busy} onClick={resend} tip="Email the confirmation link again">Send the confirmation link again</Button>}
+      <Field label="Password" optional hint="Leave empty to get a sign-in link by email instead.">
+        {(id, d) => <Input id={id} aria-describedby={d} type="password" autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} {...tip('Your password, or leave it empty to sign in with an emailed link')} />}
+      </Field>
+      <Button type="submit" full size="lg" busy={busy} disabled={!email.includes('@')} tip={password ? 'Sign in with your email and password' : 'We email you a one-time link. Open it on this device to sign in'}>{password ? 'Sign in' : 'Email me a sign-in link'}</Button>
+      <button type="button" onClick={onForgot} className="min-h-tap font-semibold text-ink underline" {...tip('Set a new password through a link sent to your email')}>Forgot your password?</button>
+    </form>
+  );
+}
 
-      <main className="mx-auto flex w-full max-w-md flex-col justify-center px-4 py-8 lg:py-12">
-        <BrandLockup size={52} />
-        <h1 className="mt-6 text-3xl font-extrabold">Ormoc City DRRM and Emergency Operations</h1>
-        <p className="mt-2 text-muted">For CDRRMO, EOC and partner office staff of the City of Ormoc. Sign in with the email address your invitation was sent to. Any address can be invited, including a personal one.</p>
-        <form onSubmit={submit} className="mt-8 space-y-5 rounded-sheet border border-line bg-surface p-5 shadow-raised" noValidate>
-          {sent && <Notice tone="ok" title="Check your email">We sent a sign-in link to {email}. Open it on this device.</Notice>}
-          <Field label="Email" error={error}>
-            {(id, d) => <Input id={id} aria-describedby={d} type="email" autoComplete="email" inputMode="email" required value={email} onChange={(e) => setEmail(e.target.value)} {...tip('The email address your invitation was sent to')} />}
-          </Field>
-          <Field label="Password" optional hint="Leave empty to get a sign-in link by email instead.">
-            {(id, d) => <Input id={id} aria-describedby={d} type="password" autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} {...tip('Your password, or leave it empty to sign in with an emailed link')} />}
-          </Field>
-          <Button type="submit" full size="lg" busy={busy} disabled={!email.includes('@')} tip={password ? 'Sign in with your email and password' : 'We email you a one-time link. Open it on this device to sign in'}>{password ? 'Sign in' : 'Email me a sign-in link'}</Button>
-        </form>
-        <p className="mt-8 text-sm text-muted">Data is held by the City Government of Ormoc under the Data Privacy Act of 2012 (RA 10173). Do not enter the names of affected persons or informants.</p>
-      </main>
-    </div>
+function SignUpForm({ onSignIn }: { onSignIn: () => void }) {
+  const { signUp } = useAuth();
+  const [f, setF] = useState({ name: '', position: '', email: '', password: '', confirm: '' });
+  const [consent, setConsent] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [done, setDone] = useState(false);
+  // A message about the form disappears as soon as the person changes something.
+  useEffect(() => { setError(null); }, [f, consent]);
+  const pwProblem = f.password ? passwordProblem(f.password, f.email) : null;
+  const mismatch = f.confirm && f.confirm !== f.password ? 'The two passwords do not match.' : null;
+  const problem = !f.name.trim() ? 'Enter your full name.' : !f.email.includes('@') ? 'Enter your email address.'
+    : passwordProblem(f.password, f.email) ?? (f.confirm !== f.password ? 'The two passwords do not match.' : null) ?? (!consent ? 'Agree to the data privacy notice.' : null);
+
+  const submit = async (e: FormEvent) => {
+    e.preventDefault(); if (problem) { setError(problem); return; }
+    setBusy(true); setError(null);
+    try { await signUp(f.email.trim(), f.password, f.name, f.position); setDone(true); }
+    catch (err) { setError((err as Error).message); } finally { setBusy(false); }
+  };
+
+  if (done) {
+    return (
+      <div className={formCard}>
+        <Notice tone="ok" title="Check your email">
+          We sent a confirmation link to {f.email.trim()}. Open it to confirm your address. After that, a system administrator reviews your account and grants your role. You will see City records once they do.
+        </Notice>
+        <Button full variant="secondary" onClick={onSignIn} tip="Go back to sign in">Back to sign in</Button>
+      </div>
+    );
+  }
+  return (
+    <form onSubmit={submit} className={formCard} noValidate aria-label="Create an account">
+      <Notice tone="info">New accounts see nothing until a system administrator approves them and grants a role.</Notice>
+      <Field label="Full name" hint="As the administrator knows you, for example: Maria Santos.">
+        {(id, d) => <Input id={id} aria-describedby={d} autoComplete="name" value={f.name} onChange={(e) => setF({ ...f, name: e.target.value })} />}
+      </Field>
+      <Field label="Position and office" optional hint="For example: LDRRMO III, CDRRMO Operations.">
+        {(id, d) => <Input id={id} aria-describedby={d} autoComplete="organization-title" value={f.position} onChange={(e) => setF({ ...f, position: e.target.value })} />}
+      </Field>
+      <Field label="Email">
+        {(id, d) => <Input id={id} aria-describedby={d} type="email" autoComplete="email" inputMode="email" value={f.email} onChange={(e) => setF({ ...f, email: e.target.value })} />}
+      </Field>
+      <Field label="Password" hint={`At least ${MIN_PASSWORD} characters, with letters and a number.`} error={pwProblem}>
+        {(id, d) => <Input id={id} aria-describedby={d} type="password" autoComplete="new-password" value={f.password} onChange={(e) => setF({ ...f, password: e.target.value })} />}
+      </Field>
+      <Field label="Password again" error={mismatch}>
+        {(id, d) => <Input id={id} aria-describedby={d} type="password" autoComplete="new-password" value={f.confirm} onChange={(e) => setF({ ...f, confirm: e.target.value })} />}
+      </Field>
+      <Checkbox checked={consent} onChange={() => setConsent(!consent)} className="flex py-2"
+        tip="Required under the Data Privacy Act of 2012 (RA 10173)">
+        <span className="text-sm">I agree that the City Government of Ormoc keeps my name, position, office and email to run my account, under the Data Privacy Act of 2012 (RA 10173).</span>
+      </Checkbox>
+      {error && <p role="alert" className="text-sm font-semibold text-bad">{error}</p>}
+      <Button type="submit" full size="lg" busy={busy} tip={problem ?? 'Create the account. We email you a link to confirm your address'}>Create account</Button>
+    </form>
+  );
+}
+
+function ForgotForm({ onBack }: { onBack: () => void }) {
+  const { requestPasswordReset } = useAuth();
+  const [email, setEmail] = useState('');
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [sent, setSent] = useState(false);
+  const submit = async (e: FormEvent) => {
+    e.preventDefault(); setBusy(true); setError(null);
+    try { await requestPasswordReset(email.trim()); setSent(true); } catch (err) { setError((err as Error).message); } finally { setBusy(false); }
+  };
+  return (
+    <form onSubmit={submit} className={formCard} noValidate aria-label="Reset your password">
+      <h2 className="text-xl font-bold">Reset your password</h2>
+      {sent && <Notice tone="ok" title="Check your email">If {email.trim()} has an account, a link to set a new password is on its way.</Notice>}
+      <Field label="Email" error={error}>
+        {(id, d) => <Input id={id} aria-describedby={d} type="email" autoComplete="email" inputMode="email" value={email} onChange={(e) => setEmail(e.target.value)} />}
+      </Field>
+      <Button type="submit" full size="lg" busy={busy} disabled={!email.includes('@')} tip="Email me a link to set a new password">Email me a reset link</Button>
+      <button type="button" onClick={onBack} className="min-h-tap font-semibold text-ink underline" {...tip('Go back to sign in')}>Back to sign in</button>
+    </form>
   );
 }
