@@ -5,7 +5,7 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 DB=drrm_parity
-scripts/db_test_reset.sh $DB >/dev/null
+bash scripts/db_test_reset.sh $DB >/dev/null
 psql -q -v ON_ERROR_STOP=1 -d $DB << 'SQL'
 insert into public.assessment_cycles (id, name, cycle_year) values ('11111111-1111-1111-1111-111111111111', 'Parity', 2026);
 insert into public.responses (id, cycle_id, indicator_id)

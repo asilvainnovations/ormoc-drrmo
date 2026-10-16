@@ -5,7 +5,7 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 export IT_DB=drrm_it
 export JWT_SECRET=${JWT_SECRET:-integration-secret-at-least-32-characters-long}
-scripts/db_test_reset.sh $IT_DB
+bash scripts/db_test_reset.sh $IT_DB
 psql -q -v ON_ERROR_STOP=1 -d $IT_DB -f tests/integration/fixtures.sql
 cat > /tmp/pgrst-it.conf << CONF
 db-uri = "postgres://authenticator:authenticator-it@/$IT_DB?host=${PGHOST}&port=${PGPORT}"
