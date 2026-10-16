@@ -1,8 +1,8 @@
 import { tip } from '@/components/Tooltip';
 import { checkBarangayList, ORMOC_BARANGAY_COUNT } from '@/domain/barangays';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { LogOut, RefreshCw, Upload } from 'lucide-react';
+import { RefreshCw, Upload } from 'lucide-react';
 import { db } from '@/lib/db';
 import { save } from '@/lib/store';
 import { syncNow, useSyncState } from '@/lib/sync';
@@ -11,82 +11,95 @@ import { ALL_ROLES, ROLE_LABEL, useAuth } from '@/lib/auth';
 import { env } from '@/lib/env';
 import { fmtDateTime, relative } from '@/lib/time';
 import { useOnline } from '@/lib/hooks';
-import { Badge, Button, Checkbox, EmptyState, Field, List, ListRow, Notice, PageHeader, Section, Textarea, TextLink } from '@/components/ui';
+import { Badge, Button, Checkbox, Field, Input, List, ListRow, Loading, Notice, PageHeader, Section, Select, Textarea, TextLink } from '@/components/ui';
+import { SignOutBlock } from '@/features/auth/AccountGatePages';
 import { useToast } from '@/components/Toast';
 import type { Barangay, Role } from '@/types';
 
 export function SettingsPage() {
-  const { profile, email, roles, signOut, setDemoRoles, has } = useAuth();
-  const toast = useToast();
-  const [busy, setBusy] = useState(false);
+  const { profile, email, roles, has } = useAuth();
   return (
     <div className="page">
       <PageHeader title="Settings" />
       <Section title="Your account">
         <p className="font-semibold">{profile?.full_name || 'Name not set'}</p>
         <p className="text-muted">{email}{profile?.position ? `, ${profile.position}` : ''}</p>
-        <p className="mt-2 flex flex-wrap gap-1.5">{roles.length ? roles.map((r) => <Badge key={r}>{ROLE_LABEL[r]}</Badge>) : <Badge tone="warn">No role yet: ask the administrator</Badge>}</p>
+        <p className="mt-2 flex flex-wrap gap-1.5">{roles.map((r) => <Badge key={r}>{ROLE_LABEL[r]}</Badge>)}</p>
+        <p className="mt-3"><TextLink to="/auth/reset" tip="Choose a new password for this account">Change password</TextLink></p>
       </Section>
-      {env.demo && (
-        <Section title="Demo roles">
-          <p className="mb-3 text-sm text-muted">Choose which roles the demo user holds. The real system enforces the same rules on the server.</p>
-          <div className="grid gap-2 sm:grid-cols-2">
-            {ALL_ROLES.map((r) => (
-              <Checkbox tip={`Demo only: act as ${ROLE_LABEL[r]}`} key={r} className="flex" checked={roles.includes(r)} onChange={() => void setDemoRoles(roles.includes(r) ? roles.filter((x) => x !== r) : [...roles, r])}>
-                {ROLE_LABEL[r]}
-              </Checkbox>
-            ))}
-          </div>
-        </Section>
-      )}
       <Section title="This device">
         <List>
           <ListRow tip="See what is waiting to send and anything the server refused" to="/settings/sync" title="Sync and offline data" meta="What is waiting to send, and anything the server refused" />
-          {has('admin') && <ListRow tip="Invite-only accounts: grant roles or deactivate people" to="/settings/users" title="Users and roles" meta="Grant or remove roles" />}
+          {has('admin') && <ListRow tip="Approve new accounts, grant or remove roles, deactivate people" to="/settings/users" title="Users and roles" meta="Approve new accounts and grant roles" />}
           {has('admin') && <ListRow tip="Load or update the barangay list from the PSA PSGC file" to="/settings/barangays" title="Barangay list" meta="Import the barangays with their PSGC codes" />}
           <ListRow tip="Version, data privacy and where the data is held" to="/settings/about" title="About and data privacy" />
         </List>
       </Section>
-      {!env.demo && (
-        <Button tip="Sign out and erase this device’s copy of the data" variant="secondary" icon={LogOut} busy={busy} onClick={async () => {
-          setBusy(true);
-          try { await signOut(); } catch (e) { toast((e as Error).message, 'bad'); } finally { setBusy(false); }
-        }}>Sign out and clear this device</Button>
-      )}
+      <SignOutBlock />
     </div>
   );
+}
+
+/** A readable copy of what someone typed, so a refused entry can be entered again. */
+function entryText(rows: Record<string, unknown>[] | undefined): string {
+  if (!rows?.length) return '';
+  const skip = new Set(['id', 'version', 'created_at', 'updated_at']);
+  return rows.map((r) => Object.entries(r).filter(([k, v]) => !skip.has(k) && v !== null && v !== '' && !(Array.isArray(v) && !v.length))
+    .map(([k, v]) => `${k.replace(/_/g, ' ')}: ${Array.isArray(v) ? v.join(', ') : String(v)}`).join('\n')).join('\n\n');
 }
 
 export function SyncPage() {
   const sync = useSyncState();
   const online = useOnline();
   const toast = useToast();
+  const { userId } = useAuth();
   const data = useLiveQuery(async () => ({
     outbox: await db.outbox.orderBy('seq').toArray(), failed: await db.failed.reverse().toArray(), conflicts: await db.conflicts.reverse().toArray(),
   }), []);
+  const mine = data?.outbox.filter((o) => !o.userId || o.userId === userId) ?? [];
+  const held = data?.outbox.filter((o) => o.userId && o.userId !== userId) ?? [];
+  // Apply only the fields this person changed on top of the server's latest version.
   const retryConflict = async (id: number) => {
     const c = await db.conflicts.get(id);
     if (!c || !c.server) return;
-    await save(c.table, { ...c.server, ...c.local, version: c.server.version }, `Reapply: ${c.label}`);
+    const changed = c.base
+      ? Object.fromEntries(Object.entries(c.local).filter(([k, v]) => k !== 'version' && JSON.stringify(v ?? null) !== JSON.stringify(c.base![k] ?? null)))
+      : c.local;
+    await save(c.table, { ...c.server, ...changed, version: c.server.version }, `Reapply: ${c.label}`);
     await db.conflicts.delete(id);
     toast('Your change was applied on top of the latest version');
+  };
+  const copy = async (text: string) => {
+    try { await navigator.clipboard.writeText(text); toast('Copied. Paste it where you enter the record again.'); }
+    catch { toast('Copying is blocked in this browser. Select the text and copy it.', 'bad'); }
   };
   return (
     <div className="page">
       <PageHeader title="Sync and offline data" back="/settings"
-        subtitle={env.demo ? 'Demo mode: nothing is sent to a server.' : `${online ? 'Online' : 'Offline'}. ${sync.lastSyncAt ? `Last synced ${relative(sync.lastSyncAt)}.` : 'Not synced yet.'}`}
-        actions={!env.demo && <Button tip="Send waiting changes and fetch the latest data now" icon={RefreshCw} busy={sync.status === 'syncing'} disabled={!online} onClick={() => syncNow({ forceReference: true })}>Sync now</Button>} />
+        subtitle={`${online ? 'Online' : 'Offline'}. ${sync.lastSyncAt ? `Last synced ${relative(sync.lastSyncAt)}.` : 'Not synced yet.'}`}
+        actions={<Button tip="Send waiting changes and fetch the latest data now" icon={RefreshCw} busy={sync.status === 'syncing'} disabled={!online} onClick={() => syncNow({ forceReference: true })}>Sync now</Button>} />
       {sync.status === 'error' && <Notice tone="bad" title="Sync stopped">{sync.message}</Notice>}
       {sync.status === 'signed_out' && <Notice tone="warn" title="Signed out">Sign in again to send your changes.</Notice>}
-      <Section title={`Waiting to send (${data?.outbox.length ?? 0})`}>
-        {data?.outbox.length ? <List>{data.outbox.map((o) => <ListRow key={o.seq} title={o.label} meta={`${fmtDateTime(o.createdAt)}${o.attempts ? `, ${o.attempts} attempt(s)` : ''}`} />)}</List>
+      <Section title={`Waiting to send (${mine.length})`}>
+        {mine.length ? <List>{mine.map((o) => <ListRow key={o.seq} title={o.label} meta={`${fmtDateTime(o.createdAt)}${o.attempts ? `, ${o.attempts} attempt(s)` : ''}`} />)}</List>
           : <p className="text-muted">Nothing waiting. Changes save on this device first and send automatically when there is a connection.</p>}
       </Section>
+      {held.length > 0 && (
+        <Section title={`From another account (${held.length})`}>
+          <Notice tone="warn">These changes were made on this device by someone who has since signed out. They are sent only when that person signs in here again. They are never sent under your account.</Notice>
+          <List>{held.map((o) => <ListRow key={o.seq} title={o.label} meta={fmtDateTime(o.createdAt)} />)}</List>
+        </Section>
+      )}
       <Section title={`Refused by the server (${data?.failed.length ?? 0})`}>
         {data?.failed.length ? (
           <List>{data.failed.map((f) => <li key={f.id} className="py-3">
             <p className="font-semibold">{f.label}</p><p className="text-sm text-bad">{f.error}</p>
             <p className="text-xs text-muted">{fmtDateTime(f.at)}. The record shows the server copy again.</p>
+            {f.rows?.length ? (
+              <details className="mt-2"><summary className="min-h-tap cursor-pointer font-semibold" {...tip('Show what you entered, so you can enter it again')}>What you entered</summary>
+                <pre className="mt-1 whitespace-pre-wrap rounded-control bg-sunken p-3 text-sm">{entryText(f.rows)}</pre>
+                <Button tip="Copy what you entered" className="mt-1" variant="secondary" onClick={() => copy(entryText(f.rows))}>Copy</Button>
+              </details>) : null}
             <Button tip="Remove this message from the list" className="mt-1" variant="quiet" onClick={() => db.failed.delete(f.id!)}>Dismiss</Button></li>)}</List>
         ) : <p className="text-muted">None.</p>}
       </Section>
@@ -94,9 +107,9 @@ export function SyncPage() {
         {data?.conflicts.length ? (
           <List>{data.conflicts.map((c) => <li key={c.id} className="py-3">
             <p className="font-semibold">{c.label}</p>
-            <p className="text-sm text-muted">Another person saved this record before your change arrived. The record now shows their version.</p>
+            <p className="text-sm text-muted">{c.server ? 'Another person saved this record before your change arrived. The record now shows their version.' : 'This record is no longer on the server or not visible to your role.'}</p>
             <div className="mt-2 flex flex-wrap gap-2">
-              <Button tip="Save your version over the other person’s change" variant="secondary" onClick={() => retryConflict(c.id!)}>Apply my change on top</Button>
+              {c.server && <Button tip="Apply the fields you changed on top of the other person’s version" variant="secondary" onClick={() => retryConflict(c.id!)}>Apply my change on top</Button>}
               <Button tip="Keep the other person’s version and discard yours" variant="quiet" onClick={() => db.conflicts.delete(c.id!)}>Keep theirs</Button>
             </div></li>)}</List>
         ) : <p className="text-muted">None.</p>}
@@ -105,39 +118,88 @@ export function SyncPage() {
   );
 }
 
+interface Account {
+  id: string; email: string; email_confirmed_at: string | null; created_at: string; last_sign_in_at: string | null;
+  full_name: string; position: string | null; office_id: string | null; is_active: boolean; roles: Role[]; version: number;
+}
+
 export function UsersPage() {
   const toast = useToast();
-  const [rows, setRows] = useState<{ id: string; full_name: string; position: string | null; is_active: boolean; roles: Role[] }[] | null>(null);
+  const online = useOnline();
+  const { userId, has } = useAuth();
+  const offices = useLiveQuery(() => db.offices.orderBy('code').toArray(), [], []);
+  const [rows, setRows] = useState<Account[] | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [q, setQ] = useState('');
   const load = async () => {
-    if (!supabase) return;
-    const [{ data: ps, error }, { data: rs }] = await Promise.all([supabase.from('profiles').select('id, full_name, position, is_active').order('full_name'), supabase.from('user_roles').select('user_id, role')]);
-    if (error) { toast(error.message, 'bad'); return; }
-    setRows((ps ?? []).map((p) => ({ ...p, roles: (rs ?? []).filter((r) => r.user_id === p.id).map((r) => r.role as Role) })));
+    const { data, error: e } = await supabase.rpc('admin_list_accounts');
+    if (e) { setError(e.message); return; }
+    setError(null); setRows((data as Account[]) ?? []);
   };
-  const toggle = async (uid: string, role: Role, has: boolean) => {
-    const q = has ? supabase!.from('user_roles').delete().eq('user_id', uid).eq('role', role) : supabase!.from('user_roles').insert({ user_id: uid, role });
-    const { error } = await q;
-    if (error) toast(error.message, 'bad'); else { toast(has ? 'Role removed' : 'Role granted'); void load(); }
+  useEffect(() => { if (online && has('admin')) void load(); }, [online]);  // eslint-disable-line react-hooks/exhaustive-deps
+  const act = async (p: PromiseLike<{ error: { message: string } | null }>, ok: string) => {
+    const { error: e } = await p;
+    if (e) toast(e.message, 'bad'); else { toast(ok); await load(); }
   };
+  const toggle = (u: Account, role: Role) => u.roles.includes(role)
+    ? act(supabase.from('user_roles').delete().eq('user_id', u.id).eq('role', role), `${ROLE_LABEL[role]} removed`)
+    : act(supabase.from('user_roles').insert({ user_id: u.id, role }), u.roles.length ? `${ROLE_LABEL[role]} granted` : `Approved as ${ROLE_LABEL[role]}`);
   // Deactivating keeps the person's records and audit trail; RLS then denies them everything.
-  const setActive = async (uid: string, active: boolean) => {
-    const { error } = await supabase!.from('profiles').update({ is_active: active }).eq('id', uid);
-    if (error) toast(error.message, 'bad'); else { toast(active ? 'Account reactivated' : 'Account deactivated'); void load(); }
-  };
-  if (env.demo) return <div className="page"><PageHeader title="Users and roles" back="/settings" /><Notice>In demo mode, change roles on the Settings page.</Notice></div>;
+  const setActive = (u: Account, active: boolean) => act(supabase.from('profiles').update({ is_active: active, version: u.version }).eq('id', u.id), active ? 'Account reactivated' : 'Account deactivated');
+  const setOffice = (u: Account, office: string) => act(supabase.from('profiles').update({ office_id: office || null, version: u.version }).eq('id', u.id), 'Office saved');
+
+  if (!has('admin')) return <div className="page"><PageHeader title="Users and roles" back="/settings" /><Notice tone="warn">Only a system administrator can manage accounts.</Notice></div>;
+  const match = (u: Account) => !q.trim() || `${u.email} ${u.full_name} ${u.position ?? ''}`.toLowerCase().includes(q.trim().toLowerCase());
+  const pending = (rows ?? []).filter((u) => u.is_active && u.roles.length === 0 && match(u));
+  const active = (rows ?? []).filter((u) => u.is_active && u.roles.length > 0 && match(u));
+  const inactive = (rows ?? []).filter((u) => !u.is_active && match(u));
+
+  const card = (u: Account) => (
+    <Section key={u.id} title={u.full_name || 'Name not given'}
+      action={u.id === userId ? <Badge>You</Badge> : u.is_active
+        ? <Button tip={u.roles.length ? 'Remove this person’s access. Their records stay' : 'Decline this account: it can no longer sign in to anything'} variant="quiet" size="md" onClick={() => setActive(u, false)}>{u.roles.length ? 'Deactivate' : 'Decline'}</Button>
+        : <Button tip="Give this person access again" variant="secondary" onClick={() => setActive(u, true)}>Reactivate</Button>}>
+      <p className="font-semibold">{u.email}</p>
+      <p className="text-sm text-muted">
+        {u.position ? `${u.position}. ` : ''}Signed up {fmtDateTime(u.created_at)}. {u.email_confirmed_at ? 'Email confirmed.' : 'Email not confirmed yet.'}
+        {u.last_sign_in_at ? ` Last sign-in ${relative(u.last_sign_in_at)}.` : ''}
+      </p>
+      {!u.email_confirmed_at && <Notice tone="warn">Wait until this person confirms their email before approving.</Notice>}
+      {u.is_active && u.email_confirmed_at && (
+        <>
+          {u.roles.length === 0 && <p className="mt-2 text-sm">Check who this is (for example with their office), then tick the role for their work to approve the account.</p>}
+          <div className="mt-2 flex flex-wrap gap-2">{ALL_ROLES.map((r) => (
+            <Checkbox tip={u.id === userId && r === 'admin' ? 'You cannot remove your own administrator role' : `${u.roles.includes(r) ? 'Remove' : 'Grant'} the ${ROLE_LABEL[r]} role`} key={r}
+              checked={u.roles.includes(r)} onChange={() => { if (!(u.id === userId && r === 'admin')) void toggle(u, r); }}>{ROLE_LABEL[r]}</Checkbox>))}</div>
+          <Field label="Office" optional hint="Needed for lead-office focal persons (Part C indicators of their office).">
+            {(id, d) => <Select id={id} aria-describedby={d} value={u.office_id ?? ''} onChange={(e) => void setOffice(u, e.target.value)}>
+              <option value="">No office</option>
+              {offices.map((o) => <option key={o.id} value={o.id}>{o.code} {o.name}</option>)}
+            </Select>}
+          </Field>
+        </>
+      )}
+      {!u.is_active && <Notice tone="warn">Deactivated. This person can no longer see or change anything. Their past entries stay.</Notice>}
+    </Section>
+  );
+
   return (
     <div className="page">
-      <PageHeader title="Users and roles" back="/settings" subtitle="Invite staff from the Supabase dashboard (Authentication). They appear here as soon as they are invited. Changes need a connection."
-        actions={<Button tip="Fetch the list of users and their roles" onClick={load}>Load users</Button>} />
-      {!rows ? <EmptyState title="Load the user list" /> : rows.map((u) => (
-        <Section key={u.id} title={u.full_name || u.id}
-          action={u.is_active ? <Button tip="Remove this person’s access. Their records stay" variant="quiet" size="md" onClick={() => setActive(u.id, false)}>Deactivate</Button>
-            : <Button tip="Give this person access again" variant="secondary" onClick={() => setActive(u.id, true)}>Reactivate</Button>}>
-          {!u.is_active && <Notice tone="warn">Deactivated. This person can no longer see or change anything. Their past entries stay.</Notice>}
-          <div className="flex flex-wrap gap-2">{ALL_ROLES.map((r) => (
-            <Checkbox tip={`${u.roles.includes(r) ? 'Remove' : 'Grant'} the ${ROLE_LABEL[r]} role`} key={r} checked={u.roles.includes(r)} onChange={() => toggle(u.id, r, u.roles.includes(r))}>{ROLE_LABEL[r]}</Checkbox>))}</div>
-        </Section>
-      ))}
+      <PageHeader title="Users and roles" back="/settings"
+        subtitle="Anyone can create an account. It sees nothing until you approve it by granting a role. Changes need a connection."
+        actions={<Button tip="Fetch the latest list of accounts" icon={RefreshCw} disabled={!online} onClick={load}>Refresh</Button>} />
+      {!online && <Notice tone="warn">Connect to manage accounts.</Notice>}
+      {error && <Notice tone="bad" title="The account list could not be loaded">{error}</Notice>}
+      {rows && (
+        <div className="mb-4 max-w-md"><Field label="Find a person">{(id) => <Input id={id} type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Email, name or position" />}</Field></div>
+      )}
+      {!rows ? (online ? <Loading /> : null) : (<>
+        <h2 className="mb-3 mt-6 text-xl font-bold">Waiting for approval ({pending.length})</h2>
+        {pending.length ? pending.map(card) : <p className="mb-6 text-muted">No accounts are waiting.</p>}
+        <h2 className="mb-3 mt-8 text-xl font-bold">Active ({active.length})</h2>
+        {active.map(card)}
+        {inactive.length > 0 && <><h2 className="mb-3 mt-8 text-xl font-bold">Deactivated or declined ({inactive.length})</h2>{inactive.map(card)}</>}
+      </>)}
     </div>
   );
 }
@@ -176,10 +238,9 @@ export function BarangaysAdminPage() {
     if (w.length && !confirmed) return;
     setBusy(true);
     try {
-      if (supabase) {
-        const { error } = await supabase.from('barangays').upsert(rows, { onConflict: 'psgc' });
-        if (error) throw new Error(error.message);
-      }
+      if (!navigator.onLine) throw new Error('Importing the barangay list needs a connection.');
+      const { error } = await supabase.from('barangays').upsert(rows, { onConflict: 'psgc' });
+      if (error) throw new Error(error.message);
       await db.barangays.bulkPut(rows.map((r) => ({ ...r, version: 1 })));
       toast(`${rows.length} barangays imported`); setText(''); setWarnings([]); setConfirmed(false);
     } catch (e) { toast((e as Error).message, 'bad'); } finally { setBusy(false); }
