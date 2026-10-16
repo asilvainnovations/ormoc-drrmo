@@ -13,7 +13,8 @@ During a typhoon the EOC and barangays may lose data service for hours. Duty off
 - **Payloads** never contain server-stamped columns (who/when, sequence numbers, deadlines, snapshots). `src/lib/tables.ts` lists them per table. Append-only tables (logbook, barangay reports) are inserted with "ignore duplicates", so a replayed insert is harmless.
 - **Deterministic ids** let a device create the same rows the server would. Protocol run steps are UUIDv5(run id, step seq). AA checklist actions are UUIDv5(declaration or PDRA id, template id). Both client and SQL use `uuid_generate_v5`, so a run started offline and then replayed through `start_protocol()` produces identical step ids.
 - **Pull.** Each table has a cursor (`updated_at` or `created_at`). Rows with unsent local edits are not overwritten. Small reference tables are refreshed whole every 6 hours. Realtime change events on EOC tables trigger an immediate pull.
-- **Demo mode.** With no Supabase env vars the app runs entirely local, emulating the RPCs, for training and for the validation workshops.
+- **Demo mode** (removed in 1.2, see [ADR-009](009-open-signup-and-live-data.md)). Training uses a separate Supabase project.
+- **1.2 hardening.** New rows are sent as inserts and edits as updates (an upsert re-ran the insert trigger and made every later edit a conflict). Temporary errors (no connection, 5xx, 429, expired token, deadlock) keep the change queued. A refusal keeps what the person entered on the Sync screen. Pull pages by (timestamp, key) and re-reads five minutes before the cursor. Queued changes carry the account that made them.
 
 ## Consequences
 - Authority actions cannot be queued (ADR-006).
