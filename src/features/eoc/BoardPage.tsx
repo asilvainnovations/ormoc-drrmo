@@ -6,7 +6,6 @@ import { Send } from 'lucide-react';
 import { db } from '@/lib/db';
 import { useAuth } from '@/lib/auth';
 import { useEocStatus, useOnline } from '@/lib/hooks';
-import { env } from '@/lib/env';
 import { canChangeLevel, canOperate, LEVEL_INFO } from '@/domain/eoc';
 import { fmtDateTime, fmtTime, relative } from '@/lib/time';
 import { Badge, Button, ChoiceGroup, Field, Input, List, ListRow, Notice, PageHeader, Section, Select, Tabs, Textarea, TextLink } from '@/components/ui';
@@ -60,7 +59,7 @@ export function BoardPage() {
         {canChangeLevel(roles) && (
           <div className="mt-4">
             <Button tip="Raise or lower the EOC alert level (EOC Manager or CDRRMO Head; needs a connection)" variant="secondary" onClick={() => setOpen(true)} className="!border-transparent !bg-surface !text-ink">Change level</Button>
-            {!env.demo && !online && <p className="mt-2 text-sm">Changing the level needs a connection.</p>}
+            {!online && <p className="mt-2 text-sm">Changing the level needs a connection.</p>}
           </div>
         )}
       </section>
@@ -110,7 +109,7 @@ export function BoardPage() {
         </Section>
       </div>
       <LevelSheet open={open} onClose={() => setOpen(false)} current={level} onSubmit={async (lv, reason, hazard, auth) => {
-        await setEocLevel(lv, reason, hazard, auth, userId); toast(`EOC level is now ${LEVEL_INFO[lv].name}`);
+        await setEocLevel(lv, reason, hazard, auth); toast(`EOC level is now ${LEVEL_INFO[lv].name}`);
       }} />
     </div>
   );
