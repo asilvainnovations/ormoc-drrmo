@@ -6,7 +6,6 @@ import { db } from '@/lib/db';
 import { save } from '@/lib/store';
 import { uuid } from '@/lib/ids';
 import { useAuth } from '@/lib/auth';
-import { env } from '@/lib/env';
 import { fmtDateTime } from '@/lib/time';
 import { Badge, Button, Field, Input, List, ListRow, Loading, Notice, PageHeader, Section, Textarea, TextLink } from '@/components/ui';
 import { Sheet } from '@/components/Sheet';
@@ -52,8 +51,7 @@ export function DocumentPage() {
   };
   const setStatus = async (v: MooVersion, status: MooVersion['status']) => {
     await save('moo_versions', { ...v, status, review_note: reviewNote.trim() || v.review_note || null }, `${status === 'approved' ? 'Approve' : status === 'in_review' ? 'Submit' : 'Return'} ${doc.code} ${v.label}`);
-    // The server promotes the approved version (trigger promote_moo_version); mirror it locally only in demo mode.
-    if (status === 'approved' && env.demo) await db.moo_documents.put({ ...doc, status: 'approved', current_version_id: v.id });
+    // The server promotes the approved version (trigger promote_moo_version); the next pull brings it.
     setReviewNote(''); toast(status === 'approved' ? 'Approved and published' : status === 'in_review' ? 'Sent for review' : 'Returned to the author');
   };
 
