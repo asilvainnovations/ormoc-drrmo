@@ -18,9 +18,22 @@ export interface OutboxItem {
   createdAt: string;
   attempts: number;
   lastError?: string;
+  /** Account that made the change. Only that account's session sends it (v1.2). */
+  userId?: string | null;
+  /** The row did not exist yet when this was queued: send as an insert, not an update. */
+  isNew?: boolean;
+  /** The row as it was before this edit (fields the user did not change keep the server's value on "Apply my change on top"). */
+  base?: Record<string, unknown> | null;
 }
-export interface FailedItem { id?: number; label: string; error: string; at: string; table?: string; pk?: string }
-export interface ConflictItem { id?: number; table: string; pk: string; local: Record<string, unknown>; server: Record<string, unknown> | null; at: string; label: string }
+export interface FailedItem {
+  id?: number; label: string; error: string; at: string; table?: string; pk?: string;
+  /** What the person entered, kept so a refused entry is never lost (this edit and any later queued edits of the row). */
+  rows?: Record<string, unknown>[];
+}
+export interface ConflictItem {
+  id?: number; table: string; pk: string; local: Record<string, unknown>; server: Record<string, unknown> | null; at: string; label: string;
+  base?: Record<string, unknown> | null;
+}
 export interface StoredFile { id: string; blob: Blob; name: string; type: string; createdAt: string }
 export interface Meta { key: string; value: unknown }
 

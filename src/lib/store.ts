@@ -1,12 +1,16 @@
 // Write API used by every screen. Writes land in IndexedDB immediately and are
-// queued for Supabase (cloud mode) or stay local (demo mode).
+// queued in the outbox for Supabase (ADR-003).
 import { db, type OutboxItem } from './db';
 import { TABLE } from './tables';
-import { env } from './env';
 import { supabase } from './supabase';
 import { scheduleSync } from './sync';
 
 type Row = Record<string, unknown>;
+
+/** The signed-in account. Every queued change is stamped with it (set by AuthProvider). */
+let actingUser: string | null = null;
+export function setActingUser(id: string | null) { actingUser = id; }
+export const getActingUser = () => actingUser;
 
 function payloadFor(table: string, row: Row): Row {
   const cfg = TABLE[table];
@@ -43,19 +47,19 @@ export async function saveMany(items: { table: string; row: object; label: strin
       const r = { ...(it.row as Row) };
       const isNew = Boolean(r._new);
       delete r._new;
+      const pk = r[cfg.pk];
+      const before = isNew ? null : ((await dexieTable(it.table).get(cfg.name === 'aa_fund_years' ? Number(pk) : pk as string)) ?? null);
       if (cfg.cursor === 'updated_at' || 'updated_at' in r) r.updated_at = stamp;
       if (isNew && !r.created_at) r.created_at = stamp;
       if (isNew && typeof r.version !== 'number' && cfg.cursor === 'updated_at') r.version = 1;
-      if (env.demo && !isNew && typeof r.version === 'number') r.version = (r.version as number) + 1;
       await dexieTable(it.table).put(r);
       saved.push(r);
-      if (!env.demo) {
-        const item: OutboxItem = {
-          kind: 'write', table: it.table, pk: String(r[cfg.pk]), row: payloadFor(it.table, isNew && cfg.cursor === 'updated_at' ? { ...r, version: 1 } : r),
-          label: it.label, createdAt: stamp, attempts: 0,
-        };
-        await db.outbox.add(item);
-      }
+      const item: OutboxItem = {
+        kind: 'write', table: it.table, pk: String(pk), row: payloadFor(it.table, isNew && cfg.cursor === 'updated_at' ? { ...r, version: 1 } : r),
+        label: it.label, createdAt: stamp, attempts: 0, userId: actingUser, isNew,
+        base: before ? payloadFor(it.table, before) : null,
+      };
+      await db.outbox.add(item);
     }
   });
   scheduleSync();
@@ -64,12 +68,11 @@ export async function saveMany(items: { table: string; row: object; label: strin
 
 /**
  * Server function that is safe to replay (idempotent). `local` applies the same
- * effect to IndexedDB so the screen updates offline; in demo mode only `local` runs.
+ * effect to IndexedDB so the screen updates offline.
  */
 export async function queueRpc(fn: string, args: Record<string, unknown>, label: string, local: () => Promise<void>): Promise<void> {
   await local();
-  if (env.demo) return;
-  await db.outbox.add({ kind: 'rpc', fn, args, label, createdAt: now(), attempts: 0 });
+  await db.outbox.add({ kind: 'rpc', fn, args, label, createdAt: now(), attempts: 0, userId: actingUser });
   scheduleSync();
 }
 
@@ -78,20 +81,58 @@ export class NeedsConnectionError extends Error {
 }
 
 /** Authority actions (EOC level) run only online so two people cannot act on stale state. */
-export async function callOnline<T>(fn: string, args: Record<string, unknown>, what: string, demo: () => Promise<T>): Promise<T> {
-  if (env.demo) return demo();
-  if (!navigator.onLine || !supabase) throw new NeedsConnectionError(what);
+export async function callOnline<T>(fn: string, args: Record<string, unknown>, what: string): Promise<T> {
+  if (!navigator.onLine) throw new NeedsConnectionError(what);
   const { data, error } = await supabase.rpc(fn, args);
-  if (error) throw new Error(error.hint ? `${error.message} ${error.hint}` : error.message);
-  scheduleSync(0);
+  if (error) {
+    if (/fetch|network|load failed/i.test(error.message)) throw new NeedsConnectionError(what);
+    throw new Error(error.hint ? `${error.message} ${error.hint}` : error.message);
+  }
   return data as T;
 }
 
-/** Keep a file on the device and queue its upload to the private evidence bucket. */
+/** Storage buckets accept these types only (migrations …_storage.sql and …_document_vault.sql). */
+export const UPLOAD_TYPES: Record<'evidence' | 'vault', { types: string[]; maxMb: number; label: string }> = {
+  evidence: {
+    types: ['application/pdf', 'image/jpeg', 'image/png', 'image/webp', 'image/heic',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'],
+    maxMb: 15, label: 'PDF, Word (.docx), Excel (.xlsx) or a JPEG, PNG, WebP or HEIC photo',
+  },
+  vault: {
+    types: ['application/pdf', 'image/jpeg', 'image/png', 'image/webp', 'image/heic',
+      'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      'application/vnd.openxmlformats-officedocument.presentationml.presentation', 'text/plain'],
+    maxMb: 25, label: 'PDF, image, Word, Excel, PowerPoint or plain text',
+  },
+};
+
+const BY_EXTENSION: Record<string, string> = {
+  pdf: 'application/pdf', jpg: 'image/jpeg', jpeg: 'image/jpeg', png: 'image/png', webp: 'image/webp', heic: 'image/heic',
+  doc: 'application/msword', docx: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  xls: 'application/vnd.ms-excel', xlsx: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  pptx: 'application/vnd.openxmlformats-officedocument.presentationml.presentation', txt: 'text/plain',
+};
+/** The file's type, from its name when the browser does not say (common for HEIC and Office files). */
+export function fileType(file: File): string {
+  return file.type || BY_EXTENSION[file.name.split('.').pop()?.toLowerCase() ?? ''] || '';
+}
+
+/** Why this file cannot be uploaded to the bucket, or null. Checked before anything is saved. */
+export function uploadProblem(file: File, bucket: 'evidence' | 'vault'): string | null {
+  const rule = UPLOAD_TYPES[bucket];
+  if (!rule.types.includes(fileType(file))) return `${file.name} is not a file type the City's storage accepts. Use ${rule.label}.`;
+  if (file.size > rule.maxMb * 1024 * 1024) return `${file.name} is larger than ${rule.maxMb} MB.`;
+  return null;
+}
+
+/** Keep a file on the device and queue its upload to the private bucket. */
 export async function queueUpload(file: File, path: string, fileId: string, bucket: 'evidence' | 'vault' = 'evidence'): Promise<void> {
-  await db.files.put({ id: fileId, blob: file, name: file.name, type: file.type, createdAt: now() });
-  if (env.demo) return;
-  await db.outbox.add({ kind: 'upload', fileId, path, bucket, label: `Upload ${file.name}`, createdAt: now(), attempts: 0 });
+  const problem = uploadProblem(file, bucket);
+  if (problem) throw new Error(problem);
+  await db.files.put({ id: fileId, blob: file, name: file.name, type: fileType(file), createdAt: now() });
+  await db.outbox.add({ kind: 'upload', fileId, path, bucket, label: `Upload ${file.name}`, createdAt: now(), attempts: 0, userId: actingUser });
   scheduleSync();
 }
 
@@ -102,8 +143,7 @@ export async function queueUpload(file: File, path: string, fileId: string, buck
 export async function evidenceFileUrl(evidenceId: string, path: string, bucket: 'evidence' | 'vault' = 'evidence'): Promise<string> {
   const local = await db.files.get(evidenceId);
   if (local) return URL.createObjectURL(local.blob);
-  if (env.demo) throw new Error('This file was added on another device.');
-  if (!navigator.onLine || !supabase) throw new NeedsConnectionError('Opening this file');
+  if (!navigator.onLine) throw new NeedsConnectionError('Opening this file');
   const { data, error } = await supabase.storage.from(bucket).createSignedUrl(path, 300);
   if (error || !data) throw new Error(error?.message ?? 'The file could not be opened.');
   return data.signedUrl;
