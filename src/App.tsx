@@ -7,8 +7,10 @@ import { TooltipLayer } from '@/components/Tooltip';
 import { Loading, PageHeader } from '@/components/ui';
 import { bootstrapReference, requestPersistentStorage } from '@/lib/bootstrap';
 import { startSync } from '@/lib/sync';
-import { env } from '@/lib/env';
 import { LoginPage } from '@/features/auth/LoginPage';
+import { AuthCallbackPage, SetPasswordPage } from '@/features/auth/AuthCallbackPage';
+import { DeactivatedPage, PendingApprovalPage } from '@/features/auth/AccountGatePages';
+import { UpdatePrompt } from '@/components/UpdatePrompt';
 import { TodayPage } from '@/features/home/TodayPage';
 
 // Modules load on demand to keep the first paint small on low-end phones.
@@ -20,11 +22,14 @@ const SettingsRoutes = lazy(() => import('@/features/settings/routes'));
 const VaultRoutes = lazy(() => import('@/features/vault/routes'));
 
 
+/** Signed in AND approved: an account without a role sees only the waiting page, never City data. */
 function RequireAuth({ children }: { children: ReactNode }) {
-  const { ready, userId } = useAuth();
+  const { ready, status } = useAuth();
   const loc = useLocation();
   if (!ready) return <Loading />;
-  if (!env.demo && !userId) return <Navigate to="/login" replace state={{ from: loc.pathname }} />;
+  if (status === 'signed_out') return <Navigate to="/login" replace state={{ from: loc.pathname }} />;
+  if (status === 'pending') return <PendingApprovalPage />;
+  if (status === 'deactivated') return <DeactivatedPage />;
   return <>{children}</>;
 }
 
@@ -35,9 +40,9 @@ function Boot({ children }: { children: ReactNode }) {
     void requestPersistentStorage();
     bootstrapReference().then(() => setOk(true)).catch((e: Error) => setErr(e.message));
   }, []);
-  const { userId } = useAuth();
-  // Sync (and its realtime connection) runs only for a signed-in user, and restarts per user.
-  useEffect(() => (ok && userId ? startSync() : undefined), [ok, userId]);
+  const { userId, status } = useAuth();
+  // Sync (and its realtime connection) runs only for an approved account, and restarts per account.
+  useEffect(() => (ok && userId && status === 'active' ? startSync() : undefined), [ok, userId, status]);
   if (err) return <div className="page"><p role="alert" className="font-semibold text-bad">The app could not open its local storage: {err}. Check that the browser allows site data.</p></div>;
   if (!ok) return <Loading />;
   return <>{children}</>;
@@ -46,11 +51,14 @@ function Boot({ children }: { children: ReactNode }) {
 export function App() {
   return (
     <BrowserRouter>
+      <UpdatePrompt />
       <ToastProvider>
         <AuthProvider>
           <Boot>
             <Routes>
               <Route path="/login" element={<LoginPage />} />
+              <Route path="/auth/confirm" element={<AuthCallbackPage />} />
+              <Route path="/auth/reset" element={<SetPasswordPage />} />
               <Route element={<RequireAuth><AppShell /></RequireAuth>}>
                 <Route index element={<TodayPage />} />
                 <Route path="assess/*" element={<Suspense fallback={<Loading />}><AssessRoutes /></Suspense>} />
