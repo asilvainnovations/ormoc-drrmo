@@ -3,7 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { FileUp, Plus, ShieldCheck } from 'lucide-react';
 import { db } from '@/lib/db';
-import { save, saveMany, queueUpload, evidenceFileUrl } from '@/lib/store';
+import { save, saveMany, queueUpload, evidenceFileUrl, uploadProblem } from '@/lib/store';
 import { uuid } from '@/lib/ids';
 import { useAuth } from '@/lib/auth';
 import { fmtDate } from '@/lib/time';
@@ -189,6 +189,8 @@ function EvidenceSheet({ open, onClose, cycleId, indicatorId, existing }: { open
   useEffect(() => { if (verbal) setStrength('verbal'); }, [verbal]);
 
   const add = async () => {
+    const fileBad = file ? uploadProblem(file, 'evidence') : null;
+    if (fileBad) { toast(fileBad, 'bad'); return; }
     setBusy(true);
     const resp = existing ?? newResponse(cycleId, indicatorId);
     const evId = uuid();
@@ -219,11 +221,11 @@ function EvidenceSheet({ open, onClose, cycleId, indicatorId, existing }: { open
       <Field label="Title" hint="For example: EO No. 12 s. 2024 creating the CDRRMO; or KII with the Operations chief.">{(id, d) => <Input id={id} aria-describedby={d} value={title} onChange={(e) => setTitle(e.target.value)} />}</Field>
       <Field label="Document date" optional>{(id) => <Input id={id} type="date" value={docDate} onChange={(e) => setDocDate(e.target.value)} />}</Field>
       <Field label="Source office or position" optional hint="Never the name of an informant.">{(id, d) => <Input id={id} aria-describedby={d} value={source} onChange={(e) => setSource(e.target.value)} />}</Field>
-      <Field label="File" optional hint="PDF, Word, Excel or photo up to 15 MB. Kept on this device until it uploads.">{(id, d) => (
+      <Field label="File" optional hint="PDF, Word (.docx), Excel (.xlsx) or a JPEG, PNG, WebP or HEIC photo, up to 15 MB. Kept on this device until it uploads.">{(id, d) => (
         <label htmlFor={id} className="flex min-h-tap cursor-pointer items-center gap-2 rounded-control border border-dashed border-line px-3 py-2 text-sm">
           <FileUp className="h-5 w-5" aria-hidden />{file ? file.name : 'Choose a file or take a photo'}
-          <input id={id} aria-describedby={d} type="file" className="sr-only" accept=".pdf,.docx,.xlsx,image/*"
-            onChange={(e) => { const f = e.target.files?.[0] ?? null; if (f && f.size > 15 * 1024 * 1024) { toast('That file is over 15 MB.', 'bad'); return; } setFile(f); }} />
+          <input id={id} aria-describedby={d} type="file" className="sr-only" accept=".pdf,.docx,.xlsx,.jpg,.jpeg,.png,.webp,.heic,image/jpeg,image/png,image/webp,image/heic"
+            onChange={(e) => { const f = e.target.files?.[0] ?? null; const bad = f ? uploadProblem(f, 'evidence') : null; if (bad) { toast(bad, 'bad'); return; } setFile(f); }} />
         </label>)}
       </Field>
     </Sheet>
