@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Gawad Kalasag: Philippines' premier award for excellence in disaster risk reduction and management (DRRM) and humanitarian assistance conferred by the NDRRMC">
+    <title>Gawad Kalasag | National Disaster Risk Reduction and Management Council</title>
+    <style>
+        :root {
+            --primary-blue: #1a3a6c;
+            --secondary-blue: #2c5282;
+            --accent-gold: #d4af37;
+            --accent-red: #e63946;
+            --success-green: #2a9d8f;
+            --light-bg: #f8f9fa;
+            --dark-text: #212529;
+            --medium-gray: #6c757d;
+            --light-gray: #e9ecef;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --transition: all 0.3s ease;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--dark-text);
+            background-color: #f5f7fb;
+            background-image: linear-gradient(to bottom, #ffffff 0%, #f8fafc 100%);
+        }
+        
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+        
+        /* Header Styles */
+        header {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
+            color: white;
+            text-align: center;
+            padding: 2.5rem 1rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        header::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
+            transform: rotate(30deg);
+        }
+        
+        .logo-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 1.5rem;
+        }
+        
+        .shield-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--accent-gold);
+            clip-path: polygon(50% 0%, 0% 25%, 0% 75%, 50% 100%, 100% 75%, 100% 25%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 4px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.25);
+        }
+        
+        .shield-icon::before {
+            content: "🛡️";
+            font-size: 28px;
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+        
+        .subtitle {
+            font-size: 1.4rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            margin: 0.5rem 0 1rem;
+            color: rgba(255, 255, 255, 0.92);
+            position: relative;
+        }
+        
+        .tagline {
+            font-size: 1.25rem;
+            max-width: 800px;
+            margin: 0 auto 1.5rem;
+            opacity: 0.95;
+            position: relative;
+        }
+        
+        .divider {
+            height: 4px;
+            width: 80px;
+            background: var(--accent-gold);
+            margin: 1.5rem auto;
+            border-radius: 2px;
+        }
+        
+        /* Main Content Styles */
+        main {
+            padding: 3rem 0;
+        }
+        
+        section {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 2.5rem;
+            margin-bottom: 2.5rem;
+            transition: var(--transition);
+        }
+        
+        section:hover {
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+            transform: translateY(-2px);
+        }
+        
+        h2 {
+            color: var(--primary-blue);
+            font-size: 2.1rem;
+            margin-bottom: 1.75rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 3px solid var(--accent-gold);
+            display: inline-block;
+        }
+        
+        h3 {
+            color: var(--secondary-blue);
+            font-size: 1.65rem;
+            margin: 1.75rem 0 1.25rem;
+            position: relative;
+            padding-left: 12px;
+        }
+        
+        h3::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 4px;
+            height: 24px;
+            background: var(--accent-gold);
+            border-radius: 2px;
+        }
+        
+        p {
+            margin-bottom: 1.25rem;
+            font-size: 1.05rem;
+        }
+        
+        ul {
+            padding-left: 28px;
+            margin: 1.25rem 0;
+        }
+        
+        li {
+            margin-bottom: 0.75rem;
+            position: relative;
+            padding-left: 10px;
+        }
+        
+        li::before {
+            content: "•";
+            color: var(--accent-red);
+            font-weight: bold;
+            position: absolute;
+            left: -20px;
+            font-size: 1.4rem;
+        }
+        
+        /* Callout Box */
+        .significance-note {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            border-left: 4px solid var(--primary-blue);
+            padding: 1.75rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 2rem 0;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.05);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .significance-note::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(212, 175, 55, 0.15) 0%, rgba(255, 255, 255, 0) 70%);
+            z-index: 0;
+        }
+        
+        .significance-note p {
+            position: relative;
+            z-index: 1;
+            font-weight: 500;
+            font-size: 1.15rem;
+        }
+        
+        /* Table Styles */
+        .table-container {
+            overflow-x: auto;
+            margin: 2rem 0;
+            border-radius: var(--border-radius);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 650px;
+        }
+        
+        th {
+            background: var(--primary-blue);
+            color: white;
+            font-weight: 600;
+            text-align: left;
+            padding: 16px 20px;
+            font-size: 1.05rem;
+        }
+        
+        td {
+            padding: 14px 20px;
+            border-bottom: 1px solid var(--light-gray);
+            font-size: 1.02rem;
+        }
+        
+        tr:nth-child(even) {
+            background-color: var(--light-bg);
+        }
+        
+        tr:hover {
+            background-color: #eef5ff;
+        }
+        
+        /* Category Cards */
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-top: 1.5rem;
+        }
+        
+        .category-card {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 22px;
+            transition: var(--transition);
+            border-top: 4px solid var(--accent-gold);
+        }
+        
+        .category-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+        }
+        
+        .category-card h4 {
+            color: var(--secondary-blue);
+            font-size: 1.45rem;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .category-card h4::before {
+            content: "✓";
+            color: var(--accent-gold);
+            font-weight: bold;
+            font-size: 1.4rem;
+        }
+        
+        /* Importance Section */
+        .importance-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-top: 1.5rem;
+        }
+        
+        .importance-card {
+            background: linear-gradient(145deg, #ffffff, #f8f9ff);
+            border-radius: var(--border-radius);
+            padding: 25px;
+            box-shadow: var(--box-shadow);
+            border-left: 4px solid var(--success-green);
+            transition: var(--transition);
+        }
+        
+        .importance-card:hover {
+            transform: translateX(5px);
+            box-shadow: 0 6px 15px rgba(42, 157, 143, 0.15);
+        }
+        
+        .importance-card h4 {
+            color: var(--success-green);
+            font-size: 1.4rem;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .importance-card h4::before {
+            content: "★";
+            font-size: 1.3rem;
+        }
+        
+        /* Official Seal Styles */
+        .official-seal-container {
+            text-align: center;
+            margin: 3rem 0 2.5rem;
+            position: relative;
+        }
+        
+        .official-seal {
+            max-width: 100%;
+            height: auto;
+            border-radius: 50%;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
+            border: 8px solid var(--primary-blue);
+            background: white;
+            display: inline-block;
+            transition: var(--transition);
+        }
+        
+        .official-seal:hover {
+            transform: scale(1.03);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .seal-caption {
+            margin-top: 15px;
+            font-weight: 600;
+            color: var(--primary-blue);
+            font-size: 1.15rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+            .subtitle {
+                font-size: 1.25rem;
+            }
+            .tagline {
+                font-size: 1.15rem;
+            }
+            section {
+                padding: 2rem;
+            }
+            h2 {
+                font-size: 1.95rem;
+            }
+            .official-seal {
+                max-width: 85%;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            header {
+                padding: 2rem 1rem 1.5rem;
+            }
+            h1 {
+                font-size: 2.2rem;
+            }
+            .subtitle {
+                font-size: 1.15rem;
+            }
+            .tagline {
+                font-size: 1.05rem;
+            }
+            .logo-container {
+                flex-direction: column;
+                gap: 8px;
+            }
+            .shield-icon {
+                width: 50px;
+                height: 50px;
+            }
+            main {
+                padding: 2rem 0;
+            }
+            section {
+                padding: 1.75rem;
+                margin-bottom: 2rem;
+            }
+            h2 {
+                font-size: 1.8rem;
+                padding-bottom: 0.5rem;
+            }
+            h3 {
+                font-size: 1.5rem;
+            }
+            .categories-grid,
+            .importance-grid {
+                grid-template-columns: 1fr;
+            }
+            .official-seal {
+                max-width: 75%;
+            }
+            .official-seal-container {
+                margin: 2.5rem 0 2rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 2rem;
+            }
+            .subtitle {
+                font-size: 1.05rem;
+            }
+            .tagline {
+                font-size: 1rem;
+            }
+            section {
+                padding: 1.5rem;
+            }
+            ul {
+                padding-left: 22px;
+            }
+            li {
+                font-size: 0.95rem;
+                margin-bottom: 0.6rem;
+            }
+            .significance-note {
+                padding: 1.25rem;
+                margin: 1.5rem 0;
+            }
+            .significance-note p {
+                font-size: 1rem;
+            }
+            th, td {
+                padding: 10px 12px;
+                font-size: 0.95rem;
+            }
+            .official-seal {
+                max-width: 90%;
+            }
+            footer {
+                padding: 2rem 1rem 1.25rem;
+            }
+        }
+        
+        /* Animation for elements on scroll */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        section {
+            animation: fadeInUp 0.6s ease-out forwards;
+            opacity: 0;
+        }
+        
+        section:nth-child(1) { animation-delay: 0.1s; opacity: 1; }
+        section:nth-child(2) { animation-delay: 0.2s; }
+        section:nth-child(3) { animation-delay: 0.3s; }
+        section:nth-child(4) { animation-delay: 0.4s; }
+        nav {
+      background-color: #333;
+      padding: 10px;
+    }
+    nav a {
+      color: white;
+      margin-right: 15px;
+      text-decoration: none;
+    }
+    .simulate-btn {
+      display: inline-block;
+      padding: 10px 20px;
+      background-color: #0078d7;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .simulate-btn:hover {
+      background-color: #005a9e;
+    }
+    </style>
+</head>
+<!-- fetched via JS) -->
+    // gk.js
+fetch('public/gawad-kalasag.json')
+  .then(response => response.json())
+  .then(data => {
+    console.log("Simulation data loaded:", data);
+    // You can now use `data` to populate UI or run logic
+  })
+  .catch(error => console.error("Error loading JSON:", error));
+
+  <!-- Link to your JavaScript logic -->
+  <script src="public/gk.js"></script>
+<body>
+    <header>
+        <div class="container">
+            <div class="logo-container">
+                <div class="shield-icon"></div>
+                <div>
+                    <h1>Gawad Kalasag</h1>
+                    <div class="subtitle">Kalamidad at Sakuna LAbanan, SAriling Galing ang Kaligtasan</div>
+                </div>
+            </div>
+            <p class="tagline">The Philippines' Premier Award for Excellence in Disaster Risk Reduction and Management (DRRM) and Humanitarian Assistance</p>
+            <div class="divider"></div>
+            <p>Aligned with the Priority of the National Disaster Risk Reduction and Management Council (NDRRMC)</p>
+            <!-- Navigation bar -->
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="about.html">About</a>
+    <a href="contact.html">Contact</a>
+    <a href="public/gk-simulation.html">Simulate</a>
+
+  </nav>
+        </div>
+    </header>
+    
+    <main class="container">
+        <section id="overview">
+            <h2>Overview</h2>
+            <p><strong>Gawad Kalasag</strong> (KAlamidad at Sakuna LAbanan, SAriling Galing ang Kaligtasan) is the Philippines' premier award for excellence in disaster risk reduction and management (DRRM) and humanitarian assistance. It is conferred annually by the <strong>National Disaster Risk Reduction and Management Council (NDRRMC)</strong> to recognize outstanding contributions of individuals, groups, and institutions in building safer, more resilient communities.</p>
+            
+            <h3>Purpose</h3>
+            <ul>
+                <li><strong>Encouragement of Best Practices</strong>: Promotes innovative and effective DRRM strategies.</li>
+                <li><strong>Recognition of Heroism</strong>: Honors acts of bravery and selflessness during disasters.</li>
+                <li><strong>Community Empowerment</strong>: Highlights the importance of local initiatives in preparedness and response.</li>
+                <li><strong>Institutional Strengthening</strong>: Encourages government agencies, NGOs, and private organizations to prioritize disaster resilience.</li>
+            </ul>
+            
+            <h3>Categories of Awards</h3>
+            <div class="categories-grid">
+                <div class="category-card">
+                    <h4>Local Government Units (LGUs)</h4>
+                    <p>Cities, municipalities, and provinces that excel in DRRM planning, response, and recovery.</p>
+                </div>
+                <div class="category-card">
+                    <h4>Civil Society and NGOs</h4>
+                    <p>Organizations that contribute significantly to humanitarian assistance and community resilience.</p>
+                </div>
+                <div class="category-card">
+                    <h4>Private Sector</h4>
+                    <p>Companies that integrate DRRM into their operations and corporate social responsibility.</p>
+                </div>
+                <div class="category-card">
+                    <h4>Individuals and Groups</h4>
+                    <p>Recognizes volunteers, rescuers, and community leaders for exemplary service.</p>
+                </div>
+                <div class="category-card">
+                    <h4>Special Awards</h4>
+                    <p>For extraordinary heroism or innovative DRRM practices.</p>
+                </div>
+            </div>
+            
+            <h3>Significance</h3>
+            <ul>
+                <li><strong>National Prestige</strong>: Considered the highest DRRM honor in the Philippines.</li>
+                <li><strong>Policy Influence</strong>: Winning LGUs often become models for DRRM programs nationwide.</li>
+                <li><strong>Community Impact</strong>: Inspires replication of successful strategies across regions.</li>
+                <li><strong>Cultural Value</strong>: "Kalasag" means <em>shield</em> in Filipino, symbolizing protection and resilience against disasters.</li>
+            </ul>
+            
+            <h3>Notable Examples</h3>
+            <p>LGUs that have won often demonstrate strong early warning systems, evacuation planning, and community-based disaster preparedness. Some awardees are recognized for their rapid response during typhoons, earthquakes, or volcanic eruptions, saving lives and minimizing damage.</p>
+            
+            <div class="significance-note">
+                <p><strong>The "significance" criteria in the Gawad Kalasag awards measure how impactful and relevant a DRRM (Disaster Risk Reduction and Management) initiative is to its community. It is calculated through a scoring system that evaluates reach, sustainability, innovation, and replicability of the program.</strong></p>
+            </div>
+        </section>
+        
+        <section id="criteria">
+            <h2>Criteria for Significance</h2>
+            <p>The <strong>National Disaster Risk Reduction and Management Council (NDRRMC)</strong> guidelines outline several dimensions under "significance":</p>
+            
+            <h3>Impact on Community Safety</h3>
+            <ul>
+                <li>How the initiative reduces disaster risks and saves lives.</li>
+                <li>Evidence of fewer casualties, faster evacuation, or reduced damage.</li>
+            </ul>
+            
+            <h3>Coverage and Reach</h3>
+            <ul>
+                <li>Number of people, households, or institutions benefiting.</li>
+                <li>Inclusion of vulnerable groups (children, elderly, persons with disabilities).</li>
+            </ul>
+            
+            <h3>Innovation and Replicability</h3>
+            <ul>
+                <li>Introduction of new methods, technologies, or practices in DRRM.</li>
+                <li>Potential for replication in other communities or regions.</li>
+            </ul>
+            
+            <h3>Sustainability</h3>
+            <ul>
+                <li>Long-term viability of the program beyond initial implementation.</li>
+                <li>Integration into local governance, policies, or community practices.</li>
+            </ul>
+            
+            <h3>Contribution to National DRRM Goals</h3>
+            <ul>
+                <li>Alignment with the Philippine DRRM Act (RA 10121) and national frameworks.</li>
+                <li>Support for resilience-building and climate adaptation.</li>
+            </ul>
+            
+            <h3>How They Are Calculated</h3>
+            <p>The evaluation uses a <strong>point-based scoring system</strong>:</p>
+            
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Dimension</th>
+                            <th>Weight/Points</th>
+                            <th>Explanation</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Impact on lives & property</strong></td>
+                            <td>~30%</td>
+                            <td>Measured by reduction in disaster losses and improved safety outcomes.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Coverage & inclusivity</strong></td>
+                            <td>~20%</td>
+                            <td>Based on number and diversity of beneficiaries.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Innovation & replicability</strong></td>
+                            <td>~20%</td>
+                            <td>Scored on originality and adaptability of practices.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Sustainability</strong></td>
+                            <td>~20%</td>
+                            <td>Assessed by long-term integration into governance and community.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Contribution to national goals</strong></td>
+                            <td>~10%</td>
+                            <td>Evaluated by consistency with DRRM law and national strategies.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <p><strong>Evaluation Process:</strong></p>
+            <ul>
+                <li><strong>Quantitative Data</strong>: Statistics on casualties, damages, beneficiaries.</li>
+                <li><strong>Qualitative Evidence</strong>: Case studies, testimonials, documentation of practices.</li>
+                <li><strong>Verification</strong>: On-site validation and review by NDRRMC evaluators.</li>
+            </ul>
+            <p>Scores are aggregated, and initiatives that meet or exceed thresholds are recognized with the <strong>Gawad Kalasag Seal of Excellence</strong> or special awards.</p>
+            
+            <div class="official-seal-container">
+                <img src="https://trecemartirescity.gov.ph/wp-content/uploads/2024/07/gawad-kalasag_2-844x1024.png" alt="Official Gawad Kalasag Seal of Excellence" class="official-seal">
+                <div class="seal-caption">Gawad Kalasag Seal of Excellence</div>
+            </div>
+        </section>
+        
+        <section id="importance">
+            <h2>Why It Matters</h2>
+            <p>The Gawad Kalasag award system creates meaningful impact across multiple sectors:</p>
+            
+            <div class="importance-grid">
+                <div class="importance-card">
+                    <h4>For LGUs</h4>
+                    <p>High scores in significance show strong governance and community resilience, often leading to national recognition and funding opportunities.</p>
+                </div>
+                <div class="importance-card">
+                    <h4>For NGOs/Private Sector</h4>
+                    <p>Demonstrates credibility and effectiveness in humanitarian work, enhancing reputation and stakeholder trust.</p>
+                </div>
+                <div class="importance-card">
+                    <h4>For Communities</h4>
+                    <p>Encourages replication of best practices, spreading resilience nationwide and saving lives during disasters.</p>
+                </div>
+                <div class="importance-card">
+                    <h4>National Development</h4>
+                    <p>Strengthens the Philippines' overall disaster preparedness framework and supports sustainable development goals.</p>
+                </div>
+            </div>
+        </section>
+        <!-- Button wired to simulation page -->
+  <a href="public/gk-simulation.html" class="simulate-btn">SIMULATE NOW!</a>
+    </main>
+    
+    <script>
+        // Set current year dynamically
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+        
+        // Simple scroll animation for sections (enhanced from CSS animation)
+        document.addEventListener('DOMContentLoaded', function() {
+            const sections = document.querySelectorAll('section');
+            
+            // Ensure all sections are visible on load for users with JS disabled
+            sections.forEach(section => {
+                section.style.opacity = 1;
+                section.style.transform = 'translateY(0)';
+            });
+            
+            // Add subtle hover effect to table rows
+            const tableRows = document.querySelectorAll('tbody tr');
+            tableRows.forEach(row => {
+                row.addEventListener('mouseenter', function() {
+                    this.style.backgroundColor = '#e6f0ff';
+                    this.style.transform = 'translateX(3px)';
+                    this.style.transition = 'all 0.2s ease';
+                });
+                
+                row.addEventListener('mouseleave', function() {
+                    this.style.backgroundColor = '';
+                    this.style.transform = '';
+                });
+            });
+            
+            // Add lazy loading to seal image
+            const sealImg = document.querySelector('.official-seal');
+            if ('loading' in HTMLImageElement.prototype) {
+                sealImg.setAttribute('loading', 'lazy');
+            }
+        });
+    </script>
+</body>
+</html>
