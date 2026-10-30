@@ -1,0 +1,1616 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Incident Command System training simulator for the City of Ormoc CDRRMO and EOC, aligned with Philippine ICS doctrine (NDRRMC MC No. 4, s. 2012).">
+<meta name="theme-color" content="#071827">
+<title>DDRiVE-M ICS · Ormoc City</title>
+<script src="/_sdk/element_sdk.js"></script>
+<script src="/_sdk/data_sdk.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Poppins:wght@400;500;600&family=Roboto+Condensed:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#071827; --bg2:#0b2236; --panel:#0f2a42; --panel2:#15364f; --panel3:#1b4262;
+  --line:rgba(122,196,240,.18); --line2:rgba(122,196,240,.34);
+  --blue:#4fb3e8; --blue2:#2b8fd0; --orange:#f7941d; --orange2:#ffb057; --gray:#9fb0bf;
+  --text:#eaf2f8; --muted:#b4c6d4; --dim:#8399ab;
+  --ok:#34c38f; --good:#4fb3e8; --warn:#f5c518; --bad:#f97316; --crit:#ef4444;
+  --lvl-white:#e8eef3; --lvl-blue:#3b82f6; --lvl-red:#e5484d;
+  --r:14px; --shadow:0 18px 40px rgba(0,0,0,.35);
+  --font-h:'Montserrat',system-ui,sans-serif; --font-b:'Poppins',system-ui,sans-serif; --font-c:'Roboto Condensed','Arial Narrow',sans-serif;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:radial-gradient(1200px 700px at 85% -10%,rgba(79,179,232,.12),transparent 60%),radial-gradient(900px 600px at -10% 110%,rgba(247,148,29,.08),transparent 60%),var(--bg);color:var(--text);font-family:var(--font-b);font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+h1,h2,h3,h4{font-family:var(--font-h);margin:0;line-height:1.2;letter-spacing:-.01em}
+p{margin:0}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+a{color:var(--blue)}
+:focus-visible{outline:3px solid var(--orange);outline-offset:2px;border-radius:8px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.cond{font-family:var(--font-c)}
+.muted{color:var(--muted)} .dim{color:var(--dim)}
+.wrap{max-width:1240px;margin:0 auto;padding:0 20px}
+.grid{display:grid;gap:16px}
+.row{display:flex;align-items:center;gap:10px}
+.between{justify-content:space-between}
+.wrapf{flex-wrap:wrap}
+.hidden{display:none!important}
+.card{background:linear-gradient(160deg,rgba(21,54,79,.92),rgba(15,42,66,.92));border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow)}
+.pad{padding:22px}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;font-family:var(--font-c);font-size:12.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;border:1px solid var(--line2);background:rgba(255,255,255,.04);white-space:nowrap}
+.kicker{font-family:var(--font-c);font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--orange2);font-weight:700}
+.accent{background:linear-gradient(120deg,#9fdcff,var(--blue) 45%,var(--orange));-webkit-background-clip:text;background-clip:text;color:transparent}
+
+/* Buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 20px;border-radius:12px;font-family:var(--font-c);font-weight:700;font-size:15px;letter-spacing:.04em;text-transform:uppercase;transition:transform .2s,box-shadow .2s,background .2s,border-color .2s;min-height:44px}
+.btn-primary{background:linear-gradient(135deg,var(--blue2),var(--blue));color:#04121e;box-shadow:0 8px 22px rgba(79,179,232,.28)}
+.btn-primary:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 12px 30px rgba(79,179,232,.42)}
+.btn-orange{background:linear-gradient(135deg,#e07b06,var(--orange));color:#1c0d00;box-shadow:0 8px 22px rgba(247,148,29,.3)}
+.btn-orange:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 12px 30px rgba(247,148,29,.45)}
+.btn-ghost{border:1.5px solid var(--line2);color:var(--text);background:rgba(255,255,255,.03)}
+.btn-ghost:hover:not(:disabled){border-color:var(--blue);background:rgba(79,179,232,.1)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.icon-btn{width:42px;height:42px;border-radius:12px;display:inline-grid;place-items:center;border:1.5px solid var(--line2);transition:.2s}
+.icon-btn:hover{border-color:var(--blue);background:rgba(79,179,232,.12)}
+.icon-btn svg,.btn svg{width:20px;height:20px}
+kbd{font-family:var(--font-c);font-size:11px;padding:1px 6px;border-radius:5px;border:1px solid var(--line2);background:rgba(0,0,0,.25);color:var(--muted)}
+
+/* Header */
+.topbar{position:sticky;top:0;z-index:40;background:rgba(7,24,39,.86);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.topbar .wrap{display:flex;align-items:center;justify-content:space-between;min-height:68px;gap:12px}
+.brand{display:flex;align-items:center;gap:12px;min-width:0}
+.logo{width:46px;height:46px;border-radius:50%;overflow:hidden;flex-shrink:0;border:2px solid rgba(79,179,232,.5);background:linear-gradient(135deg,var(--blue2),var(--orange));display:grid;place-items:center;font-family:var(--font-h);font-weight:800;font-size:13px}
+.logo img{width:100%;height:100%;object-fit:cover}
+.brand h1{font-size:18px}
+.brand small{display:block;font-family:var(--font-c);color:var(--muted);font-size:12.5px;letter-spacing:.06em;text-transform:uppercase}
+.citytag{display:flex;align-items:center;gap:8px;font-family:var(--font-c);font-size:12px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
+.flagbar{display:inline-flex;width:28px;height:6px;border-radius:3px;overflow:hidden}
+.flagbar i{flex:1}
+
+/* Screens */
+.screen{min-height:100vh;animation:screenIn .45s cubic-bezier(.2,.8,.2,1)}
+@keyframes screenIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.loading{position:fixed;inset:0;display:grid;place-items:center;z-index:100;background:var(--bg)}
+.loader-ring{width:132px;height:132px;position:relative;margin:0 auto 22px}
+.loader-ring svg{position:absolute;inset:0;animation:spin 2.4s linear infinite}
+.loader-ring .logo{position:absolute;inset:18px;width:auto;height:auto}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loadbar{width:240px;height:4px;border-radius:2px;background:rgba(255,255,255,.08);overflow:hidden;margin:16px auto 0}
+.loadbar i{display:block;height:100%;width:40%;background:linear-gradient(90deg,var(--blue),var(--orange));animation:loadslide 1.1s ease-in-out infinite}
+@keyframes loadslide{0%{transform:translateX(-100%)}100%{transform:translateX(260%)}}
+
+/* Menu */
+.hero{position:relative;overflow:hidden;padding:36px}
+.hero h2{font-size:clamp(28px,4vw,42px);margin:10px 0 14px;max-width:820px}
+.hero p.lead{font-size:17px;color:#d8e6f1;max-width:780px}
+.hero .waves{position:absolute;right:-60px;bottom:-40px;width:520px;opacity:.22;pointer-events:none}
+.hero .waves path{animation:wave 6s ease-in-out infinite}
+.hero .waves path:nth-child(2){animation-delay:-2s}.hero .waves path:nth-child(3){animation-delay:-4s}
+@keyframes wave{0%,100%{transform:translateX(0)}50%{transform:translateX(-26px)}}
+.stat{padding:18px;text-align:center}
+.stat b{display:block;font-family:var(--font-h);font-size:30px;font-weight:800}
+.stat span{font-family:var(--font-c);font-size:13px;color:var(--muted);letter-spacing:.05em;text-transform:uppercase}
+.mode{padding:26px;cursor:pointer;transition:transform .25s,border-color .25s,box-shadow .25s;text-align:left;width:100%}
+.mode:hover,.mode:focus-visible{transform:translateY(-4px);border-color:var(--blue);box-shadow:0 22px 50px rgba(79,179,232,.18)}
+.mode .ico{width:64px;height:64px;border-radius:18px;display:grid;place-items:center;flex-shrink:0}
+.mode .ico svg{width:34px;height:34px}
+.mode h3{font-size:22px;margin-bottom:6px}
+.ticks{list-style:none;padding:0;margin:14px 0 0;display:grid;gap:6px}
+.ticks li{display:flex;gap:8px;align-items:flex-start;color:#cfe3f1;font-size:14px}
+.ticks li::before{content:"";width:16px;height:16px;flex-shrink:0;margin-top:3px;border-radius:50%;background:var(--blue) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%2304121e'%3E%3Cpath d='M8 13.6 4.4 10l-1.4 1.4L8 16.4l9-9L15.6 6z'/%3E%3C/svg%3E") center/12px no-repeat}
+.pillar{padding:18px;border-radius:12px;background:rgba(255,255,255,.035);border:1px solid var(--line)}
+.pillar .L{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;font-family:var(--font-h);font-weight:800;font-size:20px;background:rgba(79,179,232,.15);color:var(--blue);margin-bottom:10px}
+.flow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:6px}
+.flow .node{padding:8px 12px;border-radius:10px;border:1px solid var(--line2);background:rgba(255,255,255,.04);font-family:var(--font-c);font-weight:700;font-size:13px}
+.flow .arr{color:var(--orange);font-weight:700}
+
+/* Setup */
+.field label{display:block;font-family:var(--font-c);font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.input,select.input,textarea.input{width:100%;padding:12px 14px;border-radius:10px;border:1.5px solid var(--line2);background:rgba(4,18,30,.6);color:var(--text);font:inherit;min-height:46px}
+.input:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(79,179,232,.25)}
+.step-h{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.step-n{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-family:var(--font-h);font-weight:800;background:linear-gradient(135deg,var(--blue2),var(--blue));color:#04121e;flex-shrink:0}
+.pick{position:relative;text-align:left;padding:16px;border-radius:12px;border:1.5px solid var(--line);background:rgba(255,255,255,.03);transition:transform .2s,border-color .2s,background .2s,box-shadow .2s;width:100%}
+.pick:hover{border-color:var(--line2);transform:translateY(-2px);background:rgba(79,179,232,.06)}
+.pick[aria-pressed="true"]{border-color:var(--orange);background:rgba(247,148,29,.09);box-shadow:0 0 0 3px rgba(247,148,29,.18)}
+.pick[aria-pressed="true"]::after{content:"✓";position:absolute;top:10px;right:12px;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;background:var(--orange);color:#1c0d00;font-weight:800;font-size:13px;animation:pop .3s}
+@keyframes pop{from{transform:scale(0)}to{transform:scale(1)}}
+.role-ico{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;font-family:var(--font-c);font-weight:700;font-size:13px;flex-shrink:0;color:#04121e}
+.tag{display:inline-block;font-family:var(--font-c);font-size:12px;padding:2px 8px;border-radius:6px;background:rgba(255,255,255,.07);color:#d3e3ef;margin:3px 4px 0 0}
+.sc-ico{width:54px;height:54px;border-radius:14px;display:grid;place-items:center;font-size:28px;flex-shrink:0;background:rgba(255,255,255,.06)}
+.sticky-cta{position:sticky;bottom:0;padding:14px 0;background:linear-gradient(to top,var(--bg) 60%,transparent);z-index:5}
+
+/* Briefing */
+.doa{border-left:4px solid var(--orange);background:rgba(247,148,29,.07);padding:16px 18px;border-radius:0 12px 12px 0;font-size:14.5px}
+.kv{display:grid;grid-template-columns:150px 1fr;gap:6px 14px;font-size:14px}
+.kv dt{font-family:var(--font-c);color:var(--muted);text-transform:uppercase;letter-spacing:.05em;font-size:12.5px;padding-top:2px}
+.kv dd{margin:0}
+
+/* Game */
+.gbar .wrap{min-height:64px}
+.gstat{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.lvl{position:relative}
+.lvl.white{background:rgba(232,238,243,.12);border-color:var(--lvl-white);color:var(--lvl-white)}
+.lvl.blue{background:rgba(59,130,246,.18);border-color:var(--lvl-blue);color:#a9c8ff}
+.lvl.red{background:rgba(229,72,77,.2);border-color:var(--lvl-red);color:#ffb3b5}
+.lvl.flash{animation:lvlflash 1.2s ease-out 2}
+@keyframes lvlflash{0%{box-shadow:0 0 0 0 rgba(247,148,29,.8)}100%{box-shadow:0 0 0 14px rgba(247,148,29,0)}}
+.dot{width:8px;height:8px;border-radius:50%;background:currentColor;animation:blink 1.6s infinite}
+@keyframes blink{50%{opacity:.25}}
+.warn-y{background:rgba(245,197,24,.16);border-color:#f5c518;color:#ffe68a}
+.warn-o{background:rgba(249,115,22,.18);border-color:#f97316;color:#ffc59b}
+.warn-r{background:rgba(220,38,38,.22);border-color:#ef4444;color:#ffb4b4}
+.warn-b{background:rgba(79,179,232,.16);border-color:var(--blue);color:#bfe6ff}
+.warn-g{background:rgba(255,255,255,.06);border-color:var(--line2);color:var(--muted)}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:18px;padding:18px 0 40px}
+.phases{display:flex;gap:6px;margin:4px 0 14px}
+.ph{flex:1;min-width:0}
+.ph .bar{height:6px;border-radius:3px;background:rgba(255,255,255,.08);overflow:hidden}
+.ph .bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--orange));transition:width .8s}
+.ph.done .bar i{width:100%}
+.ph.now .bar i{width:50%;animation:prog 2s ease-in-out infinite alternate}
+@keyframes prog{to{width:85%}}
+.ph span{display:block;font-family:var(--font-c);font-size:11.5px;color:var(--dim);margin-top:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-transform:uppercase;letter-spacing:.05em}
+.ph.now span{color:var(--orange2);font-weight:700}
+.ph.done span{color:var(--blue)}
+.inject{position:relative;overflow:hidden}
+.inject .stamp{position:absolute;top:16px;right:16px}
+.inject h3{font-size:22px;margin:6px 0 10px}
+.inject .sit{font-size:16px;color:#e4eef6}
+.inject .sit p+p{margin-top:8px}
+.reveal>*{opacity:0;transform:translateY(8px);animation:rv .5s forwards}
+@keyframes rv{to{opacity:1;transform:none}}
+.metrics-mini{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:16px}
+.mm{padding:10px;border-radius:10px;background:rgba(0,0,0,.18);border:1px solid var(--line)}
+.mm b{display:block;font-family:var(--font-h);font-size:20px}
+.mm span{font-family:var(--font-c);font-size:11.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.mm.bump b{animation:bump .6s}
+@keyframes bump{40%{transform:scale(1.25);color:var(--orange2)}}
+.roletask{display:flex;gap:12px;padding:14px 16px;border-radius:12px;border:1px dashed rgba(247,148,29,.55);background:rgba(247,148,29,.06);margin-top:14px}
+.opt{display:flex;gap:14px;align-items:flex-start;text-align:left;width:100%;padding:14px 16px;border-radius:12px;border:1.5px solid var(--line);background:rgba(255,255,255,.025);transition:border-color .2s,background .2s,transform .2s;animation:rv .45s both}
+.opt:hover:not(:disabled){border-color:var(--blue);background:rgba(79,179,232,.07);transform:translateX(3px)}
+.opt[aria-checked="true"]{border-color:var(--orange);background:rgba(247,148,29,.1)}
+.opt .k{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font-family:var(--font-h);font-weight:800;background:rgba(79,179,232,.15);color:var(--blue);flex-shrink:0;transition:.2s}
+.opt[aria-checked="true"] .k{background:var(--orange);color:#1c0d00}
+.opt:disabled{cursor:default}
+.opt.v-best{border-color:var(--ok);background:rgba(52,195,143,.1)}
+.opt.v-faded{opacity:.5}
+.opt .vtag{margin-left:auto;flex-shrink:0}
+.v-best-c{color:#7ff0c4;border-color:var(--ok);background:rgba(52,195,143,.14)}
+.v-good-c{color:#bfe6ff;border-color:var(--blue);background:rgba(79,179,232,.14)}
+.v-weak-c{color:#ffe68a;border-color:var(--warn);background:rgba(245,197,24,.12)}
+.v-unsafe-c{color:#ffb4b4;border-color:var(--crit);background:rgba(239,68,68,.14)}
+.feedback{border-left:4px solid var(--blue);animation:slidein .5s cubic-bezier(.2,.8,.2,1)}
+.feedback.v-best{border-left-color:var(--ok)}.feedback.v-weak{border-left-color:var(--warn)}.feedback.v-unsafe{border-left-color:var(--crit)}
+@keyframes slidein{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+.ref{font-family:var(--font-c);font-size:13px;color:var(--orange2);display:flex;gap:6px;align-items:flex-start}
+.timer{position:relative;width:46px;height:46px}
+.timer svg{transform:rotate(-90deg)}
+.timer circle{fill:none;stroke-width:4}
+.timer .bg{stroke:rgba(255,255,255,.1)}
+.timer .fg{stroke:var(--blue);stroke-linecap:round;transition:stroke-dashoffset 1s linear,stroke .3s}
+.timer.low .fg{stroke:var(--orange)} .timer.crit .fg{stroke:var(--crit)}
+.timer.crit{animation:shakey .5s infinite}
+@keyframes shakey{25%{transform:translateX(-1px)}75%{transform:translateX(1px)}}
+.timer b{position:absolute;inset:0;display:grid;place-items:center;font-family:var(--font-c);font-size:13px;font-weight:700}
+
+/* Side panel */
+.side{display:flex;flex-direction:column;gap:16px;min-width:0}
+.tabs{display:flex;gap:4px;padding:4px;border-radius:12px;background:rgba(0,0,0,.25);border:1px solid var(--line)}
+.tab{flex:1;padding:8px 6px;border-radius:9px;font-family:var(--font-c);font-weight:700;font-size:13px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);transition:.2s;position:relative}
+.tab[aria-selected="true"]{background:var(--panel3);color:var(--text)}
+.tab .badge{position:absolute;top:2px;right:4px;min-width:16px;height:16px;border-radius:8px;background:var(--orange);color:#1c0d00;font-size:10px;display:grid;place-items:center;padding:0 4px}
+.tabpanel{max-height:430px;overflow:auto;padding-right:4px}
+.log{display:flex;flex-direction:column;gap:8px}
+.msg{padding:10px 12px;border-radius:10px;background:rgba(0,0,0,.2);border:1px solid var(--line);border-left:3px solid var(--blue);animation:msgin .4s cubic-bezier(.2,.8,.2,1)}
+.msg.alert{border-left-color:var(--crit)}.msg.decision{border-left-color:var(--orange)}.msg.intel{border-left-color:var(--ok)}.msg.system{border-left-color:var(--gray)}
+@keyframes msgin{from{opacity:0;transform:translateX(24px)}to{opacity:1;transform:none}}
+.msg .h{display:flex;justify-content:space-between;gap:8px;font-family:var(--font-c);font-size:12.5px;font-weight:700;margin-bottom:3px}
+.msg .h em{font-style:normal;color:var(--dim);font-weight:400}
+.msg p{font-size:13px;color:#d0e0ec}
+.res{display:grid;gap:8px}
+.res .r{padding:9px 10px;border-radius:10px;background:rgba(0,0,0,.18);border:1px solid var(--line)}
+.res .r .t{display:flex;justify-content:space-between;font-family:var(--font-c);font-size:13.5px;margin-bottom:6px}
+.res .meter{height:6px;border-radius:3px;background:rgba(255,255,255,.08);overflow:hidden}
+.res .meter i{display:block;height:100%;background:linear-gradient(90deg,var(--blue),var(--orange));transition:width .9s cubic-bezier(.2,.8,.2,1)}
+.org{display:flex;flex-direction:column;align-items:center;gap:14px;padding:6px 0}
+.org .lvl-row{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;position:relative}
+.onode{padding:6px 9px;border-radius:9px;border:1.5px solid var(--line2);background:rgba(255,255,255,.04);font-family:var(--font-c);font-weight:700;font-size:12.5px;text-align:center;min-width:52px;transition:.25s;position:relative}
+.onode small{display:block;font-weight:400;font-size:10.5px;color:var(--muted);text-transform:none}
+.onode.ro{border-color:#a78bfa;color:#ddd3ff}
+.onode.ic{border-color:var(--orange);color:#ffd3a1}
+.onode.eoc{border-style:dashed;border-color:var(--blue)}
+.onode.me{background:rgba(247,148,29,.2);border-color:var(--orange);box-shadow:0 0 0 0 rgba(247,148,29,.7);animation:ring 2s infinite}
+@keyframes ring{0%{box-shadow:0 0 0 0 rgba(247,148,29,.6)}100%{box-shadow:0 0 0 12px rgba(247,148,29,0)}}
+.org .link{width:2px;height:12px;background:var(--line2)}
+.orgnote{font-size:12px;color:var(--muted);text-align:center}
+.forms{display:grid;gap:6px}
+.form{display:flex;gap:10px;align-items:center;padding:8px 10px;border-radius:10px;background:rgba(0,0,0,.18);border:1px solid var(--line);font-size:13px}
+.form .ck{width:20px;height:20px;border-radius:6px;border:1.5px solid var(--line2);display:grid;place-items:center;flex-shrink:0;font-size:12px}
+.form.done .ck{background:var(--ok);border-color:var(--ok);color:#04121e;animation:pop .35s}
+.form.due .ck{border-color:var(--orange)}
+.form b{font-family:var(--font-c)}
+.score-wrap{display:flex;gap:16px;align-items:center}
+.ringbox{position:relative;width:104px;height:104px;flex-shrink:0}
+.ringbox svg{transform:rotate(-90deg)}
+.ringbox .fg{transition:stroke-dashoffset 1.1s cubic-bezier(.2,.8,.2,1)}
+.ringbox b{position:absolute;inset:0;display:grid;place-items:center;font-family:var(--font-h);font-size:28px;font-weight:800}
+.met{display:grid;gap:8px;flex:1;min-width:0}
+.met .m .t{display:flex;justify-content:space-between;font-family:var(--font-c);font-size:12.5px;margin-bottom:3px}
+.met .m .bar{height:5px;border-radius:3px;background:rgba(255,255,255,.08);overflow:hidden}
+.met .m .bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--orange));transition:width .9s cubic-bezier(.2,.8,.2,1)}
+
+/* Overlays */
+.overlay{position:fixed;inset:0;z-index:80;display:grid;place-items:center;padding:20px;background:rgba(4,14,24,.82);backdrop-filter:blur(6px);animation:fade .25s}
+@keyframes fade{from{opacity:0}}
+.modal{width:min(820px,100%);max-height:88vh;overflow:auto;animation:modalIn .35s cubic-bezier(.2,.8,.2,1)}
+@keyframes modalIn{from{opacity:0;transform:translateY(20px) scale(.97)}}
+.optrans{position:fixed;inset:0;z-index:90;display:grid;place-items:center;background:radial-gradient(circle at 50% 50%,rgba(15,42,66,.97),rgba(4,14,24,.98));cursor:pointer}
+.optrans .inner{text-align:center;animation:opin 1.6s cubic-bezier(.2,.8,.2,1)}
+.optrans .big{font-family:var(--font-h);font-weight:800;font-size:clamp(34px,6vw,64px);letter-spacing:-.02em}
+.optrans .line{height:3px;width:0;margin:16px auto;background:linear-gradient(90deg,var(--blue),var(--orange));animation:grow 1.2s .2s forwards}
+@keyframes grow{to{width:min(420px,70vw)}}
+@keyframes opin{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:none}}
+.toasts{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);z-index:95;display:flex;flex-direction:column;gap:8px;align-items:center;pointer-events:none}
+.toast{padding:10px 16px;border-radius:12px;background:var(--panel3);border:1px solid var(--line2);box-shadow:var(--shadow);font-size:14px;animation:toast 3.4s forwards;max-width:92vw}
+@keyframes toast{0%{opacity:0;transform:translateY(16px)}10%,85%{opacity:1;transform:none}100%{opacity:0;transform:translateY(-8px)}}
+.fx{position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.5}
+.content{position:relative;z-index:1}
+.quake{animation:quake .7s 2}
+@keyframes quake{10%,90%{transform:translate(-2px,1px)}20%,80%{transform:translate(3px,-2px)}30%,50%,70%{transform:translate(-4px,2px)}40%,60%{transform:translate(4px,-1px)}}
+
+/* Tooltip */
+#tip{position:fixed;z-index:200;max-width:300px;padding:9px 12px;border-radius:10px;background:#0a1f31;border:1px solid var(--blue);color:var(--text);font-size:13px;line-height:1.45;box-shadow:0 12px 30px rgba(0,0,0,.45);pointer-events:none;opacity:0;transform:translateY(4px);transition:opacity .15s,transform .15s}
+#tip.on{opacity:1;transform:none}
+#tip b{color:var(--orange2);font-family:var(--font-c);letter-spacing:.03em}
+.term{border-bottom:1.5px dotted var(--blue);cursor:help;text-decoration:none}
+.term:hover,.term:focus{color:#bfe6ff;background:rgba(79,179,232,.12);border-radius:3px}
+
+/* Results */
+.big-ring{position:relative;width:200px;height:200px;margin:0 auto}
+.big-ring svg{transform:rotate(-90deg)}
+.big-ring .fg{transition:stroke-dashoffset 1.8s cubic-bezier(.2,.8,.2,1)}
+.big-ring b{position:absolute;inset:0;display:grid;place-items:center;font-family:var(--font-h);font-size:56px;font-weight:800}
+table.aar{width:100%;border-collapse:collapse;font-size:13.5px}
+table.aar th{font-family:var(--font-c);text-transform:uppercase;letter-spacing:.05em;font-size:12px;color:var(--muted);text-align:left;padding:8px;border-bottom:1px solid var(--line2)}
+table.aar td{padding:10px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+.lb-row{display:flex;align-items:center;gap:14px;padding:12px 14px;border-radius:12px;background:rgba(0,0,0,.18);border:1px solid var(--line);animation:rv .4s both}
+.confetti{position:fixed;inset:0;pointer-events:none;z-index:85}
+.disclaimer{font-size:12.5px;color:var(--dim);border-top:1px solid var(--line);padding-top:14px;margin-top:22px}
+.ttx-only{}
+footer.foot{padding:26px 0 40px;font-size:12.5px;color:var(--dim)}
+
+@media (max-width:1020px){.layout{grid-template-columns:1fr}.tabpanel{max-height:none}}
+@media (max-width:720px){
+  .topbar .wrap{min-height:60px}.brand h1{font-size:15px}.citytag{display:none}
+  .hero{padding:24px}.metrics-mini{grid-template-columns:repeat(2,1fr)}
+  .kv{grid-template-columns:1fr}.pad{padding:16px}
+  .hide-sm{display:none!important}
+  .brand small{display:none}
+  .gbar{position:static!important}
+  #brief-grid,.res-grid{grid-template-columns:1fr!important}
+  .gbar .wrap{flex-wrap:wrap;padding-top:8px;padding-bottom:8px}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
+  .fx{display:none}
+}
+@media print{
+  body{background:#fff;color:#000;font-size:11pt}
+  .topbar,.no-print,.fx,.toasts,#tip{display:none!important}
+  .card{background:#fff;border:1px solid #999;box-shadow:none;color:#000}
+  .muted,.dim,table.aar td,table.aar th,.msg p{color:#222!important}
+  .accent{color:#000;background:none}
+  .screen{animation:none}
+}
+</style>
+</head>
+<body>
+<canvas class="fx" id="fx" aria-hidden="true"></canvas>
+<div id="tip" role="tooltip"></div>
+<div class="toasts" id="toasts" aria-live="polite"></div>
+
+<!-- LOADING -->
+<div class="loading" id="loading-screen">
+  <div style="text-align:center">
+    <div class="loader-ring">
+      <svg viewBox="0 0 132 132"><circle cx="66" cy="66" r="62" fill="none" stroke="rgba(79,179,232,.15)" stroke-width="4"/><circle cx="66" cy="66" r="62" fill="none" stroke="url(#lg)" stroke-width="4" stroke-linecap="round" stroke-dasharray="120 300"/><defs><linearGradient id="lg"><stop offset="0" stop-color="#4fb3e8"/><stop offset="1" stop-color="#f7941d"/></linearGradient></defs></svg>
+      <div class="logo"><img src="https://ddrive-erm.appimize.app/assets/apps/user_1097/app_12127/draft/icon/app_logo.png?1772401763" alt="" onerror="this.remove()"></div>
+    </div>
+    <h2 class="accent" style="font-size:26px">DDRiVE-M ICS</h2>
+    <p class="cond muted" style="letter-spacing:.12em;text-transform:uppercase;font-size:13px;margin-top:6px">City of Ormoc · CDRRMO &amp; EOC</p>
+    <div class="loadbar"><i></i></div>
+    <p class="muted" id="load-msg" style="font-size:13px;margin-top:12px">Loading Ormoc hazard scenarios…</p>
+  </div>
+</div>
+
+<!-- HEADER (shared) -->
+<header class="topbar hidden" id="topbar">
+  <div class="wrap">
+    <div class="brand">
+      <div class="logo"><img src="https://ddrive-erm.appimize.app/assets/apps/user_1097/app_12127/draft/icon/app_logo.png?1772401763" alt="DDRiVE-M logo" onerror="this.remove()"></div>
+      <div style="min-width:0">
+        <h1 id="app-title" class="accent">DDRiVE-M ICS</h1>
+        <small>Incident Command System Simulator</small>
+      </div>
+    </div>
+    <div class="row">
+      <div class="citytag hide-sm" data-tip="<b>City of Ormoc, Leyte</b> · Eastern Visayas (Region VIII). 85 barangays (PSA PSGC, since the 2022 Poblacion merger)."><span class="flagbar"><i style="background:#0038a8"></i><i style="background:#fff"></i><i style="background:#ce1126"></i></span>Ormoc City · CDRRMO</div>
+      <button class="icon-btn" id="btn-leaderboard" data-tip="Leaderboard: top scores by scenario" aria-label="Leaderboard"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4zM17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3"/></svg></button>
+      <button class="icon-btn" id="btn-help" data-tip="How to play, PH ICS basics and doctrine references  (shortcut: ?)" aria-label="Help and references"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.2a2.6 2.6 0 0 1 5 .9c0 1.7-2.5 2.2-2.5 3.9M12 17h.01"/></svg></button>
+    </div>
+  </div>
+</header>
+
+<div class="content">
+<!-- MAIN MENU -->
+<section class="screen hidden" id="main-menu" aria-labelledby="welcome-text">
+  <div class="wrap" style="padding-top:28px">
+    <div class="card hero">
+      <svg class="waves" viewBox="0 0 520 200" aria-hidden="true"><path d="M0 120 Q65 90 130 120 T260 120 T390 120 T520 120 V200 H0Z" fill="#4fb3e8"/><path d="M0 145 Q65 115 130 145 T260 145 T390 145 T520 145 V200 H0Z" fill="#2b8fd0"/><path d="M0 170 Q65 140 130 170 T260 170 T390 170 T520 170 V200 H0Z" fill="#f7941d" opacity=".6"/></svg>
+      <span class="kicker">Ormoc City CDRRMO · EOC Training</span>
+      <h2 id="welcome-text">Command the response before the river rises.</h2>
+      <p class="lead">Practise the Philippine Incident Command System on Ormoc hazards: typhoons over Ormoc Bay, Anilao–Malbasag flash floods, a Leyte earthquake, a port casualty incident and a geothermal gas release. Each decision is scored against national doctrine and explained.</p>
+      <div class="row wrapf" style="margin-top:20px">
+        <a href="https://asilvainnovations.github.io/ddrive-m/public/ics.html" target="_blank" rel="noopener noreferrer" class="btn btn-ghost" data-tip="Opens the DDRiVE-M ICS learning module in a new tab">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5v14zM20 17v4H6.5"/></svg>Learn the ICS framework</a>
+        <button class="btn btn-ghost" id="btn-basics" data-tip="Quick primer: Responsible Official, IC, EOC alert levels, PAGASA warnings">PH ICS in 2 minutes</button>
+      </div>
+    </div>
+
+    <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr));margin:18px 0">
+      <div class="card stat" data-tip="Completed simulation runs saved on this device or your workspace"><b class="accent" id="stat-sessions">0</b><span>Exercises run</span></div>
+      <div class="card stat" data-tip="Average final score across all saved runs"><b class="accent" id="stat-avg-score">0%</b><span>Average score</span></div>
+      <div class="card stat" data-tip="Responsible Official, Command Staff, General Staff and the EOC"><b class="accent" id="stat-roles">10</b><span>ICS positions</span></div>
+      <div class="card stat" data-tip="Each scenario runs over four operational periods"><b class="accent" id="stat-scen">5</b><span>Ormoc scenarios</span></div>
+      <div class="card stat" data-tip="PSA PSGC count since the 4Q 2022 update (City Ordinance No. 052, s. 2021, ratified 8 Oct 2022)"><b class="accent">85</b><span>Barangays</span></div>
+    </div>
+
+    <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(320px,1fr))">
+      <button class="card mode" id="mode-single" data-tip="Play one ICS position against the clock, with doctrine feedback after every decision">
+        <div class="row" style="align-items:flex-start;gap:18px">
+          <div class="ico" style="background:linear-gradient(135deg,var(--blue2),var(--blue))"><svg viewBox="0 0 24 24" fill="none" stroke="#04121e" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></div>
+          <div><h3>Individual drill</h3><p class="muted">Take one position in the Incident Management Team and run four operational periods.</p>
+            <ul class="ticks"><li>Options shuffled each run; countdown per decision</li><li>Feedback with the governing law or guideline</li><li>Printable after-action review (AAR)</li></ul></div>
+        </div>
+      </button>
+      <button class="card mode" id="mode-multi" data-tip="Project on one screen; the team discusses, the facilitator enters the team decision">
+        <div class="row" style="align-items:flex-start;gap:18px">
+          <div class="ico" style="background:linear-gradient(135deg,#e07b06,var(--orange))"><svg viewBox="0 0 24 24" fill="none" stroke="#1c0d00" stroke-width="2"><circle cx="9" cy="8" r="3.5"/><circle cx="17" cy="9" r="2.5"/><path d="M2 20a7 7 0 0 1 14 0M15 20a5 5 0 0 1 7-4.6"/></svg></div>
+          <div><h3>Facilitated tabletop (TTX)</h3><p class="muted">For CDRRMC, EOC staff and BDRRMC drills. The spotlight position rotates every operational period.</p>
+            <ul class="ticks"><li>Discussion prompts for the facilitator</li><li>Longer discussion timer; team scores</li><li>AAR to attach to the exercise report</li></ul></div>
+        </div>
+      </button>
+    </div>
+
+    <div class="card pad" style="margin-top:18px">
+      <div class="row between wrapf"><h3 style="font-size:20px">DDRiVE-M and the four DRRM thematic areas</h3><span class="chip" data-tip="RA 10121 organises DRRM into four thematic areas: Prevention &amp; Mitigation, Preparedness, Response, Rehabilitation &amp; Recovery">RA 10121</span></div>
+      <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr));margin-top:16px">
+        <div class="pillar"><div class="L">D</div><h4>Detect &amp; Direct</h4><p class="muted" style="font-size:14px;margin-top:4px">PAGASA/PHIVOLCS warnings, PDRA, EOC alert level, delegation of authority to the IC.</p><span class="tag">Preparedness</span></div>
+        <div class="pillar"><div class="L">R</div><h4>Respond &amp; Recover</h4><p class="muted" style="font-size:14px;margin-top:4px">Incident objectives, IAP, clusters, evacuation, RDANA, transition to early recovery.</p><span class="tag">Response</span><span class="tag">Rehab &amp; Recovery</span></div>
+        <div class="pillar"><div class="L">M</div><h4>Mitigate</h4><p class="muted" style="font-size:14px;margin-top:4px">AAR lessons into the LDRRMP, contingency plans and the CDRRMO Manual of Operations.</p><span class="tag">Prevention &amp; Mitigation</span></div>
+      </div>
+      <p class="kicker" style="margin-top:20px">Who decides what</p>
+      <div class="flow" aria-label="Command and coordination flow">
+        <span class="node" data-tip="<b>Responsible Official (RO)</b> — the City Mayor as Local Chief Executive and CDRRMC Chair. Sets policy and priorities and delegates authority to the IC.">City Mayor (RO)</span><span class="arr">→</span>
+        <span class="node" data-tip="<b>Incident Commander</b> — manages the on-scene response from the Incident Command Post under a delegation of authority.">Incident Commander</span><span class="arr">→</span>
+        <span class="node" data-tip="<b>Incident Management Team</b> — Command Staff (Safety, PIO, Liaison) and General Staff (Operations, Planning, Logistics, Finance/Admin).">IMT</span>
+        <span class="arr" style="color:var(--blue)">⇄</span>
+        <span class="node" style="border-style:dashed" data-tip="<b>EOC / CDRRMO Operations Center</b> — coordination hub. Gathers information, sources resources, links the IC to the CDRRMC, response clusters and RDRRMC 8. It coordinates; it does not command on scene.">EOC (coordination)</span>
+      </div>
+    </div>
+    <footer class="foot">Exercise tool. Scenario names, figures and events are fictional; the procedures follow national doctrine as cited. The official text of each law or guideline governs. Validate local procedures against the approved Ormoc CDRRMO Manual of Operations.</footer>
+  </div>
+</section>
+
+<!-- SETUP -->
+<section class="screen hidden" id="setup-screen" aria-labelledby="setup-h">
+  <div class="wrap" style="padding-top:22px">
+    <div class="row between wrapf" style="margin-bottom:16px">
+      <button class="btn btn-ghost" id="btn-back-setup" data-tip="Back to the main menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>Menu</button>
+      <span class="chip" id="mode-chip">Individual drill</span>
+    </div>
+    <h2 id="setup-h" style="font-size:28px;margin-bottom:18px">Set up the exercise</h2>
+
+    <div class="card pad" style="margin-bottom:16px">
+      <div class="step-h"><div class="step-n">1</div><h3>Participant</h3></div>
+      <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(240px,1fr))">
+        <div class="field"><label for="player-name" id="name-label">Your name *</label><input class="input" id="player-name" autocomplete="name" placeholder="e.g., Juan Dela Cruz" maxlength="60"></div>
+        <div class="field"><label for="player-org">Office / agency</label>
+          <select class="input" id="player-org">
+            <option value="">Select…</option>
+            <option>CDRRMO Ormoc</option><option>CDRRMC member office</option><option>BDRRMC (barangay)</option><option>BFP</option><option>PNP</option><option>Philippine Coast Guard</option><option>City Health Office</option><option>CSWDO</option><option>City Engineering / OBO</option><option>DepEd Division</option><option>Private sector / CSO</option><option>Other</option>
+          </select></div>
+        <div class="field ttx-only hidden" id="ttx-fields"><label for="facilitator">Facilitator</label><input class="input" id="facilitator" placeholder="Facilitator name" maxlength="60"></div>
+      </div>
+    </div>
+
+    <div class="card pad" style="margin-bottom:16px" id="role-block">
+      <div class="step-h"><div class="step-n">2</div><h3>ICS position</h3><span class="muted" style="font-size:14px">Your lens on every decision: tasks, forms and AAR tips change with it.</span></div>
+      <div class="grid" id="role-grid" style="grid-template-columns:repeat(auto-fill,minmax(230px,1fr))" role="group" aria-label="ICS positions"></div>
+    </div>
+
+    <div class="card pad" style="margin-bottom:16px">
+      <div class="step-h"><div class="step-n">3</div><h3>Ormoc scenario</h3></div>
+      <div class="grid" id="scenario-list" style="grid-template-columns:repeat(auto-fill,minmax(340px,1fr))" role="group" aria-label="Scenarios"></div>
+    </div>
+
+    <div class="card pad">
+      <div class="step-h"><div class="step-n">4</div><h3>Difficulty</h3></div>
+      <div class="grid" id="difficulty-grid" style="grid-template-columns:repeat(auto-fit,minmax(200px,1fr))" role="group" aria-label="Difficulty"></div>
+    </div>
+
+    <div class="sticky-cta"><div class="row between wrapf">
+      <p class="muted" id="setup-hint" style="font-size:14px">Enter your name, then choose a position and a scenario.</p>
+      <button class="btn btn-orange" id="btn-start-game" disabled data-tip="Go to the incident briefing (ICS 201)">Proceed to briefing<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 18l6-6-6-6"/></svg></button>
+    </div></div>
+  </div>
+</section>
+
+<!-- BRIEFING -->
+<section class="screen hidden" id="briefing-screen" aria-labelledby="brief-title">
+  <div class="wrap" style="padding:22px 20px 40px">
+    <div class="row between wrapf" style="margin-bottom:14px">
+      <button class="btn btn-ghost" id="btn-back-brief"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>Setup</button>
+      <span class="chip" data-tip="<b>ICS Form 201 · Incident Briefing</b> — the first briefing given to an incoming IC and staff: situation, objectives, organisation and resources.">ICS 201 · Incident briefing</span>
+    </div>
+    <div class="grid" style="grid-template-columns:minmax(0,1.4fr) minmax(0,1fr)" id="brief-grid">
+      <div class="card pad" id="brief-main"></div>
+      <div class="grid" style="align-content:start" id="brief-side"></div>
+    </div>
+  </div>
+</section>
+
+<!-- GAME -->
+<section class="screen hidden" id="game-screen" aria-label="Simulation">
+  <div class="topbar gbar" style="top:68px;z-index:30">
+    <div class="wrap">
+      <div class="gstat">
+        <span class="chip" id="game-scenario-name"></span>
+        <span class="chip" id="game-role-name" style="border-color:var(--orange);color:var(--orange2)"></span>
+        <span class="chip lvl white" id="eoc-level"><span class="dot"></span><span id="eoc-level-t">EOC: White</span></span>
+        <span class="chip warn-g" id="hazard-warn"></span>
+      </div>
+      <div class="row">
+        <span class="chip hide-sm" id="sim-clock" data-tip="Scenario clock (exercise time, Philippine Standard Time)">D-0 · 00:00H</span>
+        <span class="chip hide-sm" data-tip="Total time spent in this exercise"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2M9 2h6"/></svg><span id="game-timer">00:00</span></span>
+        <div class="timer" id="dtimer" data-tip="Time left for this decision. When it runs out, inaction is recorded as the decision."><svg width="46" height="46" viewBox="0 0 46 46"><circle class="bg" cx="23" cy="23" r="19"/><circle class="fg" id="dtimer-fg" cx="23" cy="23" r="19" stroke-dasharray="119.4" stroke-dashoffset="0"/></svg><b id="dtimer-t">--</b></div>
+        <button class="icon-btn" id="btn-pause-game" data-tip="Pause (P)" aria-label="Pause"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg></button>
+      </div>
+    </div>
+  </div>
+  <div class="wrap layout" id="game-layout">
+    <div style="min-width:0">
+      <div class="phases" id="phase-track" aria-label="Operational periods"></div>
+      <article class="card pad inject" id="inject" aria-live="polite"></article>
+      <div class="card pad" style="margin-top:16px" id="decision-card">
+        <div class="row between wrapf" style="margin-bottom:12px">
+          <h3 style="font-size:18px" id="decision-prompt">What is your decision?</h3>
+          <span class="muted cond hide-sm" style="font-size:12.5px">Keys <kbd>1</kbd>–<kbd>4</kbd> choose · <kbd>Enter</kbd> commits · <kbd>I</kbd> intel</span>
+        </div>
+        <div class="grid" style="gap:10px" id="decision-options" role="radiogroup" aria-label="Decision options"></div>
+        <div class="row wrapf" style="margin-top:16px" id="decision-actions">
+          <button class="btn btn-orange" id="btn-submit-decision" disabled data-tip="Commit this decision (Enter). It cannot be changed.">Commit decision</button>
+          <button class="btn btn-ghost" id="btn-request-info" data-tip="Ask the EOC for more information. Costs 2 points on Timeliness.">Request intel</button>
+          <button class="btn btn-ghost hidden" id="btn-hint" data-tip="Beginner only: a doctrine nudge, without the answer">Doctrine hint</button>
+        </div>
+        <div id="feedback-slot"></div>
+      </div>
+    </div>
+    <aside class="side">
+      <div class="card pad">
+        <div class="row between" style="margin-bottom:12px"><h3 style="font-size:16px">Performance</h3><span class="chip" id="perf-band" data-tip="Running competency band">—</span></div>
+        <div class="score-wrap">
+          <div class="ringbox"><svg width="104" height="104" viewBox="0 0 104 104"><circle cx="52" cy="52" r="45" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="9"/><circle class="fg" id="score-ring" cx="52" cy="52" r="45" fill="none" stroke="url(#sg)" stroke-width="9" stroke-linecap="round" stroke-dasharray="282.7" stroke-dashoffset="282.7"/><defs><linearGradient id="sg"><stop offset="0" stop-color="#4fb3e8"/><stop offset="1" stop-color="#f7941d"/></linearGradient></defs></svg><b id="current-score">0</b></div>
+          <div class="met" id="metrics"></div>
+        </div>
+      </div>
+      <div class="card pad">
+        <div class="tabs" role="tablist" aria-label="Incident information">
+          <button class="tab" role="tab" aria-selected="true" data-tab="log" id="tab-log">Log<span class="badge hidden" id="log-badge">0</span></button>
+          <button class="tab" role="tab" aria-selected="false" data-tab="org">Org</button>
+          <button class="tab" role="tab" aria-selected="false" data-tab="res">Resources</button>
+          <button class="tab" role="tab" aria-selected="false" data-tab="forms">Forms</button>
+        </div>
+        <div class="tabpanel" style="margin-top:12px">
+          <div id="panel-log" class="log" role="log" aria-live="polite" aria-label="Communications log (ICS 213 / 214)"></div>
+          <div id="panel-org" class="hidden"></div>
+          <div id="panel-res" class="res hidden"></div>
+          <div id="panel-forms" class="forms hidden"></div>
+        </div>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<!-- RESULTS -->
+<section class="screen hidden" id="results-screen" aria-labelledby="res-h">
+  <div class="wrap" style="padding:24px 20px 40px">
+    <div class="row between wrapf no-print" style="margin-bottom:16px">
+      <span class="kicker">Exercise complete · After-action review</span>
+      <div class="row wrapf">
+        <button class="btn btn-ghost" id="btn-print" data-tip="Print or save the AAR as PDF">Print AAR</button>
+        <button class="btn btn-ghost" id="btn-export" data-tip="Download this run as JSON for the exercise report">Export</button>
+      </div>
+    </div>
+    <div class="grid res-grid" style="grid-template-columns:minmax(0,1fr) minmax(0,1.5fr)">
+      <div class="card pad" style="text-align:center">
+        <h2 id="res-h" style="font-size:20px;margin-bottom:14px">Overall performance</h2>
+        <div class="big-ring"><svg width="200" height="200" viewBox="0 0 200 200"><circle cx="100" cy="100" r="88" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="14"/><circle class="fg" id="final-score-ring" cx="100" cy="100" r="88" fill="none" stroke="url(#sg2)" stroke-width="14" stroke-linecap="round" stroke-dasharray="552.9" stroke-dashoffset="552.9"/><defs><linearGradient id="sg2"><stop offset="0" stop-color="#4fb3e8"/><stop offset="1" stop-color="#f7941d"/></linearGradient></defs></svg><b id="final-score">0</b></div>
+        <p class="accent" style="font-family:var(--font-h);font-weight:800;font-size:20px;margin-top:12px" id="performance-grade"></p>
+        <p class="muted" style="font-size:14px;margin-top:6px" id="res-meta"></p>
+      </div>
+      <div class="card pad"><h3 style="font-size:18px;margin-bottom:12px">Competency rubric</h3><div class="grid" style="gap:10px" id="rubric-results"></div></div>
+    </div>
+    <div class="card pad" style="margin-top:16px"><h3 style="font-size:18px;margin-bottom:12px">Decision log and doctrine</h3><div style="overflow:auto"><table class="aar" id="aar-table"></table></div></div>
+    <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(300px,1fr));margin-top:16px">
+      <div class="card pad"><h3 style="font-size:18px;margin-bottom:10px">Sustain</h3><div id="aar-sustain" class="grid" style="gap:8px"></div></div>
+      <div class="card pad"><h3 style="font-size:18px;margin-bottom:10px">Improve</h3><div id="recommendations-list" class="grid" style="gap:8px"></div></div>
+    </div>
+    <div class="card pad" style="margin-top:16px" id="aar-mop"></div>
+    <div class="row wrapf no-print" style="justify-content:center;margin-top:22px">
+      <button class="btn btn-orange" id="btn-play-again" data-tip="Same position and scenario; options reshuffle">Run again</button>
+      <button class="btn btn-ghost" id="btn-try-different" data-tip="Change position, scenario or difficulty">Change setup</button>
+      <button class="btn btn-ghost" id="btn-back-menu">Main menu</button>
+    </div>
+  </div>
+</section>
+</div>
+
+<!-- MODALS -->
+<div class="overlay hidden" id="leaderboard-modal" role="dialog" aria-modal="true" aria-labelledby="lb-h">
+  <div class="card pad modal">
+    <div class="row between" style="margin-bottom:14px"><h2 id="lb-h" class="accent" style="font-size:24px">Leaderboard</h2><button class="icon-btn" data-close aria-label="Close" data-tip="Close (Esc)">✕</button></div>
+    <div class="row wrapf" id="lb-filter" style="margin-bottom:14px"></div>
+    <div id="leaderboard-content" class="grid" style="gap:8px"></div>
+  </div>
+</div>
+<div class="overlay hidden" id="help-modal" role="dialog" aria-modal="true" aria-labelledby="help-h">
+  <div class="card pad modal">
+    <div class="row between" style="margin-bottom:12px"><h2 id="help-h" class="accent" style="font-size:24px">Help &amp; references</h2><button class="icon-btn" data-close aria-label="Close" data-tip="Close (Esc)">✕</button></div>
+    <div class="tabs" role="tablist" style="margin-bottom:14px">
+      <button class="tab" role="tab" aria-selected="true" data-htab="play">How to play</button>
+      <button class="tab" role="tab" aria-selected="false" data-htab="basics">PH ICS basics</button>
+      <button class="tab" role="tab" aria-selected="false" data-htab="refs">References</button>
+      <button class="tab" role="tab" aria-selected="false" data-htab="gloss">Glossary</button>
+    </div>
+    <div id="help-body"></div>
+  </div>
+</div>
+<div class="overlay hidden" id="pause-modal" role="dialog" aria-modal="true" aria-labelledby="pause-h">
+  <div class="card pad modal" style="width:min(420px,100%);text-align:center">
+    <div style="font-size:44px">⏸</div>
+    <h2 id="pause-h" style="font-size:22px;margin:8px 0 6px">Exercise paused</h2>
+    <p class="muted" style="font-size:14px;margin-bottom:18px">The decision clock is stopped. In a real incident it is not.</p>
+    <div class="grid" style="gap:10px">
+      <button class="btn btn-primary" id="btn-resume-game">Resume</button>
+      <button class="btn btn-ghost" id="btn-quit-game">End exercise and return to menu</button>
+    </div>
+  </div>
+</div>
+<script>
+'use strict';
+/* =====================================================================
+   DATA — Philippine ICS doctrine, Ormoc City context
+   Scores: [command, coordination, communication, decision, time]
+   Verdicts: best | good | weak | unsafe
+   ===================================================================== */
+
+const GLOSSARY = {
+  'RO':'Responsible Official — the Local Chief Executive (City Mayor) who sets policy and priorities and delegates authority to the Incident Commander (NDRRMC MC No. 4, s. 2012).',
+  'IC':'Incident Commander — overall on-scene manager of the incident, acting under a delegation of authority from the RO.',
+  'UC':'Unified Command — two or more agencies with jurisdiction share command and agree one set of objectives (e.g., CDRRMO with PCG at sea, or BFP for fire).',
+  'ICP':'Incident Command Post — where the IC and Command Staff work on scene. Different from the EOC.',
+  'IMT':'Incident Management Team — the IC plus Command and General Staff. Mobilization guidelines: NDRRMC Memo No. 44, s. 2016.',
+  'IAP':'Incident Action Plan — objectives, strategies and assignments for one operational period, approved by the IC.',
+  'EOC':'Emergency Operations Center — the coordination hub. Collects and shares information, sources resources, supports the IC and links to the CDRRMC and clusters.',
+  'ICS':'Incident Command System — standard on-scene, all-hazards management system adopted under NDRRMC MC No. 4, s. 2012.',
+  'CDRRMO':'City Disaster Risk Reduction and Management Office (RA 10121, Sec. 12).',
+  'CDRRMC':'City DRRM Council, chaired by the City Mayor. Recommends declarations and approves major actions.',
+  'BDRRMC':'Barangay DRRM Committee — first line of warning, evacuation and reporting in each of Ormoc\'s 85 barangays.',
+  'RDRRMC':'Regional DRRM Council — for Ormoc, RDRRMC 8 (Eastern Visayas), with OCD Region VIII as secretariat.',
+  'OCD':'Office of Civil Defense — secretariat of the NDRRMC; OCD Region VIII covers Leyte.',
+  'NDRRMC':'National Disaster Risk Reduction and Management Council.',
+  'PDRA':'Pre-Disaster Risk Assessment — structured assessment of the forecast hazard, exposure and needed actions, done before impact (NDRRMC Memo No. 17, s. 2014).',
+  'RDANA':'Rapid Damage Assessment and Needs Analysis — done in the first hours to days after impact to set relief and recovery priorities.',
+  'TCWS':'Tropical Cyclone Wind Signal (PAGASA), Nos. 1–5. Higher numbers mean stronger winds and shorter lead time.',
+  'PAGASA':'Philippine Atmospheric, Geophysical and Astronomical Services Administration — the official source of weather, rainfall and storm-surge warnings.',
+  'PHIVOLCS':'Philippine Institute of Volcanology and Seismology — the official source of earthquake and tsunami information.',
+  'PEIS':'PHIVOLCS Earthquake Intensity Scale, I to X. Intensity VII is "destructive".',
+  'LDRRMF':'Local DRRM Fund — at least 5% of estimated regular revenue. 70% for preparedness/mitigation, 30% Quick Response Fund (RA 10121, Sec. 21).',
+  'QRF':'Quick Response Fund — the 30% of the LDRRMF for relief and recovery, usable once a state of calamity is declared.',
+  'AA':'Anticipatory Action — action before impact under RA 12287. Funded from up to 10% of the 70% LDRRMF (plus other allowed sources), not the QRF.',
+  'SitRep':'Situation Report — regular status report to higher councils. RDRRMC 8 uses a harmonized template (Res. 12-006).',
+  'DROMIC':'Disaster Response Operations Monitoring and Information Center — DSWD\'s report on affected and displaced families.',
+  'CCCM':'Camp Coordination and Camp Management — the cluster for evacuation centers (DSWD-led).',
+  'FNI':'Food and Non-Food Items cluster (DSWD-led).',
+  'WASH':'Water, Sanitation and Hygiene — part of the Health cluster.',
+  'MHPSS':'Mental Health and Psychosocial Support.',
+  'MDM':'Management of the Dead and Missing — DILG-led cluster (NDRRMC MC No. 19, s. 2016).',
+  'SRR':'Search, Rescue and Retrieval cluster (AFP-led at national level).',
+  'WASAR':'Water Search and Rescue — teams trained and equipped for flood and swift-water rescue.',
+  'USAR':'Urban Search and Rescue — teams trained for collapsed-structure rescue.',
+  'MCI':'Mass Casualty Incident — casualties exceed the normal capacity of local responders and hospitals (DOH AO No. 155, s. 2004).',
+  'START':'Simple Triage and Rapid Treatment — sorts casualties into Red (immediate), Yellow (delayed), Green (minor) and Black (dead/expectant).',
+  'PCG':'Philippine Coast Guard — leads maritime search and rescue and maritime safety.',
+  'BFP':'Bureau of Fire Protection — fire, hazmat and rescue.',
+  'PNP':'Philippine National Police — Law and Order cluster lead; in Ormoc, the Ormoc City Police Office.',
+  'AFP':'Armed Forces of the Philippines — SRR cluster lead nationally; provides augmentation on request.',
+  'CHO':'City Health Office.',
+  'CSWDO':'City Social Welfare and Development Office — runs evacuation centers and relief locally.',
+  'DSWD':'Department of Social Welfare and Development — Vice-Chair for Response; leads FNI, CCCM and Protection clusters.',
+  'DOH':'Department of Health — Health cluster lead.',
+  'DILG':'Department of the Interior and Local Government — leads the MDM cluster; Operation L!sto preparedness protocols.',
+  'DepEd':'Department of Education — Education cluster lead; schools are often used as evacuation centers.',
+  'OBO':'Office of the Building Official — inspects structures before re-occupancy.',
+  'CENRO':'City Environment and Natural Resources Office.',
+  'EMB':'Environmental Management Bureau (DENR) — air-quality and pollution authority.',
+  'PIO':'Public Information Officer — Command Staff position; the single source of incident information to media and the public.',
+  'SOFR':'Safety Officer — Command Staff position with authority to stop unsafe acts.',
+  'LOFR':'Liaison Officer — Command Staff position; the contact point for assisting and cooperating agencies.',
+  'OSC':'Operations Section Chief.', 'PSC':'Planning Section Chief.', 'LSC':'Logistics Section Chief.', 'FSC':'Finance/Administration Section Chief.',
+  'EC':'Evacuation center. RA 12076 (Ligtas Pinoy Centers Act) provides for dedicated, resilient evacuation centers.',
+  'H2S':'Hydrogen sulfide — toxic, flammable gas from geothermal fluids. Heavier than air, it pools in low ground; high concentrations deaden the sense of smell.',
+  'PFD':'Personal flotation device (life vest). Required for anyone working on or near flood water.',
+  'ETC':'Emergency Telecommunications cluster — radio, satellite and backup communications.',
+  'MARINA':'Maritime Industry Authority — regulates vessels and shipping.',
+  'PPE':'Personal protective equipment.'
+};
+
+const ROLES = [
+  { id:'ro', abbr:'RO', name:'Responsible Official', who:'City Mayor / CDRRMC Chair', color:'#a78bfa',
+    desc:'Sets policy and priorities, issues the delegation of authority, signs declarations and executive orders.',
+    duties:['Delegate authority to the IC','Approve declarations and EOs','Set priorities and limits','Link to RDRRMC and national agencies'] },
+  { id:'eoc', abbr:'EOC', name:'EOC Manager', who:'CDRRMO Operations Center', color:'#4fb3e8',
+    desc:'Runs the Emergency Operations Center: alert level, information management, resource sourcing and reporting.',
+    duties:['Set EOC alert level','Consolidate SitReps','Source resources','Convene clusters'] },
+  { id:'ic', abbr:'IC', name:'Incident Commander', who:'Designated by the RO', color:'#f7941d',
+    desc:'Overall on-scene management. Sets incident objectives, approves the IAP and ensures responder safety.',
+    duties:['Set incident objectives','Approve the IAP','Manage the IMT','Ensure responder safety'] },
+  { id:'sofr', abbr:'SOFR', name:'Safety Officer', who:'Command Staff', color:'#ef4444',
+    desc:'Monitors hazards to responders. Has authority to stop or prevent unsafe acts immediately.',
+    duties:['Assess responder hazards','Prepare the safety message','Stop unsafe acts','Review the medical plan'] },
+  { id:'pio', abbr:'PIO', name:'Public Information Officer', who:'Command Staff', color:'#06b6d4',
+    desc:'Single point for warnings and public information, rumor control and media relations.',
+    duties:['Issue verified advisories','Control rumors','Brief the media','Use local languages'] },
+  { id:'lofr', abbr:'LOFR', name:'Liaison Officer', who:'Command Staff', color:'#22c55e',
+    desc:'Contact point for assisting agencies: PCG, BFP, PNP, AFP, the private sector and NGOs.',
+    duties:['Track agency representatives','Resolve inter-agency issues','Link to response clusters','Coordinate private partners'] },
+  { id:'osc', abbr:'OSC', name:'Operations Section Chief', who:'General Staff', color:'#f59e0b',
+    desc:'Directs all tactical operations: rescue, evacuation, medical, fire and security.',
+    duties:['Organize branches/divisions','Assign tactical resources','Execute the IAP','Report progress to the IC'] },
+  { id:'psc', abbr:'PSC', name:'Planning Section Chief', who:'General Staff', color:'#10b981',
+    desc:'Collects and evaluates information, tracks resources, prepares the IAP and documentation.',
+    duties:['Run the planning cycle','Prepare the IAP','Track resources','Keep documentation'] },
+  { id:'lsc', abbr:'LSC', name:'Logistics Section Chief', who:'General Staff', color:'#3b82f6',
+    desc:'Provides facilities, transport, supplies, communications, food and medical support for responders.',
+    duties:['Order and receive supplies','Set up facilities','Run the communications plan','Feed and care for responders'] },
+  { id:'fsc', abbr:'FSC', name:'Finance/Admin Section Chief', who:'General Staff', color:'#ec4899',
+    desc:'Tracks costs, time, procurement and claims within COA rules and the LDRRMF.',
+    duties:['Track costs and time','Emergency procurement','Fund source compliance','Compensation and claims'] }
+];
+
+/* Role lens per stage: 0 Alert & PDRA, 1 Escalation, 2 Response, 3 Transition */
+const ROLE_TASKS = {
+  ro:  ['Convene the CDRRMC for the PDRA and decide the warning posture.','Sign the evacuation order or EO; confirm the delegation of authority to the IC.','Back the IC; request augmentation through RDRRMC 8 when local capacity is exceeded.','Act on the CDRRMC recommendation on declarations; direct the transition to recovery.'],
+  eoc: ['Raise the EOC alert level and staff the Operations Center.','Push warnings to all 85 BDRRMCs; confirm acknowledgement.','Consolidate SitReps every reporting cycle on the RDRRMC 8 harmonized template.','Shift from response tracking to RDANA and recovery reporting.'],
+  ic:  ['Receive the ICS 201 briefing; confirm your delegation of authority.','Set incident objectives (ICS 202) with life safety first.','Organize Operations; keep span of control at 3–7 per supervisor.','Approve the demobilization plan; lead the after-action review.'],
+  sofr:['Identify the hazards responders will face; check PPE and equipment.','Issue the safety message (ICS 208) before teams deploy.','Watch for fatigue and unsafe acts; you may stop work on the spot.','Document responder injuries and near-misses for the AAR.'],
+  pio: ['Translate the PAGASA/PHIVOLCS warning into plain Cebuano/Waray and English.','Issue one verified advisory per update; name the barangays affected.','Run rumor control; release only figures verified by Planning.','Inform families on assistance, re-entry and claims.'],
+  lofr:['List agency representatives and their contact numbers.','Bring cluster leads (CSWDO, CHO, PNP, BFP, PCG) into one coordination line.','Route augmentation offers through the EOC; avoid self-deployment.','Thank and release assisting agencies in order.'],
+  osc: ['Pre-position rescue teams and vehicles at safe staging areas.','Organize evacuation by barangay group; assign team leaders.','Assign tactical resources by priority: life safety, incident stability, property.','Scale down tactical operations; move teams to recovery tasks.'],
+  psc: ['Gather hazard maps, population exposure and the PDRA results.','Track resources (ICS 211) and evacuees by barangay.','Prepare the IAP for the next operational period; keep the ICS 214 logs.','Compile documentation for the AAR and the 45-day reporting where required.'],
+  lsc: ['Check fuel, generators, radios and stockpiles of relief goods.','Open evacuation center logistics: food, water, sleeping kits, sanitation.','Supply teams in the field; run the communications plan (ICS 205).','Recover, inventory and restock equipment.'],
+  fsc: ['Confirm the fund source: AA line, LDRRMF 70% or QRF.','Set up cost tracking and time records for responders.','Process emergency procurement under the applicable rules.','Close cost reports; prepare liquidation and claims.']
+};
+
+const STAGES = ['Alert & PDRA','Escalation','Response','Transition'];
+
+const FORMS = {
+  '201':'Incident Briefing','202':'Incident Objectives','203':'Organization Assignment List','204':'Assignment List','205':'Radio Communications Plan',
+  '206':'Medical Plan','207':'Organization Chart','208':'Safety Message','209':'Incident Status Summary','211':'Check-in List','213':'General Message',
+  '214':'Activity Log','215':'Operational Planning Worksheet','215A':'Incident Safety Analysis','221':'Demobilization Check-out'
+};
+
+const REFERENCES = [
+  ['RA 10121 (2010)','Philippine DRRM Act. Creates the CDRRMC and CDRRMO; LDRRMF (70/30 split); state of calamity (Sec. 16); LDRRMO recommends pre-emptive or forced evacuation.'],
+  ['NDRRMC MC No. 4, s. 2012','Implementing guidelines on the use of ICS as the on-scene disaster response and management mechanism. Defines the Responsible Official and delegation of authority.'],
+  ['Executive Order No. 82, s. 2012','National crisis management framework; activates ICS for human-induced crises.'],
+  ['NDRRMC Memo No. 43, s. 2016','Interoperability of Incident Management Teams and Response Clusters.'],
+  ['NDRRMC Memo No. 44, s. 2016','Mobilization of Incident Management Teams.'],
+  ['NDRRMC Memo No. 17, s. 2014','Institutionalizes the Pre-Disaster Risk Assessment (PDRA).'],
+  ['NDRRMC MC (2014) on RDANA','Guidelines on Rapid Damage Assessment and Needs Analysis.'],
+  ['NDRRMC MC No. 19, s. 2016','Management of the Dead and Missing.'],
+  ['RA 12287 and its IRR (2026)','Declaration of State of Imminent Disaster and anticipatory action. Needs a PDRA showing severe impact and at least 72 h lead time; RDRRMC acts within 24 h; the Mayor declares by EO. AA funded from up to 10% of the 70% LDRRMF; tranches up to 30% beyond 3 days and up to 70% within 3 days; report to OCD within 45 days of lifting.'],
+  ['RA 12076 (2024)','Ligtas Pinoy Centers Act — dedicated, resilient evacuation centers.'],
+  ['DOH AO No. 155, s. 2004','Implementing guidelines for managing mass casualty incidents.'],
+  ['PAGASA warnings','TCWS Nos. 1–5; Heavy Rainfall Warning: Yellow 7.5–15 mm/h, Orange 15–30 mm/h, Red above 30 mm/h; storm surge warnings.'],
+  ['PHIVOLCS','Earthquake Intensity Scale (PEIS I–X), earthquake and tsunami information.'],
+  ['RDRRMC 8 Res. 12-006','Harmonized reporting template for Eastern Visayas.'],
+  ['RA 7581 (Price Act)','Automatic price freeze on basic necessities in areas declared under a state of calamity.'],
+  ['Ormoc CDRRMO MOO (in development)','City-specific procedures. Where they differ from this simulator, the approved Manual of Operations governs.']
+];
+
+const RUBRIC = [
+  { id:'command', name:'Command & control', w:.20, desc:'Delegation, unity of command, span of control, clear objectives' },
+  { id:'coordination', name:'Coordination', w:.20, desc:'EOC, clusters, unified command, RDRRMC 8 linkage' },
+  { id:'communication', name:'Communication', w:.20, desc:'Warnings, verified public information, SitReps, ICS 213' },
+  { id:'decision', name:'Decision quality', w:.25, desc:'Risk-informed, life safety first, legally sound' },
+  { id:'time', name:'Timeliness', w:.15, desc:'Acting within the warning lead time; decision speed' }
+];
+
+const DIFFICULTY = [
+  { id:'beginner', name:'Beginner', icon:'🌱', limit:180, ttx:420, hint:true, desc:'3 min per decision · doctrine hints available' },
+  { id:'intermediate', name:'Intermediate', icon:'🎯', limit:120, ttx:300, hint:false, desc:'2 min per decision · standard conditions' },
+  { id:'expert', name:'Expert', icon:'⚡', limit:75, ttx:180, hint:false, desc:'75 s per decision · intel costs double' }
+];
+
+const RES_LIB = {
+  rescue:{n:'CDRRMO rescue teams',i:'🛟'}, wasar:{n:'WASAR teams (boats)',i:'🚤'}, bfp:{n:'BFP Ormoc engines',i:'🚒'},
+  ems:{n:'Ambulances',i:'🚑'}, pnp:{n:'PNP Ormoc patrol units',i:'🚓'}, bdrrmc:{n:'BDRRMCs alerted',i:'📣'},
+  ec:{n:'Evacuation centers open',i:'🏫'}, fni:{n:'Family food packs (×100)',i:'📦'}, heavy:{n:'Heavy equipment (City Eng\'g)',i:'🚜'},
+  pcg:{n:'PCG Ormoc assets',i:'⚓'}, usar:{n:'USAR / collapsed-structure teams',i:'🏗️'}, hazmat:{n:'BFP hazmat team',i:'☣️'},
+  radio:{n:'Radio / satellite links',i:'📡'}, med:{n:'Hospital surge beds',i:'🏥'}
+};
+
+/* helper to build an option */
+const O = (t,v,s,why,fx) => ({ t, v, s, why, fx: fx || null });
+
+const SCENARIOS = [
+/* ---------------------------------------------------------------- 1 */
+{ id:'typhoon', name:'Typhoon over Ormoc Bay', type:'Hydro-meteorological', icon:'🌀', fx:'rain', lead:'CDRRMO / EOC (IC designated by the Mayor)',
+  blurb:'A strong typhoon (exercise name "Bagyong Lunhaw") tracks across Leyte. Storm surge threatens the Ormoc Bay coastline; rain swells the Anilao and Malbasag rivers.',
+  context:'Ormoc City sits at the head of Ormoc Bay with the city proper between the Anilao and Malbasag rivers. Coastal and riverside barangays (West, East, South, Linao, Ipil, Naungan, Bantigue) face surge and flooding; upland barangays face landslides. RA 12287 now allows a State of Imminent Disaster when the PDRA shows severe impact with at least 72 hours lead time.',
+  res:{ rescue:8, wasar:6, ems:10, pnp:20, bdrrmc:85, ec:40, fni:60, heavy:8, radio:12 },
+  phases:[
+  { stage:0, name:'Forecast & PDRA', clock:'D-4 · 08:00H', eoc:'blue', warn:{c:'warn-b',t:'PAGASA: Typhoon outlook · no TCWS yet'},
+    stats:{a:'—',b:'0',c:'0',d:'96 h'}, sl:['Families pre-identified','In ECs','Rescue requests','Lead time to landfall'],
+    situation:['PAGASA\'s outlook shows a typhoon expected to make landfall over Leyte in about 96 hours, intensifying to typhoon category. The forecast cone passes over Ormoc Bay.','Your hazard maps show about 9,000 families in surge- and flood-prone areas. The CDRRMC can meet this afternoon. Under RA 12287 a State of Imminent Disaster needs a PDRA showing severe impact and at least 72 hours lead time — you have the time window now.'],
+    intel:'Planning: the PDRA template is ready. The AA fund line in this year\'s LDRRMF has a balance. RDRRMC 8 answers declaration requests within 24 hours, so the request must go out early to keep the ≥72 h window.',
+    hint:'Which instrument lets the city act before impact, and how long does it need?',
+    forms:['201','214'], discuss:'What is our trigger for pre-emptive evacuation, and who signs it?',
+    opts:[
+      O('Convene the CDRRMC for a PDRA today; if it shows severe impact, request a State of Imminent Disaster from RDRRMC 8 and prepare AA from the AA fund line. Raise the EOC to Blue.','best',[94,92,88,95,94],'Uses the 72-hour window RA 12287 requires and funds early action from the correct source. The PDRA comes first and drives the request.'),
+      O('Wait for PAGASA to raise Signal No. 1 before convening anyone; the track may still change.','unsafe',[30,35,40,25,15],'By Signal No. 1 (about 36 h lead time) the ≥72 h window for a declaration has closed and pre-positioning time is lost.',{d:'+1 h lost'}),
+      O('Ask the Sangguniang Panlungsod to declare a state of calamity now so the QRF can buy relief goods.','weak',[45,50,55,35,60],'A state of calamity (RA 10121, Sec. 16) responds to a disaster that has occurred. Anticipatory action uses RA 12287 and the AA fund line, not the QRF.'),
+      O('Raise the EOC to Blue and send a text blast, but leave the PDRA to the barangays.','good',[62,55,72,58,75],'Alerting is good, but the PDRA is a city-level, multi-office assessment. Without it there is no basis for the declaration or AA.')
+    ]},
+  { stage:1, name:'Pre-emptive evacuation', clock:'D-1 · 14:00H', eoc:'red', warn:{c:'warn-o',t:'TCWS No. 2 · Storm surge warning: 2–3 m'},
+    stats:{a:'9,140',b:'1,120',c:'0',d:'26 h'}, sl:['Families at risk','Families in ECs','Rescue requests','Lead time to landfall'],
+    situation:['Signal No. 2 is up over Leyte; PAGASA projects Signal No. 4 by tonight and a 2–3 m storm surge along Ormoc Bay. RDRRMC 8 has acted on the request and the Mayor has signed the EO.','Only 1,120 families have moved. Some coastal households in West and Linao say they will stay to guard their homes and boats. Several schools are listed as evacuation centers.'],
+    intel:'CSWDO: 40 ECs ready, but 12 are in flood-prone schools. 310 families include persons with disability, older persons or pregnant women. PNP can support enforcement if the Mayor orders forced evacuation for the surge zone.',
+    hint:'Who recommends forced evacuation, and who comes first?',
+    forms:['202','203','205','208'], discuss:'How do we move people who refuse, without losing trust?',
+    opts:[
+      O('On CDRRMO\'s recommendation the Mayor orders pre-emptive evacuation now, forced for the surge zone. Move vulnerable families first, skip ECs in flood-prone schools, pre-position food packs and rescue teams at safe staging areas, and designate the IC.','best',[95,92,90,95,90],'Matches RA 10121 (the LDRRMO recommends pre-emptive or forced evacuation) and moves people while roads are open. Prioritizing vulnerable groups and safe ECs avoids a second evacuation.',{b:'+5,900 families'}),
+      O('Wait for Signal No. 3 to make the evacuation order stronger.','unsafe',[30,35,35,25,15],'Waiting shortens lead time to about 18 h and pushes evacuation into the night and the rain. The surge warning already justifies action.',{c:'+38 rescue requests later'}),
+      O('Leave evacuation to each BDRRMC; the city will just open the ECs.','weak',[45,40,55,45,60],'Barangays are first responders, but surge evacuation crosses barangay lines. The city must coordinate transport, ECs and enforcement under one plan.'),
+      O('Evacuate everyone citywide to the nearest schools at once.','weak',[50,45,55,40,55],'Over-evacuating clogs roads and fills unsafe ECs. Target the exposure your hazard maps show.')
+    ]},
+  { stage:2, name:'Landfall', clock:'D-0 · 03:00H', eoc:'red', warn:{c:'warn-r',t:'TCWS No. 4 · Red rainfall warning'},
+    stats:{a:'9,140',b:'7,020',c:'54',d:'0 h'}, sl:['Families at risk','Families in ECs','Rescue requests','Lead time to landfall'],
+    situation:['The eye passed north of the city at 01:30H. Winds remain at typhoon strength. Cell sites are down in most of the city and power is out. 54 rescue requests have reached the EOC by radio and runners, mostly from riverside areas along the Anilao.','Two roads to upland barangays are blocked by fallen trees. Rescue teams are asking to deploy now.'],
+    intel:'SOFR: sustained winds are still above safe limits for boat and line work until about 05:00H. Two radio repeaters are working; the satellite phone at the EOC is working.',
+    hint:'Life safety includes responders. What do the winds allow right now?',
+    forms:['202','204','205','208','213','215A'], discuss:'How do we sort 54 requests when we cannot reach all of them at once?',
+    opts:[
+      O('Hold boat teams at staging until the Safety Officer clears winds; meanwhile triage the 54 requests in the EOC by life threat, assign them to divisions by area, keep radios on the repeaters, and request augmentation through RDRRMC 8.','best',[95,93,92,95,85],'Protects responders, uses the waiting time to prioritize, keeps a workable span of control by area, and asks for help through the proper channel before local capacity runs out.'),
+      O('Send every rescue team out now; people are on rooftops.','unsafe',[30,40,40,20,70],'Deploying boats in typhoon winds risks losing the teams you need for the next 72 hours. The Safety Officer has authority to stop this.',{e:'2 responders injured'}),
+      O('Wait for daylight and full communications before doing anything.','weak',[35,40,35,35,25],'Responders should wait for safe winds, not for perfect conditions. The EOC can triage, plan and request support now.'),
+      O('Let each barangay captain call AFP and PCG directly for help.','weak',[40,35,45,45,55],'Direct calls bypass the EOC and break unity of command. Augmentation is requested and tracked through the EOC and RDRRMC 8.')
+    ]},
+  { stage:3, name:'Assessment & transition', clock:'D+2 · 09:00H', eoc:'red', warn:{c:'warn-y',t:'Signals lifted · Yellow rainfall advisory'},
+    stats:{a:'11,300',b:'6,450',c:'3',d:'D+2'}, sl:['Families affected','Families in ECs','Open rescue requests','Day'],
+    situation:['All signals are lifted. Rescue is nearly complete. 6,450 families remain in ECs, including 12 schools that DepEd wants back for classes.','Partial damage reports show houses and farms destroyed in coastal and upland barangays. The State of Imminent Disaster has been lifted. Media are asking for the death toll.'],
+    intel:'Planning: RDANA teams are ready. The CDRRMC meets at 13:00H. Finance notes that the AA report to OCD is due within 45 days of the lifting of the declaration.',
+    hint:'Which assessment justifies the next declaration, and what report is now running on a clock?',
+    forms:['209','214','221'], discuss:'What criteria tell us response is over and recovery can start?',
+    opts:[
+      O('Deploy RDANA teams; on their findings the CDRRMC recommends a state of calamity to the Sangguniang Panlungsod. Plan the move from school ECs, start the 45-day AA report, release only verified casualty figures, and set a demobilization plan and AAR date.','best',[92,92,93,94,85],'Evidence first (RDANA), the correct body for the declaration, the RA 12287 reporting clock, verified public information, and an orderly demobilization.'),
+      O('Release the barangays\' early estimate of the death toll so media stop calling.','unsafe',[35,40,15,30,60],'Unverified casualty figures cause distress and must be corrected later. The PIO releases figures verified through Planning and the MDM process.'),
+      O('Close all ECs today so classes can resume tomorrow.','weak',[45,45,45,35,60],'Families with destroyed houses have nowhere to go. Transition needs alternative shelter, not a deadline.'),
+      O('Declare a state of calamity by Mayor\'s EO today, before RDANA.','weak',[50,45,55,40,70],'Under RA 10121, Sec. 16 the Sanggunian declares on the CDRRMC\'s recommendation; RDANA gives the basis.')
+    ]}
+  ]},
+
+/* ---------------------------------------------------------------- 2 */
+{ id:'flood', name:'Anilao–Malbasag flash flood', type:'Hydro-meteorological · short lead time', icon:'🌊', fx:'rain', lead:'CDRRMO (IC) with BDRRMCs, BFP and PNP',
+  blurb:'Intense rain over the upper watershed sends a flash flood down the Anilao and Malbasag rivers into the city proper at night. Lead time: about three hours.',
+  context:'On 5 November 1991 Tropical Storm Thelma (Uring) sent floodwaters down the Anilao and Malbasag rivers into the city proper; the former District 26 (Isla Verde), now part of Barangay West, was among the hardest hit and thousands died. Flash floods here give hours, not days: below RA 12287\'s 72-hour threshold, so early action rests on the city\'s own authority and plans.',
+  res:{ rescue:8, wasar:6, ems:10, pnp:20, bdrrmc:14, ec:18, fni:40, heavy:6, radio:12 },
+  phases:[
+  { stage:0, name:'Early warning', clock:'Day 1 · 16:00H', eoc:'blue', warn:{c:'warn-o',t:'PAGASA: Orange rainfall warning'},
+    stats:{a:'3,800',b:'0',c:'0',d:'~3 h'}, sl:['Families on riverbanks','In ECs','Rescue requests','Est. lead time'],
+    situation:['PAGASA has raised an Orange rainfall warning (15–30 mm per hour) over western Leyte. The upstream rain gauge reads 48 mm in the last hour; the river gauge at the Anilao bridge is rising fast.','Your flood model gives about three hours before water overtops the banks in West, East and South. About 3,800 riverside families are exposed.'],
+    intel:'Planning: the upstream gauge has exceeded the alarm threshold in the community early warning system. A State of Imminent Disaster under RA 12287 needs at least 72 h lead time, so it does not apply. The city may still act under RA 10121 and its contingency plan.',
+    hint:'Three hours. Which law fits, and what has to move first?',
+    forms:['201','213','214'], discuss:'What is our trigger level on the Anilao gauge, and who sounds the warning?',
+    opts:[
+      O('Activate the flash-flood contingency plan: raise the EOC to Blue, warn the riverside BDRRMCs by radio, siren and bell, start pre-emptive evacuation of riverbank households now, and pre-position WASAR teams on high ground.','best',[94,90,94,95,95],'Short-lead hazards need city-level early action under the LGU\'s own authority. Multiple warning channels reach people without phones; evacuation starts while it is still light.',{b:'+2,600 families'}),
+      O('Request a State of Imminent Disaster from RDRRMC 8 before ordering any evacuation.','unsafe',[35,45,40,25,10],'RA 12287 needs at least 72 hours lead time; you have three. Waiting for an inapplicable process wastes the only window you have.',{c:'+60 rescue requests'}),
+      O('Wait for PAGASA to raise a Red warning to be sure.','unsafe',[30,35,40,25,15],'The river gauge is the better trigger here; by the time Red is raised, lead time may be under an hour.',{c:'+45 rescue requests'}),
+      O('Post an advisory on the City Facebook page and let families decide.','weak',[45,45,50,40,60],'One channel and no instruction. At night, with power at risk, sirens, radios and BDRRMC house-to-house warnings reach far more people.')
+    ]},
+  { stage:1, name:'Overtopping', clock:'Day 1 · 19:30H', eoc:'red', warn:{c:'warn-r',t:'PAGASA: Red rainfall warning'},
+    stats:{a:'3,800',b:'2,640',c:'71',d:'0 h'}, sl:['Families on riverbanks','Families in ECs','Rescue requests','Est. lead time'],
+    situation:['The Anilao has overtopped near the bridge. Water is chest-deep in parts of West and rising. 71 rescue requests: families on rooftops, an elderly couple trapped, a jeepney stalled in the current.','Volunteers with private bancas are heading into the water. A crowd is gathering on the bridge to watch.'],
+    intel:'SOFR: current is too strong for paddled bancas. Only WASAR-trained teams with PFDs and throw lines should enter. The bridge approach is unstable.',
+    hint:'Who goes into moving water, and who keeps the bridge clear?',
+    forms:['202','204','208','211','215A'], discuss:'How do we use willing volunteers safely?',
+    opts:[
+      O('Establish an ICP on high ground; Operations assigns WASAR teams by sector with PFDs and throw lines; the Safety Officer stops untrained volunteers from entering the current and reassigns them to EC support; PNP clears the bridge.','best',[95,92,88,95,88],'Only trained, equipped teams enter moving water. Volunteers are redirected, not wasted, and the bridge closure prevents secondary casualties.'),
+      O('Let the volunteers go; every boat helps.','unsafe',[25,35,40,20,70],'Untrained rescuers in swift water become victims. Self-deployment also breaks accountability (no check-in, ICS 211).',{e:'Volunteer banca capsized: 3 rescuers in the water'}),
+      O('Pull all teams back until the water recedes.','unsafe',[35,40,40,25,30],'WASAR teams exist for this. With the right equipment and sector assignments they can work safely now.',{c:'+30 rescue requests'}),
+      O('Send all teams to the stalled jeepney first; it is on the news.','weak',[45,45,45,40,60],'Media attention is not a triage criterion. Assign teams by life threat across all sectors.')
+    ]},
+  { stage:2, name:'Missing persons', clock:'Day 2 · 02:00H', eoc:'red', warn:{c:'warn-o',t:'Orange rainfall warning · river receding'},
+    stats:{a:'3,800',b:'3,050',c:'9',d:'17 missing'}, sl:['Families affected','Families in ECs','Rescue requests','Reported missing'],
+    situation:['Water is falling slowly. Barangays report 17 people missing, but names repeat across lists. Two bodies have been recovered near the river mouth.','A local page has posted a "death toll of 40". Families are arriving at the EOC asking for news.'],
+    intel:'Planning: after de-duplication the 17 reports are 11 unique names. PNP SOCO is available for identification. The MDM cluster is DILG-led; the CHO can support.',
+    hint:'One list, one voice.',
+    forms:['209','213','214'], discuss:'Who owns the missing-persons list, and who may release figures?',
+    opts:[
+      O('Planning keeps a single, de-duplicated missing-persons list; open a family assistance desk with CSWDO; follow MDM procedures with PNP SOCO for identification; the PIO releases only verified figures and corrects the rumor.','best',[92,93,95,94,85],'Follows NDRRMC MC No. 19, s. 2016 on the dead and missing; one verified list and one public voice protect families and credibility.'),
+      O('Confirm the "40" figure for now; correct it later if needed.','unsafe',[30,35,10,25,60],'Releasing an unverified death toll harms families and the city\'s credibility.'),
+      O('Let each barangay release its own list to save time.','weak',[40,40,35,40,65],'Overlapping lists inflate numbers and confuse families. Lists are consolidated by Planning.'),
+      O('Say nothing until all missing persons are found.','weak',[50,45,30,45,55],'Silence fuels rumors. Give regular verified updates even when the count is incomplete.')
+    ]},
+  { stage:3, name:'Recovery & health', clock:'Day 4 · 10:00H', eoc:'blue', warn:{c:'warn-g',t:'No rainfall warning'},
+    stats:{a:'4,100',b:'1,900',c:'0',d:'Day 4'}, sl:['Families affected','Families in ECs','Rescue requests','Day'],
+    situation:['Water has receded. Mud and debris fill West and East. Many residents waded through floodwater for hours.','1,900 families remain in ECs, most in schools. Classes are due to resume.'],
+    intel:'CHO: residents who waded in floodwater are at risk of leptospirosis; the DOH protocol covers prophylaxis for exposed persons. CENRO notes watershed cover upstream has declined.',
+    hint:'Think health, shelter and the root cause.',
+    forms:['209','214','221'], discuss:'Which lesson from 1991 and from tonight goes into the LDRRMP?',
+    opts:[
+      O('CHO runs leptospirosis advisories and prophylaxis per the DOH protocol; WASH and debris clearing by area; move families out of school ECs into planned alternative shelter; RDANA; schedule an AAR that feeds watershed actions (CENRO) into the LDRRMP.','best',[92,92,92,94,85],'Covers the main post-flood health risk, protects education, and closes the loop to mitigation — the "M" in DDRiVE-M.'),
+      O('Start classes tomorrow; families can return home.','weak',[45,45,45,35,60],'Many houses are not habitable. Moving families out needs a destination and a health check.'),
+      O('Keep all ECs open indefinitely while waiting for national help.','weak',[50,45,45,40,40],'Recovery is led locally. Plan transitional shelter and request specific support through the proper channel.'),
+      O('Focus only on debris clearing; health will take care of itself.','unsafe',[40,40,35,30,60],'Post-flood leptospirosis is a known, preventable risk. Leaving it out costs lives.')
+    ]}
+  ]},
+
+/* ---------------------------------------------------------------- 3 */
+{ id:'quake', name:'Leyte earthquake', type:'Geological', icon:'🏚️', fx:'quake', lead:'CDRRMO (IC); BFP and City Engineering in unified command on fire/structure sites',
+  blurb:'A shallow magnitude 6.5 earthquake on the Leyte segment of the Philippine Fault. PEIS VII in Ormoc. A commercial building partly collapses in Barangay South.',
+  context:'Western Leyte sits along the Philippine Fault Zone. In July 2017 a magnitude 6.5 earthquake near Kananga and Jaro damaged buildings and the geothermal field area, and Ormoc felt strong shaking. Critical facilities to check first: hospitals, bridges over the Anilao and Malbasag, the port, schools and the Tongonan geothermal area.',
+  res:{ rescue:8, usar:3, bfp:6, ems:12, pnp:20, heavy:8, ec:20, med:30, radio:12 },
+  phases:[
+  { stage:0, name:'First minutes', clock:'Day 1 · 14:12H', eoc:'red', warn:{c:'warn-r',t:'PHIVOLCS: M6.5 · PEIS VII in Ormoc'},
+    stats:{a:'—',b:'0',c:'14',d:'Aftershocks'}, sl:['Damage reports','Families in open areas','Calls for help','Status'],
+    situation:['Strong shaking lasted about 20 seconds. PHIVOLCS reports magnitude 6.5, depth 10 km, PEIS VII in Ormoc. Aftershocks continue.','Calls report cracked walls at a hospital, a partly collapsed building in South and fires in two houses. People are running toward the bay.'],
+    intel:'PHIVOLCS bulletin: the epicenter is onshore. Check the bulletin for any tsunami information rather than guessing. The geothermal operator reports wells shut in safely.',
+    hint:'Where does tsunami information come from?',
+    forms:['201','209','213'], discuss:'Which facilities do we check in the first hour, and who checks them?',
+    opts:[
+      O('Raise the EOC to Red; the Mayor delegates authority to the IC; send rapid assessment teams to hospitals, bridges, the port and schools; the PIO relays the official PHIVOLCS tsunami information and tells people to stay away from damaged buildings.','best',[95,92,93,95,92],'Activates command fast, checks critical facilities first, and uses PHIVOLCS as the only source on tsunami threat, stopping a panic move in the wrong direction.'),
+      O('Order everyone to the coast and open ground by the bay to escape falling buildings.','unsafe',[30,30,35,15,60],'Sending people to the shore after strong shaking is dangerous until PHIVOLCS rules out a tsunami.',{e:'Crowd crush at the port gate'}),
+      O('Wait for the PHIVOLCS final report before activating anything.','unsafe',[30,35,35,25,15],'Activation follows the felt intensity and reported damage, not the final report.'),
+      O('Send every responder to the collapsed building immediately.','weak',[45,40,50,40,70],'Converging on one site leaves hospitals and bridges unchecked. Assess first, then assign.')
+    ]},
+  { stage:1, name:'Collapsed structure', clock:'Day 1 · 15:00H', eoc:'red', warn:{c:'warn-o',t:'Aftershocks up to M4.8'},
+    stats:{a:'312',b:'2,400',c:'8 trapped',d:'26 injured'}, sl:['Damaged structures','Families in open areas','Trapped (est.)','Injured at site'],
+    situation:['At the partly collapsed three-storey building in South, an estimated eight people are trapped. BFP is fighting a small fire next door. Bystanders are pulling at debris.','26 injured people are sitting at the roadside; ambulances are arriving from three directions.'],
+    intel:'City Engineering: the north wall is leaning; another aftershock could bring it down. Two USAR-trained teams are available. The nearest hospital has limited surge capacity.',
+    hint:'Two agencies with jurisdiction, one site. Who commands, and who enters?',
+    forms:['202','203','206','208','211','215A'], discuss:'When do we let rescuers enter a damaged structure?',
+    opts:[
+      O('Form a unified command (CDRRMO, BFP, City Engineering) at an ICP upwind; cordon the site; no entry until the engineer marks safe zones; USAR teams go in with shoring; set up a casualty collection point with START triage and distribute patients across hospitals.','best',[95,95,90,95,88],'Unified command fits multi-agency sites; structural assessment protects rescuers; START triage and patient distribution follow MCI practice (DOH AO No. 155, s. 2004).'),
+      O('Let bystanders and responders keep digging; speed matters.','unsafe',[25,30,35,20,70],'Uncontrolled digging can bring the structure down on victims and rescuers. The Safety Officer stops it.',{e:'Secondary collapse: 1 rescuer injured'}),
+      O('Send all 26 injured to the nearest hospital.','weak',[45,40,50,35,65],'One hospital is overwhelmed while others sit empty. Triage and distribute.'),
+      O('BFP takes sole command since there is a fire.','weak',[50,40,50,45,70],'The fire is one part of a structural rescue and MCI. Agencies with jurisdiction share command.')
+    ]},
+  { stage:2, name:'Second operational period', clock:'Day 2 · 06:00H', eoc:'red', warn:{c:'warn-y',t:'Aftershocks continuing'},
+    stats:{a:'1,140',b:'3,900',c:'2 trapped',d:'Op period 2'}, sl:['Damaged structures','Families in open areas','Trapped (est.)','Status'],
+    situation:['Six of the eight trapped were rescued overnight. A landslide blocks the road to upland barangays; one barangay has had no contact since the quake.','Responders have worked 16 hours. Offers of help are arriving from neighbouring LGUs and private companies.'],
+    intel:'Logistics: two excavators are available but no fuel plan. Liaison: three LGUs and two companies want to send teams. A barangay runner says the isolated barangay has injured residents.',
+    hint:'Who rests, who replaces them, and how do offers become assignments?',
+    forms:['202','203','204','211','215'], discuss:'How do we take offers of help without losing control?',
+    opts:[
+      O('Run the planning meeting: an IAP for this operational period with relief shifts for tired crews; send a team on foot or by motorbike to the isolated barangay; Liaison routes offers through the EOC to check-in (ICS 211) and assignment; Logistics sets fuel and supply plans for the excavators.','best',[94,94,90,94,88],'The planning cycle turns chaos into an IAP; crew rest protects capacity; check-in keeps every resource accountable.'),
+      O('Accept every offer and tell teams to go wherever they see damage.','unsafe',[30,25,35,25,65],'Self-deployed teams are untracked and unsafe, and they duplicate effort.'),
+      O('Keep the same crews working until all rescues are done.','weak',[50,45,45,35,60],'Fatigue causes injuries and errors. Plan relief shifts.'),
+      O('Wait for the road to be cleared before contacting the isolated barangay.','weak',[45,45,40,40,40],'Silence from a barangay is a priority signal. Reach it by any available means.')
+    ]},
+  { stage:3, name:'Re-entry & recovery', clock:'Day 4 · 09:00H', eoc:'blue', warn:{c:'warn-g',t:'Aftershocks decreasing'},
+    stats:{a:'1,560',b:'2,100',c:'0',d:'Day 4'}, sl:['Damaged structures','Families displaced','Trapped','Day'],
+    situation:['Search and rescue is complete. 2,100 families are in tents or ECs; many are afraid to go home. Owners want to reopen shops in South.','Schools have visible cracks.'],
+    intel:'OBO can inspect about 120 buildings a day with current staff. DepEd needs a safety certification before reopening schools. CHO reports many residents with anxiety and poor sleep.',
+    hint:'Who certifies that a building is safe?',
+    forms:['209','214','221'], discuss:'How do we prioritize building inspections?',
+    opts:[
+      O('OBO inspects and tags buildings (inspected / restricted / unsafe), schools and hospitals first; families return only to inspected houses; set up MHPSS with the CHO; RDANA feeds the CDRRMC\'s recommendation on a state of calamity; plan demobilization and the AAR.','best',[92,92,92,94,85],'Re-entry based on inspection prevents deaths in aftershocks. MHPSS and RDANA cover needs, and evidence supports any declaration.'),
+      O('Let owners reopen shops if they feel it is safe.','unsafe',[35,40,40,25,65],'Owners are not structural assessors; aftershocks can collapse damaged buildings.'),
+      O('Keep everyone out of the city proper for two weeks.','weak',[45,40,45,40,45],'Blanket closure stalls recovery. Use inspection tags to reopen safe areas.'),
+      O('Reopen schools once classes are scheduled.','weak',[45,45,45,35,60],'Schools need certification first.')
+    ]}
+  ]},
+
+/* ---------------------------------------------------------------- 4 */
+{ id:'maritime', name:'Ormoc port vessel capsizing', type:'Human-induced · maritime MCI', icon:'⚓', fx:'sea', lead:'Unified command: PCG (at sea) + CDRRMO (shoreside)',
+  blurb:'A passenger motorbanca bound for the Camotes Islands capsizes just outside Ormoc port in a squall. About 150 aboard; the manifest does not match the count.',
+  context:'Ormoc port links Leyte to Cebu and the Camotes Islands. In July 2015 a passenger motorbanca capsized near the port, with dozens dead. The PCG leads maritime search and rescue; the city runs the shoreside response: casualty collection, hospitals, families and information.',
+  res:{ pcg:5, rescue:6, ems:14, pnp:16, med:40, bfp:3, ec:2, radio:10 },
+  phases:[
+  { stage:1, name:'Capsizing', clock:'Day 1 · 12:20H', eoc:'red', warn:{c:'warn-o',t:'Squall · Gale warning nearby'},
+    stats:{a:'~150',b:'0',c:'—',d:'0'}, sl:['On board (est.)','Rescued','Missing','At shore CCP'],
+    situation:['A motorbanca capsized 400 m from the port breakwater at 12:15H. Fishermen and port workers are already pulling people from the water.','PCG Station Ormoc has launched two boats. The EOC asks who is in charge.'],
+    intel:'PCG has jurisdiction over maritime SAR. The port has space for a casualty collection point near the terminal. Hospitals have not yet been alerted.',
+    hint:'Whose jurisdiction is the water? Whose is the shore?',
+    forms:['201','202','205','207'], discuss:'Where does the PCG\'s command end and the city\'s begin?',
+    opts:[
+      O('Establish unified command: PCG leads at sea, CDRRMO leads shoreside. Set up a casualty collection point at the port, alert all hospitals for an MCI, PNP secures the terminal, and the EOC rises to Red.','best',[95,95,92,95,92],'Respects PCG\'s maritime mandate while the city runs what it is responsible for, under one set of objectives.'),
+      O('CDRRMO takes command of everything, including the boats.','weak',[45,35,45,40,70],'The city does not have maritime SAR jurisdiction or assets. Taking over the sea creates conflict, not speed.'),
+      O('Leave it to the PCG; it is a maritime incident.','unsafe',[30,25,35,25,50],'Survivors, casualties and families come ashore in the city. Without a shoreside command, triage and transport fail.',{e:'Casualties transported without triage'}),
+      O('Ask private boats to stop rescuing until the PCG arrives.','unsafe',[30,35,35,20,40],'Bystanders are already saving lives in calm water near shore. Coordinate them; do not stop them.')
+    ]},
+  { stage:2, name:'Mass casualties', clock:'Day 1 · 13:10H', eoc:'red', warn:{c:'warn-y',t:'Weather improving'},
+    stats:{a:'~150',b:'96',c:'54',d:'31'}, sl:['On board (est.)','Rescued','Missing','At shore CCP'],
+    situation:['96 people have been rescued; 31 are at the shore casualty collection point, several unconscious after near-drowning. Ambulances are lining up at the terminal gate.','Relatives are pushing into the area.'],
+    intel:'Hospitals report: two can take about 20 patients each; the nearest has 8 beds free. DOH-Eastern Visayas can activate surge support.',
+    hint:'Sort, then spread.',
+    forms:['206','211','213'], discuss:'Who decides which hospital each patient goes to?',
+    opts:[
+      O('Run START triage at the casualty point; a transport officer assigns patients to hospitals by capacity; one-way ambulance lanes; PNP cordons the area and directs families to a separate family assistance desk.','best',[95,94,90,95,90],'MCI practice: triage, then distribute by capacity so no hospital is overwhelmed. Separating families keeps the treatment area clear.'),
+      O('Send everyone to the nearest hospital as fast as possible.','unsafe',[35,30,40,25,75],'The nearest hospital would receive far more patients than it can treat.',{e:'Nearest ER overwhelmed'}),
+      O('Treat everyone at the port until doctors arrive.','weak',[45,40,45,35,40],'Critical near-drowning cases need hospital care; triage and transport.'),
+      O('Let relatives take survivors home or to hospital themselves.','weak',[40,35,40,35,60],'Untracked departures make the missing count wrong and survivors may not be checked.')
+    ]},
+  { stage:2, name:'Missing & families', clock:'Day 1 · 17:00H', eoc:'red', warn:{c:'warn-g',t:'Fair weather'},
+    stats:{a:'~150',b:'118',c:'26',d:'9 dead'}, sl:['On board (est.)','Rescued','Missing (unreconciled)','Confirmed dead'],
+    situation:['The manifest lists 132 names; rescuers count 118 survivors and 9 dead; witnesses say there were children not on the manifest.','TV crews ask for the names of the dead. Families are at the port.'],
+    intel:'Planning has three different counts. CSWDO can staff the family desk. PCG will continue search at sea overnight.',
+    hint:'Who reconciles the numbers, and who is told first?',
+    forms:['209','213','214'], discuss:'How do we inform families before the public?',
+    opts:[
+      O('Planning reconciles the manifest, survivor list and hospital lists into one count; CSWDO runs the family desk with MHPSS; next of kin are informed before any name is released; the PIO gives scheduled briefings with verified numbers, coordinated with the PCG.','best',[92,94,95,94,85],'One reconciled list, families informed first, and joint information with the PCG.'),
+      O('Release the manifest names now so families know.','unsafe',[30,35,15,25,60],'Releasing unverified names causes false hope or false grief; the manifest is known to be wrong.'),
+      O('Let the PCG and the city brief media separately.','weak',[45,35,40,45,60],'Two voices give two numbers. Joint information under unified command.'),
+      O('Close the port to families until search ends.','weak',[45,45,35,40,55],'Families need a place, information and support. A desk with clear updates works better than a closed gate.')
+    ]},
+  { stage:3, name:'Retrieval & transition', clock:'Day 3 · 08:00H', eoc:'blue', warn:{c:'warn-g',t:'Fair weather'},
+    stats:{a:'~150',b:'118',c:'4',d:'Day 3'}, sl:['On board (est.)','Rescued','Missing','Day'],
+    situation:['Search has moved to retrieval. Four people remain missing. MARINA and the PCG have opened an investigation.','Media ask the city whether the boat was overloaded.'],
+    intel:'Liaison: MARINA and PCG lead the investigation. Relatives need help with documents and claims.',
+    hint:'What is the city\'s role in an investigation it does not lead?',
+    forms:['209','214','221'], discuss:'What will we change in the port contingency plan?',
+    opts:[
+      O('Support PCG retrieval; refer cause questions to MARINA and PCG; continue family support, documents and MHPSS; demobilize city resources in order; hold an AAR and update the port contingency plan with PCG.','best',[92,93,92,94,85],'Stays within the city\'s mandate, supports families, and turns lessons into plan updates.'),
+      O('Tell media the boat was clearly overloaded.','unsafe',[35,35,15,30,60],'Speculation can prejudice an investigation led by other agencies.'),
+      O('Withdraw all city support since rescue is over.','weak',[40,35,40,40,55],'Families still need support during retrieval.'),
+      O('Keep all response resources at the port until the investigation ends.','weak',[45,45,45,40,40],'Demobilize what is no longer needed; keep only what retrieval and family support need.')
+    ]}
+  ]},
+
+/* ---------------------------------------------------------------- 5 */
+{ id:'hazmat', name:'Tongonan geothermal gas release', type:'Technological · hazmat', icon:'☣️', fx:'gas', lead:'Unified command: BFP (hazmat) + CDRRMO + facility emergency team',
+  blurb:'A ruptured pipeline at the Tongonan geothermal field releases hydrogen sulfide (H2S). Residents nearby report a rotten-egg smell, then dizziness.',
+  context:'Barangay Tongonan in upland Ormoc hosts part of the Leyte geothermal production field. H2S is heavier than air and collects in low ground and valleys; at high levels it deadens the sense of smell, so "the smell is gone" is not a safety signal. The facility operator has its own emergency team and monitoring equipment.',
+  res:{ hazmat:1, bfp:4, rescue:4, ems:8, pnp:10, ec:3, radio:8, bdrrmc:3 },
+  phases:[
+  { stage:0, name:'First report', clock:'Day 1 · 06:40H', eoc:'blue', warn:{c:'warn-o',t:'Facility report: H2S release'},
+    stats:{a:'~420',b:'0',c:'5',d:'Light, downslope'}, sl:['Residents within 1 km','Evacuated','Symptom reports','Wind'],
+    situation:['The facility operator reports a pipeline rupture and says its team is isolating the line. Residents in two sitios downslope call the barangay about a strong smell; five report dizziness.','Wind is light, flowing downslope toward the houses.'],
+    intel:'Operator: monitors near the fence show H2S above safe limits. BFP\'s hazmat team is 50 minutes away. H2S collects in low ground.',
+    hint:'Distance, direction and elevation.',
+    forms:['201','202','208','215A'], discuss:'What does the facility\'s emergency plan say we should do?',
+    opts:[
+      O('Form a unified command with BFP and the operator\'s emergency team; set an exclusion zone; evacuate the downslope sitios crosswind and uphill, away from low ground; no entry without SCBA; alert the CHO and hospitals; raise the EOC to Blue.','best',[95,95,90,95,92],'Treats H2S correctly (heavier than air, follows low ground), keeps unprotected responders out, and puts agencies with jurisdiction and expertise in one command.',{b:'+380 residents'}),
+      O('Send the barangay tanod to check on the dizzy residents.','unsafe',[25,35,40,15,70],'Untrained, unprotected responders entering an H2S area become casualties.',{e:'2 tanods collapsed'}),
+      O('Tell residents to stay indoors with windows closed until the leak stops.','weak',[50,45,55,40,65],'Sheltering in houses in a low area where gas pools is risky at these levels. Evacuate crosswind and uphill.'),
+      O('Let the operator handle it; it is their facility.','weak',[40,30,40,40,60],'Residents outside the fence are the city\'s responsibility. Use a unified command.')
+    ]},
+  { stage:1, name:'Wind shift', clock:'Day 1 · 08:15H', eoc:'red', warn:{c:'warn-r',t:'Wind shift toward school'},
+    stats:{a:'~650',b:'380',c:'14',d:'Shifting'}, sl:['Residents in zone','Evacuated','Symptom reports','Wind'],
+    situation:['The wind has shifted. Readings are rising near an elementary school in a hollow 1.2 km away, where classes have just started.','Parents are driving toward the school.'],
+    intel:'The school\'s planned evacuation route runs down into the valley. An uphill route is available on foot.',
+    hint:'Which way is safe for gas that sinks?',
+    forms:['202','204','213'], discuss:'How do we reunite children and parents safely?',
+    opts:[
+      O('Evacuate the school by the uphill route on foot; PNP holds parents\' vehicles at a reunification point outside the zone; the PIO issues one clear advisory naming the zone; expand the exclusion zone.','best',[95,93,94,95,90],'Uphill, crosswind movement avoids pooled gas; a reunification point prevents a traffic jam in the danger zone.'),
+      O('Use the school\'s planned evacuation route down the valley.','unsafe',[30,40,40,15,70],'The planned route leads into the area where H2S collects.',{e:'Students exposed on the route'}),
+      O('Keep the children inside the school.','weak',[45,45,45,35,60],'The school is in a hollow where gas will accumulate.'),
+      O('Let parents collect their children directly.','weak',[40,35,45,35,65],'Cars converging in the zone block responders and expose parents.')
+    ]},
+  { stage:2, name:'Exposure care', clock:'Day 1 · 10:00H', eoc:'red', warn:{c:'warn-o',t:'Leak isolated · readings falling'},
+    stats:{a:'~650',b:'610',c:'23',d:'Easing'}, sl:['Residents in zone','Evacuated','Symptom reports','Wind'],
+    situation:['The operator has isolated the line; readings are falling. 23 people have symptoms; 4 were briefly unconscious.','Social media claims the river is "poisoned".'],
+    intel:'CHO: people briefly unconscious from H2S need hospital evaluation. EMB can test water and air. The operator has monitoring data.',
+    hint:'Treat, verify, then speak.',
+    forms:['206','209','213'], discuss:'Who confirms water and air are safe?',
+    opts:[
+      O('Send the 4 who lost consciousness to hospital and assess the others at a medical post; request EMB sampling; the PIO answers the river rumor with what is known and when test results will come.','best',[92,93,94,94,88],'Medical priority by severity, independent verification, and honest communication that says what is not yet known.'),
+      O('Announce that the river is safe.','unsafe',[35,40,15,25,70],'No test has been done. Claims without evidence damage trust when corrected.'),
+      O('Discharge everyone since readings are falling.','weak',[45,40,45,35,60],'Victims who lost consciousness need evaluation.'),
+      O('Avoid comment until EMB results come in.','weak',[50,45,35,45,55],'Silence lets the rumor run.')
+    ]},
+  { stage:3, name:'Re-entry', clock:'Day 2 · 07:00H', eoc:'blue', warn:{c:'warn-g',t:'Readings near background'},
+    stats:{a:'~650',b:'610',c:'0',d:'Normal'}, sl:['Residents in zone','Evacuated','Symptom reports','Wind'],
+    situation:['Readings are near background. Residents want to go home to their animals and crops. The operator wants to restart the line.'],
+    intel:'Restart of the line is the operator\'s decision under its regulators. Re-entry of residents is the city\'s decision.',
+    hint:'Who decides each thing?',
+    forms:['209','214','221'], discuss:'What goes into a joint LGU–facility contingency plan?',
+    opts:[
+      O('Allow phased re-entry after joint monitoring by the operator and EMB confirms safe levels, starting with higher ground; hold a community meeting; demobilize; schedule an AAR to update the joint LGU–facility contingency plan.','best',[92,93,92,94,85],'Evidence-based, phased re-entry and a joint plan update.'),
+      O('Let residents return now; the smell is gone.','unsafe',[30,35,35,20,65],'Loss of smell is not a reliable safety sign for H2S.'),
+      O('Keep the area closed until the line is restarted.','weak',[45,40,45,35,45],'Re-entry depends on monitoring, not the restart.'),
+      O('Let the operator decide on re-entry for residents.','weak',[45,35,40,40,60],'Residents\' safety outside the fence is a city decision.')
+    ]}
+  ]}
+];
+</script>
+<script>
+'use strict';
+/* =====================================================================
+   APP
+   ===================================================================== */
+const $ = (s, r=document) => r.querySelector(s);
+const $$ = (s, r=document) => [...r.querySelectorAll(s)];
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const shuffle = a => { const b=[...a]; for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];} return b; };
+const fmt = s => `${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`;
+const VERDICT = { best:{l:'Best practice',c:'v-best-c'}, good:{l:'Acceptable',c:'v-good-c'}, weak:{l:'Weak',c:'v-weak-c'}, unsafe:{l:'Unsafe / non-compliant',c:'v-unsafe-c'} };
+
+/* ---------- glossary auto-tooltips ---------- */
+const GLOSS_RE = new RegExp('\\b(' + Object.keys(GLOSSARY).sort((a,b)=>b.length-a.length).join('|') + ')(s?)\\b','g');
+function gloss(text, seen = new Set()){
+  return esc(text).replace(GLOSS_RE, (m, k, pl) => {
+    if (seen.has(k)) return m;
+    seen.add(k);
+    return `<abbr class="term" tabindex="0" data-tip="<b>${esc(k)}</b> — ${esc(GLOSSARY[k])}">${k}${pl}</abbr>`;
+  });
+}
+const DOCTRINE_PATTERNS = [
+  [/RA 12287/,'RA 12287 & IRR (State of Imminent Disaster, AA)'], [/RA 10121|state of calamity|Sec\. 16/i,'RA 10121 (DRRM Act)'],
+  [/MC No\. 19|MDM|dead and missing/i,'NDRRMC MC No. 19, s. 2016 (MDM)'], [/AO No\. 155|\bMCI\b|\bSTART\b|[Tt]riage/,'DOH AO No. 155, s. 2004 (MCI)'],
+  [/RDANA/,'NDRRMC RDANA guidelines (2014)'], [/PDRA/,'NDRRMC Memo No. 17, s. 2014 (PDRA)'], [/check-in|ICS 211|offers|augmentation/i,'NDRRMC Memo Nos. 43 & 44, s. 2016 (IMT)'],
+  [/PAGASA|Signal|rainfall/i,'PAGASA warning system'], [/PHIVOLCS|PEIS|tsunami/i,'PHIVOLCS bulletins / PEIS'], [/RA 12076|evacuation center|ECs/i,'RA 12076 (Ligtas Pinoy Centers)'],
+  [/MARINA|PCG/,'PCG maritime SAR mandate'], [/EMB/,'DENR-EMB (air & water quality)'], [/leptospirosis/i,'DOH leptospirosis protocol']
+];
+function doctrineFor(...texts){
+  const t = texts.join(' '); const out = new Set(['NDRRMC MC No. 4, s. 2012 (ICS)']);
+  DOCTRINE_PATTERNS.forEach(([re,l]) => { if (re.test(t)) out.add(l); });
+  return [...out];
+}
+
+/* ---------- tooltip ---------- */
+const tip = $('#tip'); let tipTarget=null, tipTimer=null;
+function showTip(el){
+  const html = el.getAttribute('data-tip'); if(!html) return;
+  tipTarget = el; tip.innerHTML = html; tip.classList.add('on');
+  el.setAttribute('aria-describedby','tip');
+  const r = el.getBoundingClientRect(), t = tip.getBoundingClientRect(), m = 8;
+  let top = r.top - t.height - 10; if (top < m) top = r.bottom + 10;
+  let left = r.left + r.width/2 - t.width/2; left = Math.max(m, Math.min(left, innerWidth - t.width - m));
+  tip.style.top = top + 'px'; tip.style.left = left + 'px';
+}
+function hideTip(){ if(tipTarget) tipTarget.removeAttribute('aria-describedby'); tipTarget=null; tip.classList.remove('on'); }
+document.addEventListener('pointerover', e => { const el = e.target.closest('[data-tip]'); if(!el || el===tipTarget) return; clearTimeout(tipTimer); showTip(el); if(e.pointerType==='touch') tipTimer=setTimeout(hideTip,2800); });
+document.addEventListener('pointerout', e => { if(e.pointerType==='touch') return; const el = e.target.closest('[data-tip]'); if(el && !el.contains(e.relatedTarget)) hideTip(); });
+document.addEventListener('focusin', e => { const el = e.target.closest('[data-tip]'); if(el) showTip(el); });
+document.addEventListener('focusout', hideTip);
+addEventListener('scroll', hideTip, true);
+
+/* ---------- toasts ---------- */
+function toast(msg){ const t=document.createElement('div'); t.className='toast'; t.innerHTML=msg; $('#toasts').appendChild(t); setTimeout(()=>t.remove(),3500); }
+
+/* ---------- storage (Data SDK or local) ---------- */
+let allRecords = [];
+const LKEY = 'ddrivem-ics-ormoc-records';
+const localRecords = () => { try { return JSON.parse(localStorage.getItem(LKEY)||'[]'); } catch { return []; } };
+function saveLocal(rec){ try { const a = localRecords(); a.push(rec); localStorage.setItem(LKEY, JSON.stringify(a.slice(-300))); } catch {} }
+const records = () => window.dataSdk ? allRecords : localRecords();
+
+/* ---------- Element SDK (host customisation) ---------- */
+const defaultConfig = { app_title:'DDRiVE-M ICS', welcome_message:'Command the response before the river rises.', background_color:'#071827', surface_color:'#0f2a42', text_color:'#eaf2f8', primary_action:'#4fb3e8', secondary_action:'#f7941d' };
+function applyColors(c){ const r=document.documentElement.style;
+  if(c.background_color) r.setProperty('--bg',c.background_color); if(c.surface_color) r.setProperty('--panel',c.surface_color);
+  if(c.text_color) r.setProperty('--text',c.text_color); if(c.primary_action) r.setProperty('--blue',c.primary_action); if(c.secondary_action) r.setProperty('--orange',c.secondary_action); }
+if (window.elementSdk) {
+  try {
+    window.elementSdk.init({ defaultConfig,
+      onConfigChange: async (config) => { $('#app-title').textContent = config.app_title || defaultConfig.app_title; $('#welcome-text').textContent = config.welcome_message || defaultConfig.welcome_message; document.title = (config.app_title || defaultConfig.app_title) + ' · Ormoc City'; applyColors(config); },
+      mapToCapabilities: (config) => ({ recolorables: ['background_color','surface_color','text_color','primary_action','secondary_action'].map(k => ({ get:()=>config[k]||defaultConfig[k], set:(v)=>{ config[k]=v; window.elementSdk.setConfig({[k]:v}); } })), borderables:[], fontEditable:undefined, fontSizeable:undefined }),
+      mapToEditPanelValues: (config) => new Map([['app_title',config.app_title||defaultConfig.app_title],['welcome_message',config.welcome_message||defaultConfig.welcome_message]])
+    });
+  } catch(e){ console.warn('elementSdk init failed', e); }
+}
+if (window.dataSdk) {
+  try { window.dataSdk.init({ onDataChanged(data){ allRecords = data || []; updateStats(); } }).then(r => { if(!r?.isOk) console.warn('Data SDK not ready; using local storage'); }); }
+  catch(e){ console.warn('dataSdk init failed', e); }
+}
+
+/* ---------- state ---------- */
+const S = { mode:'single', name:'', org:'', facilitator:'', role:null, scen:null, diff:'intermediate',
+  phase:0, picks:[], log:[], elapsed:0, dLeft:0, paused:false, locked:false, chosen:null, order:[], intel:false, hint:false, timer:null, unread:0, tab:'log' };
+const scenario = () => SCENARIOS.find(s => s.id === S.scen);
+const diff = () => DIFFICULTY.find(d => d.id === S.diff);
+const roleOf = id => ROLES.find(r => r.id === id);
+const TTX_ROTATION = ['ic','osc','psc','lsc','pio','sofr','lofr','fsc','eoc','ro'];
+function spotlight(){ if (S.mode !== 'multi') return roleOf(S.role); const i = TTX_ROTATION.indexOf(S.role); return roleOf(TTX_ROTATION[(i + S.phase) % TTX_ROTATION.length]); }
+
+/* ---------- screens ---------- */
+const SCREENS = ['main-menu','setup-screen','briefing-screen','game-screen','results-screen'];
+function showScreen(id){
+  hideTip();
+  SCREENS.forEach(s => $('#'+s).classList.add('hidden'));
+  const el = $('#'+id); el.classList.remove('hidden'); el.style.animation='none'; void el.offsetWidth; el.style.animation='';
+  $('#topbar').classList.remove('hidden'); scrollTo({top:0});
+  if (id !== 'game-screen') fx.stop();
+}
+
+function updateStats(){
+  const rs = records(); const n = rs.length;
+  const avg = n ? Math.round(rs.reduce((a,r)=>a+(r.score||0),0)/n) : 0;
+  countUp($('#stat-sessions'), n, ''); countUp($('#stat-avg-score'), avg, '%');
+}
+function countUp(el, to, suf){ if(reduceMotion){ el.textContent = to+suf; return; } const from = parseInt(el.textContent)||0, t0 = performance.now(), d=800;
+  const step = t => { const p=Math.min(1,(t-t0)/d), v=Math.round(from+(to-from)*(1-Math.pow(1-p,3))); el.textContent=v+suf; if(p<1) requestAnimationFrame(step); }; requestAnimationFrame(step); }
+
+/* ---------- setup ---------- */
+function renderRoles(){
+  $('#role-grid').innerHTML = ROLES.map(r => `
+    <button class="pick" data-role="${r.id}" aria-pressed="${S.role===r.id}" data-tip="<b>${esc(r.name)}</b> — ${esc(r.desc)}<br><br>Key duties: ${esc(r.duties.join(' · '))}">
+      <div class="row" style="margin-bottom:8px"><div class="role-ico" style="background:${r.color}">${r.abbr}</div>
+      <div style="min-width:0"><h4 style="font-size:15px">${esc(r.name)}</h4><span class="cond dim" style="font-size:12.5px">${esc(r.who)}</span></div></div>
+      <p class="muted" style="font-size:13px">${esc(r.desc)}</p>
+      <div>${r.duties.slice(0,2).map(d=>`<span class="tag">${esc(d)}</span>`).join('')}</div>
+    </button>`).join('');
+  $$('#role-grid .pick').forEach(b => b.onclick = () => { S.role = b.dataset.role; $$('#role-grid .pick').forEach(x => x.setAttribute('aria-pressed', x===b)); validateSetup(); });
+}
+function renderScenarios(){
+  $('#scenario-list').innerHTML = SCENARIOS.map(s => `
+    <button class="pick" data-scen="${s.id}" aria-pressed="${S.scen===s.id}" data-tip="<b>Ormoc context</b><br>${esc(s.context)}">
+      <div class="row" style="align-items:flex-start;gap:14px"><div class="sc-ico" aria-hidden="true">${s.icon}</div>
+      <div style="min-width:0"><h4 style="font-size:16px">${esc(s.name)}</h4><p class="cond" style="color:var(--orange2);font-size:12.5px;letter-spacing:.04em;text-transform:uppercase;margin:2px 0 6px">${esc(s.type)}</p>
+      <p class="muted" style="font-size:13.5px">${esc(s.blurb)}</p>
+      <p style="font-size:12.5px;margin-top:8px" class="dim"><b class="cond">Lead:</b> ${esc(s.lead)} · ${s.phases.length} operational periods</p></div></div>
+    </button>`).join('');
+  $$('#scenario-list .pick').forEach(b => b.onclick = () => { S.scen = b.dataset.scen; $$('#scenario-list .pick').forEach(x => x.setAttribute('aria-pressed', x===b)); validateSetup(); });
+}
+function renderDifficulties(){
+  $('#difficulty-grid').innerHTML = DIFFICULTY.map(d => `
+    <button class="pick" data-diff="${d.id}" aria-pressed="${S.diff===d.id}" style="text-align:center" data-tip="${esc(d.desc)}${S.mode==='multi'?` · TTX discussion time: ${Math.round(d.ttx/60)} min`:''}">
+      <div style="font-size:28px" aria-hidden="true">${d.icon}</div><h4 style="font-size:16px;margin-top:4px">${d.name}</h4><p class="muted" style="font-size:13px;margin-top:2px">${esc(d.desc)}</p>
+    </button>`).join('');
+  $$('#difficulty-grid .pick').forEach(b => b.onclick = () => { S.diff = b.dataset.diff; $$('#difficulty-grid .pick').forEach(x => x.setAttribute('aria-pressed', x===b)); });
+}
+function validateSetup(){
+  const ok = $('#player-name').value.trim() && S.role && S.scen;
+  $('#btn-start-game').disabled = !ok;
+  const miss = [!$('#player-name').value.trim() && (S.mode==='multi'?'team name':'your name'), !S.role && (S.mode==='multi'?'a starting spotlight position':'a position'), !S.scen && 'a scenario'].filter(Boolean);
+  $('#setup-hint').textContent = ok ? 'Ready. You will receive an ICS 201 briefing first.' : 'Still needed: ' + miss.join(', ') + '.';
+}
+function openSetup(mode){
+  S.mode = mode;
+  $('#mode-chip').textContent = mode==='multi' ? 'Facilitated tabletop (TTX)' : 'Individual drill';
+  $('#name-label').textContent = mode==='multi' ? 'Team name *' : 'Your name *';
+  $('#player-name').placeholder = mode==='multi' ? 'e.g., EOC Shift A' : 'e.g., Juan Dela Cruz';
+  $('#ttx-fields').classList.toggle('hidden', mode!=='multi');
+  $('#role-block h3').textContent = mode==='multi' ? 'Starting spotlight position' : 'ICS position';
+  renderDifficulties(); validateSetup(); showScreen('setup-screen');
+}
+
+/* ---------- briefing (ICS 201) ---------- */
+function renderBriefing(){
+  const sc = scenario(), r = roleOf(S.role), d = diff();
+  S.name = $('#player-name').value.trim(); S.org = $('#player-org').value; S.facilitator = ($('#facilitator').value||'').trim();
+  const seen = new Set();
+  $('#brief-main').innerHTML = `
+    <div class="row wrapf" style="gap:8px"><span class="chip">${sc.icon} ${esc(sc.type)}</span><span class="chip" style="border-color:var(--orange);color:var(--orange2)">${esc(d.name)}</span></div>
+    <h2 id="brief-title" style="font-size:28px;margin:12px 0 10px">${esc(sc.name)}</h2>
+    <p style="font-size:16px">${gloss(sc.blurb, seen)}</p>
+    <dl class="kv" style="margin:18px 0">
+      <dt>Lead</dt><dd>${gloss(sc.lead, seen)}</dd>
+      <dt>Ormoc context</dt><dd class="muted">${gloss(sc.context, seen)}</dd>
+      <dt>Priorities</dt><dd>1 Life safety (public and responders) · 2 Incident stabilization · 3 Property and environment</dd>
+    </dl>
+    <p class="kicker" style="margin-bottom:8px">Delegation of authority</p>
+    <div class="doa">I, the City Mayor of Ormoc, as Responsible Official, delegate to <b>${S.mode==='multi'?'the Incident Commander of '+esc(S.name):esc(S.name)}</b> the authority to manage the <b>${esc(sc.name)}</b> response under the Incident Command System (NDRRMC MC No. 4, s. 2012). Requests for augmentation go through the City EOC to RDRRMC 8. Public information is released only through the PIO. Expenditures follow LDRRMF and COA rules.<br><span class="dim cond" style="font-size:12.5px">— Exercise document. Not an official issuance.</span></div>
+    <div class="row wrapf" style="margin-top:20px"><button class="btn btn-orange" id="btn-begin">Begin operational period 1<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 18l6-6-6-6"/></svg></button>
+    <span class="muted" style="font-size:13px">${S.mode==='multi'?`Discussion time per decision: ${Math.round(d.ttx/60)} min`:`Decision time: ${d.limit}s each`} · ${sc.phases.length} decisions</span></div>`;
+  $('#brief-side').innerHTML = `
+    <div class="card pad"><p class="kicker">${S.mode==='multi'?'Starting spotlight':'Your position'}</p>
+      <div class="row" style="margin:10px 0"><div class="role-ico" style="background:${r.color}">${r.abbr}</div><div><h3 style="font-size:17px">${esc(r.name)}</h3><span class="dim cond" style="font-size:12.5px">${esc(r.who)}</span></div></div>
+      <ul class="ticks">${ROLE_TASKS[r.id].map((t,i)=>`<li><span><b class="cond" style="color:var(--orange2)">${STAGES[i]}:</b> ${gloss(t)}</span></li>`).join('')}</ul>
+      ${S.mode==='multi'?'<p class="muted" style="font-size:13px;margin-top:10px">The spotlight rotates each operational period: IC → OSC → PSC → LSC → PIO …</p>':''}</div>
+    <div class="card pad"><p class="kicker" style="margin-bottom:10px">Operational periods</p>
+      ${sc.phases.map((p,i)=>`<div class="row" style="margin-bottom:8px"><span class="step-n" style="width:28px;height:28px;font-size:13px">${i+1}</span><div><b style="font-size:14px">${esc(p.name)}</b><div class="dim cond" style="font-size:12.5px">${esc(p.clock)} · ${esc(p.warn.t)}</div></div></div>`).join('')}</div>
+    <div class="card pad"><p class="kicker" style="margin-bottom:10px">Resources at start (exercise figures)</p>
+      <div class="res">${Object.entries(sc.res).map(([k,v])=>`<div class="row between" style="font-size:13.5px"><span>${RES_LIB[k].i} ${esc(RES_LIB[k].n)}</span><b class="cond">${v}</b></div>`).join('')}</div></div>`;
+  $('#btn-begin').onclick = startGame;
+  showScreen('briefing-screen');
+}
+
+/* ---------- game ---------- */
+function startGame(){
+  clearInterval(S.timer);
+  Object.assign(S, { phase:0, picks:[], log:[], elapsed:0, paused:false, locked:false, chosen:null, unread:0 });
+  const sc = scenario();
+  $('#game-scenario-name').innerHTML = `${sc.icon} ${esc(sc.name)}`;
+  $('#panel-log').innerHTML = '';
+  $('#game-timer').textContent = '00:00';
+  renderMetrics(true); setTab('log');
+  showScreen('game-screen');
+  fx.start(sc.fx);
+  addLog('system','EOC','Exercise started. ' + (S.mode==='multi' ? `Team: ${S.name}${S.facilitator?' · Facilitator: '+S.facilitator:''}.` : `${S.name} as ${roleOf(S.role).name}.`));
+  S.timer = setInterval(tick, 1000);
+  loadPhase();
+}
+
+function loadPhase(){
+  const sc = scenario(), ph = sc.phases[S.phase], d = diff(), r = spotlight();
+  S.locked = true; S.chosen = null; S.intel = false; S.hint = false;
+  S.order = shuffle(ph.opts.map((_,i)=>i));
+  S.dLeft = S.mode==='multi' ? d.ttx : d.limit; S.dTotal = S.dLeft;
+  $('#game-role-name').innerHTML = (S.mode==='multi'?'Spotlight: ':'You: ') + r.abbr;
+  $('#game-role-name').setAttribute('data-tip', `<b>${esc(r.name)}</b> — ${esc(r.desc)}`);
+  // status chips
+  const lv = $('#eoc-level'); const prev = lv.dataset.lvl;
+  lv.className = 'chip lvl ' + ph.eoc; lv.dataset.lvl = ph.eoc;
+  $('#eoc-level-t').textContent = 'EOC: ' + ph.eoc[0].toUpperCase() + ph.eoc.slice(1);
+  lv.setAttribute('data-tip', {white:'<b>White — normal operations</b>. Routine monitoring by the Operations Center.',blue:'<b>Blue — alert</b>. Partial activation: key offices and clusters on standby; EOC staffed.',red:'<b>Red — full activation</b>. All CDRRMC member offices and clusters report to the EOC; 24/7 operations.'}[ph.eoc]);
+  if (prev && prev !== ph.eoc) { lv.classList.add('flash'); addLog('alert','EOC',`Alert level changed to ${ph.eoc.toUpperCase()}.`); }
+  const hw = $('#hazard-warn'); hw.className = 'chip ' + ph.warn.c; hw.textContent = ph.warn.t; hw.setAttribute('data-tip','Current official warning (exercise). Always act on the latest PAGASA / PHIVOLCS / PCG bulletin.');
+  $('#sim-clock').textContent = ph.clock;
+  renderPhaseTrack(); renderInject(); renderOptions(); renderOrg(); renderRes(); renderForms(); updateTimerUI();
+  $('#feedback-slot').innerHTML = '';
+  $('#btn-hint').classList.toggle('hidden', !d.hint);
+  $('#btn-hint').disabled = false; $('#btn-request-info').disabled = false; $('#btn-submit-decision').disabled = true;
+  $('#decision-actions').classList.remove('hidden');
+  addLog('system', ph.clock, `Operational period ${S.phase+1}: ${ph.name}. ${ph.warn.t}.`);
+  if (sc.fx === 'quake' && S.phase === 0 && !reduceMotion) { $('#game-layout').classList.add('quake'); setTimeout(()=>$('#game-layout').classList.remove('quake'),1500); }
+  fx.level(S.phase, sc.phases.length);
+  opTransition(ph, () => { S.locked = false; const first = $('#decision-options .opt'); if (first) first.focus({preventScroll:true}); });
+}
+
+function opTransition(ph, done){
+  const o = document.createElement('div'); o.className = 'optrans'; o.setAttribute('role','status');
+  o.innerHTML = `<div class="inner"><p class="kicker">Operational period ${S.phase+1} of ${scenario().phases.length}</p><div class="big">${esc(ph.name)}</div><div class="line"></div><p class="cond" style="font-size:18px;letter-spacing:.08em">${esc(ph.clock)}</p><p style="margin-top:10px"><span class="chip ${ph.warn.c}">${esc(ph.warn.t)}</span></p><p class="dim" style="font-size:12px;margin-top:18px">Click or press any key to skip</p></div>`;
+  document.body.appendChild(o);
+  let gone = false; const end = () => { if(gone) return; gone = true; o.style.transition='opacity .3s'; o.style.opacity='0'; setTimeout(()=>{o.remove(); done();},280); document.removeEventListener('keydown', end, true); };
+  o.onclick = end; document.addEventListener('keydown', end, true); setTimeout(end, reduceMotion ? 300 : 2100);
+}
+
+function renderPhaseTrack(){
+  const sc = scenario();
+  $('#phase-track').innerHTML = sc.phases.map((p,i)=>`<div class="ph ${i<S.phase?'done':i===S.phase?'now':''}" data-tip="<b>OP ${i+1}: ${esc(p.name)}</b><br>${esc(p.clock)} · ${esc(STAGES[p.stage])}"><div class="bar"><i></i></div><span>${i+1}. ${esc(p.name)}</span></div>`).join('');
+}
+
+function renderInject(){
+  const sc = scenario(), ph = sc.phases[S.phase], r = spotlight(), seen = new Set();
+  const task = ROLE_TASKS[r.id][ph.stage];
+  $('#inject').innerHTML = `
+    <span class="chip stamp hide-sm" data-tip="<b>ICS 213 · General Message</b> — inject received at the EOC">INJECT ${S.phase+1}</span>
+    <span class="kicker">${esc(ph.clock)} · ${esc(STAGES[ph.stage])}</span>
+    <h3>${esc(ph.name)}</h3>
+    <div class="sit reveal">${ph.situation.map((p,i)=>`<p style="animation-delay:${.1+i*.25}s">${gloss(p, seen)}</p>`).join('')}</div>
+    <div class="metrics-mini">${ph.sl.map((l,i)=>`<div class="mm" data-tip="${esc(l)} (exercise figure)"><b>${esc(Object.values(ph.stats)[i])}</b><span>${esc(l)}</span></div>`).join('')}</div>
+    <div class="roletask" style="animation:rv .5s .5s both"><div class="role-ico" style="background:${r.color};width:36px;height:36px;font-size:12px">${r.abbr}</div>
+      <div><b class="cond" style="color:var(--orange2);letter-spacing:.04em;text-transform:uppercase;font-size:12.5px">${S.mode==='multi'?'Spotlight':'Your task'} · ${esc(r.name)}</b><p style="font-size:14px;margin-top:2px">${gloss(task, seen)}</p>
+      ${S.mode==='multi'?`<p style="font-size:14px;margin-top:8px"><b class="cond" style="color:var(--blue)">FACILITATOR PROMPT:</b> ${gloss(ph.discuss, seen)}</p>`:''}</div></div>`;
+}
+
+function renderOptions(){
+  const ph = scenario().phases[S.phase];
+  $('#decision-prompt').textContent = S.mode==='multi' ? 'Team decision' : 'What is your decision?';
+  $('#decision-options').innerHTML = S.order.map((oi, n) => {
+    const o = ph.opts[oi];
+    return `<button class="opt" role="radio" aria-checked="false" data-oi="${oi}" style="animation-delay:${.15+n*.08}s"><span class="k">${n+1}</span><span style="flex:1">${gloss(o.t)}</span></button>`;
+  }).join('');
+  $$('#decision-options .opt').forEach(b => b.onclick = e => { if(e.target.closest('.term')) return; choose(+b.dataset.oi); });
+}
+function choose(oi){
+  if (S.locked) return; S.chosen = oi;
+  $$('#decision-options .opt').forEach(b => b.setAttribute('aria-checked', +b.dataset.oi === oi));
+  $('#btn-submit-decision').disabled = false;
+}
+
+function commit(timeout=false){
+  if (S.locked) return; if (!timeout && S.chosen === null) return;
+  S.locked = true;
+  const sc = scenario(), ph = sc.phases[S.phase], d = diff();
+  const used = S.dTotal - S.dLeft;
+  let opt;
+  if (timeout) opt = { t:'No decision within the time available.', v:'unsafe', s:[25,20,20,15,5], why:'Inaction is a decision. While the EOC deliberated, the warning lead time was used up.', fx:null };
+  else opt = ph.opts[S.chosen];
+  const frac = used / S.dTotal;
+  const tmult = frac <= .5 ? 1 : Math.max(.6, 1 - .4*(frac-.5)/.5);
+  const s = { command:opt.s[0], coordination:opt.s[1], communication:opt.s[2], decision:opt.s[3], time:Math.round(opt.s[4]*tmult) };
+  if (S.intel) s.time -= (S.diff==='expert'?4:2);
+  if (S.hint) s.time -= 3;
+  s.time = Math.max(0, s.time);
+  const best = ph.opts.find(o => o.v==='best');
+  S.picks.push({ phase:S.phase, name:ph.name, clock:ph.clock, choice:opt.t, verdict:opt.v, why:opt.why, best:best.t, bestWhy:best.why, scores:s, secs:used, intel:S.intel, hint:S.hint, timeout, role:spotlight().id, refs:doctrineFor(opt.t, opt.why, best.t, best.why, ph.situation.join(' ')) });
+  addLog('decision', spotlight().abbr, (timeout ? '⏱ ' : '') + opt.t);
+  if (opt.fx) Object.values(opt.fx).forEach(c => { addLog('alert','Consequence', c); toast('⚠️ ' + esc(c)); });
+  renderMetrics();
+  showFeedback(opt, best, timeout);
+}
+
+function showFeedback(opt, best, timeout){
+  const ph = scenario().phases[S.phase], last = S.picks[S.picks.length-1], vd = VERDICT[opt.v];
+  $$('#decision-options .opt').forEach(b => {
+    b.disabled = true; const o = ph.opts[+b.dataset.oi];
+    if (o.v === 'best') { b.classList.add('v-best'); b.insertAdjacentHTML('beforeend', `<span class="chip vtag v-best-c">Best</span>`); }
+    else if (+b.dataset.oi === S.chosen) b.insertAdjacentHTML('beforeend', `<span class="chip vtag ${VERDICT[o.v].c}">${VERDICT[o.v].l}</span>`);
+    else b.classList.add('v-faded');
+  });
+  $('#decision-actions').classList.add('hidden');
+  const isLast = S.phase === scenario().phases.length - 1, seen = new Set();
+  $('#feedback-slot').innerHTML = `
+    <div class="card pad feedback v-${opt.v}" style="margin-top:16px;background:rgba(0,0,0,.18)" role="status">
+      <div class="row between wrapf"><span class="chip ${vd.c}">${timeout?'⏱ Time expired · ':''}${vd.l}</span><span class="cond dim" style="font-size:12.5px">Decided in ${fmt(last.secs)}${last.intel?' · intel used':''}${last.hint?' · hint used':''}</span></div>
+      <p style="margin-top:10px;font-size:15px">${gloss(opt.why, seen)}</p>
+      ${opt.v!=='best'?`<p style="margin-top:10px;font-size:14px" class="muted"><b class="cond" style="color:#7ff0c4">BETTER:</b> ${gloss(best.why, seen)}</p>`:''}
+      ${opt.fx?`<div class="row wrapf" style="margin-top:10px">${Object.values(opt.fx).map(c=>`<span class="chip v-unsafe-c">⚠ ${esc(c)}</span>`).join('')}</div>`:''}
+      <div class="ref" style="margin-top:12px"><span aria-hidden="true">§</span><span>${last.refs.map(esc).join(' · ')}</span></div>
+      <div class="row wrapf" style="margin-top:16px"><button class="btn ${isLast?'btn-orange':'btn-primary'}" id="btn-next">${isLast?'Close incident and open the AAR':'Next operational period'}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 18l6-6-6-6"/></svg></button><span class="dim cond" style="font-size:12.5px">Press <kbd>Enter</kbd></span></div>
+    </div>`;
+  const nb = $('#btn-next'); nb.onclick = next; nb.focus({preventScroll:true});
+  $('#feedback-slot').scrollIntoView({behavior: reduceMotion?'auto':'smooth', block:'nearest'});
+  if (opt.v === 'best') toast('✅ Best practice');
+}
+
+function next(){
+  const sc = scenario(); if (!$('#btn-next')) return;
+  $('#feedback-slot').innerHTML = '';
+  S.phase++;
+  if (S.phase < sc.phases.length) loadPhase(); else endGame();
+}
+
+function requestIntel(){
+  if (S.locked || S.intel) return; S.intel = true;
+  const ph = scenario().phases[S.phase];
+  addLog('intel','Intel', ph.intel); setTab('log');
+  $('#btn-request-info').disabled = true; toast('📡 Intel received (Timeliness −' + (S.diff==='expert'?4:2) + ')');
+}
+function useHint(){ if (S.locked || S.hint) return; S.hint = true; const ph = scenario().phases[S.phase]; addLog('intel','Hint', ph.hint); setTab('log'); $('#btn-hint').disabled = true; toast('💡 ' + esc(ph.hint)); }
+
+function tick(){
+  if (S.paused || $('#game-screen').classList.contains('hidden')) return;
+  S.elapsed++; $('#game-timer').textContent = fmt(S.elapsed);
+  if (S.locked) return;
+  S.dLeft--; updateTimerUI();
+  if (S.dLeft === 15) toast('⏱ 15 seconds left for this decision');
+  if (S.dLeft <= 0) commit(true);
+}
+function updateTimerUI(){
+  const f = Math.max(0, S.dLeft / (S.dTotal||1)), el = $('#dtimer');
+  $('#dtimer-fg').style.strokeDashoffset = 119.4 * (1 - f);
+  $('#dtimer-t').textContent = S.dLeft >= 60 ? Math.ceil(S.dLeft/60)+'m' : Math.max(0,S.dLeft);
+  el.classList.toggle('low', f < .4 && f >= .15); el.classList.toggle('crit', f < .15 && !S.locked);
+}
+
+/* ---------- side panel ---------- */
+function metricsNow(){
+  const m = {}; RUBRIC.forEach(c => m[c.id] = S.picks.length ? Math.round(S.picks.reduce((a,p)=>a+p.scores[c.id],0)/S.picks.length) : 0);
+  m.total = Math.round(RUBRIC.reduce((a,c)=>a+m[c.id]*c.w,0)); return m;
+}
+const band = v => v>=85?'Exemplary':v>=70?'Proficient':v>=55?'Developing':'Needs further training';
+function renderMetrics(reset){
+  const m = metricsNow();
+  if (reset || !$('#metrics').children.length) $('#metrics').innerHTML = RUBRIC.map(c=>`<div class="m" data-tip="<b>${esc(c.name)}</b> (weight ${c.w*100}%) — ${esc(c.desc)}"><div class="t"><span>${esc(c.name)}</span><b id="metric-${c.id}">0%</b></div><div class="bar"><i id="bar-${c.id}"></i></div></div>`).join('');
+  RUBRIC.forEach(c => { $('#metric-'+c.id).textContent = m[c.id]+'%'; $('#bar-'+c.id).style.width = m[c.id]+'%'; });
+  $('#current-score').textContent = m.total;
+  $('#score-ring').style.strokeDashoffset = 282.7 * (1 - m.total/100);
+  $('#perf-band').textContent = S.picks.length ? band(m.total) : '—';
+}
+function addLog(type, from, text){
+  const t = fmt(S.elapsed);
+  S.log.push({type, from, text, t});
+  const el = document.createElement('div'); el.className = 'msg ' + type;
+  const icon = {system:'📋',decision:'✅',intel:'📡',alert:'⚠️'}[type]||'📋';
+  el.innerHTML = `<div class="h"><span>${icon} ${esc(from)}</span><em>${t}</em></div><p>${gloss(text)}</p>`;
+  $('#panel-log').prepend(el);
+  if (S.tab !== 'log') { S.unread++; const b = $('#log-badge'); b.textContent = S.unread; b.classList.remove('hidden'); }
+}
+function setTab(t){
+  S.tab = t; $$('.tabs [data-tab]').forEach(b => b.setAttribute('aria-selected', b.dataset.tab===t));
+  ['log','org','res','forms'].forEach(k => $('#panel-'+k).classList.toggle('hidden', k!==t));
+  if (t==='log'){ S.unread=0; $('#log-badge').classList.add('hidden'); }
+}
+function renderOrg(){
+  const sc = scenario(), me = spotlight().id, uc = /unified/i.test(sc.lead);
+  const n = (id, label, sub, cls='') => { const r = roleOf(id); return `<div class="onode ${cls} ${id===me?'me':''}" data-tip="<b>${esc(r.name)}</b> — ${esc(r.desc)}">${label}<small>${esc(sub)}</small></div>`; };
+  $('#panel-org').innerHTML = `<div class="org">
+    <div class="lvl-row">${n('ro','RO','City Mayor','ro')}<div class="onode eoc ${me==='eoc'?'me':''}" data-tip="<b>EOC</b> — coordination and support; links the IC to the CDRRMC, clusters and RDRRMC 8.">EOC<small>CDRRMO</small></div></div>
+    <div class="link"></div>
+    <div class="lvl-row">${n('ic', uc?'UC':'IC', uc?'Unified Command':'Incident Cmdr','ic')}</div>
+    <div class="link"></div>
+    <div class="lvl-row">${n('sofr','SOFR','Safety')}${n('pio','PIO','Public Info')}${n('lofr','LOFR','Liaison')}</div>
+    <div class="link"></div>
+    <div class="lvl-row">${n('osc','OSC','Operations')}${n('psc','PSC','Planning')}${n('lsc','LSC','Logistics')}${n('fsc','FSC','Finance/Admin')}</div>
+    <p class="orgnote">${uc?esc(sc.lead)+'. ':''}Solid lines: command. EOC: coordination, not command.</p></div>`;
+}
+function renderRes(){
+  const sc = scenario(), stage = sc.phases[S.phase].stage, use = [.2,.55,.9,.45][stage];
+  const harmed = S.picks.filter(p => p.verdict==='unsafe').length;
+  $('#panel-res').innerHTML = Object.entries(sc.res).map(([k,tot]) => {
+    let dep = Math.round(tot*use); if (['rescue','wasar','usar','bfp'].includes(k) && harmed) dep = Math.min(tot, dep + harmed);
+    const avail = tot - dep;
+    return `<div class="r" data-tip="${esc(RES_LIB[k].n)}: ${dep} committed, ${avail} available (exercise figures)"><div class="t"><span>${RES_LIB[k].i} ${esc(RES_LIB[k].n)}</span><b class="cond">${dep}/${tot}</b></div><div class="meter"><i style="width:${Math.round(dep/tot*100)}%"></i></div></div>`;
+  }).join('') + `<p class="dim" style="font-size:12px">Committed / total. Unsafe decisions tie up extra rescue capacity.</p>`;
+}
+function renderForms(){
+  const sc = scenario(); const all = [];
+  sc.phases.forEach((p,i) => p.forms.forEach(f => { if(!all.find(a=>a.f===f)) all.push({f, first:i}); }));
+  all.sort((a,b)=>a.first-b.first);
+  $('#panel-forms').innerHTML = all.map(({f,first}) => {
+    const st = first < S.phase ? 'done' : first === S.phase ? 'due' : '';
+    return `<div class="form ${st}" data-tip="<b>ICS ${f}</b> — ${esc(FORMS[f])}. ${st==='due'?'Due this operational period.':st==='done'?'Completed.':'Later.'}"><span class="ck">${st==='done'?'✓':''}</span><span><b>ICS ${f}</b> · ${esc(FORMS[f])}</span>${st==='due'?'<span class="chip warn-o" style="margin-left:auto;font-size:10.5px">Due</span>':''}</div>`;
+  }).join('');
+}
+
+/* ---------- end / AAR ---------- */
+async function endGame(){
+  clearInterval(S.timer); fx.stop();
+  const m = metricsNow(), sc = scenario();
+  const rec = { player_id: Date.now().toString(), player_name: S.name, role: S.role, scenario_id: S.scen, score: m.total,
+    command_score:m.command, coordination_score:m.coordination, communication_score:m.communication, decision_score:m.decision, time_management_score:m.time,
+    completed_at: new Date().toISOString(), duration_seconds: S.elapsed, difficulty: S.diff, mode: S.mode };
+  if (window.dataSdk && allRecords.length < 999) { try { const r = await window.dataSdk.create(rec); if(!r?.isOk) saveLocal(rec); } catch { saveLocal(rec); } }
+  else saveLocal(rec);
+  S.lastRecord = rec;
+  showScreen('results-screen'); renderResults(m, sc); updateStats();
+}
+function renderResults(m, sc){
+  const r = roleOf(S.role);
+  $('#final-score').textContent = '0'; $('#final-score-ring').style.strokeDashoffset = 552.9;
+  setTimeout(() => { $('#final-score-ring').style.strokeDashoffset = 552.9 * (1 - m.total/100); countUp($('#final-score'), m.total, ''); }, 250);
+  $('#performance-grade').textContent = band(m.total);
+  $('#res-meta').innerHTML = `${esc(S.name)} · ${S.mode==='multi'?'Team TTX':esc(r.name)} · ${esc(sc.name)} · ${esc(diff().name)} · ${fmt(S.elapsed)}`;
+  $('#rubric-results').innerHTML = RUBRIC.map((c,i) => { const v = m[c.id], lvl = v>=85?['Exemplary','v-best-c']:v>=70?['Proficient','v-good-c']:v>=55?['Developing','v-weak-c']:['Needs work','v-unsafe-c'];
+    return `<div style="animation:rv .5s ${.1*i}s both"><div class="row between" style="margin-bottom:4px"><span class="cond" style="font-weight:700">${esc(c.name)} <span class="dim" style="font-weight:400">· ${c.w*100}%</span></span><span class="chip ${lvl[1]}">${lvl[0]} · ${v}%</span></div>
+      <div class="res"><div class="meter" style="height:8px"><i style="width:0" data-w="${v}"></i></div></div><p class="dim" style="font-size:12.5px;margin-top:3px">${esc(c.desc)}</p></div>`; }).join('');
+  setTimeout(()=>$$('#rubric-results [data-w]').forEach(i=>i.style.width=i.dataset.w+'%'),300);
+  $('#aar-table').innerHTML = `<thead><tr><th>OP</th><th>Decision taken</th><th>Rating</th><th>What doctrine expects</th><th>Basis</th></tr></thead><tbody>` +
+    S.picks.map(p => `<tr><td class="cond"><b>${p.phase+1}</b><br><span class="dim">${esc(p.clock)}</span><br>${esc(p.name)}</td><td>${gloss(p.choice)}<div class="dim cond" style="font-size:12px;margin-top:4px">${roleOf(p.role).abbr} · ${fmt(p.secs)}${p.intel?' · intel':''}${p.hint?' · hint':''}</div></td><td><span class="chip ${VERDICT[p.verdict].c}">${VERDICT[p.verdict].l}</span></td><td>${p.verdict==='best'?'<span class="dim">Matched best practice.</span> ':''}${gloss(p.verdict==='best'?p.why:p.bestWhy)}</td><td class="cond" style="font-size:12.5px;color:var(--orange2)">${p.refs.map(esc).join('<br>')}</td></tr>`).join('') + '</tbody>';
+  const sustain = S.picks.filter(p=>p.verdict==='best').map(p=>`<div class="pillar" style="padding:12px"><b class="cond">OP ${p.phase+1} · ${esc(p.name)}</b><p class="muted" style="font-size:13.5px;margin-top:2px">${gloss(p.why)}</p></div>`);
+  $('#aar-sustain').innerHTML = sustain.length ? sustain.join('') : '<p class="muted">No decision matched best practice this time. Review the doctrine column and run it again.</p>';
+  const imp = [];
+  S.picks.filter(p=>p.verdict!=='best').forEach(p => imp.push(`<b class="cond">OP ${p.phase+1}:</b> ${gloss(p.bestWhy)}`));
+  const low = RUBRIC.filter(c => m[c.id] < 70);
+  const tips = { command:'Practise the delegation of authority and setting ICS 202 objectives in the first hour.', coordination:'Rehearse EOC–IC links and cluster activation with CSWDO, CHO, PNP, BFP and PCG.', communication:'Drill verified, plain-language advisories in Cebuano/Waray and English, and the RDRRMC 8 SitRep template.', decision:'Review RA 10121, RA 12287 and NDRRMC MC No. 4 decision points; apply "life safety first" to responders too.', time:'Agree trigger levels in advance (river gauges, PAGASA warnings, the 72-hour RA 12287 window) so decisions are pre-made.' };
+  low.forEach(c => imp.push(`<b class="cond">${esc(c.name)}:</b> ${esc(tips[c.id])}`));
+  if (S.mode!=='multi') imp.push(`<b class="cond">As ${esc(r.name)}:</b> ${esc(r.duties.join(' · '))}.`);
+  $('#recommendations-list').innerHTML = (imp.length?imp:['Excellent run. Try Expert difficulty or another position, or facilitate a TTX for your EOC shift.']).map(t=>`<div class="pillar" style="padding:12px;font-size:13.5px">${t}</div>`).join('');
+  $('#aar-mop').innerHTML = `<h3 style="font-size:18px;margin-bottom:8px">For the Ormoc CDRRMO Manual of Operations</h3>
+    <p class="muted" style="font-size:14px">Use weak or unsafe ratings as evidence of protocol gaps. Each one points to a procedure the MOO or EOC Manual should state clearly: triggers, who decides, which form, which channel. Record exercise results as evidence under the relevant IAT indicators (exercise and after-action evidence supports the "tested and improved" level).</p>
+    <p class="disclaimer">Exercise tool. Scenario names, figures and events are fictional. Doctrine summaries are plain-language notes; the official text of each law and guideline governs, and the approved Ormoc MOO takes precedence for local procedures.</p>`;
+  if (m.total >= 85) confetti();
+}
+function exportRun(){
+  const data = { tool:'DDRiVE-M ICS · Ormoc City', exported_at:new Date().toISOString(), participant:S.name, office:S.org, facilitator:S.facilitator||undefined, mode:S.mode, role:S.role, scenario:S.scen, difficulty:S.diff, duration_seconds:S.elapsed, scores:metricsNow(), decisions:S.picks, log:S.log };
+  const url = URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:'application/json'}));
+  const a = Object.assign(document.createElement('a'),{href:url,download:`ICS-AAR_${S.scen}_${(S.name||'run').replace(/\W+/g,'-')}_${new Date().toISOString().slice(0,10)}.json`});
+  document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url),1000); toast('⬇️ AAR exported');
+}
+
+/* ---------- leaderboard / help ---------- */
+let lbFilter = 'all';
+function showLeaderboard(){
+  $('#lb-filter').innerHTML = [['all','All'],...SCENARIOS.map(s=>[s.id,s.icon+' '+s.name.split(' ')[0]])].map(([id,l])=>`<button class="chip" style="cursor:pointer;${lbFilter===id?'border-color:var(--orange);color:var(--orange2)':''}" data-f="${id}">${esc(l)}</button>`).join('');
+  $$('#lb-filter [data-f]').forEach(b => b.onclick = () => { lbFilter = b.dataset.f; showLeaderboard(); });
+  const rs = records().filter(r => lbFilter==='all' || r.scenario_id===lbFilter).sort((a,b)=>(b.score||0)-(a.score||0)).slice(0,20);
+  $('#leaderboard-content').innerHTML = rs.length ? rs.map((r,i)=>{ const sc = SCENARIOS.find(s=>s.id===r.scenario_id), ro = roleOf(r.role);
+    return `<div class="lb-row" style="animation-delay:${i*.04}s"><div style="width:36px;text-align:center;font-size:${i<3?22:15}px;font-family:var(--font-h);font-weight:800">${['🥇','🥈','🥉'][i]||'#'+(i+1)}</div>
+      <div style="flex:1;min-width:0"><b>${esc(r.player_name||'Anonymous')}</b><div class="dim cond" style="font-size:12.5px">${r.mode==='multi'?'TTX team':esc(ro?.abbr||r.role||'—')} · ${esc(sc?.name||r.scenario_id||'Earlier version scenario')} · ${esc(r.difficulty||'')}</div></div>
+      <div style="text-align:right"><b class="accent" style="font-family:var(--font-h);font-size:22px">${r.score||0}%</b><div class="dim cond" style="font-size:12px">${r.completed_at?new Date(r.completed_at).toLocaleDateString('en-PH'):''}</div></div></div>`; }).join('')
+    : `<div style="text-align:center;padding:40px 0"><div style="font-size:48px">🏆</div><p class="muted">No runs yet${lbFilter!=='all'?' for this scenario':''}. Complete an exercise to appear here.</p></div>`;
+  openModal('leaderboard-modal');
+}
+const HELP = {
+  play: () => `<div class="grid" style="gap:12px;font-size:14.5px">
+    <p><b>1. Set up.</b> Choose a position (your lens), an Ormoc scenario and a difficulty. In TTX mode, a facilitator projects the screen and enters the team's decision; the spotlight position rotates each period.</p>
+    <p><b>2. Brief.</b> Read the ICS 201 briefing and the delegation of authority from the City Mayor.</p>
+    <p><b>3. Decide.</b> Each operational period brings an inject. Pick one of four options before the clock runs out. Options are shuffled every run. <b>Request intel</b> adds information at a small Timeliness cost.</p>
+    <p><b>4. Learn.</b> After each decision you see the rating, why, the better option if you missed it, and the doctrinal basis.</p>
+    <p><b>5. Review.</b> The AAR lists every decision against doctrine. Print it or export it for the exercise report.</p>
+    <p class="muted"><b>Scoring.</b> Five competencies: Command & control 20%, Coordination 20%, Communication 20%, Decision quality 25%, Timeliness 15%. Taking more than half the available time reduces Timeliness gradually.</p>
+    <p class="muted"><b>Keys.</b> <kbd>1</kbd>–<kbd>4</kbd> choose · <kbd>Enter</kbd> commit/continue · <kbd>I</kbd> intel · <kbd>H</kbd> hint · <kbd>P</kbd> pause · <kbd>?</kbd> help · <kbd>Esc</kbd> close.</p></div>`,
+  basics: () => `<div class="grid" style="gap:12px;font-size:14.5px">
+    <div class="pillar"><b>Responsible Official vs Incident Commander.</b> ${gloss('The City Mayor is the RO: sets policy, priorities and limits, and delegates authority. The IC manages the incident on scene from the ICP. The RO does not run tactics.')}</div>
+    <div class="pillar"><b>EOC vs ICP.</b> ${gloss('The ICP commands the scene. The EOC coordinates: information, resources, clusters, reporting to RDRRMC 8. One incident can have one EOC supporting several ICPs.')}</div>
+    <div class="pillar"><b>EOC alert levels.</b> <span class="chip lvl white">White</span> normal · <span class="chip lvl blue">Blue</span> alert / partial activation · <span class="chip lvl red">Red</span> full activation.</div>
+    <div class="pillar"><b>PAGASA warnings.</b> ${gloss('TCWS Nos. 1–5 (higher = stronger winds, shorter lead time).')} Heavy Rainfall Warning: <span class="chip warn-y">Yellow 7.5–15 mm/h</span> <span class="chip warn-o">Orange 15–30 mm/h</span> <span class="chip warn-r">Red &gt;30 mm/h</span></div>
+    <div class="pillar"><b>Acting before impact (RA 12287).</b> ${gloss('A State of Imminent Disaster needs a PDRA showing severe impact and at least 72 h lead time; RDRRMC 8 acts within 24 h; the Mayor declares by EO. AA is funded from up to 10% of the 70% LDRRMF, not the QRF. Report to OCD within 45 days of lifting. Flash floods and landslides usually give less than 72 h, so city-level early action applies.')}</div>
+    <div class="pillar"><b>Clusters.</b> ${gloss('Response clusters (e.g., FNI, CCCM, Health/WASH, Law and Order, SRR, MDM, ETC, Education, Logistics) supply resources; under NDRRMC Memo No. 43, s. 2016 they work with the IMT on scene.')}</div></div>`,
+  refs: () => `<div class="grid" style="gap:8px">${REFERENCES.map(([t,d])=>`<div class="pillar" style="padding:12px"><b class="cond" style="color:var(--orange2)">${esc(t)}</b><p class="muted" style="font-size:13.5px;margin-top:2px">${esc(d)}</p></div>`).join('')}
+    <p class="dim" style="font-size:12.5px">Plain-language summaries for training. The official text governs. Pending national guidance (e.g., NDRRMC operational guidelines on AA triggers, DBM–COA AA funding rules) may change details.</p></div>`,
+  gloss: () => `<div class="grid" style="gap:6px;grid-template-columns:repeat(auto-fill,minmax(240px,1fr))">${Object.entries(GLOSSARY).sort().map(([k,v])=>`<div class="pillar" style="padding:10px"><b class="cond" style="color:var(--blue)">${esc(k)}</b><p class="muted" style="font-size:13px">${esc(v)}</p></div>`).join('')}</div>`
+};
+function openHelp(tab='play'){
+  $$('[data-htab]').forEach(b => { b.setAttribute('aria-selected', b.dataset.htab===tab); b.onclick = () => openHelp(b.dataset.htab); });
+  $('#help-body').innerHTML = HELP[tab](); openModal('help-modal');
+}
+let lastFocus = null;
+function openModal(id){ if($('#'+id).classList.contains('hidden')) lastFocus = document.activeElement; $('#'+id).classList.remove('hidden'); if(id!=='pause-modal' && !$('#game-screen').classList.contains('hidden') && !S.locked){ S.paused = true; S.modalPaused = true; } setTimeout(()=>{$('#'+id).querySelector('button')?.focus();},50); }
+function closeModal(id){ $('#'+id).classList.add('hidden'); hideTip(); if (S.modalPaused){ S.paused=false; S.modalPaused=false; } lastFocus?.focus?.(); }
+function pauseGame(){ if($('#game-screen').classList.contains('hidden')) return; S.paused = true; $('#pause-modal').classList.remove('hidden'); $('#btn-resume-game').focus(); }
+function resumeGame(){ S.paused = false; $('#pause-modal').classList.add('hidden'); }
+function quitGame(){ clearInterval(S.timer); S.paused=false; $('#pause-modal').classList.add('hidden'); showScreen('main-menu'); }
+
+/* ---------- visual FX ---------- */
+const fx = (() => {
+  const c = $('#fx'), x = c.getContext('2d'); let kind=null, raf=0, parts=[], intensity=.4, t=0;
+  const size = () => { c.width = innerWidth; c.height = innerHeight; }; addEventListener('resize', size); size();
+  function seed(){ parts = []; const n = kind==='rain' ? Math.round(60+260*intensity) : kind==='gas' ? 14 : 0;
+    for(let i=0;i<n;i++) parts.push({x:Math.random()*c.width, y:Math.random()*c.height, v:6+Math.random()*10, l:8+Math.random()*16, r:80+Math.random()*160, a:Math.random()*6.28}); }
+  function draw(){
+    x.clearRect(0,0,c.width,c.height); t+=.016;
+    if (kind==='rain'){ x.strokeStyle='rgba(159,220,255,.35)'; x.lineWidth=1; x.beginPath();
+      parts.forEach(p=>{ x.moveTo(p.x,p.y); x.lineTo(p.x-2-intensity*4,p.y+p.l); p.y+=p.v*(1+intensity); p.x-=1+intensity*3; if(p.y>c.height){p.y=-20;p.x=Math.random()*(c.width+200);} }); x.stroke(); }
+    if (kind==='sea'){ for(let k=0;k<3;k++){ x.beginPath(); x.strokeStyle=`rgba(79,179,232,${.12+k*.05})`; x.lineWidth=2;
+      for(let px=0;px<=c.width;px+=12){ const py = c.height-40-k*26+Math.sin(px/90+t*(1.2+k*.3))*(8+intensity*10); px?x.lineTo(px,py):x.moveTo(px,py);} x.stroke(); } }
+    if (kind==='gas'){ parts.forEach(p=>{ p.a+=.004; p.x+=Math.cos(p.a)*.4; p.y+=Math.sin(p.a*1.3)*.25; const g=x.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r); g.addColorStop(0,`rgba(190,220,120,${.05+intensity*.06})`); g.addColorStop(1,'rgba(190,220,120,0)'); x.fillStyle=g; x.fillRect(p.x-p.r,p.y-p.r,p.r*2,p.r*2); }); }
+    raf = requestAnimationFrame(draw);
+  }
+  return {
+    start(k){ cancelAnimationFrame(raf); if(reduceMotion || !['rain','sea','gas'].includes(k)){ kind=null; x.clearRect(0,0,c.width,c.height); return; } kind=k; seed(); draw(); },
+    level(i,n){ intensity = kind==='rain' ? [.35,.7,1,.15][i] ?? .4 : kind==='gas' ? [.6,1,.6,.15][i] ?? .4 : [.8,.5,.3,.2][i] ?? .3; if(kind==='rain') seed(); },
+    stop(){ cancelAnimationFrame(raf); kind=null; x.clearRect(0,0,c.width,c.height); }
+  };
+})();
+function confetti(){
+  if (reduceMotion) return; const c = document.createElement('canvas'); c.className='confetti'; c.width=innerWidth; c.height=innerHeight; document.body.appendChild(c);
+  const x = c.getContext('2d'), cols=['#4fb3e8','#f7941d','#ffffff','#0038a8','#ce1126','#fcd116'];
+  const ps = Array.from({length:160},()=>({x:Math.random()*c.width,y:-20-Math.random()*c.height*.5,vx:-2+Math.random()*4,vy:2+Math.random()*4,r:Math.random()*6.28,s:5+Math.random()*6,c:cols[Math.floor(Math.random()*cols.length)]}));
+  let f=0; (function d(){ x.clearRect(0,0,c.width,c.height); ps.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.r+=.1;x.save();x.translate(p.x,p.y);x.rotate(p.r);x.fillStyle=p.c;x.fillRect(-p.s/2,-p.s/4,p.s,p.s/2);x.restore();}); if(++f<240) requestAnimationFrame(d); else c.remove(); })();
+}
+
+/* ---------- events ---------- */
+$('#mode-single').onclick = () => openSetup('single');
+$('#mode-multi').onclick = () => openSetup('multi');
+$('#btn-basics').onclick = () => openHelp('basics');
+$('#btn-back-setup').onclick = () => showScreen('main-menu');
+$('#btn-back-brief').onclick = () => showScreen('setup-screen');
+$('#btn-start-game').onclick = renderBriefing;
+$('#player-name').addEventListener('input', validateSetup);
+$('#btn-submit-decision').onclick = () => commit(false);
+$('#btn-request-info').onclick = requestIntel;
+$('#btn-hint').onclick = useHint;
+$('#btn-pause-game').onclick = pauseGame;
+$('#btn-resume-game').onclick = resumeGame;
+$('#btn-quit-game').onclick = quitGame;
+$('#btn-play-again').onclick = startGame;
+$('#btn-try-different').onclick = () => showScreen('setup-screen');
+$('#btn-back-menu').onclick = () => showScreen('main-menu');
+$('#btn-leaderboard').onclick = showLeaderboard;
+$('#btn-help').onclick = () => openHelp('play');
+$('#btn-print').onclick = () => window.print();
+$('#btn-export').onclick = exportRun;
+$$('.tabs [data-tab]').forEach(b => b.onclick = () => { setTab(b.dataset.tab); });
+['leaderboard-modal','help-modal'].forEach(id => { const m = $('#'+id); m.addEventListener('click', e => { if (e.target===m || e.target.closest('[data-close]')) closeModal(id); }); });
+document.addEventListener('keydown', e => {
+  if (e.target.matches('input,select,textarea')) return;
+  const open = ['leaderboard-modal','help-modal'].find(id => !$('#'+id).classList.contains('hidden'));
+  if (e.key==='Escape'){ if(open) return closeModal(open); if(!$('#pause-modal').classList.contains('hidden')) return resumeGame(); }
+  if (open) return;
+  if (e.key==='?'){ openHelp('play'); return; }
+  if ($('#game-screen').classList.contains('hidden') || !$('#pause-modal').classList.contains('hidden') || $('.optrans')) return;
+  const k = e.key.toLowerCase();
+  if (k==='p') return pauseGame();
+  if (k==='enter'){ if($('#btn-next')){ e.preventDefault(); return next(); } if(S.chosen!==null && !S.locked){ e.preventDefault(); return commit(false); } }
+  if (S.locked) return;
+  if (['1','2','3','4'].includes(k)){ const b = $$('#decision-options .opt')[+k-1]; if(b){ choose(+b.dataset.oi); b.focus(); } }
+  if (k==='i') requestIntel();
+  if (k==='h' && diff().hint) useHint();
+});
+document.addEventListener('visibilitychange', () => { if (document.hidden && !$('#game-screen').classList.contains('hidden') && !S.locked && !S.paused) pauseGame(); });
+
+/* ---------- init ---------- */
+(function init(){
+  $('#stat-roles').textContent = ROLES.length; $('#stat-scen').textContent = SCENARIOS.length;
+  renderRoles(); renderScenarios(); renderDifficulties(); updateStats();
+  const msgs = ['Loading Ormoc hazard scenarios…','Briefing the Incident Management Team…','Checking PAGASA bulletins…'];
+  let i = 0; const iv = setInterval(()=>{ i=(i+1)%msgs.length; $('#load-msg').textContent = msgs[i]; }, 600);
+  setTimeout(() => { clearInterval(iv); const l = $('#loading-screen'); l.style.transition='opacity .4s'; l.style.opacity='0'; setTimeout(()=>l.remove(),400); showScreen('main-menu'); }, reduceMotion ? 300 : 1600);
+})();
+</script>
+</body>
+</html>
