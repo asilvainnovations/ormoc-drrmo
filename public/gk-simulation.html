@@ -1,0 +1,1847 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Gawad Kalasag Simulator Assessment Tool - Evaluate your DRRM initiatives against NDRRMC criteria">
+    <title>Gawad Kalasag Simulator | Assessment Portal</title>
+    <style>
+        :root {
+            --primary-blue: #1a3a6c;
+            --secondary-blue: #2c5282;
+            --accent-gold: #d4af37;
+            --accent-red: #e63946;
+            --success-green: #2a9d8f;
+            --warning-orange: #e76f51;
+            --info-blue: #1e6ab3;
+            --light-bg: #f8f9fa;
+            --dark-text: #212529;
+            --medium-gray: #6c757d;
+            --light-gray: #e9ecef;
+            --border-radius: 10px;
+            --box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+            --transition: all 0.35s ease;
+            --step-active: var(--primary-blue);
+            --step-complete: var(--success-green);
+            --step-incomplete: var(--medium-gray);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--dark-text);
+            background: linear-gradient(135deg, #f0f4f8 0%, #e6e9f0 100%);
+            min-height: 100vh;
+            position: relative;
+        }
+        
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(42, 157, 143, 0.03) 0%, transparent 25%),
+                radial-gradient(circle at 90% 80%, rgba(212, 175, 55, 0.04) 0%, transparent 25%),
+                radial-gradient(circle at 50% 50%, rgba(26, 58, 108, 0.02) 0%, transparent 35%);
+            z-index: -1;
+        }
+        
+        .container {
+            width: 92%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+        
+        /* Header Styles */
+        header {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
+            color: white;
+            text-align: center;
+            padding: 2rem 1rem 1.5rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.18);
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 2.5rem;
+        }
+        
+        header::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0) 70%);
+            transform: rotate(30deg);
+            z-index: 1;
+        }
+        
+        .header-content {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .logo-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 18px;
+            margin-bottom: 1.2rem;
+        }
+        
+        .shield-icon {
+            width: 72px;
+            height: 72px;
+            background: var(--accent-gold);
+            clip-path: polygon(50% 0%, 0% 25%, 0% 75%, 50% 100%, 100% 75%, 100% 25%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 4px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            position: relative;
+            z-index: 3;
+        }
+        
+        .shield-icon::before {
+            content: "🛡️";
+            font-size: 32px;
+        }
+        
+        h1 {
+            font-size: 2.9rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            margin-bottom: 0.4rem;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.25);
+            position: relative;
+        }
+        
+        .subtitle {
+            font-size: 1.55rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            margin: 0.4rem 0 1rem;
+            color: rgba(255, 255, 255, 0.94);
+            position: relative;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+        }
+        
+        .tagline {
+            font-size: 1.35rem;
+            max-width: 850px;
+            margin: 0 auto 1.2rem;
+            opacity: 0.97;
+            font-weight: 300;
+            position: relative;
+            line-height: 1.5;
+        }
+        
+        .divider {
+            height: 4px;
+            width: 90px;
+            background: var(--accent-gold);
+            margin: 1.2rem auto;
+            border-radius: 2px;
+            position: relative;
+        }
+        
+        .official-badge {
+            background: rgba(255, 255, 255, 0.15);
+            display: inline-block;
+            padding: 5px 18px;
+            border-radius: 30px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            margin-top: 8px;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        /* Navigation */
+        .simulator-nav {
+            background: white;
+            box-shadow: var(--box-shadow);
+            border-radius: var(--border-radius);
+            padding: 15px;
+            margin-bottom: 2.5rem;
+            position: sticky;
+            top: 20px;
+            z-index: 100;
+        }
+        
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+        
+        .progress-container {
+            flex: 1;
+            max-width: 600px;
+        }
+        
+        .progress-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.85rem;
+            color: var(--medium-gray);
+        }
+        
+        .progress-bar {
+            height: 10px;
+            background: var(--light-gray);
+            border-radius: 5px;
+            overflow: hidden;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-blue) 0%, var(--accent-gold) 100%);
+            border-radius: 5px;
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+        
+        .sector-selector {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .sector-btn {
+            background: white;
+            border: 2px solid var(--light-gray);
+            color: var(--medium-gray);
+            padding: 8px 16px;
+            border-radius: 30px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 0.95rem;
+        }
+        
+        .sector-btn.active {
+            background: var(--primary-blue);
+            color: white;
+            border-color: var(--primary-blue);
+            box-shadow: 0 3px 10px rgba(26, 58, 108, 0.25);
+        }
+        
+        .sector-btn:hover:not(.active) {
+            border-color: var(--secondary-blue);
+            color: var(--secondary-blue);
+        }
+        
+        /* Main Content Styles */
+        main {
+            padding: 1.5rem 0 3.5rem;
+        }
+        
+        .simulator-container {
+            display: flex;
+            gap: 28px;
+        }
+        
+        .form-section {
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        .results-section {
+            flex: 1;
+            min-width: 300px;
+            display: none;
+        }
+        
+        .results-section.active {
+            display: block;
+            animation: fadeIn 0.6s ease-out;
+        }
+        
+        .form-step {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 28px;
+            margin-bottom: 28px;
+            display: none;
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        .form-step.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .step-title {
+            color: var(--primary-blue);
+            font-size: 1.9rem;
+            margin-bottom: 22px;
+            padding-bottom: 12px;
+            border-bottom: 3px solid var(--accent-gold);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .step-title::before {
+            content: attr(data-step);
+            display: inline-flex;
+            width: 32px;
+            height: 32px;
+            background: var(--accent-gold);
+            color: var(--primary-blue);
+            border-radius: 50%;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+        
+        h2 {
+            color: var(--primary-blue);
+            font-size: 2.1rem;
+            margin-bottom: 1.75rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 3px solid var(--accent-gold);
+            display: inline-block;
+        }
+        
+        h3 {
+            color: var(--secondary-blue);
+            font-size: 1.65rem;
+            margin: 1.75rem 0 1.25rem;
+            position: relative;
+            padding-left: 12px;
+        }
+        
+        h3::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 4px;
+            height: 24px;
+            background: var(--accent-gold);
+            border-radius: 2px;
+        }
+        
+        p {
+            margin-bottom: 1.25rem;
+            font-size: 1.05rem;
+            line-height: 1.65;
+        }
+        
+        .instructions {
+            background: linear-gradient(135deg, #eef7ff 0%, #dbe9ff 100%);
+            border-left: 4px solid var(--info-blue);
+            padding: 18px;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 22px 0;
+            font-size: 0.98rem;
+        }
+        
+        .instructions strong {
+            color: var(--secondary-blue);
+        }
+        
+        /* Form Controls */
+        .form-group {
+            margin-bottom: 24px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 500;
+            color: var(--secondary-blue);
+            font-size: 1.05rem;
+        }
+        
+        .required::after {
+            content: " *";
+            color: var(--accent-red);
+        }
+        
+        textarea, input[type="text"], select {
+            width: 100%;
+            padding: 14px 18px;
+            border: 1px solid var(--light-gray);
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 1.02rem;
+            transition: var(--transition);
+            background: white;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+        
+        textarea:focus, input[type="text"]:focus, select:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(26, 58, 108, 0.15);
+        }
+        
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+        
+        .evidence-upload {
+            border: 2px dashed var(--light-gray);
+            border-radius: 8px;
+            padding: 25px;
+            text-align: center;
+            background: var(--light-bg);
+            cursor: pointer;
+            transition: var(--transition);
+            margin-top: 10px;
+        }
+        
+        .evidence-upload:hover {
+            border-color: var(--secondary-blue);
+            background: rgba(230, 240, 255, 0.3);
+        }
+        
+        .evidence-upload i {
+            font-size: 2.5rem;
+            color: var(--medium-gray);
+            margin-bottom: 12px;
+        }
+        
+        .evidence-upload p {
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--secondary-blue);
+        }
+        
+        .evidence-upload small {
+            color: var(--medium-gray);
+            font-size: 0.9rem;
+        }
+        
+        .file-input {
+            display: none;
+        }
+        
+        .file-list {
+            margin-top: 15px;
+            text-align: left;
+        }
+        
+        .file-item {
+            display: flex;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--light-gray);
+        }
+        
+        .file-item:last-child {
+            border-bottom: none;
+        }
+        
+        .file-icon {
+            margin-right: 10px;
+            color: var(--info-blue);
+            font-size: 1.2rem;
+        }
+        
+        .remove-file {
+            margin-left: auto;
+            color: var(--accent-red);
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            padding: 2px 6px;
+            border-radius: 4px;
+            transition: var(--transition);
+        }
+        
+        .remove-file:hover {
+            background: rgba(230, 57, 70, 0.1);
+        }
+        
+        .slider-container {
+            margin-top: 15px;
+        }
+        
+        .slider-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 8px;
+            font-size: 0.88rem;
+            color: var(--medium-gray);
+        }
+        
+        .slider-value {
+            font-weight: bold;
+            color: var(--primary-blue);
+            font-size: 1.2rem;
+            text-align: center;
+            margin-top: 8px;
+            background: rgba(26, 58, 108, 0.05);
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            line-height: 40px;
+        }
+        
+        input[type="range"] {
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            background: var(--light-gray);
+            outline: none;
+            -webkit-appearance: none;
+            margin: 15px 0;
+        }
+        
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: var(--primary-blue);
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        }
+        
+        .weight-badge {
+            display: inline-block;
+            background: var(--accent-gold);
+            color: var(--primary-blue);
+            padding: 2px 10px;
+            border-radius: 15px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            margin-left: 8px;
+            letter-spacing: 0.5px;
+        }
+        
+        /* Navigation Buttons */
+        .step-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid var(--light-gray);
+        }
+        
+        .nav-btn {
+            padding: 14px 32px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1.05rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .prev-btn {
+            background: var(--light-gray);
+            color: var(--dark-text);
+        }
+        
+        .prev-btn:hover {
+            background: #d5d9e0;
+        }
+        
+        .next-btn, .submit-btn {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
+            color: white;
+            box-shadow: 0 4px 12px rgba(26, 58, 108, 0.25);
+        }
+        
+        .next-btn:hover, .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(26, 58, 108, 0.35);
+        }
+        
+        .submit-btn {
+            background: linear-gradient(135deg, var(--success-green) 0%, #1e7e70 100%);
+            padding: 16px 40px;
+            font-size: 1.15rem;
+            margin-top: 15px;
+            width: 100%;
+        }
+        
+        .submit-btn:hover {
+            box-shadow: 0 6px 18px rgba(42, 157, 143, 0.35);
+        }
+        
+        .back-to-form {
+            background: white;
+            color: var(--primary-blue);
+            border: 2px solid var(--primary-blue);
+            margin-top: 20px;
+            width: 100%;
+            display: none;
+        }
+        
+        .back-to-form.active {
+            display: block;
+        }
+        
+        /* Results Section */
+        .results-container {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 35px;
+            animation: fadeIn 0.7s ease-out;
+        }
+        
+        .seal-display {
+            text-align: center;
+            margin: 25px 0 35px;
+            position: relative;
+        }
+        
+        .official-seal {
+            max-width: 220px;
+            height: auto;
+            border-radius: 50%;
+            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.28);
+            border: 10px solid white;
+            background: white;
+            display: inline-block;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .seal-frame {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 260px;
+            height: 260px;
+            border: 18px solid var(--accent-gold);
+            border-radius: 50%;
+            z-index: 1;
+            box-shadow: 0 0 0 4px var(--primary-blue), 0 8px 25px rgba(0,0,0,0.25);
+        }
+        
+        .score-display {
+            text-align: center;
+            margin: 30px 0;
+        }
+        
+        .total-score {
+            font-size: 5.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent-gold) 0%, #b89e2b 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            line-height: 1;
+            text-shadow: 0 4px 10px rgba(212, 175, 55, 0.3);
+            position: relative;
+            display: inline-block;
+        }
+        
+        .total-score::after {
+            content: "%";
+            position: absolute;
+            font-size: 2.2rem;
+            top: 15px;
+            right: -25px;
+        }
+        
+        .score-label {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-top: 12px;
+            color: var(--primary-blue);
+        }
+        
+        .rating-badge {
+            display: inline-block;
+            padding: 8px 28px;
+            border-radius: 40px;
+            font-weight: 700;
+            font-size: 1.4rem;
+            margin-top: 15px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        }
+        
+        .rating-excellent {
+            background: linear-gradient(135deg, var(--accent-gold) 0%, #b89e2b 100%);
+            color: var(--primary-blue);
+            letter-spacing: 2px;
+        }
+        
+        .rating-very-good {
+            background: linear-gradient(135deg, var(--success-green) 0%, #1e7e70 100%);
+            color: white;
+        }
+        
+        .rating-good {
+            background: linear-gradient(135deg, var(--warning-orange) 0%, #d45d3e 100%);
+            color: white;
+        }
+        
+        .rating-fair {
+            background: linear-gradient(135deg, #e9c46a 0%, #d6a236 100%);
+            color: var(--primary-blue);
+        }
+        
+        .criteria-breakdown {
+            margin: 40px 0;
+        }
+        
+        .criterion-item {
+            margin-bottom: 22px;
+            padding-bottom: 22px;
+            border-bottom: 1px dashed var(--light-gray);
+        }
+        
+        .criterion-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        
+        .criterion-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            align-items: center;
+        }
+        
+        .criterion-title {
+            font-weight: 600;
+            font-size: 1.35rem;
+            color: var(--secondary-blue);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .criterion-title::before {
+            content: "•";
+            color: var(--accent-gold);
+            font-size: 2rem;
+            line-height: 0.6;
+        }
+        
+        .criterion-score {
+            background: var(--primary-blue);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.4rem;
+            flex-shrink: 0;
+        }
+        
+        .score-bar-container {
+            background: var(--light-gray);
+            border-radius: 4px;
+            height: 12px;
+            margin: 10px 0;
+            overflow: hidden;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .score-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-blue) 0%, var(--accent-gold) 100%);
+            border-radius: 4px;
+            width: 0%;
+            transition: width 1.2s ease-out;
+        }
+        
+        .recommendations {
+            background: linear-gradient(135deg, #f8fdff 0%, #f0f7ff 100%);
+            border-radius: var(--border-radius);
+            padding: 28px;
+            margin: 30px 0;
+            border: 1px solid var(--light-gray);
+        }
+        
+        .recommendations h3 {
+            color: var(--accent-red);
+            margin-top: 0;
+            padding-left: 0;
+        }
+        
+        .recommendations h3::before {
+            background: var(--accent-red);
+        }
+        
+        .recommendation-item {
+            background: white;
+            border-left: 4px solid var(--warning-orange);
+            padding: 15px;
+            border-radius: 0 8px 8px 0;
+            margin: 15px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+        
+        .recommendation-item.strong {
+            border-left-color: var(--success-green);
+        }
+        
+        .recommendation-item.strong h4 {
+            color: var(--success-green);
+        }
+        
+        .recommendation-item h4 {
+            color: var(--warning-orange);
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .recommendation-item h4::before {
+            content: "→";
+            font-weight: bold;
+        }
+        
+        .evidence-summary {
+            margin-top: 30px;
+        }
+        
+        .evidence-item {
+            display: flex;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--light-gray);
+        }
+        
+        .evidence-item:last-child {
+            border-bottom: none;
+        }
+        
+        .evidence-icon {
+            color: var(--info-blue);
+            font-size: 1.4rem;
+            margin-right: 12px;
+            min-width: 24px;
+        }
+        
+        .report-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .report-btn {
+            flex: 1;
+            min-width: 200px;
+            padding: 16px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .print-btn {
+            background: white;
+            color: var(--primary-blue);
+            border: 2px solid var(--primary-blue);
+        }
+        
+        .print-btn:hover {
+            background: var(--primary-blue);
+            color: white;
+        }
+        
+        .download-btn {
+            background: linear-gradient(135deg, var(--success-green) 0%, #1e7e70 100%);
+            color: white;
+            border: none;
+        }
+        
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(42, 157, 143, 0.35);
+        }
+        
+        .new-assessment-btn {
+            background: linear-gradient(135deg, var(--secondary-blue) 0%, var(--primary-blue) 100%);
+            color: white;
+            border: none;
+            width: 100%;
+            padding: 18px;
+            font-size: 1.2rem;
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+        
+        .new-assessment-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(26, 58, 108, 0.3);
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 1100px) {
+            .simulator-container {
+                flex-direction: column;
+            }
+            
+            .results-section {
+                display: none;
+            }
+            
+            .results-section.active {
+                display: block;
+            }
+            
+            .nav-container {
+                flex-direction: column;
+                gap: 15px;
+                align-items: flex-start;
+            }
+            
+            .sector-selector {
+                width: 100%;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+        }
+        
+        @media (max-width: 900px) {
+            h1 {
+                font-size: 2.6rem;
+            }
+            .subtitle {
+                font-size: 1.4rem;
+            }
+            .tagline {
+                font-size: 1.25rem;
+            }
+            .step-title {
+                font-size: 1.75rem;
+            }
+            .form-step {
+                padding: 24px;
+            }
+            .results-container {
+                padding: 28px;
+            }
+            .total-score {
+                font-size: 4.8rem;
+            }
+            .total-score::after {
+                font-size: 1.9rem;
+                right: -20px;
+                top: 12px;
+            }
+            .score-label {
+                font-size: 1.65rem;
+            }
+            .official-seal {
+                max-width: 190px;
+            }
+            .seal-frame {
+                width: 230px;
+                height: 230px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            header {
+                padding: 1.7rem 1rem 1.2rem;
+            }
+            h1 {
+                font-size: 2.35rem;
+            }
+            .subtitle {
+                font-size: 1.25rem;
+            }
+            .tagline {
+                font-size: 1.15rem;
+            }
+            .logo-container {
+                flex-direction: column;
+                gap: 10px;
+            }
+            .shield-icon {
+                width: 60px;
+                height: 60px;
+            }
+            .shield-icon::before {
+                font-size: 28px;
+            }
+            .step-navigation {
+                flex-direction: column;
+                gap: 12px;
+            }
+            .nav-btn {
+                width: 100%;
+                justify-content: center;
+            }
+            .form-step, .results-container {
+                padding: 22px;
+            }
+            .total-score {
+                font-size: 4.2rem;
+            }
+            .total-score::after {
+                font-size: 1.7rem;
+                right: -15px;
+                top: 10px;
+            }
+            .score-label {
+                font-size: 1.5rem;
+            }
+            .official-seal {
+                max-width: 170px;
+            }
+            .seal-frame {
+                width: 210px;
+                height: 210px;
+            }
+            .report-actions {
+                flex-direction: column;
+            }
+            .report-btn {
+                width: 100%;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 2.1rem;
+            }
+            .subtitle {
+                font-size: 1.15rem;
+            }
+            .tagline {
+                font-size: 1.05rem;
+            }
+            .divider {
+                width: 70px;
+            }
+            .step-title {
+                font-size: 1.6rem;
+            }
+            .form-group {
+                margin-bottom: 20px;
+            }
+            label {
+                font-size: 1rem;
+            }
+            textarea, input[type="text"], select {
+                padding: 12px 15px;
+                font-size: 0.98rem;
+            }
+            .evidence-upload {
+                padding: 20px 15px;
+            }
+            .slider-value {
+                width: 36px;
+                height: 36px;
+                line-height: 36px;
+                font-size: 1.1rem;
+            }
+            .nav-btn {
+                padding: 12px 20px;
+                font-size: 1rem;
+            }
+            .submit-btn, .new-assessment-btn {
+                padding: 14px;
+                font-size: 1.05rem;
+            }
+            .total-score {
+                font-size: 3.8rem;
+            }
+            .total-score::after {
+                font-size: 1.5rem;
+                right: -12px;
+                top: 8px;
+            }
+            .score-label {
+                font-size: 1.4rem;
+            }
+            .official-seal {
+                max-width: 150px;
+            }
+            .seal-frame {
+                width: 190px;
+                height: 190px;
+            }
+            .criterion-score {
+                width: 44px;
+                height: 44px;
+                font-size: 1.25rem;
+            }
+            .rating-badge {
+                padding: 6px 22px;
+                font-size: 1.25rem;
+            }
+        }
+        
+        /* Print Styles */
+        @media print {
+            body {
+                background: white;
+                color: black;
+            }
+            header, .simulator-nav, .step-navigation, .report-actions, .new-assessment-btn, .back-to-form {
+                display: none !important;
+            }
+            main {
+                padding: 0;
+            }
+            .results-container {
+                box-shadow: none;
+                padding: 20px;
+                border-radius: 0;
+            }
+            .seal-frame {
+                box-shadow: none;
+                border-width: 8px;
+            }
+            .official-seal {
+                border-width: 5px;
+                box-shadow: none;
+            }
+            .score-bar {
+                background: #2c5282 !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container header-content">
+            <div class="logo-container">
+                <div class="shield-icon"></div>
+                <div>
+                    <h1>Gawad Kalasag</h1>
+                    <div class="subtitle">KAlamidad at Sakuna LAbanan, SAriling Galing ang Kaligtasan</div>
+                </div>
+            </div>
+            <p class="tagline">Simulator Assessment Tool for Disaster Risk Reduction and Management Excellence</p>
+            <div class="divider"></div>
+            <p>Aligned with the priority of the National Disaster Risk Reduction and Management Council (NDRRMC)</p>
+            <div class="official-badge">ASSESSMENT SIMULATOR • FOR PLANNING AND SELF-EVALUATION PURPOSES</div>
+        </div>
+    </header>
+    
+    <div class="simulator-nav">
+        <div class="container nav-container">
+            <div class="progress-container">
+                <div class="progress-labels">
+                    <span>Start</span>
+                    <span>Criteria Assessment</span>
+                    <span>Evidence Submission</span>
+                    <span>Results</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress-fill"></div>
+                </div>
+            </div>
+            <div class="sector-selector">
+                <button class="sector-btn active" data-sector="lgu">LGU</button>
+                <button class="sector-btn" data-sector="ngo">NGO/CSO</button>
+                <button class="sector-btn" data-sector="private">Private Sector</button>
+                <button class="sector-btn" data-sector="individual">Individual/Group</button>
+            </div>
+        </div>
+    </div>
+    
+    <main class="container">
+        <div class="simulator-container">
+            <div class="form-section">
+                <div class="form-step active" id="step-1" data-step="1">
+                    <h2 class="step-title" data-step="1">Sector & Initiative Details</h2>
+                    <p>Welcome to the official Gawad Kalasag Simulator Assessment. This tool will evaluate your DRRM initiative against the NDRRMC criteria to provide a projected score, strengths, and improvement areas.</p>
+                    
+                    <div class="instructions">
+                        <strong>Instructions:</strong> Select your sector above, then provide details about your DRRM initiative. Be specific and prepare documentary evidence for each criteria section. All fields marked with asterisk (*) are required.
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="initiative-name" class="required">Initiative/Project Name</label>
+                        <input type="text" id="initiative-name" placeholder="e.g., Project Bantay-Bahay, Community Early Warning System">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="organization" class="required">Organization/Agency Name</label>
+                        <input type="text" id="organization" placeholder="e.g., City/Municipality of..., ABC Foundation, XYZ Corporation">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="sector-type" class="required">Sector Type</label>
+                        <select id="sector-type">
+                            <option value="lgu-city">LGU - City</option>
+                            <option value="lgu-municipality">LGU - Municipality</option>
+                            <option value="lgu-province">LGU - Province</option>
+                            <option value="ngo">NGO/Civil Society Organization</option>
+                            <option value="private-enterprise">Private Enterprise</option>
+                            <option value="private-csr">Private Sector (CSR Program)</option>
+                            <option value="community-group">Community-Based Group</option>
+                            <option value="volunteer-group">Volunteer Organization</option>
+                            <option value="individual">Individual</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="initiative-description" class="required">Brief Description of Initiative (max 250 words)</label>
+                        <textarea id="initiative-description" placeholder="Describe your DRRM initiative, its objectives, implementation period, and geographic coverage. Focus on how it addresses disaster risks in your community."></textarea>
+                    </div>
+                    
+                    <div class="step-navigation">
+                        <div></div> <!-- Empty div for spacing -->
+                        <button class="nav-btn next-btn" onclick="nextStep(1)">Next: Impact Assessment →</button>
+                    </div>
+                </div>
+                
+                <div class="form-step" id="step-2" data-step="2">
+                    <h2 class="step-title" data-step="2">Impact on Lives & Property <span class="weight-badge">30%</span></h2>
+                    <p>Evaluate how your initiative reduces disaster risks, saves lives, and protects property. Provide specific metrics and outcomes.</p>
+                    
+                    <div class="form-group">
+                        <label for="impact-description" class="required">Description of Impact</label>
+                        <textarea id="impact-description" placeholder="Describe specific outcomes: reduction in casualties, faster evacuation times, reduced property damage, lives saved, etc. Include quantitative data where possible (e.g., '30% reduction in flood damage', 'evacuated 500 residents in under 30 minutes')."></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Documentary Evidence</label>
+                        <div class="evidence-upload" onclick="document.getElementById('impact-evidence').click()">
+                            <div>📁</div>
+                            <p>Upload Evidence Files</p>
+                            <small>Images, reports, testimonials, data sheets (Max 5 files, 10MB each)</small>
+                            <input type="file" id="impact-evidence" class="file-input" multiple accept="image/*,.pdf,.doc,.docx,.xls,.xlsx">
+                        </div>
+                        <div class="file-list" id="impact-file-list"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="impact-slider" class="required">Impact Score (1-5)</label>
+                        <div class="slider-container">
+                            <div class="slider-value" id="impact-value">3</div>
+                            <input type="range" id="impact-slider" min="1" max="5" value="3" oninput="updateSliderValue('impact')">
+                            <div class="slider-labels">
+                                <span>1 (Minimal)</span>
+                                <span>3 (Moderate)</span>
+                                <span>5 (Exceptional)</span>
+                            </div>
+                        </div>
+                        <small>Score based on: Measurable reduction in casualties, property damage prevention, lives saved, response time improvement</small>
+                    </div>
+                    
+                    <div class="step-navigation">
+                        <button class="nav-btn prev-btn" onclick="prevStep(2)">← Previous: Initiative Details</button>
+                        <button class="nav-btn next-btn" onclick="nextStep(2)">Next: Coverage & Inclusivity →</button>
+                    </div>
+                </div>
+                
+                <div class="form-step" id="step-3" data-step="3">
+                    <h2 class="step-title" data-step="3">Coverage & Inclusivity <span class="weight-badge">20%</span></h2>
+                    <p>Assess the reach of your initiative and how it includes vulnerable populations in disaster preparedness and response.</p>
+                    
+                    <div class="form-group">
+                        <label for="coverage-description" class="required">Description of Coverage</label>
+                        <textarea id="coverage-description" placeholder="Describe the number of people/households served, geographic coverage, and inclusion of vulnerable groups (children, elderly, PWDs, indigenous groups, etc.). Include specific programs for marginalized communities."></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Documentary Evidence</label>
+                        <div class="evidence-upload" onclick="document.getElementById('coverage-evidence').click()">
+                            <div>📁</div>
+                            <p>Upload Evidence Files</p>
+                            <small>Participation records, demographic data, inclusion program documents</small>
+                            <input type="file" id="coverage-evidence" class="file-input" multiple accept="image/*,.pdf,.doc,.docx,.xls,.xlsx">
+                        </div>
+                        <div class="file-list" id="coverage-file-list"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="coverage-slider" class="required">Coverage Score (1-5)</label>
+                        <div class="slider-container">
+                            <div class="slider-value" id="coverage-value">3</div>
+                            <input type="range" id="coverage-slider" min="1" max="5" value="3" oninput="updateSliderValue('coverage')">
+                            <div class="slider-labels">
+                                <span>1 (Limited)</span>
+                                <span>3 (Adequate)</span>
+                                <span>5 (Comprehensive)</span>
+                            </div>
+                        </div>
+                        <small>Score based on: Number of beneficiaries, geographic coverage, inclusion of vulnerable groups, accessibility of services</small>
+                    </div>
+                    
+                    <div class="step-navigation">
+                        <button class="nav-btn prev-btn" onclick="prevStep(3)">← Previous: Impact Assessment</button>
+                        <button class="nav-btn next-btn" onclick="nextStep(3)">Next: Innovation & Replicability →</button>
+                    </div>
+                </div>
+                
+                <div class="form-step" id="step-4" data-step="4">
+                    <h2 class="step-title" data-step="4">Innovation & Replicability <span class="weight-badge">20%</span></h2>
+                    <p>Evaluate the novelty of your approach and its potential to be adapted by other communities or organizations.</p>
+                    
+                    <div class="form-group">
+                        <label for="innovation-description" class="required">Description of Innovation</label>
+                        <textarea id="innovation-description" placeholder="Describe innovative methods, technologies, or approaches used. Explain how your initiative can be replicated in other communities, including any adaptation requirements, cost considerations, and transferability of knowledge."></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Documentary Evidence</label>
+                        <div class="evidence-upload" onclick="document.getElementById('innovation-evidence').click()">
+                            <div>📁</div>
+                            <p>Upload Evidence Files</p>
+                            <small>Technical documents, replication guides, technology specifications, case studies</small>
+                            <input type="file" id="innovation-evidence" class="file-input" multiple accept="image/*,.pdf,.doc,.docx,.xls,.xlsx">
+                        </div>
+                        <div class="file-list" id="innovation-file-list"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="innovation-slider" class="required">Innovation Score (1-5)</label>
+                        <div class="slider-container">
+                            <div class="slider-value" id="innovation-value">3</div>
+                            <input type="range" id="innovation-slider" min="1" max="5" value="3" oninput="updateSliderValue('innovation')">
+                            <div class="slider-labels">
+                                <span>1 (Traditional)</span>
+                                <span>3 (Improved)</span>
+                                <span>5 (Pioneering)</span>
+                            </div>
+                        </div>
+                        <small>Score based on: Originality of approach, use of appropriate technology, adaptability to other contexts, documentation for replication</small>
+                    </div>
+                    
+                    <div class="step-navigation">
+                        <button class="nav-btn prev-btn" onclick="prevStep(4)">← Previous: Coverage & Inclusivity</button>
+                        <button class="nav-btn next-btn" onclick="nextStep(4)">Next: Sustainability →</button>
+                    </div>
+                </div>
+                
+                <div class="form-step" id="step-5" data-step="5">
+                    <h2 class="step-title" data-step="5">Sustainability <span class="weight-badge">20%</span></h2>
+                    <p>Assess the long-term viability of your initiative and its integration into policies, systems, or community practices.</p>
+                    
+                    <div class="form-group">
+                        <label for="sustainability-description" class="required">Description of Sustainability</label>
+                        <textarea id="sustainability-description" placeholder="Describe how the initiative will continue beyond initial implementation: funding mechanisms, integration into local policies/ordinances, community ownership, capacity building, maintenance plans, and institutional support."></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Documentary Evidence</label>
+                        <div class="evidence-upload" onclick="document.getElementById('sustainability-evidence').click()">
+                            <div>📁</div>
+                            <p>Upload Evidence Files</p>
+                            <small>Local ordinances, MOAs, sustainability plans, funding documents, training materials</small>
+                            <input type="file" id="sustainability-evidence" class="file-input" multiple accept="image/*,.pdf,.doc,.docx,.xls,.xlsx">
+                        </div>
+                        <div class="file-list" id="sustainability-file-list"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="sustainability-slider" class="required">Sustainability Score (1-5)</label>
+                        <div class="slider-container">
+                            <div class="slider-value" id="sustainability-value">3</div>
+                            <input type="range" id="sustainability-slider" min="1" max="5" value="3" oninput="updateSliderValue('sustainability')">
+                            <div class="slider-labels">
+                                <span>1 (Short-term)</span>
+                                <span>3 (Medium-term)</span>
+                                <span>5 (Long-term)</span>
+                            </div>
+                        </div>
+                        <small>Score based on: Integration into local governance, secured funding, community ownership, policy alignment, maintenance mechanisms</small>
+                    </div>
+                    
+                    <div class="step-navigation">
+                        <button class="nav-btn prev-btn" onclick="prevStep(5)">← Previous: Innovation & Replicability</button>
+                        <button class="nav-btn next-btn" onclick="nextStep(5)">Next: National Contribution →</button>
+                    </div>
+                </div>
+                
+                <div class="form-step" id="step-6" data-step="6">
+                    <h2 class="step-title" data-step="6">Contribution to National Goals <span class="weight-badge">10%</span></h2>
+                    <p>Evaluate how your initiative aligns with and supports national DRRM frameworks, policies, and development goals.</p>
+                    
+                    <div class="form-group">
+                        <label for="national-description" class="required">Description of National Contribution</label>
+                        <textarea id="national-description" placeholder="Describe alignment with RA 10121 (Philippine DRRM Act), National DRRM Plan, SDGs, climate adaptation frameworks, or other national policies. Explain how your initiative contributes to national resilience building and policy implementation."></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Documentary Evidence</label>
+                        <div class="evidence-upload" onclick="document.getElementById('national-evidence').click()">
+                            <div>📁</div>
+                            <p>Upload Evidence Files</p>
+                            <small>Policy alignment documents, national agency endorsements, framework integration reports</small>
+                            <input type="file" id="national-evidence" class="file-input" multiple accept="image/*,.pdf,.doc,.docx,.xls,.xlsx">
+                        </div>
+                        <div class="file-list" id="national-file-list"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="national-slider" class="required">National Contribution Score (1-5)</label>
+                        <div class="slider-container">
+                            <div class="slider-value" id="national-value">3</div>
+                            <input type="range" id="national-slider" min="1" max="5" value="3" oninput="updateSliderValue('national')">
+                            <div class="slider-labels">
+                                <span>1 (Minimal)</span>
+                                <span>3 (Aligned)</span>
+                                <span>5 (Exemplary)</span>
+                            </div>
+                        </div>
+                        <small>Score based on: Alignment with RA 10121, National DRRM Plan, SDGs, climate policies, and contribution to national resilience frameworks</small>
+                    </div>
+                    
+                    <div class="step-navigation">
+                        <button class="nav-btn prev-btn" onclick="prevStep(6)">← Previous: Sustainability</button>
+                        <button class="nav-btn submit-btn" onclick="generateReport()">Generate Assessment Report</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="results-section" id="results-section">
+                <div class="results-container">
+                    <h2>Gawad Kalasag Assessment Report</h2>
+                    
+                    <div class="seal-display">
+                        <div class="seal-frame"></div>
+                        <img src="https://trecemartirescity.gov.ph/wp-content/uploads/2024/07/gawad-kalasag_2-844x1024.png" alt="Official Gawad Kalasag Seal" class="official-seal">
+                    </div>
+                    
+                    <div class="score-display">
+                        <div class="total-score" id="total-score">85</div>
+                        <div class="score-label">Total Assessment Score</div>
+                        <div class="rating-badge rating-very-good" id="rating-badge">Very Good</div>
+                    </div>
+                    
+                    <div class="criteria-breakdown">
+                        <h3>Criteria Breakdown</h3>
+                        
+                        <div class="criterion-item">
+                            <div class="criterion-header">
+                                <div class="criterion-title">Impact on Lives & Property</div>
+                                <div class="criterion-score" id="score-impact">85</div>
+                            </div>
+                            <div class="score-bar-container">
+                                <div class="score-bar" id="bar-impact" style="width: 85%"></div>
+                            </div>
+                            <small>Weight: 30% | Evidence submitted: <span id="evidence-impact">3 files</span></small>
+                        </div>
+                        
+                        <div class="criterion-item">
+                            <div class="criterion-header">
+                                <div class="criterion-title">Coverage & Inclusivity</div>
+                                <div class="criterion-score" id="score-coverage">80</div>
+                            </div>
+                            <div class="score-bar-container">
+                                <div class="score-bar" id="bar-coverage" style="width: 80%"></div>
+                            </div>
+                            <small>Weight: 20% | Evidence submitted: <span id="evidence-coverage">2 files</span></small>
+                        </div>
+                        
+                        <div class="criterion-item">
+                            <div class="criterion-header">
+                                <div class="criterion-title">Innovation & Replicability</div>
+                                <div class="criterion-score" id="score-innovation">90</div>
+                            </div>
+                            <div class="score-bar-container">
+                                <div class="score-bar" id="bar-innovation" style="width: 90%"></div>
+                            </div>
+                            <small>Weight: 20% | Evidence submitted: <span id="evidence-innovation">4 files</span></small>
+                        </div>
+                        
+                        <div class="criterion-item">
+                            <div class="criterion-header">
+                                <div class="criterion-title">Sustainability</div>
+                                <div class="criterion-score" id="score-sustainability">75</div>
+                            </div>
+                            <div class="score-bar-container">
+                                <div class="score-bar" id="bar-sustainability" style="width: 75%"></div>
+                            </div>
+                            <small>Weight: 20% | Evidence submitted: <span id="evidence-sustainability">3 files</span></small>
+                        </div>
+                        
+                        <div class="criterion-item">
+                            <div class="criterion-header">
+                                <div class="criterion-title">Contribution to National Goals</div>
+                                <div class="criterion-score" id="score-national">85</div>
+                            </div>
+                            <div class="score-bar-container">
+                                <div class="score-bar" id="bar-national" style="width: 85%"></div>
+                            </div>
+                            <small>Weight: 10% | Evidence submitted: <span id="evidence-national">2 files</span></small>
+                        </div>
+                    </div>
+                    
+                    <div class="recommendations">
+                        <h3>Strengths & Recommendations</h3>
+                        
+                        <div class="recommendation-item strong">
+                            <h4>Major Strength: Innovation & Replicability</h4>
+                            <p>Your initiative demonstrates exceptional innovation with strong potential for replication across similar communities. The documentation provided shows clear adaptation pathways and transferable methodologies.</p>
+                        </div>
+                        
+                        <div class="recommendation-item">
+                            <h4>Improvement Area: Sustainability Mechanisms</h4>
+                            <p>While your initiative shows good community engagement, strengthening long-term funding mechanisms and deeper integration into local government policies would enhance sustainability. Consider developing a formal sustainability plan with clear ownership transition strategies.</p>
+                        </div>
+                        
+                        <div class="recommendation-item">
+                            <h4>Improvement Area: Inclusion of Vulnerable Groups</h4>
+                            <p>Expand specific programs targeting persons with disabilities, elderly populations, and indigenous communities. Documenting tailored approaches for these groups would significantly improve your coverage score.</p>
+                        </div>
+                        
+                        <div class="recommendation-item strong">
+                            <h4>Strength: Measurable Impact</h4>
+                            <p>Your initiative demonstrates clear, quantifiable outcomes in reducing disaster risks and protecting lives. The evidence provided shows concrete improvements in evacuation times and damage reduction.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="evidence-summary">
+                        <h3>Submitted Documentary Evidence</h3>
+                        <div class="evidence-item">
+                            <div class="evidence-icon">📄</div>
+                            <div>Impact Assessment: 3 files (Photos, impact report, testimonial letters)</div>
+                        </div>
+                        <div class="evidence-item">
+                            <div class="evidence-icon">📊</div>
+                            <div>Coverage Documentation: 2 files (Beneficiary list, inclusion program details)</div>
+                        </div>
+                        <div class="evidence-item">
+                            <div class="evidence-icon">💡</div>
+                            <div>Innovation Evidence: 4 files (Technical specifications, replication guide, case studies)</div>
+                        </div>
+                        <div class="evidence-item">
+                            <div class="evidence-icon">🔄</div>
+                            <div>Sustainability Plans: 3 files (Local ordinance draft, MOA with partners, maintenance schedule)</div>
+                        </div>
+                        <div class="evidence-item">
+                            <div class="evidence-icon">🇵🇭</div>
+                            <div>National Alignment: 2 files (Policy alignment matrix, endorsement letter)</div>
+                        </div>
+                    </div>
+                    
+                    <div class="report-actions">
+                        <button class="report-btn print-btn" onclick="window.print()">
+                            <span>🖨️</span> Print Report
+                        </button>
+                        <button class="report-btn download-btn" onclick="alert('In a production environment, this would generate a PDF report. For this simulator, use the Print function and choose \"Save as PDF\".')">
+                            <span>↓</span> Download as PDF
+                        </button>
+                    </div>
+                    
+                    <button class="nav-btn new-assessment-btn" onclick="resetAssessment()">
+                        <span>🔄</span> Start New Assessment
+                    </button>
+                </div>
+                
+                <button class="nav-btn back-to-form" id="back-to-form" onclick="showFormSection()">
+                    ← Back to Assessment Form
+                </button>
+            </div>
+        </div>
+    </main>
+    
+    <script>
+        // Set current year dynamically
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+        
+        // Initialize sector selection
+        document.addEventListener('DOMContentLoaded', function() {
+            const sectorBtns = document.querySelectorAll('.sector-btn');
+            const sectorType = document.getElementById('sector-type');
+            
+            sectorBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // Update active button
+                    sectorBtns.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Update sector type dropdown
+                    const sector = this.getAttribute('data-sector');
+                    if (sector === 'lgu') {
+                        sectorType.value = 'lgu-city';
+                    } else if (sector === 'ngo') {
+                        sectorType.value = 'ngo';
+                    } else if (sector === 'private') {
+                        sectorType.value = 'private-enterprise';
+                    } else if (sector === 'individual') {
+                        sectorType.value = 'community-group';
+                    }
+                });
+            });
+            
+            // Initialize file upload handlers
+            setupFileUpload('impact');
+            setupFileUpload('coverage');
+            setupFileUpload('innovation');
+            setupFileUpload('sustainability');
+            setupFileUpload('national');
+            
+            // Initialize slider values
+            document.querySelectorAll('input[type="range"]').forEach(slider => {
+                const id = slider.id.split('-')[0];
+                updateSliderValue(id);
+            });
+            
+            // Set progress bar
+            updateProgressBar(16.67);
+        });
+        
+        // File upload handling
+        function setupFileUpload(criteria) {
+            const fileInput = document.getElementById(`${criteria}-evidence`);
+            const fileList = document.getElementById(`${criteria}-file-list`);
+            
+            fileInput.addEventListener('change', function() {
+                fileList.innerHTML = '';
+                
+                if (this.files.length > 5) {
+                    alert('Maximum of 5 files allowed. Only the first 5 will be processed.');
+                }
+                
+                const maxFiles = Math.min(this.files.length, 5);
+                for (let i = 0; i < maxFiles; i++) {
+                    const file = this.files[i];
+                    const fileItem = document.createElement('div');
+                    fileItem.className = 'file-item';
+                    fileItem.innerHTML = `
+                        <span class="file-icon">📎</span>
+                        <span>${file.name} (${formatFileSize(file.size)})</span>
+                        <button class="remove-file" onclick="removeFile(this, '${criteria}')">×</button>
+                    `;
+                    fileList.appendChild(fileItem);
+                }
+            });
+        }
+        
+        function removeFile(button, criteria) {
+            const fileItem = button.parentElement;
+            const fileList = fileItem.parentElement;
+            fileList.removeChild(fileItem);
+            
+            // In a real app, we'd also remove from the file input's FileList
+            // This is a simulator, so we just remove the visual element
+        }
+        
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+        
+        // Slider functionality
+        function updateSliderValue(criteria) {
+            const slider = document.getElementById(`${criteria}-slider`);
+            const valueDisplay = document.getElementById(`${criteria}-value`);
+            valueDisplay.textContent = slider.value;
+        }
+        
+        // Form navigation
+        let currentStep = 1;
+        const totalSteps = 6;
+        
+        function nextStep(step) {
+            // Basic validation for required fields in current step
+            if (step === 1) {
+                const name = document.getElementById('initiative-name').value.trim();
+                const org = document.getElementById('organization').value.trim();
+                const desc = document.getElementById('initiative-description').value.trim();
+                
+                if (!name || !org || !desc) {
+                    alert('Please complete all required fields before proceeding.');
+                    return;
+                }
+            }
+            
+            document.getElementById(`step-${step}`).classList.remove('active');
+            document.getElementById(`step-${step + 1}`).classList.add('active');
+            currentStep = step + 1;
+            updateProgressBar((currentStep / totalSteps) * 100);
+            
+            // Scroll to top of form
+            window.scrollTo({ top: document.querySelector('.form-section').offsetTop - 20, behavior: 'smooth' });
+        }
+        
+        function prevStep(step) {
+            document.getElementById(`step-${step}`).classList.remove('active');
+            document.getElementById(`step-${step - 1}`).classList.add('active');
+            currentStep = step - 1;
+            updateProgressBar((currentStep / totalSteps) * 100);
+            
+            // Scroll to top of form
+            window.scrollTo({ top: document.querySelector('.form-section').offsetTop - 20, behavior: 'smooth' });
+        }
+        
+        function updateProgressBar(percentage) {
+            document.getElementById('progress-fill').style.width = `${percentage}%`;
+        }
+        
+        // Report generation
+        function generateReport() {
+            // Basic validation for last step
+            const nationalDesc = document.getElementById('national-description').value.trim();
+            if (!nationalDesc) {
+                alert('Please complete the National Contribution description before generating the report.');
+                return;
+            }
+            
+            // Calculate scores
+            const impactScore = parseInt(document.getElementById('impact-slider').value) * 17; // Scale 1-5 to percentage
+            const coverageScore = parseInt(document.getElementById('coverage-slider').value) * 17;
+            const innovationScore = parseInt(document.getElementById('innovation-slider').value) * 17;
+            const sustainabilityScore = parseInt(document.getElementById('sustainability-slider').value) * 17;
+            const nationalScore = parseInt(document.getElementById('national-slider').value) * 17;
+            
+            // Calculate weighted total
+            const totalScore = Math.round(
+                (impactScore * 0.30) + 
+                (coverageScore * 0.20) + 
+                (innovationScore * 0.20) + 
+                (sustainabilityScore * 0.20) + 
+                (nationalScore * 0.10)
+            );
+            
+            // Determine rating
+            let rating = "Needs Improvement";
+            let ratingClass = "rating-fair";
+            
+            if (totalScore >= 90) {
+                rating = "Seal of Excellence";
+                ratingClass = "rating-excellent";
+            } else if (totalScore >= 80) {
+                rating = "Very Good";
+                ratingClass = "rating-very-good";
+            } else if (totalScore >= 70) {
+                rating = "Good";
+                ratingClass = "rating-good";
+            } else if (totalScore >= 60) {
+                rating = "Fair";
+                ratingClass = "rating-fair";
+            }
+            
+            // Update report with calculated values
+            document.getElementById('total-score').textContent = totalScore;
+            document.getElementById('rating-badge').textContent = rating;
+            document.getElementById('rating-badge').className = `rating-badge ${ratingClass}`;
+            
+            // Update criterion scores
+            document.getElementById('score-impact').textContent = impactScore;
+            document.getElementById('score-coverage').textContent = coverageScore;
+            document.getElementById('score-innovation').textContent = innovationScore;
+            document.getElementById('score-sustainability').textContent = sustainabilityScore;
+            document.getElementById('score-national').textContent = nationalScore;
+            
+            // Update progress bars with animation
+            setTimeout(() => {
+                document.getElementById('bar-impact').style.width = `${impactScore}%`;
+                document.getElementById('bar-coverage').style.width = `${coverageScore}%`;
+                document.getElementById('bar-innovation').style.width = `${innovationScore}%`;
+                document.getElementById('bar-sustainability').style.width = `${sustainabilityScore}%`;
+                document.getElementById('bar-national').style.width = `${nationalScore}%`;
+            }, 100);
+            
+            // Update evidence counts
+            document.getElementById('evidence-impact').textContent = 
+                `${document.querySelectorAll('#impact-file-list .file-item').length || 'No'} files`;
+            document.getElementById('evidence-coverage').textContent = 
+                `${document.querySelectorAll('#coverage-file-list .file-item').length || 'No'} files`;
+            document.getElementById('evidence-innovation').textContent = 
+                `${document.querySelectorAll('#innovation-file-list .file-item').length || 'No'} files`;
+            document.getElementById('evidence-sustainability').textContent = 
+                `${document.querySelectorAll('#sustainability-file-list .file-item').length || 'No'} files`;
+            document.getElementById('evidence-national').textContent = 
+                `${document.querySelectorAll('#national-file-list .file-item').length || 'No'} files`;
+            
+            // Show results section
+            document.querySelector('.form-section').style.display = 'none';
+            document.getElementById('results-section').classList.add('active');
+            document.getElementById('back-to-form').classList.add('active');
+            
+            // Scroll to results
+            window.scrollTo({ top: document.getElementById('results-section').offsetTop - 20, behavior: 'smooth' });
+        }
+        
+        function showFormSection() {
+            document.querySelector('.form-section').style.display = 'block';
+            document.getElementById('results-section').classList.remove('active');
+            document.getElementById('back-to-form').classList.remove('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        
+        function resetAssessment() {
+            // Reset form
+            document.querySelectorAll('.form-step').forEach((step, index) => {
+                step.classList.toggle('active', index === 0);
+            });
+            
+            // Reset file lists
+            document.querySelectorAll('.file-list').forEach(list => {
+                list.innerHTML = '';
+            });
+            
+            // Reset sliders to default
+            document.querySelectorAll('input[type="range"]').forEach(slider => {
+                slider.value = 3;
+                const id = slider.id.split('-')[0];
+                updateSliderValue(id);
+            });
+            
+            // Reset text areas and inputs
+            document.querySelectorAll('textarea, input[type="text"]').forEach(input => {
+                input.value = '';
+            });
+            
+            // Reset progress bar
+            updateProgressBar(16.67);
+            currentStep = 1;
+            
+            // Show form section
+            showFormSection();
+        }
+        
+        // Add keyboard navigation support
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowRight' && currentStep < totalSteps) {
+                nextStep(currentStep);
+            } else if (e.key === 'ArrowLeft' && currentStep > 1) {
+                prevStep(currentStep);
+            }
+        });
+    </script>
+</body>
+</html>
