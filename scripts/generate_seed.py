@@ -2,7 +2,7 @@
 """Generate reference data for the platform from the City's source-of-truth workbooks.
 
 Inputs  (reference/):
-  Ormoc_CDRRMO-EOC_Institutional_Assessment_Tool_v1.1.xlsx          -> parts, domains, 140 indicators, crosswalk
+  Ormoc_CDRRMO-EOC_Institutional_Assessment_Tool_v*.xlsx            -> parts, domains, 140 indicators, crosswalk
   Ormoc_CDRRMO_EOC_Master_Requirements_Traceability_and_140_...xlsx -> 18 master requirements, indicator->MR map,
                                                                        functional areas and platform modules
 Outputs:
@@ -10,7 +10,7 @@ Outputs:
   src/data/reference.json  the same records, bundled so the PWA works offline and in demo mode
 
 Operational content that is not in the workbooks (hazards, protocol templates, AA checklist items,
-offices) is defined below. It is DRAFT content for CDRRMO validation and is marked as such.
+offices) is defined below. Drafted manual text (reference/moo/*.md) is loaded as draft versions. It is DRAFT content for CDRRMO validation and is marked as such.
 
 Usage: python3 scripts/generate_seed.py
 """
@@ -20,7 +20,15 @@ from pathlib import Path
 import openpyxl
 
 ROOT = Path(__file__).resolve().parents[1]
-IAT = ROOT / 'reference' / 'Ormoc_CDRRMO-EOC_Institutional_Assessment_Tool_v1.1.xlsx'
+def _one(pattern: str) -> Path:
+    found = sorted((ROOT / 'reference').glob(pattern))
+    if len(found) != 1:
+        raise SystemExit(f'Expected exactly one reference/{pattern}, found {[f.name for f in found]}')
+    return found[0]
+
+
+# The IAT workbook is renamed as it is revised (v1.1 -> v1-3), so match any version suffix.
+IAT = _one('Ormoc_CDRRMO-EOC_Institutional_Assessment_Tool_v*.xlsx')
 MRT = ROOT / 'reference' / 'Ormoc_CDRRMO_EOC_Master_Requirements_Traceability_and_140_Indicator_Data_Dictionary_v1.1.xlsx'
 NS = uuid.UUID('6f1c1d1e-0a0b-4c4d-9e8f-0123456789ab')   # namespace for deterministic ids
 
@@ -91,6 +99,30 @@ MOO_TITLES = {
     'EOC Ch.8': 'Training and Exercises', 'EOC Ch.9': 'Sustainability',
 }
 ANNEX_JD = 'MOO Annex JDs'
+
+# Drafted manual text, loaded as DRAFT versions for review and approval in the Library.
+# Source: reference/Ormoc_CDRRMO_EOC_MOO_Chapter1_Consolidated_v0.9.docx (31 Oct 2026), split into
+# reference/moo/*.md. Existing codes get a new version; new codes become new Library documents.
+# Seeding never overwrites a draft version once loaded (the Library workflow owns it after that).
+LIBRARY_DRAFTS = [  # code, manual, kind, title, file, label, indicators
+    ('MOO Ch.1', 'MOO', 'chapter', None, 'MOO_Ch1_v0.9.md', 'v0.9 consolidated draft', None),
+    ('MOO Annex 1-0', 'MOO', 'annex', 'Chapter 1 Implementation Package: document control and annex register',
+     'Annex_1_00_package_control.md', 'v0.9 consolidated draft', []),
+    ('MOO Annex 1-A', 'MOO', 'annex', 'Proposed ordinance institutionalizing the CDRRMO', 'Annex_1-A.md',
+     'v0.9 consolidated draft', ['A1.1', 'A2.1', 'A2.2', 'A2.3', 'A2.5']),
+    ('MOO Annex 1-B', 'MOO', 'annex', 'Proposed Executive Order reconstituting the CDRRMC', 'Annex_1-B.md',
+     'v0.9 consolidated draft', ['A1.2', 'A1.3', 'A1.4']),
+    ('MOO Annex 1-C', 'MOO', 'annex', 'Proposed Executive Order establishing the City EOC', 'Annex_1-C.md',
+     'v0.9 consolidated draft', ['B1.1', 'B1.2', 'B1.3', 'B4.1', 'B6.1']),
+    ('SOP GOV-04', 'MOO', 'sop', 'State of Calamity: declaration, implementation and lifting', 'Annex_1-D.md',
+     'v0.9 consolidated draft', ['A1.6']),
+    ('SOP GOV-05', 'MOO', 'sop', 'State of Imminent Disaster: declaration, anticipatory action, lifting and reporting',
+     'Annex_1-E.md', 'v0.9 consolidated draft', ['A1.8', 'A2.9', 'A10.8']),
+    ('MOO Annex 1-F', 'MOO', 'annex', 'Master RACI and institutional interface matrix', 'Annex_1-F.md',
+     'v0.9 consolidated draft', ['A1.4', 'B6.1']),
+    ('MOO Annex 1-G', 'MOO', 'form', 'Governance forms, templates and registers (GOV-F01 to GOV-F16)', 'Annex_1-G.md',
+     'v0.9 consolidated draft', ['A1.3', 'A1.4']),
+]
 
 
 def chapters_of(tag: str) -> list[str]:
@@ -234,7 +266,7 @@ PROTOCOLS = [
                 ('Log barangays that did not confirm and assign follow-up', False, True, 75)]),
     dict(code='PR-EOC-ACTIVATE', title='EOC activation (Blue or Red)', category='eoc', owner_role='eoc_manager',
          doc='EOC Ch.2', purpose='Stand up the EOC quickly with the right people and records.',
-         trigger='When the EOC Manager raises the level to Blue or Red.',
+         trigger='When the EOC is raised to Blue or Red as directed by the City Mayor (Responsible Official), or by the EOC Manager under the approved activation protocol.',
          steps=[('Record the level change and reason in the platform (logs it automatically). If no device can connect, write it in the paper logbook with the time and enter it once connected', True, False, 0),
                 ('Notify CDRRMC members, cluster leads and liaison desks of the activation', True, True, 15),
                 ('Fill EOC positions from the roster, with alternates', True, True, 30),
@@ -251,15 +283,30 @@ PROTOCOLS = [
                 ('Decide: monitor, city early action, or request a State of Imminent Disaster; record the basis', True, True, 60),
                 ('Record the PDRA in the platform and brief the CDRRMO Head', True, False, 75)]),
     dict(code='PR-SOID-REQUEST', title='State of Imminent Disaster: request and declaration', category='anticipatory_action', owner_role='eoc_manager',
-         doc='MOO Ch.1', purpose='Follow RA 12287 and its IRR from the PDRA to the Mayor\'s Executive Order.',
-         trigger='When the PDRA shows severe impact with at least 3 days of lead time.',
-         steps=[('Prepare the CDRRMC request to RDRRMC VIII with the PDRA results', True, False, 0),
-                ('Send the request and record the time sent (RDRRMC replies within 24 hours)', True, True, 15),
-                ('Record the RDRRMC recommendation and its reference', True, True, None),
-                ('Prepare the Mayor\'s Executive Order for signature', True, False, None),
+         doc='SOP GOV-05', purpose='Follow RA 12287, its IRR and SOP GOV-05 from the PDRA to the Mayor\'s Executive Order.',
+         trigger='When the PDRA classifies the projected impact as severe or its equivalent (including where IRR Rule II Sec. 4 factors support that classification below the thresholds) and there is enough lead time to carry out anticipatory action.',
+         steps=[('Record the official forecast: issuer, time issued, validity, areas, expected impact time, and both the lead time from issuance and the time left before impact', True, True, 0),
+                ('Attach the PDRA summary: exposure, projected severity, cascading hazards, sector needs, and any IRR Rule II Sec. 4 factors relied on', True, True, 10),
+                ('Prepare the anticipatory action matrix: actions, owners, resources, funding source and target completion', True, False, None),
+                ('Convene the CDRRMC (or its authorized mechanism) to review and endorse the request; record the minutes', True, True, None),
+                ('Send the request to RDRRMC VIII and record the time sent and the acknowledgment (RDRRMC replies within 24 hours)', True, True, None),
+                ('Record the RDRRMC VIII recommendation and its reference', True, True, None),
+                ('City Legal Office confirms the prerequisites; prepare the Mayor\'s Executive Order (hazard, areas, validity, measures, offices, fund controls, reporting)', True, False, None),
                 ('Record the EO number and time of declaration', True, True, None),
                 ('Issue official public notice of the declaration and the actions required', True, False, None),
                 ('Load the anticipatory action checklist and assign lead offices', True, False, None)]),
+    dict(code='PR-SOC-DECLARE', title='State of Calamity: assessment, declaration and lifting', category='council', owner_role='cdrrmo_head',
+         doc='SOP GOV-04', purpose='Follow RA 10121 Sec. 16 and SOP GOV-04: the Sangguniang Panlungsod declares or lifts, on the CDRRMC\'s recommendation.',
+         trigger='When damage and needs reports indicate that a State of Calamity may be warranted.',
+         steps=[('Log incoming reports from BDRRMCs, agencies, utilities and City offices with source, time, location and verification status', True, True, 0),
+                ('Conduct and consolidate the RDANA with the sector offices; separate verified facts, estimates and gaps', True, True, None),
+                ('Prepare the technical assessment: scale, severity, sectors, urgent needs, capacity, and the basis for or against declaring', True, False, None),
+                ('Submit the assessment to the CDRRMC; record the deliberation and its recommendation', True, True, None),
+                ('Transmit the recommendation and evidence to the Sangguniang Panlungsod; record the reference', True, True, None),
+                ('Record the Sanggunian resolution number and date (a Mayor\'s EO does not substitute for it)', True, True, None),
+                ('Implement the authorized measures and keep the post-declaration action and resource register', True, False, None),
+                ('Recommend lifting when warranted and record the Sanggunian\'s lifting resolution', True, True, None),
+                ('Archive the decision trail and schedule the after-action review', False, True, None)]),
     dict(code='PR-FLASHFLOOD-EARLY', title='Flash flood and landslide early action', category='anticipatory_action', owner_role='duty_officer',
          doc='EOC Ch.2', purpose='Act on short-lead hazards that cannot wait for a declaration.',
          trigger='When rainfall or river readings reach the City\'s early-action thresholds for the Anilao–Malbasag system or upland barangays.',
@@ -290,7 +337,7 @@ PROTOCOLS = [
          trigger='When the hazard occurs or the PDRA shows the projected impacts will not be met.',
          steps=[('Record the lifting ground and its basis (advisory, incident or situation report, or latest PDRA)', True, True, 0),
                 ('Shift to response and early recovery if the hazard occurred', True, False, None),
-                ('If not utilized, return LDRRMF anticipatory funds to the Special Trust Fund and hand stocks to CSWDO', True, True, None),
+                ('Record unutilized LDRRMF anticipatory funds; they revert per IRR Rule V Sec. 3 (accrue to the Special Trust Fund after the validity period). Hand stocks to CSWDO', True, True, None),
                 ('Deliver perishable goods to the intended beneficiaries (no-regrets principle)', False, True, None),
                 ('Compile declaration status, AA fund use and estimated costs minimized', True, False, None),
                 ('Submit the report to OCD within 45 days of lifting and record the reference', True, True, None)]),
@@ -371,6 +418,25 @@ def main():
                              change_note='Generated from IAT v1.1', status='draft'))
         for ind in inds:
             doc_links.append(dict(document_id=did, indicator_id=ind['id']))
+    known = {d['code']: d for d in docs}
+    ind_ids = {i['id'] for i in indicators}
+    sort = len(docs)
+    for code, manual, kind, title, fname, label, inds in LIBRARY_DRAFTS:
+        body = (ROOT / 'reference' / 'moo' / fname).read_text(encoding='utf-8')
+        if code in known:
+            did = known[code]['id']
+        else:
+            sort += 1
+            did = uid('doc', code)
+            docs.append(dict(id=did, manual=manual, kind=kind, code=code, title=title,
+                             summary=f'Draft from the Chapter 1 consolidated document (v0.9, 31 Oct 2026). {len(inds)} IAT indicator(s) linked.',
+                             status='draft', sort=sort, current_version_id=None))
+            bad = [i for i in inds if i not in ind_ids]
+            assert not bad, (code, bad)
+            doc_links += [dict(document_id=did, indicator_id=i) for i in inds]
+        versions.append(dict(id=uid('docver', code, label), document_id=did, label=label, body_md=body,
+                             change_note=f'Loaded from reference/moo/{fname} (Chapter 1 consolidated draft v0.9, 31 Oct 2026)',
+                             status='draft'))
     out['moo_documents'], out['moo_versions'], out['moo_document_indicators'] = docs, versions, doc_links
 
     tpls, steps = [], []
@@ -416,15 +482,17 @@ def row_sql(r, cols, cast):
     return '(' + ','.join(lit(r.get(c)) + cast.get(c, '') for c in cols) + ')'
 
 
-def upsert_chunks(table, rows, key, cols=None, cast=None, conflict=True):
-    """Insert statements for one table, split so each stays well inside one part."""
+def upsert_chunks(table, rows, key, cols=None, cast=None, conflict=True, keep=()):
+    """Insert statements for one table, split so each stays well inside one part.
+    Columns in `keep` are written on first insert only, so a re-seed never resets them
+    (for example the approval status the City sets in the app). keep='*' updates nothing."""
     if not rows:
         return []
     cols = cols or list(rows[0].keys())
     cast = cast or {}
     if conflict:
         keys = key if isinstance(key, list) else [key]
-        upd = [c for c in cols if c not in keys]
+        upd = [] if keep == '*' else [c for c in cols if c not in keys and c not in keep]
         action = ('do update set ' + ', '.join(f'{c} = excluded.{c}' for c in upd)) if upd else 'do nothing'
         tail = f'\non conflict ({",".join(keys)}) {action};\n\n'
     else:
@@ -485,17 +553,20 @@ def statements(o):
     st += upsert_chunks('indicator_lead_offices', o['indicator_lead_offices'], ['indicator_id', 'office_id'], cast={'office_id': '::uuid'})
     st += upsert_chunks('hazards', o['hazards'], 'code')
     st += upsert_chunks('moo_documents', o['moo_documents'], 'id',
-                        cols=['id', 'manual', 'kind', 'code', 'title', 'summary', 'status', 'sort'], cast={'id': '::uuid'})
-    st += upsert_chunks('moo_versions', o['moo_versions'], 'id', cast={'id': '::uuid', 'document_id': '::uuid'})
+                        cols=['id', 'manual', 'kind', 'code', 'title', 'summary', 'status', 'sort'], cast={'id': '::uuid'},
+                        keep=('status',))
+    # Versions belong to the Library workflow once loaded (drafts get edited, reviewed, approved).
+    st += upsert_chunks('moo_versions', o['moo_versions'], 'id', cast={'id': '::uuid', 'document_id': '::uuid'}, keep='*')
     st += upsert_chunks('moo_document_indicators', o['moo_document_indicators'], ['document_id', 'indicator_id'], cast={'document_id': '::uuid'})
     st += upsert_chunks('protocol_templates', o['protocol_templates'], 'id',
-                        cast={'id': '::uuid', 'document_id': '::uuid', 'owner_role': '::public.app_role'})
+                        cast={'id': '::uuid', 'document_id': '::uuid', 'owner_role': '::public.app_role'},
+                        keep=('status', 'template_rev'))  # template_rev is bumped by the step trigger
     st += upsert_chunks('protocol_steps', o['protocol_steps'], 'id', cast={'id': '::uuid', 'template_id': '::uuid'})
     st += upsert_chunks('aa_action_templates', o['aa_action_templates'], 'id', cast={'id': '::uuid'})
     return st
 
 
-CHECK_SQL = """-- Expected: 140 | 18 | 935 | 71 | 9 | 54 | 29
+CHECK_SQL = """-- Expected: 140 | 18 | 935 | 71 | 10 | 66 | 29
 select (select count(*) from public.iat_indicators)         as indicators,
        (select count(*) from public.master_requirements)    as requirements,
        (select count(*) from public.indicator_requirements) as indicator_links,
