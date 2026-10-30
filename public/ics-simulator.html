@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -284,8 +284,29 @@ table.aar td{padding:10px 8px;border-bottom:1px solid var(--line);vertical-align
 .ttx-only{}
 footer.foot{padding:26px 0 40px;font-size:12.5px;color:var(--dim)}
 
+.lgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px;margin:12px 0}
+.lgrid .pillar p{font-size:13.5px;color:#cfe0ec;margin-top:4px}
+.note{border-left:3px solid var(--orange);background:rgba(247,148,29,.07);padding:10px 12px;border-radius:0 10px 10px 0;font-size:13.5px;margin-top:12px}
+ol.steps{padding-left:20px;display:grid;gap:6px;margin:10px 0}
+.learn-body p{margin:10px 0}
+.learn-nav{display:flex;flex-direction:column;gap:6px;position:sticky;top:84px}
+.learn-nav button{text-align:left;padding:10px 12px;border-radius:10px;border:1px solid var(--line);font-family:var(--font-c);font-weight:700;font-size:14px;color:var(--muted);transition:.2s}
+.learn-nav button[aria-current="true"]{border-color:var(--orange);color:var(--text);background:rgba(247,148,29,.1)}
+.learn-nav button:hover{border-color:var(--blue)}
+.qz{display:grid;gap:8px;margin-top:8px}
+.qz button{text-align:left;padding:10px 12px;border-radius:10px;border:1.5px solid var(--line);background:rgba(255,255,255,.03);transition:.2s}
+.qz button:hover:not(:disabled){border-color:var(--blue)}
+.qz button.ok{border-color:var(--ok);background:rgba(52,195,143,.12)}
+.qz button.no{border-color:var(--crit);background:rgba(239,68,68,.12)}
+.map svg{width:100%;height:auto;display:block;border-radius:12px;background:rgba(0,0,0,.2)}
+.map .hz{animation:hzp 2.2s ease-in-out infinite;transform-box:fill-box;transform-origin:center}
+@keyframes hzp{50%{transform:scale(1.18);opacity:.7}}
+.map a.btn{min-height:36px;padding:8px 12px;font-size:12.5px}
+.comp li{display:flex;gap:8px;align-items:flex-start;padding:6px 0;border-bottom:1px solid var(--line);font-size:14px}
+.comp{list-style:none;padding:0;margin:0}
 @media (max-width:1020px){.layout{grid-template-columns:1fr}.tabpanel{max-height:none}}
 @media (max-width:720px){
+  #learn-grid{grid-template-columns:1fr!important}.learn-nav{position:static;flex-direction:row;flex-wrap:wrap}
   .topbar .wrap{min-height:60px}.brand h1{font-size:15px}.citytag{display:none}
   .hero{padding:24px}.metrics-mini{grid-template-columns:repeat(2,1fr)}
   .kv{grid-template-columns:1fr}.pad{padding:16px}
@@ -340,6 +361,7 @@ footer.foot{padding:26px 0 40px;font-size:12.5px;color:var(--dim)}
     </div>
     <div class="row">
       <div class="citytag hide-sm" data-tip="<b>City of Ormoc, Leyte</b> · Eastern Visayas (Region VIII). 85 barangays (PSA PSGC, since the 2022 Poblacion merger)."><span class="flagbar"><i style="background:#0038a8"></i><i style="background:#fff"></i><i style="background:#ce1126"></i></span>Ormoc City · CDRRMO</div>
+      <button class="icon-btn" id="btn-learn" data-tip="Learn: PH ICS, EOC (Memo 131), RDRRMC 8 reporting, RA 12287, Ormoc risk profile" aria-label="Learn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5v14zM20 17v4H6.5"/></svg></button>
       <button class="icon-btn" id="btn-leaderboard" data-tip="Leaderboard: top scores by scenario" aria-label="Leaderboard"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4zM17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3"/></svg></button>
       <button class="icon-btn" id="btn-help" data-tip="How to play, PH ICS basics and doctrine references  (shortcut: ?)" aria-label="Help and references"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.2a2.6 2.6 0 0 1 5 .9c0 1.7-2.5 2.2-2.5 3.9M12 17h.01"/></svg></button>
     </div>
@@ -354,11 +376,12 @@ footer.foot{padding:26px 0 40px;font-size:12.5px;color:var(--dim)}
       <svg class="waves" viewBox="0 0 520 200" aria-hidden="true"><path d="M0 120 Q65 90 130 120 T260 120 T390 120 T520 120 V200 H0Z" fill="#4fb3e8"/><path d="M0 145 Q65 115 130 145 T260 145 T390 145 T520 145 V200 H0Z" fill="#2b8fd0"/><path d="M0 170 Q65 140 130 170 T260 170 T390 170 T520 170 V200 H0Z" fill="#f7941d" opacity=".6"/></svg>
       <span class="kicker">Ormoc City CDRRMO · EOC Training</span>
       <h2 id="welcome-text">Command the response before the river rises.</h2>
-      <p class="lead">Practise the Philippine Incident Command System on Ormoc hazards: typhoons over Ormoc Bay, Anilao–Malbasag flash floods, a Leyte earthquake, a port casualty incident and a geothermal gas release. Each decision is scored against national doctrine and explained.</p>
+      <p class="lead">Practise the Philippine Incident Command System on Ormoc hazards: typhoons over Ormoc Bay, Anilao–Malbasag flash floods, an upland landslide, a Leyte earthquake, a port casualty incident and a geothermal gas release. Each decision is scored against national doctrine and explained.</p>
       <div class="row wrapf" style="margin-top:20px">
         <a href="https://asilvainnovations.github.io/ddrive-m/public/ics.html" target="_blank" rel="noopener noreferrer" class="btn btn-ghost" data-tip="Opens the DDRiVE-M ICS learning module in a new tab">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5v14zM20 17v4H6.5"/></svg>Learn the ICS framework</a>
         <button class="btn btn-ghost" id="btn-basics" data-tip="Quick primer: Responsible Official, IC, EOC alert levels, PAGASA warnings">PH ICS in 2 minutes</button>
+        <button class="btn btn-orange" id="btn-learn-hero" data-tip="Seven short modules and a knowledge check, built from NDRRMC, RDRRMC 8 and Ormoc City documents">Open the learning module</button>
       </div>
     </div>
 
@@ -366,7 +389,7 @@ footer.foot{padding:26px 0 40px;font-size:12.5px;color:var(--dim)}
       <div class="card stat" data-tip="Completed simulation runs saved on this device or your workspace"><b class="accent" id="stat-sessions">0</b><span>Exercises run</span></div>
       <div class="card stat" data-tip="Average final score across all saved runs"><b class="accent" id="stat-avg-score">0%</b><span>Average score</span></div>
       <div class="card stat" data-tip="Responsible Official, Command Staff, General Staff and the EOC"><b class="accent" id="stat-roles">10</b><span>ICS positions</span></div>
-      <div class="card stat" data-tip="Each scenario runs over four operational periods"><b class="accent" id="stat-scen">5</b><span>Ormoc scenarios</span></div>
+      <div class="card stat" data-tip="Each scenario runs over four operational periods"><b class="accent" id="stat-scen">6</b><span>Ormoc scenarios</span></div>
       <div class="card stat" data-tip="PSA PSGC count since the 4Q 2022 update (City Ordinance No. 052, s. 2021, ratified 8 Oct 2022)"><b class="accent">85</b><span>Barangays</span></div>
     </div>
 
@@ -386,6 +409,13 @@ footer.foot{padding:26px 0 40px;font-size:12.5px;color:var(--dim)}
         </div>
       </button>
     </div>
+
+    <button class="card mode" id="mode-drill" style="margin-top:18px" data-tip="Three quick, position-specific decisions: RO, EOC Manager, IC, Command Staff or Section Chiefs">
+      <div class="row" style="align-items:flex-start;gap:18px">
+        <div class="ico" style="background:linear-gradient(135deg,#10b981,#4fb3e8)"><svg viewBox="0 0 24 24" fill="none" stroke="#04121e" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5" fill="#04121e"/></svg></div>
+        <div><h3>Position drills</h3><p class="muted">Ten-minute drills for one ICS or EOC position: where the Mayor stands, routing resource requests through the EOC, the 2-hour initial report, AA fund tranches, emergency procurement under RA 12009 and more.</p></div>
+      </div>
+    </button>
 
     <div class="card pad" style="margin-top:18px">
       <div class="row between wrapf"><h3 style="font-size:20px">DDRiVE-M and the four DRRM thematic areas</h3><span class="chip" data-tip="RA 10121 organises DRRM into four thematic areas: Prevention &amp; Mitigation, Preparedness, Response, Rehabilitation &amp; Recovery">RA 10121</span></div>
@@ -434,13 +464,13 @@ footer.foot{padding:26px 0 40px;font-size:12.5px;color:var(--dim)}
       <div class="grid" id="role-grid" style="grid-template-columns:repeat(auto-fill,minmax(230px,1fr))" role="group" aria-label="ICS positions"></div>
     </div>
 
-    <div class="card pad" style="margin-bottom:16px">
+    <div class="card pad" style="margin-bottom:16px" id="scen-block">
       <div class="step-h"><div class="step-n">3</div><h3>Ormoc scenario</h3></div>
       <div class="grid" id="scenario-list" style="grid-template-columns:repeat(auto-fill,minmax(340px,1fr))" role="group" aria-label="Scenarios"></div>
     </div>
 
     <div class="card pad">
-      <div class="step-h"><div class="step-n">4</div><h3>Difficulty</h3></div>
+      <div class="step-h"><div class="step-n" id="diff-n">4</div><h3>Difficulty</h3></div>
       <div class="grid" id="difficulty-grid" style="grid-template-columns:repeat(auto-fit,minmax(200px,1fr))" role="group" aria-label="Difficulty"></div>
     </div>
 
@@ -512,12 +542,14 @@ footer.foot{padding:26px 0 40px;font-size:12.5px;color:var(--dim)}
       <div class="card pad">
         <div class="tabs" role="tablist" aria-label="Incident information">
           <button class="tab" role="tab" aria-selected="true" data-tab="log" id="tab-log">Log<span class="badge hidden" id="log-badge">0</span></button>
+          <button class="tab" role="tab" aria-selected="false" data-tab="map">Map</button>
           <button class="tab" role="tab" aria-selected="false" data-tab="org">Org</button>
-          <button class="tab" role="tab" aria-selected="false" data-tab="res">Resources</button>
+          <button class="tab" role="tab" aria-selected="false" data-tab="res">Assets</button>
           <button class="tab" role="tab" aria-selected="false" data-tab="forms">Forms</button>
         </div>
         <div class="tabpanel" style="margin-top:12px">
           <div id="panel-log" class="log" role="log" aria-live="polite" aria-label="Communications log (ICS 213 / 214)"></div>
+          <div id="panel-map" class="map hidden"></div>
           <div id="panel-org" class="hidden"></div>
           <div id="panel-res" class="res hidden"></div>
           <div id="panel-forms" class="forms hidden"></div>
@@ -551,11 +583,31 @@ footer.foot{padding:26px 0 40px;font-size:12.5px;color:var(--dim)}
       <div class="card pad"><h3 style="font-size:18px;margin-bottom:10px">Sustain</h3><div id="aar-sustain" class="grid" style="gap:8px"></div></div>
       <div class="card pad"><h3 style="font-size:18px;margin-bottom:10px">Improve</h3><div id="recommendations-list" class="grid" style="gap:8px"></div></div>
     </div>
+    <div class="card pad" style="margin-top:16px"><h3 style="font-size:18px;margin-bottom:10px">Legal and doctrine compliance</h3><p class="muted" style="font-size:13.5px;margin-bottom:8px">A reference is marked met when every decision that rested on it was rated best or acceptable.</p><ul class="comp" id="compliance-list"></ul></div>
     <div class="card pad" style="margin-top:16px" id="aar-mop"></div>
     <div class="row wrapf no-print" style="justify-content:center;margin-top:22px">
       <button class="btn btn-orange" id="btn-play-again" data-tip="Same position and scenario; options reshuffle">Run again</button>
       <button class="btn btn-ghost" id="btn-try-different" data-tip="Change position, scenario or difficulty">Change setup</button>
       <button class="btn btn-ghost" id="btn-back-menu">Main menu</button>
+    </div>
+  </div>
+</section>
+
+<!-- LEARN -->
+<section class="screen hidden" id="learn-screen" aria-labelledby="learn-h">
+  <div class="wrap" style="padding:22px 20px 40px">
+    <div class="row between wrapf" style="margin-bottom:16px">
+      <button class="btn btn-ghost" id="btn-back-learn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>Menu</button>
+      <span class="chip" data-tip="Corrected and localized from the attached ICS learning page, using NDRRMC Memo No. 131 s. 2018, RA 12287 IRR, RDRRMC 8 Res. 12-006, the RDRRMOC SOPG, the Ormoc CDRA, CLUP and Ten-Year Plan">Sources: NDRRMC · RDRRMC 8 · Ormoc City</span>
+    </div>
+    <span class="kicker">Learning module</span>
+    <h2 id="learn-h" style="font-size:30px;margin:6px 0 18px">The Incident Command System in the Philippines — for Ormoc</h2>
+    <div class="grid" style="grid-template-columns:240px minmax(0,1fr)" id="learn-grid">
+      <nav class="learn-nav" id="learn-nav" aria-label="Learning sections"></nav>
+      <div>
+        <article class="card pad learn-body" id="learn-body" aria-live="polite"></article>
+        <div class="card pad" style="margin-top:16px" id="quiz-card"></div>
+      </div>
     </div>
   </div>
 </section>
@@ -605,9 +657,9 @@ const GLOSSARY = {
   'IC':'Incident Commander — overall on-scene manager of the incident, acting under a delegation of authority from the RO.',
   'UC':'Unified Command — two or more agencies with jurisdiction share command and agree one set of objectives (e.g., CDRRMO with PCG at sea, or BFP for fire).',
   'ICP':'Incident Command Post — where the IC and Command Staff work on scene. Different from the EOC.',
-  'IMT':'Incident Management Team — the IC plus Command and General Staff. Mobilization guidelines: NDRRMC Memo No. 44, s. 2016.',
+  'IMT':'Incident Management Team — the IC plus Command and General Staff. It is the "resource employer"; response clusters are the "resource providers" (NDRRMC Memo Nos. 43 & 44, s. 2016; Memo No. 131, s. 2018).',
   'IAP':'Incident Action Plan — objectives, strategies and assignments for one operational period, approved by the IC.',
-  'EOC':'Emergency Operations Center — the coordination hub. Collects and shares information, sources resources, supports the IC and links to the CDRRMC and clusters.',
+  'EOC':'Emergency Operations Center — a facility staffed and equipped to coordinate stakeholders, manage information and mobilize resources in anticipation of or in support of incident operations (NDRRMC Memo No. 131, s. 2018). It must not be co-located with the ICP.',
   'ICS':'Incident Command System — standard on-scene, all-hazards management system adopted under NDRRMC MC No. 4, s. 2012.',
   'CDRRMO':'City Disaster Risk Reduction and Management Office (RA 10121, Sec. 12).',
   'CDRRMC':'City DRRM Council, chaired by the City Mayor. Recommends declarations and approves major actions.',
@@ -621,10 +673,10 @@ const GLOSSARY = {
   'PAGASA':'Philippine Atmospheric, Geophysical and Astronomical Services Administration — the official source of weather, rainfall and storm-surge warnings.',
   'PHIVOLCS':'Philippine Institute of Volcanology and Seismology — the official source of earthquake and tsunami information.',
   'PEIS':'PHIVOLCS Earthquake Intensity Scale, I to X. Intensity VII is "destructive".',
-  'LDRRMF':'Local DRRM Fund — at least 5% of estimated regular revenue. 70% for preparedness/mitigation, 30% Quick Response Fund (RA 10121, Sec. 21).',
+  'LDRRMF':'Local DRRM Fund — at least 5% of estimated regular revenue. 70% for prevention, mitigation and preparedness; 30% Quick Response Fund (RA 10121, Sec. 21). Unexpended balances go to the Special Trust Fund.',
   'QRF':'Quick Response Fund — the 30% of the LDRRMF for relief and recovery, usable once a state of calamity is declared.',
-  'AA':'Anticipatory Action — action before impact under RA 12287. Funded from up to 10% of the 70% LDRRMF (plus other allowed sources), not the QRF.',
-  'SitRep':'Situation Report — regular status report to higher councils. RDRRMC 8 uses a harmonized template (Res. 12-006).',
+  'AA':'Anticipatory action — action before impact under RA 12287. LGUs may charge it to no more than 10% of the 70% LDRRMF, plus the Special Trust Fund, donor or ODA funds; not the QRF. Under 3 days lead time up to 70% of the AA allocation may be disbursed; beyond 3 days, at most 30%.',
+  'SitRep':'Situation Report — cumulative status report to higher councils. Eastern Visayas LGUs use the harmonized template of RDRRMC 8 Res. No. 12-006, s. 2023: under Blue or Red alert, LGU reports are due by 09:00 and 19:00.',
   'DROMIC':'Disaster Response Operations Monitoring and Information Center — DSWD\'s report on affected and displaced families.',
   'CCCM':'Camp Coordination and Camp Management — the cluster for evacuation centers (DSWD-led).',
   'FNI':'Food and Non-Food Items cluster (DSWD-led).',
@@ -658,7 +710,21 @@ const GLOSSARY = {
   'PFD':'Personal flotation device (life vest). Required for anyone working on or near flood water.',
   'ETC':'Emergency Telecommunications cluster — radio, satellite and backup communications.',
   'MARINA':'Maritime Industry Authority — regulates vessels and shipping.',
-  'PPE':'Personal protective equipment.'
+  'PPE':'Personal protective equipment.',
+  'EPR':'Emergency Preparedness and Response protocols for slow-onset hazards in the RDRRMOC SOPG: Standby (green), ALPHA (yellow), BRAVO (orange), CHARLIE (red).',
+  'SWB':'Severe Weather Bulletin (PAGASA) — issued for tropical cyclones; a trigger for raising EOC alert levels.',
+  'DORMS':'Disaster Online Reporting and Monitoring System — part of the harmonized reporting contents.',
+  'GIDA':'Geographically Isolated and Disadvantaged Areas — communities cut off by distance, terrain or weather; warnings and aid must reach them deliberately.',
+  'DVI':'Disaster Victim Identification — process that turns unidentified remains into confirmed, identified dead.',
+  'NIMT':'NDRRMC Incident Management Team — a deployable national IMT that can augment or assume management of complex incidents.',
+  'RIT':'Rapid Intervention Team — a standby team that rescues responders in trouble.',
+  'COP':'Common Operating Picture — one shared, verified view of the situation used by all sections and agencies.',
+  'PSCP':'Public Service Continuity Plan — keeps essential City services running during disruption (OCD PSCP Guidebook).',
+  'ACDV':'Accredited Community Disaster Volunteers — trained volunteers accredited through the LDRRMO; mobilized under RA 12287 IRR Rule IV, Sec. 5.',
+  'CBMS':'Community-Based Monitoring System — household registry used to target social amelioration under RA 12287.',
+  'MGB':'Mines and Geosciences Bureau (DENR) — source of landslide susceptibility maps and geohazard assessments.',
+  'HoPE':'Head of the Procuring Entity — must confirm in writing the grounds for emergency negotiated procurement.',
+  'CBEWS':'Community-based early warning system — local gauges, observers and alarms run with BDRRMCs.'
 };
 
 const ROLES = [
@@ -717,21 +783,24 @@ const FORMS = {
 };
 
 const REFERENCES = [
-  ['RA 10121 (2010)','Philippine DRRM Act. Creates the CDRRMC and CDRRMO; LDRRMF (70/30 split); state of calamity (Sec. 16); LDRRMO recommends pre-emptive or forced evacuation.'],
-  ['NDRRMC MC No. 4, s. 2012','Implementing guidelines on the use of ICS as the on-scene disaster response and management mechanism. Defines the Responsible Official and delegation of authority.'],
-  ['Executive Order No. 82, s. 2012','National crisis management framework; activates ICS for human-induced crises.'],
-  ['NDRRMC Memo No. 43, s. 2016','Interoperability of Incident Management Teams and Response Clusters.'],
-  ['NDRRMC Memo No. 44, s. 2016','Mobilization of Incident Management Teams.'],
+  ['RA 10121 (2010)','Philippine DRRM Act. Creates the CDRRMC and CDRRMO (Sec. 12). Sec. 15: the BDRRMC leads if one barangay is affected, the City DRRMC if two or more barangays, the province if two or more cities/municipalities, the region if two or more provinces, the NDRRMC if two or more regions; higher councils support LGUs. Sec. 16: state of calamity; Sec. 21: LDRRMF 70/30.'],
+  ['NDRRMC MC No. 4, s. 2012','Implementing guidelines on ICS as the on-scene disaster response and management mechanism. The Responsible Official (the Local Chief Executive) delegates authority to the Incident Commander.'],
+  ['NDRRMC Memo No. 131, s. 2018','Establishment, operationalization and management of EOCs. Five activation triggers; five functions (Management, Operations, Planning, Logistics, Finance/Admin); EOC links clusters (resource providers) and the IMT (resource employer); all IMT resource requests go through the EOC; EOC and ICP shall not be co-located; the IC recommends termination for the RO\'s approval.'],
+  ['NDRRMC Memo Nos. 43 & 44, s. 2016','Interoperability of IMTs and Response Clusters; mobilization of IMTs.'],
   ['NDRRMC Memo No. 17, s. 2014','Institutionalizes the Pre-Disaster Risk Assessment (PDRA).'],
-  ['NDRRMC MC (2014) on RDANA','Guidelines on Rapid Damage Assessment and Needs Analysis.'],
   ['NDRRMC MC No. 19, s. 2016','Management of the Dead and Missing.'],
-  ['RA 12287 and its IRR (2026)','Declaration of State of Imminent Disaster and anticipatory action. Needs a PDRA showing severe impact and at least 72 h lead time; RDRRMC acts within 24 h; the Mayor declares by EO. AA funded from up to 10% of the 70% LDRRMF; tranches up to 30% beyond 3 days and up to 70% within 3 days; report to OCD within 45 days of lifting.'],
+  ['RA 12287 (approved 12 Sep 2025) and IRR','State of Imminent Disaster. RDRRMC answers an LDRRMC request within 24 h; the LCE declares and lifts by EO on RDRRMC recommendation. Lifted when the hazard occurs or the forecast impact does not materialize. LGUs may also act early at their own discretion. AA from no more than 10% of the 70% LDRRMF (plus STF, donor, ODA funds); disbursement up to 30% beyond 3 days lead time, up to 70% within 3 days. Report to OCD within 45 days of lifting.'],
+  ['RDRRMC 8 Res. No. 12-006, s. 2023 (DILG VIII memo, 26 Feb 2025)','Harmonized Disaster Response Reporting Template and SOP. Alert levels White/Blue/Red; pre-, during-, post-disaster and terminal reports; Forms A–L; LGU reports at 06:00/18:00 (White) and 09:00/19:00 (Blue and Red).'],
+  ['RDRRMOC SOPG (2022 edition), OCD Region VIII','Regional Operations Center procedures: White/Blue/Red alert; EPR protocols Standby–ALPHA–BRAVO–CHARLIE for slow-onset hazards; initial report within 2 hours; criteria for reportable incidents.'],
   ['RA 12076 (2024)','Ligtas Pinoy Centers Act — dedicated, resilient evacuation centers.'],
   ['DOH AO No. 155, s. 2004','Implementing guidelines for managing mass casualty incidents.'],
-  ['PAGASA warnings','TCWS Nos. 1–5; Heavy Rainfall Warning: Yellow 7.5–15 mm/h, Orange 15–30 mm/h, Red above 30 mm/h; storm surge warnings.'],
-  ['PHIVOLCS','Earthquake Intensity Scale (PEIS I–X), earthquake and tsunami information.'],
-  ['RDRRMC 8 Res. 12-006','Harmonized reporting template for Eastern Visayas.'],
+  ['RA 12009 (2024)','New Government Procurement Act; replaced RA 9184. Keeps negotiated procurement for emergency cases.'],
+  ['PAGASA and PHIVOLCS warnings','TCWS Nos. 1–5; Heavy Rainfall Warning: Yellow 7.5–15 mm/h, Orange 15–30 mm/h, Red above 30 mm/h; PEIS I–X; tsunami information.'],
   ['RA 7581 (Price Act)','Automatic price freeze on basic necessities in areas declared under a state of calamity.'],
+  ['Ormoc City CDRA (CDRA_Ormoc)','Hazard, exposure and risk by barangay for flood, rain-induced landslide, storm surge and ground shaking; event history (1991 Uring, 2013, 2017 earthquake, 2018–2022 typhoons).'],
+  ['Ormoc City DRRM Ten-Year Plan 2023–2032','Adopted by SP Res. No. 2023-112. 46 barangays with critical flood risk (59,545 people); 24/7 EOC in place but needs an SOP/manual; ICS, EOC management and MDM training needs.'],
+  ['Ormoc City CLUP and Gawad Kalasag assessment','Land use and zoning basis; Gawad KALASAG indicators for LDRRMC, LDRRMO, Operations Center, alternate EOC and ICS training.'],
+  ['EOC Capability Assessment Checklist (Dec 2017)','Adapted by USFS from a FEMA checklist: siting outside hazard zones, 72-hour three-deep staffing, backup power and fuel, alternate EOC, SOPs, exercises.'],
   ['Ormoc CDRRMO MOO (in development)','City-specific procedures. Where they differ from this simulator, the approved Manual of Operations governs.']
 ];
 
@@ -764,24 +833,24 @@ const SCENARIOS = [
 /* ---------------------------------------------------------------- 1 */
 { id:'typhoon', name:'Typhoon over Ormoc Bay', type:'Hydro-meteorological', icon:'🌀', fx:'rain', lead:'CDRRMO / EOC (IC designated by the Mayor)',
   blurb:'A strong typhoon (exercise name "Bagyong Lunhaw") tracks across Leyte. Storm surge threatens the Ormoc Bay coastline; rain swells the Anilao and Malbasag rivers.',
-  context:'Ormoc City sits at the head of Ormoc Bay with the city proper between the Anilao and Malbasag rivers. Coastal and riverside barangays (West, East, South, Linao, Ipil, Naungan, Bantigue) face surge and flooding; upland barangays face landslides. RA 12287 now allows a State of Imminent Disaster when the PDRA shows severe impact with at least 72 hours lead time.',
+  context:'Ormoc City sits at the head of Ormoc Bay with the city proper between the Anilao and Malbasag rivers. The CDRA rates Naungan, Linao, Punta, Alegria, Batuan and Macabug as high storm-surge risk, with Linao, Tambulilid, Naungan and Ipil the most vulnerable; about 17.65% of the city\'s area is surge-susceptible. In November 2013 30,546 houses were destroyed (PHP 2.07 billion); Agaton (April 2022) affected 19,262 families in 38 barangays. RA 12287 allows a State of Imminent Disaster when the PDRA shows severe impact, recommended by RDRRMC 8 no later than 3 days before impact.',
   res:{ rescue:8, wasar:6, ems:10, pnp:20, bdrrmc:85, ec:40, fni:60, heavy:8, radio:12 },
   phases:[
   { stage:0, name:'Forecast & PDRA', clock:'D-4 · 08:00H', eoc:'blue', warn:{c:'warn-b',t:'PAGASA: Typhoon outlook · no TCWS yet'},
     stats:{a:'—',b:'0',c:'0',d:'96 h'}, sl:['Families pre-identified','In ECs','Rescue requests','Lead time to landfall'],
-    situation:['PAGASA\'s outlook shows a typhoon expected to make landfall over Leyte in about 96 hours, intensifying to typhoon category. The forecast cone passes over Ormoc Bay.','Your hazard maps show about 9,000 families in surge- and flood-prone areas. The CDRRMC can meet this afternoon. Under RA 12287 a State of Imminent Disaster needs a PDRA showing severe impact and at least 72 hours lead time — you have the time window now.'],
-    intel:'Planning: the PDRA template is ready. The AA fund line in this year\'s LDRRMF has a balance. RDRRMC 8 answers declaration requests within 24 hours, so the request must go out early to keep the ≥72 h window.',
+    situation:['PAGASA\'s outlook shows a typhoon expected to make landfall over Leyte in about 96 hours, intensifying to typhoon category. The forecast cone passes over Ormoc Bay.','Your hazard maps show about 9,000 families in surge- and flood-prone areas (Linao, Naungan, Punta, Alegria, Batuan, Macabug, Ipil, Tambulilid). The CDRRMC can meet this afternoon. Under RA 12287 a State of Imminent Disaster rests on a PDRA showing severe impact, and the IRR works on a 3-day lead time; RDRRMC 8 has 24 hours to answer a city request. You are inside the window now.'],
+    intel:'Planning: the PDRA template is ready. The AA fund line in this year\'s LDRRMF has a balance. RDRRMC 8 answers declaration requests within 24 hours, so the request must go out today to keep the 3-day window. NDRRMC operational guidelines on triggers per hazard are still pending.',
     hint:'Which instrument lets the city act before impact, and how long does it need?',
     forms:['201','214'], discuss:'What is our trigger for pre-emptive evacuation, and who signs it?',
     opts:[
-      O('Convene the CDRRMC for a PDRA today; if it shows severe impact, request a State of Imminent Disaster from RDRRMC 8 and prepare AA from the AA fund line. Raise the EOC to Blue.','best',[94,92,88,95,94],'Uses the 72-hour window RA 12287 requires and funds early action from the correct source. The PDRA comes first and drives the request.'),
-      O('Wait for PAGASA to raise Signal No. 1 before convening anyone; the track may still change.','unsafe',[30,35,40,25,15],'By Signal No. 1 (about 36 h lead time) the ≥72 h window for a declaration has closed and pre-positioning time is lost.',{d:'+1 h lost'}),
+      O('Convene the CDRRMC for a PDRA today; if it shows severe impact, request a State of Imminent Disaster from RDRRMC 8 and prepare AA from the AA fund line. Raise the EOC to Blue.','best',[94,92,88,95,94],'Uses the 3-day window RA 12287 and its IRR work on, and funds early action from the correct source. The PDRA comes first and drives the request.'),
+      O('Wait for PAGASA to raise Signal No. 1 before convening anyone; the track may still change.','unsafe',[30,35,40,25,15],'By Signal No. 1 (about 36 h lead time) the 3-day window for a declaration has closed and pre-positioning time is lost.',{d:'Pre-positioning window lost'}),
       O('Ask the Sangguniang Panlungsod to declare a state of calamity now so the QRF can buy relief goods.','weak',[45,50,55,35,60],'A state of calamity (RA 10121, Sec. 16) responds to a disaster that has occurred. Anticipatory action uses RA 12287 and the AA fund line, not the QRF.'),
       O('Raise the EOC to Blue and send a text blast, but leave the PDRA to the barangays.','good',[62,55,72,58,75],'Alerting is good, but the PDRA is a city-level, multi-office assessment. Without it there is no basis for the declaration or AA.')
     ]},
   { stage:1, name:'Pre-emptive evacuation', clock:'D-1 · 14:00H', eoc:'red', warn:{c:'warn-o',t:'TCWS No. 2 · Storm surge warning: 2–3 m'},
     stats:{a:'9,140',b:'1,120',c:'0',d:'26 h'}, sl:['Families at risk','Families in ECs','Rescue requests','Lead time to landfall'],
-    situation:['Signal No. 2 is up over Leyte; PAGASA projects Signal No. 4 by tonight and a 2–3 m storm surge along Ormoc Bay. RDRRMC 8 has acted on the request and the Mayor has signed the EO.','Only 1,120 families have moved. Some coastal households in West and Linao say they will stay to guard their homes and boats. Several schools are listed as evacuation centers.'],
+    situation:['Signal No. 2 is up over Leyte; PAGASA projects Signal No. 4 by tonight and a 2–3 m storm surge along Ormoc Bay. RDRRMC 8 has acted on the request and the Mayor has signed the EO.','Only 1,120 families have moved. Some coastal households in Linao and Naungan say they will stay to guard their homes and boats. Several schools are listed as evacuation centers.'],
     intel:'CSWDO: 40 ECs ready, but 12 are in flood-prone schools. 310 families include persons with disability, older persons or pregnant women. PNP can support enforcement if the Mayor orders forced evacuation for the surge zone.',
     hint:'Who recommends forced evacuation, and who comes first?',
     forms:['202','203','205','208'], discuss:'How do we move people who refuse, without losing trust?',
@@ -820,18 +889,18 @@ const SCENARIOS = [
 /* ---------------------------------------------------------------- 2 */
 { id:'flood', name:'Anilao–Malbasag flash flood', type:'Hydro-meteorological · short lead time', icon:'🌊', fx:'rain', lead:'CDRRMO (IC) with BDRRMCs, BFP and PNP',
   blurb:'Intense rain over the upper watershed sends a flash flood down the Anilao and Malbasag rivers into the city proper at night. Lead time: about three hours.',
-  context:'On 5 November 1991 Tropical Storm Thelma (Uring) sent floodwaters down the Anilao and Malbasag rivers into the city proper; the former District 26 (Isla Verde), now part of Barangay West, was among the hardest hit and thousands died. Flash floods here give hours, not days: below RA 12287\'s 72-hour threshold, so early action rests on the city\'s own authority and plans.',
+  context:'On 5 November 1991 Tropical Storm Thelma (Uring) sent floodwaters down the Anilao and Malbasag rivers into the city proper; the former District 26 (Isla Verde), now part of Barangay West, was among the hardest hit and thousands died. The Ten-Year Plan counts 46 barangays with critical flood risk (59,545 people), and the CDRA rates 35 barangays as flooding every 1–3 years. Flash floods give hours, not days: below RA 12287\'s 3-day window, so early action rests on the city\'s own discretion and contingency plan, which the IRR expressly allows.',
   res:{ rescue:8, wasar:6, ems:10, pnp:20, bdrrmc:14, ec:18, fni:40, heavy:6, radio:12 },
   phases:[
   { stage:0, name:'Early warning', clock:'Day 1 · 16:00H', eoc:'blue', warn:{c:'warn-o',t:'PAGASA: Orange rainfall warning'},
     stats:{a:'3,800',b:'0',c:'0',d:'~3 h'}, sl:['Families on riverbanks','In ECs','Rescue requests','Est. lead time'],
     situation:['PAGASA has raised an Orange rainfall warning (15–30 mm per hour) over western Leyte. The upstream rain gauge reads 48 mm in the last hour; the river gauge at the Anilao bridge is rising fast.','Your flood model gives about three hours before water overtops the banks in West, East and South. About 3,800 riverside families are exposed.'],
-    intel:'Planning: the upstream gauge has exceeded the alarm threshold in the community early warning system. A State of Imminent Disaster under RA 12287 needs at least 72 h lead time, so it does not apply. The city may still act under RA 10121 and its contingency plan.',
+    intel:'Planning: the upstream gauge has exceeded the alarm threshold in the community early warning system. A State of Imminent Disaster under RA 12287 is built around a 3-day lead time, so it does not fit here. The IRR (Rule IV, Sec. 1) still lets LGUs take anticipatory action at their own discretion, and RA 10121 and the contingency plan apply.',
     hint:'Three hours. Which law fits, and what has to move first?',
     forms:['201','213','214'], discuss:'What is our trigger level on the Anilao gauge, and who sounds the warning?',
     opts:[
       O('Activate the flash-flood contingency plan: raise the EOC to Blue, warn the riverside BDRRMCs by radio, siren and bell, start pre-emptive evacuation of riverbank households now, and pre-position WASAR teams on high ground.','best',[94,90,94,95,95],'Short-lead hazards need city-level early action under the LGU\'s own authority. Multiple warning channels reach people without phones; evacuation starts while it is still light.',{b:'+2,600 families'}),
-      O('Request a State of Imminent Disaster from RDRRMC 8 before ordering any evacuation.','unsafe',[35,45,40,25,10],'RA 12287 needs at least 72 hours lead time; you have three. Waiting for an inapplicable process wastes the only window you have.',{c:'+60 rescue requests'}),
+      O('Request a State of Imminent Disaster from RDRRMC 8 before ordering any evacuation.','unsafe',[35,45,40,25,10],'The RA 12287 declaration works on a 3-day lead time; you have three hours. The IRR lets the city act early on its own discretion. Waiting for an unsuitable process wastes the only window you have.',{c:'+60 rescue requests'}),
       O('Wait for PAGASA to raise a Red warning to be sure.','unsafe',[30,35,40,25,15],'The river gauge is the better trigger here; by the time Red is raised, lead time may be under an hour.',{c:'+45 rescue requests'}),
       O('Post an advisory on the City Facebook page and let families decide.','weak',[45,45,50,40,60],'One channel and no instruction. At night, with power at risk, sirens, radios and BDRRMC house-to-house warnings reach far more people.')
     ]},
@@ -876,7 +945,7 @@ const SCENARIOS = [
 /* ---------------------------------------------------------------- 3 */
 { id:'quake', name:'Leyte earthquake', type:'Geological', icon:'🏚️', fx:'quake', lead:'CDRRMO (IC); BFP and City Engineering in unified command on fire/structure sites',
   blurb:'A shallow magnitude 6.5 earthquake on the Leyte segment of the Philippine Fault. PEIS VII in Ormoc. A commercial building partly collapses in Barangay South.',
-  context:'Western Leyte sits along the Philippine Fault Zone. In July 2017 a magnitude 6.5 earthquake near Kananga and Jaro damaged buildings and the geothermal field area, and Ormoc felt strong shaking. Critical facilities to check first: hospitals, bridges over the Anilao and Malbasag, the port, schools and the Tongonan geothermal area.',
+  context:'Western Leyte sits along the Philippine Fault Zone. In July 2017 a magnitude 6.5 earthquake struck Ormoc and nearby towns, affecting 10,167 families in the city (CDRA, citing DSWD DROMIC). Critical facilities to check first: hospitals, bridges over the Anilao and Malbasag, the port, schools and the Tongonan geothermal area.',
   res:{ rescue:8, usar:3, bfp:6, ems:12, pnp:20, heavy:8, ec:20, med:30, radio:12 },
   phases:[
   { stage:0, name:'First minutes', clock:'Day 1 · 14:12H', eoc:'red', warn:{c:'warn-r',t:'PHIVOLCS: M6.5 · PEIS VII in Ormoc'},
@@ -988,7 +1057,7 @@ const SCENARIOS = [
 /* ---------------------------------------------------------------- 5 */
 { id:'hazmat', name:'Tongonan geothermal gas release', type:'Technological · hazmat', icon:'☣️', fx:'gas', lead:'Unified command: BFP (hazmat) + CDRRMO + facility emergency team',
   blurb:'A ruptured pipeline at the Tongonan geothermal field releases hydrogen sulfide (H2S). Residents nearby report a rotten-egg smell, then dizziness.',
-  context:'Barangay Tongonan in upland Ormoc hosts part of the Leyte geothermal production field. H2S is heavier than air and collects in low ground and valleys; at high levels it deadens the sense of smell, so "the smell is gone" is not a safety signal. The facility operator has its own emergency team and monitoring equipment.',
+  context:'Barangay Tongonan in upland Ormoc hosts the Mahanagdong A and Malitbog geothermal plants (CDRA critical facilities); the PNOC access roads there are rated high risk for landslides. H2S is heavier than air and collects in low ground and valleys; at high levels it deadens the sense of smell, so "the smell is gone" is not a safety signal. The facility operator has its own emergency team and monitoring equipment.',
   res:{ hazmat:1, bfp:4, rescue:4, ems:8, pnp:10, ec:3, radio:8, bdrrmc:3 },
   phases:[
   { stage:0, name:'First report', clock:'Day 1 · 06:40H', eoc:'blue', warn:{c:'warn-o',t:'Facility report: H2S release'},
@@ -1045,6 +1114,381 @@ const SCENARIOS = [
 <script>
 'use strict';
 /* =====================================================================
+   DATA v2 — EOC (Memo 131), RDRRMC 8 harmonized reporting, CDRA,
+   position drills (adapted and corrected from the second simulator)
+   ===================================================================== */
+
+/* EOC alert levels — RDRRMC 8 Res. 12-006 / RDRRMOC SOPG */
+const ALERT_INFO = {
+  white:'<b>WHITE — normal operations</b>. Operations Center monitors and reports under regular mandates. LGU report times: 06:00 and 18:00 (RDRRMC 8 Res. No. 12-006).',
+  blue:'<b>BLUE — heightened alert</b>. At least 50% of human and material resources on standby for duty or deployment; triggered by detection, monitoring or PDRA results. EOC operated by directive; harmonized reporting starts. Reports at 09:00 and 19:00.',
+  red:'<b>RED — full alert</b>. All human and material resources available for duty and deployment; response clusters and IMT may be activated; inter-cluster action planning. Reports at 09:00 and 19:00.'
+};
+
+/* Harmonized reporting forms (RDRRMC 8 Res. No. 12-006, s. 2023) */
+const HFORMS = {
+  A:['Pre-emptive Data','CDRRMO'], B:['Evacuation Center Facilities','CSWDO'], C:['Inventory of Resources','CDRRMO'],
+  D:['No. of Affected','CSWDO'], E:['Displacement Data','CSWDO'], F:['Affected Agricultural Sectors','City Agriculture'],
+  G:['Status of Telecommunications','CDRRMO'], H:['Status of Lifeline Structures','DPWH / CDRRMO'],
+  I:['No. of Injured Persons','CHO'], J:['Management of the Dead and Missing','City DILG (CLGOO)'],
+  K:['Damaged Houses and Relief Operations','CDRRMO / CSWDO'], L:['Total Served Population','CSWDO']
+};
+const STAGE_REPORT = [
+  { r:'Pre-disaster report', f:['A','B','C'] },
+  { r:'Pre-disaster report (update)', f:['A','B','C'] },
+  { r:'During-disaster report', f:['D','E','F','G','H'] },
+  { r:'Post-disaster / terminal report', f:['I','J','K','L'] }
+];
+
+/* Schematic map zones (not to scale). Barangay groupings follow the CDRA. */
+const MAP_ZONES = {
+  bay:{x:300,y:330,l:'Ormoc Bay'},
+  coast_w:{x:150,y:268,l:'West coast',b:'Linao, Naungan, Punta (CDRA: high storm-surge risk)'},
+  coast_e:{x:455,y:268,l:'East coast',b:'Alegria, Batuan, Macabug, Ipil (CDRA: high storm-surge risk)'},
+  proper:{x:300,y:230,l:'City proper',b:'South, East, West, North — between the Anilao and Malbasag rivers'},
+  river:{x:300,y:160,l:'Anilao–Malbasag watershed',b:'Flash-flood source; 1991 Uring flood'},
+  lowland:{x:185,y:175,l:'Lowland barangays',b:'Liloan, Tambulilid, Curva, Lao (CDRA: high flood exposure)'},
+  upland:{x:400,y:95,l:'Upland barangays',b:'Patag, Don Carlos B. Rivilla Sr., Sumangga, Hibunawon, Lake Danao (CDRA: rain-induced landslide)'},
+  geo:{x:250,y:62,l:'Tongonan geothermal',b:'Mahanagdong A and Malitbog plants; PNOC roads (CDRA)'},
+  port:{x:330,y:288,l:'Ormoc port',b:'Ro-ro and passenger terminals; PCG Station Ormoc'}
+};
+
+const O2 = (t,v,s,why,fx) => ({ t, v, s, why, fx: fx || null });
+
+/* ---------------------------------------------------------------- 6 */
+SCENARIOS.push(
+{ id:'landslide', name:'Upland rain-induced landslide', type:'Hydro-meteorological · geohazard', icon:'⛰️', fx:'rain', lead:'CDRRMO (IC) with City Engineering, BFP, PNP and BDRRMCs',
+  blurb:'Days of shear-line rain saturate the slopes of upland Ormoc. Cracks open above a sitio; then a slope fails and cuts the road.',
+  context:'The CDRA names Patag, Don Carlos B. Rivilla Sr., Sumangga, Ipil and Hibunawon as most exposed to rain-induced landslides, and rates the PNOC roads, Margen Road 3 and the Lake Danao Circumferential Road as high-risk lifelines. RA 12287 covers rain-induced landslides, but warning lead times are usually short, so community-based early warning and the City\'s own discretion carry the decision.',
+  res:{ rescue:6, usar:2, bfp:4, ems:8, pnp:12, heavy:6, ec:10, fni:20, radio:10, bdrrmc:12 },
+  map:['upland','geo'],
+  phases:[
+  { stage:0, name:'Warning signs', clock:'Day 1 · 15:00H', eoc:'blue', warn:{c:'warn-o',t:'Orange rainfall warning · MGB landslide threat advisory'},
+    stats:{a:'~260',b:'0',c:'3',d:'Hours'}, sl:['Households on mapped slopes','Evacuated','Crack reports','Est. lead time'],
+    situation:['A third day of rain. PAGASA has an Orange warning over western Leyte and the MGB advisory lists upland Ormoc barangays as susceptible to landslides.','BDRRMC observers in a sitio of Patag report new tension cracks above 40 houses and muddy springs on the slope. The road below is the only way out.'],
+    intel:'City Engineering: the cracks match the CDRA high-susceptibility zone. Heavy equipment is at the city yard, two hours away. The barangay has a covered court on stable ground.',
+    hint:'Signs on the slope are the trigger. Who moves first, and where does equipment wait?',
+    forms:['201','213','214'], discuss:'What are our landslide early-warning signs, and who calls the evacuation?',
+    opts:[
+      O2('Raise the EOC to Blue; on CDRRMO\'s recommendation the Mayor orders pre-emptive evacuation of households below the cracks to the covered court; close the road to traffic; pre-position heavy equipment and a rescue team at a safe staging point away from the slope toe.','best',[94,90,90,95,93],'Community warning signs justify early action under the City\'s own discretion (RA 12287 IRR, Rule IV, Sec. 1). Equipment waits off the runout path.',{b:'+40 households'}),
+      O2('Send a team up the slope to measure the cracks before deciding.','weak',[45,45,45,40,50],'Assessment helps, but people below a failing slope should move first. Measure from a safe position after evacuation.'),
+      O2('Wait for the MGB to confirm in writing.','unsafe',[30,35,35,25,15],'Slopes can fail in hours. A written confirmation is not a precondition for pre-emptive evacuation.',{c:'Slope fails with families still in place'}),
+      O2('Bring the excavator in now to cut a drainage channel across the slope.','unsafe',[30,35,40,20,55],'Heavy equipment on a saturated, cracking slope can trigger the failure and put operators in the runout path.')
+    ]},
+  { stage:1, name:'Slope failure', clock:'Day 1 · 22:40H', eoc:'red', warn:{c:'warn-r',t:'Red rainfall warning'},
+    stats:{a:'~260',b:'190',c:'7 missing',d:'Road cut'}, sl:['Households on mapped slopes','Evacuated','Reported missing','Access'],
+    situation:['The slope failed at 22:20H. Four houses that had not evacuated are buried; seven people are reported missing. Debris has cut the road in two places.','Neighbours are digging with shovels in the dark. Rain continues.'],
+    intel:'City Engineering: the scarp is still moving; a secondary slide is likely while rain continues. A geologist can reach the site at first light.',
+    hint:'Unstable ground, darkness, rain. Who enters, and who watches the slope?',
+    forms:['202','203','208','211','215A'], discuss:'When do we stop rescue on an unstable slope?',
+    opts:[
+      O2('Set the ICP at a safe distance; cordon the debris; post slope spotters with a clear evacuation signal; trained SRR teams work only in zones the engineer marks safe; record missing persons through Planning; request a geologist and lighting through the EOC.','best',[95,92,90,95,88],'Spotters and safe zones protect rescuers from a second slide; a single missing-persons list starts the MDM process.'),
+      O2('Let neighbours keep digging; every minute counts.','unsafe',[25,35,40,20,70],'Untrained diggers on a moving slope risk becoming victims of a secondary slide.',{e:'Secondary slide: 2 diggers injured'}),
+      O2('Bring in the excavator to dig fast.','unsafe',[30,35,40,20,65],'Machinery on unstable debris can trigger collapse and harm buried survivors.'),
+      O2('Suspend all work until the geologist arrives at dawn.','weak',[45,45,45,40,35],'Some work can continue safely with spotters in marked zones; a full stop may cost lives.')
+    ]},
+  { stage:2, name:'Isolated barangay', clock:'Day 2 · 08:00H', eoc:'red', warn:{c:'warn-o',t:'Orange rainfall warning'},
+    stats:{a:'~600',b:'240',c:'5 missing',d:'Isolated'}, sl:['Residents cut off','Evacuated','Missing','Access'],
+    situation:['Two missing persons were found alive overnight. The road will take three days to clear. About 600 residents beyond the slide are cut off; a sick child needs evacuation.','Offers of help arrive from neighbouring LGUs and a private company with a small helicopter.'],
+    intel:'Logistics: a foot trail is passable. RDRRMC 8 can request AFP air assets. Weather may allow flights after 10:00H.',
+    hint:'Reach, resupply and request through the right channel.',
+    forms:['202','204','206','211','215'], discuss:'How do we decide between road, trail and air?',
+    opts:[
+      O2('Send a medical team and supplies by foot trail now; request air support through the EOC to RDRRMC 8 for the child and for resupply when weather allows; Liaison routes offers to check-in and assignment; keep spotters on the slide.','best',[94,94,90,94,88],'Uses what works now, asks for air assets through the proper channel, and keeps every offer accountable (NDRRMC Memo No. 131: IMT requests go through the EOC).'),
+      O2('Tell the private helicopter to fly in whenever the pilot thinks it is safe.','weak',[40,35,40,40,60],'Untracked air operations without coordination are unsafe and duplicate effort.'),
+      O2('Wait until the road is cleared.','unsafe',[30,35,35,25,20],'Three days without access is not acceptable for a sick child and 600 residents.'),
+      O2('Send the excavator crew to dig through the slide now.','weak',[45,40,40,35,55],'Clearing must follow the geologist\'s assessment while the scarp is still moving.')
+    ]},
+  { stage:3, name:'Re-entry and land use', clock:'Day 5 · 09:00H', eoc:'blue', warn:{c:'warn-g',t:'No rainfall warning'},
+    stats:{a:'~260',b:'210',c:'0',d:'Day 5'}, sl:['Households on mapped slopes','Still displaced','Missing','Day'],
+    situation:['Rain has stopped. Families want to return to houses near the scarp. The barangay asks the City to rebuild the road along the same line.'],
+    intel:'The geologist has mapped the scarp and runout zone. The CLUP and zoning ordinance set rules for hazard zones; CSWDO can arrange transitional shelter.',
+    hint:'Who decides whether a slope is safe to live on?',
+    forms:['209','214','221'], discuss:'What changes in the LDRRMP and zoning after this event?',
+    opts:[
+      O2('Keep households in the mapped runout zone out until a geohazard assessment clears them; arrange transitional shelter; RDANA; refer no-build and relocation recommendations to CPDO for the CLUP and zoning; schedule the AAR.','best',[92,92,92,94,85],'Re-entry based on assessment, shelter for the displaced, and mitigation through land use — the "M" in DDRiVE-M.'),
+      O2('Let families return now that the rain has stopped.','unsafe',[30,35,35,20,65],'Saturated slopes can fail days after rain stops.'),
+      O2('Rebuild the road on the same alignment immediately.','weak',[45,45,45,35,55],'Rebuilding in the runout zone repeats the risk.'),
+      O2('Close the whole barangay indefinitely.','weak',[45,40,45,40,45],'Blanket closure ignores the mapped safe areas and stalls recovery.')
+    ]}
+  ]}
+);
+
+/* map hotspots for existing scenarios */
+const SCEN_MAP = { typhoon:['coast_w','coast_e','proper','port'], flood:['river','proper','lowland'], quake:['proper','port','geo'], maritime:['port','bay'], hazmat:['geo','upland'], landslide:['upland','geo'] };
+
+/* ---------------- Position drills ----------------
+   Adapted from the second simulator's role phases. Corrections applied:
+   the Mayor is the Responsible Official, not a member of Unified Command;
+   procurement cites RA 12009 (RA 9184 was repealed); EOC rules follow Memo No. 131. */
+const DRILLS = {
+  ro: [
+    { name:'Where the Mayor stands', situation:['Typhoon response, day 1. The IC invites you to "join Unified Command" at the ICP, and TV crews are waiting there.'], intel:'NDRRMC MC No. 4, s. 2012: the RO sets policy and priorities and delegates authority; the IC manages the scene.', hint:'Policy level or tactical level?',
+      opts:[ O2('Stay as Responsible Official: confirm the delegation of authority in writing, set priorities and limits, receive briefings at the EOC, and visit the ICP briefly without directing tactics.','best',[95,90,88,95,90],'Keeps the policy layer intact and the IC free to manage the incident.'),
+             O2('Join Unified Command at the ICP as a member.','weak',[45,45,50,40,60],'Unified Command is for agencies with jurisdiction at the scene. The Mayor delegates to the IC rather than sharing tactical command.'),
+             O2('Take over as IC for the visibility.','weak',[40,40,50,35,60],'It removes the policy layer and puts a non-specialist on tactics; designate a qualified IC.'),
+             O2('Direct rescue teams by phone from your car.','unsafe',[20,25,35,20,65],'Bypasses the chain of command and the accountability system.') ]},
+    { name:'Ending operations', situation:['Day 4. The IC recommends terminating search and rescue: all reports are cleared and teams are tired. Some councillors want operations to continue "to show presence".'], intel:'NDRRMC Memo No. 131, s. 2018: the IC recommends termination; the RO approves based on situation updates.', hint:'Who recommends, who approves?',
+      opts:[ O2('Approve termination on the IC\'s recommendation after a situation update, with a demobilization plan and a shift to early recovery.','best',[94,90,90,94,88],'Follows the Memo 131 sequence and moves resources to where they are now needed.'),
+             O2('Keep operations running for another week for public confidence.','weak',[40,40,40,35,40],'Holding resources without a task wastes capacity and tires responders.'),
+             O2('Order termination yourself without consulting the IC.','weak',[45,40,45,40,65],'The IC has the ground picture; the RO approves on that basis.'),
+             O2('Let each agency leave when it decides to.','unsafe',[25,25,35,25,60],'Uncoordinated withdrawal leaves gaps and untracked resources.') ]},
+    { name:'State of calamity', situation:['Barangay captains ask you to declare a state of calamity today by Executive Order so they can use their funds.'], intel:'RA 10121 Sec. 16: the Sanggunian declares on the recommendation of the LDRRMC, based on assessment results.', hint:'Which body declares, on whose recommendation?',
+      opts:[ O2('Convene the CDRRMC to review RDANA results; if criteria are met, the CDRRMC recommends to the Sangguniang Panlungsod, which declares by resolution.','best',[94,92,90,95,85],'Correct body and evidence base; the resolution is also what RDRRMC 8 needs before reporting the declaration.'),
+             O2('Sign an EO declaring a state of calamity now.','weak',[45,40,45,35,70],'A state of calamity is declared by the Sanggunian, not by the Mayor\'s EO.'),
+             O2('Tell barangays to declare their own states of calamity.','weak',[40,35,40,35,60],'Each declaration follows its own council process; coordinate rather than delegate the decision.'),
+             O2('Wait for the President to declare one.','weak',[40,40,40,35,35],'Local declarations do not wait for a national one.') ]}
+  ],
+  eoc: [
+    { name:'A resource request', situation:['The IC radios the EOC: "Need two more rescue boats in the West sector within the hour."'], intel:'NDRRMC Memo No. 131, s. 2018: all IMT resource requests go to the EOC; the EOC coordinates with the response clusters to fill them.', hint:'Resource employer, resource provider — who sits between?',
+      opts:[ O2('Log the request, source the boats through the clusters and partner agencies, track them to delivery and confirm arrival with the IC.','best',[94,95,90,94,90],'The EOC is the link between the IMT and the clusters, and tracks the request to completion.'),
+             O2('Tell the IC to call the PCG directly.','weak',[40,35,45,40,65],'Direct calls bypass tracking and create duplicate requests.'),
+             O2('Send EOC staff to the West sector to run the boats.','unsafe',[25,30,35,25,55],'The EOC coordinates; it does not take tactical command.'),
+             O2('Wait for the next coordination meeting.','weak',[40,40,40,35,25],'Urgent requests are processed as they arrive.') ]},
+    { name:'Where to put the ICP', situation:['The IC proposes running the ICP from the EOC building "so everyone is in one room".'], intel:'NDRRMC Memo No. 131, s. 2018, item 9.2.5.3: the EOC and ICP shall not be co-located.', hint:'Coordination and command in the same room?',
+      opts:[ O2('Keep the ICP on scene at a safe, accessible location; link it to the EOC by radio and a liaison; the EOC stays the coordination hub.','best',[95,92,90,95,88],'Follows Memo 131 and keeps command close to the incident.'),
+             O2('Agree; one room is simpler.','weak',[40,40,45,35,60],'Co-location blurs command and coordination and takes the IC away from the scene.'),
+             O2('Move the EOC to the ICP instead.','weak',[40,40,40,35,55],'The EOC must stay at a safe, hazard-free site with its equipment and links.'),
+             O2('Run without an ICP; the EOC can direct teams.','unsafe',[25,30,35,25,60],'Without on-scene command, tactics are directed by people who cannot see the scene.') ]},
+    { name:'First report under Red alert', situation:['A flash flood hit at 19:30H. RDRRMC 8 is asking for numbers; barangay figures are arriving by text and do not agree.'], intel:'RDRRMOC SOPG: initial report within 2 hours to confirm the incident. RDRRMC 8 Res. 12-006: under Blue or Red alert, LGU reports are due by 09:00 and 19:00 on the harmonized template.', hint:'Fast, then regular, then verified.',
+      opts:[ O2('Send an initial report within 2 hours (what, when, where, initial actions), then harmonized reports by 09:00 and 19:00 using Forms D–H, with figures validated before release.','best',[92,94,95,92,92],'Meets the 2-hour initial report and the harmonized schedule with validated data.'),
+             O2('Forward the barangay texts as they arrive.','weak',[45,40,35,40,70],'Unvalidated, conflicting figures create confusion up the line.'),
+             O2('Report only when all figures are complete.','weak',[45,40,35,45,30],'The initial report confirms the event; completeness comes in later reports.'),
+             O2('Wait for RDRRMC 8 to call again.','unsafe',[30,30,25,30,20],'Reporting is a standing duty under Blue and Red alert.') ]}
+  ],
+  ic: [
+    { name:'Setting up the ICP', situation:['Typhoon landfall in 6 hours. You need an Incident Command Post.'], intel:'The ICP should be safe, accessible and close enough to the scene, and not in the EOC (Memo No. 131).', hint:'Safe, near, separate.',
+      opts:[ O2('Set the ICP at a safe, elevated, accessible site near the most exposed area, separate from the EOC, with backup power and radio links.','best',[95,90,88,94,90],'A safe, functioning ICP comes first; resources follow once command is set.'),
+             O2('Deploy all rescue teams first and set up the ICP later.','weak',[45,40,45,40,65],'Without command, deployed teams are untracked.'),
+             O2('Run the incident from the EOC.','weak',[40,40,45,35,60],'The EOC coordinates; command belongs on scene.'),
+             O2('Put the ICP at the coastal plaza for visibility.','unsafe',[25,30,40,20,55],'The coast is in the surge zone.') ]},
+    { name:'Sizing the IMT', situation:['City-wide typhoon impact: rescue, evacuation, relief and road clearing are all running at once.'], intel:'ICS is modular: activate only the positions you need, but keep span of control at 3 to 7.', hint:'Modular, but not understaffed.',
+      opts:[ O2('Activate Command Staff and all four sections, with divisions by area so each supervisor manages 3–7 units.','best',[95,92,90,94,88],'Matches the incident\'s complexity and keeps span of control workable.'),
+             O2('Run Operations and Logistics only; planning can wait.','weak',[45,40,40,40,60],'Without Planning there is no IAP or resource tracking.'),
+             O2('Let each agency run its own operation.','unsafe',[20,20,30,25,55],'Leads to duplication, gaps and no accountability.'),
+             O2('Form ad-hoc teams as people arrive.','weak',[40,40,40,35,55],'Standard structure lets arriving staff slot in quickly.') ]},
+    { name:'Transfer of command', situation:['An OCD-deployed IMT arrives to augment. Its leader is more experienced and will take over as IC.'], intel:'Transfer of command needs a face-to-face briefing (ICS 201), a set effective time and notification of all staff.', hint:'How does command change hands?',
+      opts:[ O2('Brief the incoming IC face to face with ICS 201, agree an effective time, notify the RO, EOC and staff, and record the transfer.','best',[95,92,92,94,88],'An orderly transfer avoids two ICs and lost information.'),
+             O2('Hand over the radio and leave.','unsafe',[25,30,25,25,60],'Without a briefing, the new IC starts blind.'),
+             O2('Keep command and treat the new team as advisers.','weak',[40,40,40,35,55],'Augmentation was requested to strengthen management; use it.'),
+             O2('Split command: you keep Operations, they take the rest.','weak',[40,40,40,35,55],'Unity of command requires one IC or a formal Unified Command.') ]}
+  ],
+  sofr: [
+    { name:'Rescuer in the water', situation:['A WASAR rescuer is swept off a boat in the Anilao current. Nearby teams start toward him without orders.'], intel:'A designated Rapid Intervention Team and accountability check are standard for responder emergencies.', hint:'Rescue the rescuer without making more victims.',
+      opts:[ O2('Activate the rapid intervention team: the nearest equipped WASAR unit responds, other teams in that sector hold, and you run a personnel accountability check.','best',[95,92,92,95,92],'A controlled response to a responder emergency; untrained convergence causes more casualties.'),
+             O2('Let every nearby team go.','unsafe',[25,30,35,20,70],'Uncontrolled convergence in swift water multiplies victims.'),
+             O2('Pull all operations citywide until he is found.','weak',[40,40,40,35,40],'Only the affected sector needs to hold.'),
+             O2('Ask the IC to request outside teams first.','weak',[40,45,45,35,30],'Act now with the nearest qualified unit.') ]},
+    { name:'Night operations', situation:['Flood rescue continues past midnight. Visibility is poor and teams want to split up to cover more houses.'], intel:'Night work needs lighting, buddy pairs and tighter accountability.', hint:'Fewer, safer, lit.',
+      opts:[ O2('Consolidate teams, keep buddy pairs, deploy lighting, mark hazards and limit tasks to life-threatening calls until daylight.','best',[94,90,90,94,88],'Reduces exposure while keeping life-saving work going.'),
+             O2('Continue at the same pace with smaller teams.','unsafe',[25,30,35,20,65],'Smaller teams at night raise the risk of losing responders.'),
+             O2('Stop all field work until dawn.','weak',[45,40,40,40,40],'Life-threatening calls may still be handled safely.'),
+             O2('Leave it to each team leader.','weak',[40,35,40,35,55],'The Safety Officer sets the safety rules for the operational period.') ]},
+    { name:'Fatigue', situation:['Some responders have worked 18 hours straight and insist they are fine.'], intel:'Fatigue causes errors and injuries; time records and relief shifts are part of the IAP.', hint:'Willing is not the same as fit.',
+      opts:[ O2('Enforce rest using the time records, bring in relief personnel in phases, and put rest periods into the next IAP.','best',[94,90,90,95,88],'Protects responders and keeps capacity for the next period.'),
+             O2('Let them continue as long as they are willing.','unsafe',[25,30,35,20,60],'Fatigued responders cause accidents.'),
+             O2('Order everyone to rest at once.','weak',[45,40,45,40,50],'Phased relief keeps operations running.'),
+             O2('Hand out coffee and energy drinks.','weak',[35,35,40,30,60],'Stimulants do not replace rest.') ]}
+  ],
+  pio: [
+    { name:'A fake warning', situation:['A doctored "PAGASA Signal No. 5 for Ormoc" graphic is spreading on social media. The real bulletin shows Signal No. 2.'], intel:'Warnings must come from mandated agencies; the RA 12287 IRR requires inclusive, timely, coordinated advisories across all platforms.', hint:'Correct it fast, everywhere, in the local language.',
+      opts:[ O2('Issue a correction quoting the official PAGASA bulletin on all City channels, radio and barangay networks, in Cebuano/Waray and English, with the actions people should take now.','best',[92,92,95,92,92],'Fast, sourced, multi-channel and actionable.'),
+             O2('Ignore it; people will check PAGASA themselves.','unsafe',[30,30,20,30,50],'Rumors spread faster than corrections; silence lets panic or complacency grow.'),
+             O2('Post a correction on the City page only.','weak',[45,40,50,45,70],'One channel misses people without data or power.'),
+             O2('Ask the platform to delete it and say nothing else.','weak',[40,40,35,40,50],'Takedowns are slow; the public needs the correct information now.') ]},
+    { name:'Names of the dead', situation:['Media ask for the names of three people found dead. Families have not all been told.'], intel:'RDRRMC 8 template: "Dead (confirmed)" needs PNP identification or DVI processing; others are "for verification and validation".', hint:'Families before the public; confirmed before reported.',
+      opts:[ O2('Release counts in the correct categories (confirmed / for verification); release names only after next-of-kin notification and PNP confirmation.','best',[92,92,95,94,85],'Protects families and the accuracy of official figures.'),
+             O2('Release the names now; it is public interest.','unsafe',[30,30,15,25,60],'Families learning of a death from the news causes harm, and errors are hard to undo.'),
+             O2('Refuse to give any figures.','weak',[40,40,30,40,50],'Verified counts can be shared; silence feeds speculation.'),
+             O2('Let the barangays release their own lists.','weak',[40,35,35,40,60],'Multiple sources give conflicting figures.') ]},
+    { name:'Reaching everyone', situation:['Pre-emptive evacuation is ordered. Upland GIDA sitios have no signal; some residents are deaf or blind.'], intel:'The RA 12287 IRR requires advisories that consider GIDAs and are inclusive.', hint:'Which channels reach people without phones?',
+      opts:[ O2('Combine radio, sirens, barangay bells and house-to-house BDRRMC warnings, with visual signals and sign-language-ready messages, and confirm receipt from each barangay.','best',[92,94,95,94,88],'Multiple channels and confirmation close the gaps.'),
+             O2('Send a text blast to all subscribers.','weak',[45,40,50,40,70],'Misses people without signal or phones.'),
+             O2('Post on social media and radio only.','weak',[45,40,50,40,65],'Misses people who cannot hear or have no power.'),
+             O2('Rely on the media to spread the word.','weak',[40,35,40,35,55],'The City is responsible for warning its residents.') ]}
+  ],
+  lofr: [
+    { name:'Corporate offer', situation:['A company offers 20 trucks and 50 employee volunteers and asks where to send them.'], intel:'The RA 12287 IRR provides for mobilizing ACDVs, CSOs and the private sector through a strategic deployment plan.', hint:'Welcome, check in, assign.',
+      opts:[ O2('Route the offer through the EOC: check in vehicles and volunteers, brief them, and assign low-risk tasks under supervision; record it for later recognition and cost tracking.','best',[92,95,90,92,88],'Accountable use of private help without self-deployment.'),
+             O2('Tell them to go wherever they see need.','unsafe',[25,25,35,25,65],'Self-deployment duplicates effort and puts untrained people at risk.'),
+             O2('Decline for liability reasons.','weak',[40,35,40,40,50],'Supervised, low-risk tasks use the help safely.'),
+             O2('Accept and leave them unsupervised.','weak',[35,35,40,35,60],'Untracked volunteers create safety and liability problems.') ]},
+    { name:'Unannounced team', situation:['A rescue team from a neighbouring LGU arrives at the ICP without prior coordination.'], intel:'All arriving resources check in (ICS 211) before assignment.', hint:'First stop for any arriving resource.',
+      opts:[ O2('Direct them to check-in, brief them on local conditions and safety, and pass them to Operations for assignment.','best',[92,94,92,92,90],'Integrates help while keeping accountability.'),
+             O2('Send them straight to the hardest-hit area.','weak',[40,40,40,40,70],'Skipping check-in leaves them untracked.'),
+             O2('Send them home; they did not coordinate.','weak',[40,35,40,35,50],'Use available capacity after proper check-in.'),
+             O2('Let them work on their own.','unsafe',[25,25,35,25,60],'Freelancing teams risk duplication and responder safety.') ]},
+    { name:'Who leads?', situation:['At a fire in a collapsed building, BFP and CDRRMO staff argue about who is in charge.'], intel:'Where more than one agency has jurisdiction, Unified Command sets one set of objectives.', hint:'Shared jurisdiction, one plan.',
+      opts:[ O2('Bring both agency leads together to form Unified Command with one set of objectives and one IAP; you keep the agency contact list and resolve issues.','best',[94,95,92,94,88],'Unified Command fits multi-jurisdiction incidents.'),
+             O2('Let the larger agency take over.','weak',[40,40,40,35,60],'Size does not settle jurisdiction.'),
+             O2('Let both run separate operations.','unsafe',[25,25,30,25,55],'Parallel commands at one site are unsafe.'),
+             O2('Ask the Mayor to decide on the phone.','weak',[40,40,45,40,55],'The RO sets policy; on-scene arrangements are settled through Unified Command.') ]}
+  ],
+  osc: [
+    { name:'Organizing the field', situation:['Rescue requests are coming from 12 barangays at once.'], intel:'Divisions by area keep span of control at 3 to 7.', hint:'Geography and span of control.',
+      opts:[ O2('Create geographic divisions with a supervisor each and assign teams by priority within each division.','best',[95,92,90,94,88],'Keeps supervision workable and coverage balanced.'),
+             O2('Send one team to each barangay on its own.','weak',[45,40,40,40,60],'Unsupervised teams cannot be re-tasked or tracked well.'),
+             O2('Put everything into the worst-hit barangay.','weak',[40,40,40,35,60],'Leaves other life-threatening calls unanswered.'),
+             O2('Wait for complete damage reports.','unsafe',[25,30,30,20,20],'Life safety cannot wait for complete data.') ]},
+    { name:'One boat, two divisions', situation:['Two division supervisors both want the only swift-water boat.'], intel:'Priorities: life safety, incident stabilization, property; the IAP sets objectives.', hint:'Need, not equality.',
+      opts:[ O2('Assign the boat to the division with the higher life threat under the IAP, and give the other an alternative or the next available asset.','best',[94,92,90,95,90],'Resolves the conflict at the right level by need.'),
+             O2('Alternate it between divisions every hour.','weak',[45,40,40,40,55],'Equal shares ignore who is in danger.'),
+             O2('Let the supervisors decide between themselves.','weak',[35,35,40,35,55],'Operations resolves tactical conflicts.'),
+             O2('Escalate every such conflict to the IC.','weak',[45,45,45,40,50],'The OSC owns tactical allocation.') ]},
+    { name:'Rising water at an EC', situation:['Water is rising around an evacuation center holding 300 families.'], intel:'Staged evacuation with assembly points and mixed transport prevents crowding.', hint:'Move people in order.',
+      opts:[ O2('Run a staged evacuation to a safer EC with assembly points, vulnerable groups first, and trucks, boats and buses as available.','best',[94,92,92,94,88],'Orderly and prioritized movement.'),
+             O2('Tell everyone to move to the second floor.','weak',[45,40,40,40,60],'Short-term only if water keeps rising.'),
+             O2('Request every bus in the city at once.','weak',[45,40,45,40,60],'Without staging, vehicles jam the route.'),
+             O2('Wait for the water to stabilize.','unsafe',[25,30,30,20,20],'Rising water around an EC needs action now.') ]}
+  ],
+  psc: [
+    { name:'One picture', situation:['CSWDO, BFP and CDRRMO each keep their own situation map with different figures.'], intel:'A single Situation Unit and common operating picture prevent conflicting decisions.', hint:'One map, one number.',
+      opts:[ O2('Set up one Situation Unit with a common map (GeoRiskPH layers plus field data) and one verified SitRep cycle on the harmonized template.','best',[94,95,95,94,88],'One verified picture for all sections and agencies.'),
+             O2('Let each agency keep its own displays.','unsafe',[25,25,25,25,55],'Conflicting figures lead to conflicting decisions.'),
+             O2('Adopt whichever agency has the best software.','weak',[45,40,45,40,55],'The issue is a single verified process, not software.'),
+             O2('Use paper maps only.','weak',[40,40,40,40,50],'Paper is a good backup but not the whole system.') ]},
+    { name:'A missed check-in', situation:['Two field teams have missed their scheduled radio check-in by 40 minutes.'], intel:'Resource accountability is a core ICS function.', hint:'Verify now.',
+      opts:[ O2('Verify their status with Operations at once, update resource tracking and alert the Safety Officer if contact cannot be made.','best',[94,92,92,95,90],'Fast verification may save a team in trouble.'),
+             O2('Assume they are busy.','unsafe',[25,30,30,20,40],'Missed check-ins can mean an emergency.'),
+             O2('Report them to the IC as casualties.','weak',[40,40,40,35,60],'Premature; verify first.'),
+             O2('Wait for the next scheduled check-in.','weak',[40,40,40,35,30],'Too passive.') ]},
+    { name:'A second storm', situation:['While response continues, PAGASA tracks a second tropical cyclone that may affect Leyte in 4 days.'], intel:'Planning looks ahead: PDRA for the new threat and contingency for the IAP.', hint:'Plan for the next period and the next hazard.',
+      opts:[ O2('Brief the IC, start a PDRA for the new threat, prepare an alternate IAP and check whether RA 12287 options apply within its window.','best',[94,92,92,95,90],'Proactive planning for compounding hazards.'),
+             O2('Deal with it when it arrives.','unsafe',[25,30,30,20,30],'Reactive planning loses the lead time.'),
+             O2('Recommend full demobilization now.','weak',[40,40,40,35,50],'Current needs still exist.'),
+             O2('Tell the media first.','weak',[40,35,45,35,60],'Public information follows the plan, through the PIO.') ]}
+  ],
+  lsc: [
+    { name:'Relief shortage', situation:['Two ECs report food packs will run out tonight.'], intel:'CSWDO and the DSWD-led FNI cluster supply relief; requests go through the EOC.', hint:'Supply chain through the cluster.',
+      opts:[ O2('Activate the Supply Unit, request family food packs through the EOC from CSWDO and the FNI cluster, and set distribution points with tracking.','best',[94,95,90,94,88],'Uses the established supply chain with accountability.'),
+             O2('Buy from the nearest stores with cash.','weak',[40,40,40,35,65],'Purchases must follow procurement rules and coordination.'),
+             O2('Wait for national relief.','weak',[40,40,40,35,30],'Local stocks and the cluster move first.'),
+             O2('Ask evacuees to share what they brought.','unsafe',[25,25,30,25,55],'The government must provide for evacuees.') ]},
+    { name:'Communications down', situation:['Cell sites are down across the city; field teams are out of contact.'], intel:'ICS 205 radio plan; backup HF, ham and satellite links; the ETC cluster can support.', hint:'Redundancy.',
+      opts:[ O2('Deploy portable repeaters, activate HF and amateur radio volunteers and the satellite phone, and update the ICS 205 communications plan.','best',[94,92,95,94,90],'Restores links through planned redundancy.'),
+             O2('Wait for telcos to restore service.','unsafe',[25,30,25,25,25],'Responders cannot work blind for hours.'),
+             O2('Use motorcycle messengers only.','weak',[45,40,45,40,55],'Useful backup, not the main system.'),
+             O2('Pull teams back from areas without signal.','weak',[40,40,40,35,50],'Restore communications instead.') ]},
+    { name:'Flooded staging area', situation:['The staging area at the city yard is flooding; vehicles and supplies are at risk.'], intel:'Staging can move independently of the ICP.', hint:'Move staging, keep operating.',
+      opts:[ O2('Open an alternate staging area on higher ground, relocate in phases and inform Operations and the EOC of the new location.','best',[92,92,92,94,88],'Keeps resources available without stopping operations.'),
+             O2('Send responders home until water recedes.','unsafe',[25,30,30,25,30],'Stops operations at the worst time.'),
+             O2('Have crews work from their vehicles.','weak',[40,40,40,40,55],'Temporary only.'),
+             O2('Move the whole ICP.','weak',[40,40,40,35,50],'Only staging needs to move.') ]}
+  ],
+  fsc: [
+    { name:'Emergency purchase', situation:['Operations needs 2,000 litres of fuel and generator parts today; normal bidding takes weeks.'], intel:'RA 12009 (which replaced RA 9184) keeps negotiated procurement for emergency cases; the HoPE confirms the grounds in writing.', hint:'Fast, legal, documented.',
+      opts:[ O2('Use negotiated procurement for emergency cases under RA 12009 and its rules, with written justification from the HoPE and a full audit trail.','best',[94,90,90,95,90],'Lawful speed with documentation that will pass audit.'),
+             O2('Run normal public bidding.','weak',[40,40,40,35,20],'Too slow for an emergency need.'),
+             O2('Pay from personal funds and claim later.','unsafe',[25,30,30,20,60],'Improper and unaccountable.'),
+             O2('Buy now and document later.','weak',[40,40,40,35,60],'Documentation must be done at the time.') ]},
+    { name:'Fund source for AA', situation:['A State of Imminent Disaster is declared 4 days before landfall. Operations wants to spend the whole AA allocation today.'], intel:'RA 12287 IRR: beyond 3 days lead time, disbursement is capped at 30% of the AA allocation; within 3 days, up to 70%. AA comes from no more than 10% of the 70% LDRRMF; not the QRF.', hint:'Which fund, and how much now?',
+      opts:[ O2('Charge AA to the AA line (no more than 10% of the 70% LDRRMF), release no more than 30% now, plan the rest for within 3 days, and track costs for the 45-day OCD report.','best',[92,90,92,95,90],'Follows the IRR funding and tranche rules and prepares the report.'),
+             O2('Release the full allocation today.','weak',[40,40,40,30,70],'Exceeds the 30% cap for actions beyond 3 days.'),
+             O2('Use the Quick Response Fund.','weak',[40,40,40,30,60],'The QRF is not the AA source.'),
+             O2('Spend nothing until landfall.','unsafe',[30,30,35,25,20],'Defeats the purpose of anticipatory action.') ]},
+    { name:'Cost sharing', situation:['Partner agencies and a neighbouring LGU are using equipment and fuel at the incident.'], intel:'Clear agreements and records avoid disputes later.', hint:'Agree and record.',
+      opts:[ O2('Set cost-share agreements now, keep equipment-use and fuel logs, and prepare claims and reimbursements.','best',[92,94,90,92,88],'Transparent records for all parties.'),
+             O2('Assume partners absorb their own costs.','weak',[40,40,40,40,60],'Unstated assumptions cause disputes.'),
+             O2('Bill everyone after the incident.','weak',[40,40,40,40,55],'Without records the bills cannot be supported.'),
+             O2('Track only City resources.','weak',[40,35,40,35,60],'Incomplete cost records.') ]}
+  ]
+};
+
+/* Build a drill pseudo-scenario for a role */
+function buildDrill(roleId){
+  const r = ROLES.find(x => x.id === roleId), set = DRILLS[roleId];
+  return { id:'drill-'+roleId, drill:true, name:'Position drill · '+r.abbr, type:'Position-specific drill', icon:'🎯', fx:null, lead:r.name,
+    blurb:`Three quick decisions that test the ${r.name}'s job under Philippine ICS doctrine, set in Ormoc.`,
+    context:'Short drills adapted from typhoon, flood and landslide operations. They focus on one position\'s decisions, not the whole incident.',
+    res:{ rescue:8, ems:10, pnp:20, radio:12 }, map:['proper','coast_w','upland'],
+    phases: set.map((d,i) => ({ stage:[0,2,3][i], name:d.name, clock:`Drill ${i+1} of ${set.length}`, eoc: i===2?'blue':'red',
+      warn:{c:'warn-b',t:'Position drill · '+r.abbr}, stats:null, sl:null, situation:d.situation, intel:d.intel, hint:d.hint,
+      forms:['213','214'], discuss:'What would you do differently in your own office?', opts:d.opts })) };
+}
+
+/* Learning module — corrected and localized from the attached ICS learning page */
+const LEARN = [
+  { id:'ics', t:'ICS in the Philippines', h:`
+    <p>${'ICS is the standard, on-scene, all-hazards incident management system adopted under NDRRMC MC No. 4, s. 2012 and reiterated in NDRRMC Memo No. 131, s. 2018. The IRR of RA 10121 (Rule 7) tasks the OCD to establish ICS as part of the country\'s on-scene response system.'}</p>
+    <div class="lgrid">
+      <div class="pillar"><b>Responsible Official (RO)</b><p>The City Mayor as Local Chief Executive and CDRRMC Chair. Sets policy, priorities and limits; delegates authority to the IC; approves termination on the IC's recommendation.</p></div>
+      <div class="pillar"><b>Incident Commander (IC)</b><p>Responsible for all incident activities: objectives, strategies, tactics, and requesting and releasing resources. Head of the IMT.</p></div>
+      <div class="pillar"><b>Command Staff</b><p>Public Information Officer, Safety Officer, Liaison Officer.</p></div>
+      <div class="pillar"><b>General Staff</b><p>Operations, Planning, Logistics, Finance/Administration Section Chiefs.</p></div>
+    </div>
+    <p><b>Core principles:</b> common terminology, modular organization, management by objectives, an Incident Action Plan for each operational period, manageable span of control (3–7), unity of command, unified command where jurisdictions overlap, accountability (check-in, ICS 211), and integrated communications (ICS 205).</p>
+    <p class="note">Correction from the attached page: the Local Chief Executive is the <b>Responsible Official</b>, not the default Incident Commander. The RO designates a qualified IC.</p>` },
+  { id:'lead', t:'Who leads where (RA 10121, Sec. 15)', h:`
+    <table class="aar"><thead><tr><th>Area affected</th><th>Council that leads</th><th>Responsible Official</th></tr></thead><tbody>
+      <tr><td>One barangay</td><td>BDRRMC</td><td>Punong Barangay</td></tr>
+      <tr><td>Two or more barangays</td><td>City DRRMC (Ormoc CDRRMC)</td><td>City Mayor</td></tr>
+      <tr><td>Two or more cities/municipalities</td><td>Provincial DRRMC</td><td>Governor</td></tr>
+      <tr><td>Two or more provinces</td><td>RDRRMC 8</td><td>RDRRMC Chair</td></tr>
+      <tr><td>Two or more regions</td><td>NDRRMC</td><td>NDRRMC Chair</td></tr></tbody></table>
+    <p>Higher councils support the LGU, which remains the first responder. Requests for augmentation go from the City EOC to RDRRMC 8 / OCD Region VIII; national IMTs (NIMT) can be mobilized under NDRRMC Memo No. 44, s. 2016.</p>` },
+  { id:'eoc', t:'The EOC (NDRRMC Memo No. 131, s. 2018)', h:`
+    <div class="lgrid">
+      <div class="pillar"><b>Activate or raise alert when</b><p>1 a natural or human-induced hazard threatens · 2 a planned event carries a threat · 3 an incident is ongoing · 4 a request for support needs multi-stakeholder coordination · 5 the RO directs.</p></div>
+      <div class="pillar"><b>Deactivate or downgrade when</b><p>1 the situation has improved · 2 tactical operations no longer need EOC support · 3 lower-level EOCs or agencies can manage · 4 the RO directs.</p></div>
+      <div class="pillar"><b>Five functions</b><p>Management · Operations (multi-stakeholder coordination) · Planning (information, SitReps, action planning) · Logistics (EOC facilities and support) · Finance/Admin.</p></div>
+      <div class="pillar"><b>Rules that matter on the day</b><p>The EOC links the clusters (resource providers) and the IMT (resource employer). All IMT resource requests go to the EOC. <b>The EOC and ICP shall not be co-located.</b> The IC recommends termination; the RO approves.</p></div>
+    </div>
+    <div class="flow" style="margin-top:12px"><span class="node">Response clusters<br><small>resource providers</small></span><span class="arr">⇄</span><span class="node" style="border-style:dashed">City EOC</span><span class="arr">⇄</span><span class="node">IMT at the ICP<br><small>resource employer</small></span><span class="arr" style="color:var(--blue)">↑</span><span class="node">RO priorities</span></div>
+    <p style="margin-top:10px"><b>Alert levels in Eastern Visayas</b> (RDRRMC 8 Res. No. 12-006; RDRRMOC SOPG): <span class="chip lvl white">White</span> normal monitoring · <span class="chip lvl blue">Blue</span> heightened, at least 50% of resources on standby · <span class="chip lvl red">Red</span> full alert, all resources available. For slow-onset hazards the regional center also uses EPR protocols: Standby (green), ALPHA (yellow), BRAVO (orange), CHARLIE (red).</p>
+    <p class="note">The Ten-Year Plan reports that Ormoc has a 24/7 EOC but that its operations still need a manual or SOP, and staff need ICS, EOC management and MDM training — the gap the MOO addresses.</p>` },
+  { id:'report', t:'Reporting (RDRRMC 8 harmonized template)', h:`
+    <p>Adopted by RDRRMC 8 Res. No. 12-006, s. 2023 and directed to all LDRRMCs, including the City LGOO of Ormoc, by DILG VIII on 26 Feb 2025. The template starts when the LGU raises a Blue alert or starts an emergency response.</p>
+    <table class="aar"><thead><tr><th>Phase</th><th>Forms</th><th>Prepared by</th></tr></thead><tbody>
+      <tr><td>Pre-disaster</td><td>A Pre-emptive Data · B Evacuation Center Facilities · C Inventory of Resources</td><td>CDRRMO, CSWDO</td></tr>
+      <tr><td>During</td><td>D No. of Affected · E Displacement · F Agricultural Sectors · G Telecommunications · H Lifeline Structures</td><td>CSWDO, City Agriculture, CDRRMO, DPWH</td></tr>
+      <tr><td>Post / terminal</td><td>I Injured · J Dead and Missing · K Damaged Houses and Relief · L Total Served Population</td><td>CHO, City DILG, CDRRMO, CSWDO</td></tr></tbody></table>
+    <p><b>When:</b> White alert — by 06:00 and 18:00; Blue and Red — by 09:00 and 19:00 (LGU level). The regional center expects an <b>initial report within 2 hours</b> of an incident (RDRRMOC SOPG).</p>
+    <p><b>Categories that protect families:</b> Dead (confirmed — identified by PNP or processed by DVI) vs Dead (for verification and validation); Missing (confirmed — with PNP report) vs Missing (for verification) vs Missing and found alive.</p>` },
+  { id:'aa', t:'Anticipatory action (RA 12287 and IRR)', h:`
+    <ol class="steps"><li>PDRA by the RDRRMC/LDRRMC shows "severe" projected impact for a forecastable hazard (severe winds, storm surge, floods, rain-induced landslides, lahar; drought).</li>
+      <li>The CDRRMC coordinates with RDRRMC 8, which answers a local request <b>within 24 hours</b>. Nationally the NDRRMC recommends no later than 3 days before impact.</li>
+      <li>The City Mayor declares the State of Imminent Disaster by <b>Executive Order</b> on RDRRMC recommendation.</li>
+      <li>AA measures start at once: advisories, pre-positioning, pre-emptive evacuation and CCCM, ACDV and private-sector mobilization, FNI distribution, social amelioration (CBMS targeting), agri-fishery contingency, public health, education, transport, economy and environment measures.</li>
+      <li>Lifted by the Mayor on RDRRMC recommendation when the hazard occurs (shift to response) or the forecast impact does not materialize. "No regrets": provisions still go to the intended beneficiaries.</li>
+      <li>Report to OCD <b>within 45 days of lifting</b>: status of declarations, use of AA funds, economic and social costs minimized.</li></ol>
+    <p><b>Money:</b> no more than 10% of the 70% LDRRMF, plus the Special Trust Fund, donor funds, ODA and other lawful sources — not the QRF. Disbursement: at most 30% of the AA allocation for actions beyond 3 days lead time; up to 70% within 3 days.</p>
+    <p class="note">Corrections from the attached pages: the IRR sets no fixed 30-day duration (the declaration runs to impact or non-occurrence); RA 12287 is the Declaration of State of Imminent Disaster Act, not a "DRRM enhancement" law; it does not open the QRF. Short-lead hazards such as Anilao–Malbasag flash floods still allow early action at the City's discretion (IRR Rule IV, Sec. 1). NDRRMC operational guidelines on triggers and DBM–COA funding guidelines are still pending.</p>` },
+  { id:'ormoc', t:'Ormoc risk profile', h:`
+    <div class="lgrid">
+      <div class="pillar"><b>People</b><p>About 241,692 residents and 56,208 households (2023 estimate, Ten-Year Plan); 85 barangays; 46,430 ha (CLUP).</p></div>
+      <div class="pillar"><b>Flood</b><p>46 barangays with critical flood risk, 59,545 people (Ten-Year Plan, from GeoRiskPH). 35 barangays flood every 1–3 years. Highest exposure: Punta, Liloan, Tambulilid (CDRA).</p></div>
+      <div class="pillar"><b>Storm surge</b><p>17.65% of the city's area susceptible. High risk: Naungan, Linao, Punta, Alegria, Batuan, Macabug (CDRA).</p></div>
+      <div class="pillar"><b>Landslide</b><p>Most exposed: Patag, Don Carlos B. Rivilla Sr., Sumangga, Ipil, Hibunawon. High-risk lifelines: PNOC roads, Margen Road 3, Lake Danao Circumferential Road (CDRA).</p></div>
+    </div>
+    <table class="aar" style="margin-top:12px"><thead><tr><th>Event</th><th>Impact in Ormoc (CDRA)</th></tr></thead><tbody>
+      <tr><td>Nov 1991 — Uring (Thelma) flash flood</td><td>Anilao and Malbasag floodwaters through the city proper; the city's defining disaster.</td></tr>
+      <tr><td>Nov 2013 — event recorded in the CDRA (citing NDRRMC)</td><td>30,546 houses destroyed; PHP 2.07 billion damage.</td></tr>
+      <tr><td>Jul 2017 — M6.5 earthquake</td><td>10,167 families affected.</td></tr>
+      <tr><td>Dec 2019 — Ursula</td><td>6,575 affected; PHP 11.1 million damage.</td></tr>
+      <tr><td>Apr 2022 — Agaton</td><td>38 barangays; 19,262 families; 5,180 houses partially damaged.</td></tr>
+      <tr><td>Dec 2021 — Odette; Oct 2022 — Paeng</td><td>Odette affected 40 barangays; Paeng caused PHP 13.4 million damage.</td></tr></tbody></table>
+    <p>Live hazard maps: <a href="https://hazardhunter.georisk.gov.ph/map" target="_blank" rel="noopener noreferrer">HazardHunterPH</a> (city level) and <a href="https://geoanalytics.georisk.gov.ph/" target="_blank" rel="noopener noreferrer">GeoAnalyticsPH</a> (barangay level).</p>` },
+  { id:'train', t:'Training and EOC readiness', h:`
+    <p><b>ICS courses</b> referenced in the Gawad KALASAG assessment: ICS Executive Course, Basic ICS, Integrated Planning on ICS, and position courses; plus EOC management, RDANA and MDM. The Ten-Year Plan targets all levels of ICS training for City and barangay DRRMCs.</p>
+    <p><b>EOC readiness checklist</b> (EOC Capability Assessment Checklist, 2017): staffing for at least 72 hours with a three-deep roster per position; an EOC operations manual; activation and deactivation conditions defined; generator tested at full load and fuel contracts; resource inventories kept current; a PSCP; an alternate EOC sited on the same criteria; location outside flood, landslide and hazmat zones; regular exercises with after-action reviews.</p>
+    <p><b>Exercise cycle for Ormoc:</b> use this simulator for drills and tabletop exercises; record AAR findings as evidence for the "tested and improved" level in the Institutional Assessment Tool, and feed them into the MOO and the contingency plans.</p>
+    <p class="note">The attached page proposed native iOS/macOS development; this web build runs on any device instead, including the EOC wall display.</p>` }
+];
+
+const QUIZ = [
+  { q:'Who designates the Incident Commander for a City-level incident in Ormoc?', o:['The City Mayor as Responsible Official','The OCD Regional Director','The most senior BFP officer present','The CDRRMO Head automatically'], a:0, w:'The LCE is the RO and delegates authority to a qualified IC (NDRRMC MC No. 4, s. 2012).' },
+  { q:'The IC proposes running the ICP from inside the City EOC. What does Memo No. 131 say?', o:['Allowed if space permits','The EOC and ICP shall not be co-located','Required during Red alert','Only with RDRRMC approval'], a:1, w:'Item 9.2.5.3 of NDRRMC Memo No. 131, s. 2018.' },
+  { q:'Under Blue or Red alert, when are Ormoc\'s harmonized reports due (LGU level)?', o:['06:00 and 18:00','08:00 and 17:00','09:00 and 19:00','Every 3 hours'], a:2, w:'RDRRMC 8 Res. No. 12-006 frequency table.' },
+  { q:'Which fund pays for anticipatory action under RA 12287?', o:['The Quick Response Fund','No more than 10% of the 70% LDRRMF, plus other lawful sources','The full 70% LDRRMF','Only national funds'], a:1, w:'RA 12287 IRR, Rule V.' },
+  { q:'A flash flood gives three hours of warning. What can the City do?', o:['Nothing until RDRRMC 8 recommends a declaration','Act early at its own discretion under its contingency plan','Ask the President to declare','Declare a state of calamity first'], a:1, w:'IRR Rule IV, Sec. 1 allows anticipatory action at the LGU\'s discretion.' },
+  { q:'A Blue alert means…', o:['Normal monitoring','At least 50% of resources on standby','All resources deployed','The incident is over'], a:1, w:'RDRRMC 8 definition of Blue (heightened) alert.' },
+  { q:'Which body declares a state of calamity for the City?', o:['The Mayor by EO','The Sangguniang Panlungsod on CDRRMC recommendation','RDRRMC 8','The OCD'], a:1, w:'RA 10121, Sec. 16.' },
+  { q:'Within how many days after lifting a State of Imminent Disaster is the report to OCD due?', o:['7','30','45','90'], a:2, w:'RA 12287 IRR, Rule VI, Sec. 1.' }
+];
+</script>
+<script>
+'use strict';
+/* =====================================================================
    APP
    ===================================================================== */
 const $ = (s, r=document) => r.querySelector(s);
@@ -1069,7 +1513,11 @@ const DOCTRINE_PATTERNS = [
   [/MC No\. 19|MDM|dead and missing/i,'NDRRMC MC No. 19, s. 2016 (MDM)'], [/AO No\. 155|\bMCI\b|\bSTART\b|[Tt]riage/,'DOH AO No. 155, s. 2004 (MCI)'],
   [/RDANA/,'NDRRMC RDANA guidelines (2014)'], [/PDRA/,'NDRRMC Memo No. 17, s. 2014 (PDRA)'], [/check-in|ICS 211|offers|augmentation/i,'NDRRMC Memo Nos. 43 & 44, s. 2016 (IMT)'],
   [/PAGASA|Signal|rainfall/i,'PAGASA warning system'], [/PHIVOLCS|PEIS|tsunami/i,'PHIVOLCS bulletins / PEIS'], [/RA 12076|evacuation center|ECs/i,'RA 12076 (Ligtas Pinoy Centers)'],
-  [/MARINA|PCG/,'PCG maritime SAR mandate'], [/EMB/,'DENR-EMB (air & water quality)'], [/leptospirosis/i,'DOH leptospirosis protocol']
+  [/MARINA|PCG/,'PCG maritime SAR mandate'], [/EMB/,'DENR-EMB (air & water quality)'], [/leptospirosis/i,'DOH leptospirosis protocol'],
+  [/Memo No\. 131|co-located|resource request|through the EOC|clusters? (?:and|to)|terminat/i,'NDRRMC Memo No. 131, s. 2018 (EOC)'],
+  [/2 hours|09:00|harmonized|Forms? [A-L]\b|SitRep|Dead \(confirmed|verification/i,'RDRRMC 8 Res. No. 12-006 (harmonized reporting)'],
+  [/RA 12009|procurement/i,'RA 12009 (New Government Procurement Act)'], [/geohazard|MGB|runout|scarp/i,'MGB geohazard assessment'],
+  [/CLUP|zoning/i,'Ormoc CLUP and Zoning Ordinance'], [/Unified Command/,'NDRRMC MC No. 4, s. 2012 (Unified Command)']
 ];
 function doctrineFor(...texts){
   const t = texts.join(' '); const out = new Set(['NDRRMC MC No. 4, s. 2012 (ICS)']);
@@ -1127,14 +1575,14 @@ if (window.dataSdk) {
 /* ---------- state ---------- */
 const S = { mode:'single', name:'', org:'', facilitator:'', role:null, scen:null, diff:'intermediate',
   phase:0, picks:[], log:[], elapsed:0, dLeft:0, paused:false, locked:false, chosen:null, order:[], intel:false, hint:false, timer:null, unread:0, tab:'log' };
-const scenario = () => SCENARIOS.find(s => s.id === S.scen);
+const scenario = () => S.drillScen && S.drillScen.id === S.scen ? S.drillScen : SCENARIOS.find(s => s.id === S.scen);
 const diff = () => DIFFICULTY.find(d => d.id === S.diff);
 const roleOf = id => ROLES.find(r => r.id === id);
 const TTX_ROTATION = ['ic','osc','psc','lsc','pio','sofr','lofr','fsc','eoc','ro'];
 function spotlight(){ if (S.mode !== 'multi') return roleOf(S.role); const i = TTX_ROTATION.indexOf(S.role); return roleOf(TTX_ROTATION[(i + S.phase) % TTX_ROTATION.length]); }
 
 /* ---------- screens ---------- */
-const SCREENS = ['main-menu','setup-screen','briefing-screen','game-screen','results-screen'];
+const SCREENS = ['main-menu','setup-screen','briefing-screen','game-screen','results-screen','learn-screen'];
 function showScreen(id){
   hideTip();
   SCREENS.forEach(s => $('#'+s).classList.add('hidden'));
@@ -1180,14 +1628,16 @@ function renderDifficulties(){
   $$('#difficulty-grid .pick').forEach(b => b.onclick = () => { S.diff = b.dataset.diff; $$('#difficulty-grid .pick').forEach(x => x.setAttribute('aria-pressed', x===b)); });
 }
 function validateSetup(){
-  const ok = $('#player-name').value.trim() && S.role && S.scen;
+  const ok = $('#player-name').value.trim() && S.role && (S.scen || S.mode==='drill');
   $('#btn-start-game').disabled = !ok;
-  const miss = [!$('#player-name').value.trim() && (S.mode==='multi'?'team name':'your name'), !S.role && (S.mode==='multi'?'a starting spotlight position':'a position'), !S.scen && 'a scenario'].filter(Boolean);
+  const miss = [!$('#player-name').value.trim() && (S.mode==='multi'?'team name':'your name'), !S.role && (S.mode==='multi'?'a starting spotlight position':'a position'), !S.scen && S.mode!=='drill' && 'a scenario'].filter(Boolean);
   $('#setup-hint').textContent = ok ? 'Ready. You will receive an ICS 201 briefing first.' : 'Still needed: ' + miss.join(', ') + '.';
 }
 function openSetup(mode){
   S.mode = mode;
-  $('#mode-chip').textContent = mode==='multi' ? 'Facilitated tabletop (TTX)' : 'Individual drill';
+  if (mode !== 'drill' && String(S.scen||'').startsWith('drill-')) { S.scen = null; renderScenarios(); }
+  $('#mode-chip').textContent = mode==='multi' ? 'Facilitated tabletop (TTX)' : mode==='drill' ? 'Position drill' : 'Individual drill';
+  $('#scen-block').classList.toggle('hidden', mode==='drill'); $('#diff-n').textContent = mode==='drill' ? '3' : '4';
   $('#name-label').textContent = mode==='multi' ? 'Team name *' : 'Your name *';
   $('#player-name').placeholder = mode==='multi' ? 'e.g., EOC Shift A' : 'e.g., Juan Dela Cruz';
   $('#ttx-fields').classList.toggle('hidden', mode!=='multi');
@@ -1197,6 +1647,7 @@ function openSetup(mode){
 
 /* ---------- briefing (ICS 201) ---------- */
 function renderBriefing(){
+  if (S.mode==='drill'){ S.drillScen = buildDrill(S.role); S.scen = S.drillScen.id; }
   const sc = scenario(), r = roleOf(S.role), d = diff();
   S.name = $('#player-name').value.trim(); S.org = $('#player-org').value; S.facilitator = ($('#facilitator').value||'').trim();
   const seen = new Set();
@@ -1253,11 +1704,11 @@ function loadPhase(){
   const lv = $('#eoc-level'); const prev = lv.dataset.lvl;
   lv.className = 'chip lvl ' + ph.eoc; lv.dataset.lvl = ph.eoc;
   $('#eoc-level-t').textContent = 'EOC: ' + ph.eoc[0].toUpperCase() + ph.eoc.slice(1);
-  lv.setAttribute('data-tip', {white:'<b>White — normal operations</b>. Routine monitoring by the Operations Center.',blue:'<b>Blue — alert</b>. Partial activation: key offices and clusters on standby; EOC staffed.',red:'<b>Red — full activation</b>. All CDRRMC member offices and clusters report to the EOC; 24/7 operations.'}[ph.eoc]);
+  lv.setAttribute('data-tip', ALERT_INFO[ph.eoc]);
   if (prev && prev !== ph.eoc) { lv.classList.add('flash'); addLog('alert','EOC',`Alert level changed to ${ph.eoc.toUpperCase()}.`); }
   const hw = $('#hazard-warn'); hw.className = 'chip ' + ph.warn.c; hw.textContent = ph.warn.t; hw.setAttribute('data-tip','Current official warning (exercise). Always act on the latest PAGASA / PHIVOLCS / PCG bulletin.');
   $('#sim-clock').textContent = ph.clock;
-  renderPhaseTrack(); renderInject(); renderOptions(); renderOrg(); renderRes(); renderForms(); updateTimerUI();
+  renderPhaseTrack(); renderInject(); renderOptions(); renderOrg(); renderRes(); renderForms(); renderMap(); updateTimerUI();
   $('#feedback-slot').innerHTML = '';
   $('#btn-hint').classList.toggle('hidden', !d.hint);
   $('#btn-hint').disabled = false; $('#btn-request-info').disabled = false; $('#btn-submit-decision').disabled = true;
@@ -1270,7 +1721,7 @@ function loadPhase(){
 
 function opTransition(ph, done){
   const o = document.createElement('div'); o.className = 'optrans'; o.setAttribute('role','status');
-  o.innerHTML = `<div class="inner"><p class="kicker">Operational period ${S.phase+1} of ${scenario().phases.length}</p><div class="big">${esc(ph.name)}</div><div class="line"></div><p class="cond" style="font-size:18px;letter-spacing:.08em">${esc(ph.clock)}</p><p style="margin-top:10px"><span class="chip ${ph.warn.c}">${esc(ph.warn.t)}</span></p><p class="dim" style="font-size:12px;margin-top:18px">Click or press any key to skip</p></div>`;
+  o.innerHTML = `<div class="inner"><p class="kicker">${scenario().drill?'Position drill':'Operational period'} ${S.phase+1} of ${scenario().phases.length}</p><div class="big">${esc(ph.name)}</div><div class="line"></div><p class="cond" style="font-size:18px;letter-spacing:.08em">${esc(ph.clock)}</p><p style="margin-top:10px"><span class="chip ${ph.warn.c}">${esc(ph.warn.t)}</span></p><p class="dim" style="font-size:12px;margin-top:18px">Click or press any key to skip</p></div>`;
   document.body.appendChild(o);
   let gone = false; const end = () => { if(gone) return; gone = true; o.style.transition='opacity .3s'; o.style.opacity='0'; setTimeout(()=>{o.remove(); done();},280); document.removeEventListener('keydown', end, true); };
   o.onclick = end; document.addEventListener('keydown', end, true); setTimeout(end, reduceMotion ? 300 : 2100);
@@ -1289,7 +1740,7 @@ function renderInject(){
     <span class="kicker">${esc(ph.clock)} · ${esc(STAGES[ph.stage])}</span>
     <h3>${esc(ph.name)}</h3>
     <div class="sit reveal">${ph.situation.map((p,i)=>`<p style="animation-delay:${.1+i*.25}s">${gloss(p, seen)}</p>`).join('')}</div>
-    <div class="metrics-mini">${ph.sl.map((l,i)=>`<div class="mm" data-tip="${esc(l)} (exercise figure)"><b>${esc(Object.values(ph.stats)[i])}</b><span>${esc(l)}</span></div>`).join('')}</div>
+    ${ph.stats ? `<div class="metrics-mini">${ph.sl.map((l,i)=>`<div class="mm" data-tip="${esc(l)} (exercise figure)"><b>${esc(Object.values(ph.stats)[i])}</b><span>${esc(l)}</span></div>`).join('')}</div>` : ''}
     <div class="roletask" style="animation:rv .5s .5s both"><div class="role-ico" style="background:${r.color};width:36px;height:36px;font-size:12px">${r.abbr}</div>
       <div><b class="cond" style="color:var(--orange2);letter-spacing:.04em;text-transform:uppercase;font-size:12.5px">${S.mode==='multi'?'Spotlight':'Your task'} · ${esc(r.name)}</b><p style="font-size:14px;margin-top:2px">${gloss(task, seen)}</p>
       ${S.mode==='multi'?`<p style="font-size:14px;margin-top:8px"><b class="cond" style="color:var(--blue)">FACILITATOR PROMPT:</b> ${gloss(ph.discuss, seen)}</p>`:''}</div></div>`;
@@ -1411,7 +1862,7 @@ function addLog(type, from, text){
 }
 function setTab(t){
   S.tab = t; $$('.tabs [data-tab]').forEach(b => b.setAttribute('aria-selected', b.dataset.tab===t));
-  ['log','org','res','forms'].forEach(k => $('#panel-'+k).classList.toggle('hidden', k!==t));
+  ['log','map','org','res','forms'].forEach(k => $('#panel-'+k).classList.toggle('hidden', k!==t));
   if (t==='log'){ S.unread=0; $('#log-badge').classList.add('hidden'); }
 }
 function renderOrg(){
@@ -1443,7 +1894,38 @@ function renderForms(){
   $('#panel-forms').innerHTML = all.map(({f,first}) => {
     const st = first < S.phase ? 'done' : first === S.phase ? 'due' : '';
     return `<div class="form ${st}" data-tip="<b>ICS ${f}</b> — ${esc(FORMS[f])}. ${st==='due'?'Due this operational period.':st==='done'?'Completed.':'Later.'}"><span class="ck">${st==='done'?'✓':''}</span><span><b>ICS ${f}</b> · ${esc(FORMS[f])}</span>${st==='due'?'<span class="chip warn-o" style="margin-left:auto;font-size:10.5px">Due</span>':''}</div>`;
-  }).join('');
+  }).join('') + renderHarmonized();
+}
+
+function renderHarmonized(){
+  const ph = scenario().phases[S.phase], rep = STAGE_REPORT[ph.stage], times = ph.eoc==='white' ? '06:00 and 18:00' : '09:00 and 19:00';
+  return `<p class="kicker" style="margin-top:12px" data-tip="RDRRMC 8 Res. No. 12-006, s. 2023, adopted for all LDRRMCs by DILG VIII memo of 26 Feb 2025">RDRRMC 8 harmonized report</p>
+    <div class="form due" data-tip="Under ${ph.eoc.toUpperCase()} alert, LGU reports are due by ${times}. The RDRRMOC expects an initial report within 2 hours of an incident."><span class="ck">⏱</span><span><b>${esc(rep.r)}</b> · due ${times}</span></div>` +
+    rep.f.map(k => `<div class="form" data-tip="<b>Form ${k}</b> — ${esc(HFORMS[k][0])}. Prepared by ${esc(HFORMS[k][1])}; consolidated by the CDRRMC and submitted by the CDRRM Officer."><span class="ck">${k}</span><span>${esc(HFORMS[k][0])} <span class="dim">· ${esc(HFORMS[k][1])}</span></span></div>`).join('');
+}
+function renderMap(){
+  const sc = scenario(), hot = sc.map || SCEN_MAP[sc.id] || [], ph = sc.phases[S.phase];
+  const col = ph.eoc==='red' ? '#ef4444' : ph.eoc==='blue' ? '#3b82f6' : '#e8eef3';
+  const z = MAP_ZONES;
+  $('#panel-map').innerHTML = `<svg viewBox="0 0 600 380" role="img" aria-label="Schematic situation map of Ormoc City, not to scale">
+    <defs><linearGradient id="land" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1d4a3a"/><stop offset="1" stop-color="#16384f"/></linearGradient></defs>
+    <rect width="600" height="380" fill="url(#land)"/>
+    <path d="M0 300 Q120 255 210 285 Q300 315 390 285 Q480 255 600 300 V380 H0Z" fill="#0b3a5c"/>
+    <path d="M250 40 Q262 140 278 255" stroke="#5fb8f0" stroke-width="3" fill="none" opacity=".8"/>
+    <path d="M360 40 Q340 140 322 255" stroke="#5fb8f0" stroke-width="3" fill="none" opacity=".8"/>
+    <rect x="262" y="210" width="76" height="46" rx="8" fill="rgba(255,255,255,.12)" stroke="rgba(255,255,255,.35)"/>
+    ${Object.entries(z).map(([k,v]) => { const on = hot.includes(k); return `<g data-tip="<b>${esc(v.l)}</b>${v.b?'<br>'+esc(v.b):''}${on?'<br><b>Affected in this scenario</b>':''}" tabindex="0">
+      ${on?`<circle class="hz" cx="${v.x}" cy="${v.y}" r="30" fill="${col}" fill-opacity=".28" stroke="${col}" stroke-width="2"/>`:''}
+      <circle cx="${v.x}" cy="${v.y}" r="${on?9:6}" fill="${on?col:'#cfe0ec'}"/>
+      <text x="${v.x}" y="${v.y-16}" fill="#fff" font-size="${on?22:18}" font-weight="${on?700:400}" font-family="Roboto Condensed, Arial Narrow, sans-serif" text-anchor="middle" stroke="#071827" stroke-width="4" paint-order="stroke">${esc(v.l.replace(' barangays',''))}</text></g>`; }).join('')}
+    <g data-tip="<b>ICP</b> — on scene, at a safe site. NDRRMC Memo No. 131: not co-located with the EOC." tabindex="0"><rect x="${(z[hot[0]]||z.proper).x+34}" y="${(z[hot[0]]||z.proper).y-2}" width="46" height="22" rx="5" fill="#f7941d"/><text x="${(z[hot[0]]||z.proper).x+57}" y="${(z[hot[0]]||z.proper).y+14}" font-size="15" text-anchor="middle" font-weight="700" fill="#1c0d00">ICP</text></g>
+    <g data-tip="<b>City EOC</b> — coordination hub, sited away from hazard zones" tabindex="0"><rect x="488" y="12" width="100" height="28" rx="6" fill="#071827" stroke="#4fb3e8" stroke-dasharray="5 3"/><text x="538" y="31" font-size="16" text-anchor="middle" fill="#bfe6ff" font-weight="700">City EOC</text></g>
+    <text x="10" y="372" font-size="14" fill="rgba(255,255,255,.65)">Schematic, not to scale. Barangay groupings from the Ormoc CDRA.</text>
+  </svg>
+  <div class="row wrapf" style="margin-top:10px">
+    <a class="btn btn-ghost" href="https://hazardhunter.georisk.gov.ph/map" target="_blank" rel="noopener noreferrer" data-tip="GeoRiskPH HazardHunterPH: city-level hazard assessment for any location">HazardHunterPH</a>
+    <a class="btn btn-ghost" href="https://geoanalytics.georisk.gov.ph/" target="_blank" rel="noopener noreferrer" data-tip="GeoRiskPH GeoAnalyticsPH: barangay-level exposure analytics">GeoAnalyticsPH</a>
+  </div>`;
 }
 
 /* ---------- end / AAR ---------- */
@@ -1475,13 +1957,17 @@ function renderResults(m, sc){
   const imp = [];
   S.picks.filter(p=>p.verdict!=='best').forEach(p => imp.push(`<b class="cond">OP ${p.phase+1}:</b> ${gloss(p.bestWhy)}`));
   const low = RUBRIC.filter(c => m[c.id] < 70);
-  const tips = { command:'Practise the delegation of authority and setting ICS 202 objectives in the first hour.', coordination:'Rehearse EOC–IC links and cluster activation with CSWDO, CHO, PNP, BFP and PCG.', communication:'Drill verified, plain-language advisories in Cebuano/Waray and English, and the RDRRMC 8 SitRep template.', decision:'Review RA 10121, RA 12287 and NDRRMC MC No. 4 decision points; apply "life safety first" to responders too.', time:'Agree trigger levels in advance (river gauges, PAGASA warnings, the 72-hour RA 12287 window) so decisions are pre-made.' };
+  const tips = { command:'Practise the delegation of authority and setting ICS 202 objectives in the first hour.', coordination:'Rehearse EOC–IC links and cluster activation with CSWDO, CHO, PNP, BFP and PCG.', communication:'Drill verified, plain-language advisories in Cebuano/Waray and English, and the RDRRMC 8 SitRep template.', decision:'Review RA 10121, RA 12287 and NDRRMC MC No. 4 decision points; apply "life safety first" to responders too.', time:'Agree trigger levels in advance (river gauges, PAGASA warnings, the 3-day RA 12287 window) so decisions are pre-made.' };
   low.forEach(c => imp.push(`<b class="cond">${esc(c.name)}:</b> ${esc(tips[c.id])}`));
   if (S.mode!=='multi') imp.push(`<b class="cond">As ${esc(r.name)}:</b> ${esc(r.duties.join(' · '))}.`);
   $('#recommendations-list').innerHTML = (imp.length?imp:['Excellent run. Try Expert difficulty or another position, or facilitate a TTX for your EOC shift.']).map(t=>`<div class="pillar" style="padding:12px;font-size:13.5px">${t}</div>`).join('');
   $('#aar-mop').innerHTML = `<h3 style="font-size:18px;margin-bottom:8px">For the Ormoc CDRRMO Manual of Operations</h3>
     <p class="muted" style="font-size:14px">Use weak or unsafe ratings as evidence of protocol gaps. Each one points to a procedure the MOO or EOC Manual should state clearly: triggers, who decides, which form, which channel. Record exercise results as evidence under the relevant IAT indicators (exercise and after-action evidence supports the "tested and improved" level).</p>
     <p class="disclaimer">Exercise tool. Scenario names, figures and events are fictional. Doctrine summaries are plain-language notes; the official text of each law and guideline governs, and the approved Ormoc MOO takes precedence for local procedures.</p>`;
+  const refMap = {};
+  S.picks.forEach(p => p.refs.forEach(r => { (refMap[r] = refMap[r] || []).push(p.verdict); }));
+  $('#compliance-list').innerHTML = Object.entries(refMap).map(([r,vs]) => { const ok = vs.every(v => v==='best'||v==='good');
+    return `<li><span style="color:${ok?'var(--ok)':'var(--crit)'};font-weight:800">${ok?'✓':'✗'}</span><span><b class="cond">${esc(r)}</b> <span class="dim">· ${vs.length} decision${vs.length>1?'s':''}</span></span></li>`; }).join('');
   if (m.total >= 85) confetti();
 }
 function exportRun(){
@@ -1494,12 +1980,12 @@ function exportRun(){
 /* ---------- leaderboard / help ---------- */
 let lbFilter = 'all';
 function showLeaderboard(){
-  $('#lb-filter').innerHTML = [['all','All'],...SCENARIOS.map(s=>[s.id,s.icon+' '+s.name.split(' ')[0]])].map(([id,l])=>`<button class="chip" style="cursor:pointer;${lbFilter===id?'border-color:var(--orange);color:var(--orange2)':''}" data-f="${id}">${esc(l)}</button>`).join('');
+  $('#lb-filter').innerHTML = [['all','All'],...SCENARIOS.map(s=>[s.id,s.icon+' '+s.name.split(' ')[0]]),['drill','🎯 Drills']].map(([id,l])=>`<button class="chip" style="cursor:pointer;${lbFilter===id?'border-color:var(--orange);color:var(--orange2)':''}" data-f="${id}">${esc(l)}</button>`).join('');
   $$('#lb-filter [data-f]').forEach(b => b.onclick = () => { lbFilter = b.dataset.f; showLeaderboard(); });
-  const rs = records().filter(r => lbFilter==='all' || r.scenario_id===lbFilter).sort((a,b)=>(b.score||0)-(a.score||0)).slice(0,20);
+  const rs = records().filter(r => lbFilter==='all' || r.scenario_id===lbFilter || (lbFilter==='drill' && String(r.scenario_id||'').startsWith('drill-'))).sort((a,b)=>(b.score||0)-(a.score||0)).slice(0,20);
   $('#leaderboard-content').innerHTML = rs.length ? rs.map((r,i)=>{ const sc = SCENARIOS.find(s=>s.id===r.scenario_id), ro = roleOf(r.role);
     return `<div class="lb-row" style="animation-delay:${i*.04}s"><div style="width:36px;text-align:center;font-size:${i<3?22:15}px;font-family:var(--font-h);font-weight:800">${['🥇','🥈','🥉'][i]||'#'+(i+1)}</div>
-      <div style="flex:1;min-width:0"><b>${esc(r.player_name||'Anonymous')}</b><div class="dim cond" style="font-size:12.5px">${r.mode==='multi'?'TTX team':esc(ro?.abbr||r.role||'—')} · ${esc(sc?.name||r.scenario_id||'Earlier version scenario')} · ${esc(r.difficulty||'')}</div></div>
+      <div style="flex:1;min-width:0"><b>${esc(r.player_name||'Anonymous')}</b><div class="dim cond" style="font-size:12.5px">${r.mode==='multi'?'TTX team':esc(ro?.abbr||r.role||'—')} · ${esc(sc?.name||(String(r.scenario_id||'').startsWith('drill-')?'Position drill':r.scenario_id)||'Earlier version scenario')} · ${esc(r.difficulty||'')}</div></div>
       <div style="text-align:right"><b class="accent" style="font-family:var(--font-h);font-size:22px">${r.score||0}%</b><div class="dim cond" style="font-size:12px">${r.completed_at?new Date(r.completed_at).toLocaleDateString('en-PH'):''}</div></div></div>`; }).join('')
     : `<div style="text-align:center;padding:40px 0"><div style="font-size:48px">🏆</div><p class="muted">No runs yet${lbFilter!=='all'?' for this scenario':''}. Complete an exercise to appear here.</p></div>`;
   openModal('leaderboard-modal');
@@ -1516,9 +2002,10 @@ const HELP = {
   basics: () => `<div class="grid" style="gap:12px;font-size:14.5px">
     <div class="pillar"><b>Responsible Official vs Incident Commander.</b> ${gloss('The City Mayor is the RO: sets policy, priorities and limits, and delegates authority. The IC manages the incident on scene from the ICP. The RO does not run tactics.')}</div>
     <div class="pillar"><b>EOC vs ICP.</b> ${gloss('The ICP commands the scene. The EOC coordinates: information, resources, clusters, reporting to RDRRMC 8. One incident can have one EOC supporting several ICPs.')}</div>
-    <div class="pillar"><b>EOC alert levels.</b> <span class="chip lvl white">White</span> normal · <span class="chip lvl blue">Blue</span> alert / partial activation · <span class="chip lvl red">Red</span> full activation.</div>
+    <div class="pillar"><b>EOC alert levels (RDRRMC 8).</b> <span class="chip lvl white">White</span> normal monitoring · <span class="chip lvl blue">Blue</span> at least 50% of resources on standby · <span class="chip lvl red">Red</span> all resources available. ${gloss('The EOC and the ICP are never in the same place (NDRRMC Memo No. 131, s. 2018).')}</div>
+    <div class="pillar"><b>Reporting.</b> ${gloss('Initial report within 2 hours; harmonized reports (RDRRMC 8 Res. 12-006) by 09:00 and 19:00 under Blue or Red alert, using Forms A–L.')}</div>
     <div class="pillar"><b>PAGASA warnings.</b> ${gloss('TCWS Nos. 1–5 (higher = stronger winds, shorter lead time).')} Heavy Rainfall Warning: <span class="chip warn-y">Yellow 7.5–15 mm/h</span> <span class="chip warn-o">Orange 15–30 mm/h</span> <span class="chip warn-r">Red &gt;30 mm/h</span></div>
-    <div class="pillar"><b>Acting before impact (RA 12287).</b> ${gloss('A State of Imminent Disaster needs a PDRA showing severe impact and at least 72 h lead time; RDRRMC 8 acts within 24 h; the Mayor declares by EO. AA is funded from up to 10% of the 70% LDRRMF, not the QRF. Report to OCD within 45 days of lifting. Flash floods and landslides usually give less than 72 h, so city-level early action applies.')}</div>
+    <div class="pillar"><b>Acting before impact (RA 12287).</b> ${gloss('A State of Imminent Disaster rests on a PDRA showing severe impact; the IRR works on a 3-day lead time; RDRRMC 8 answers a city request within 24 h; the Mayor declares and lifts by EO. AA is funded from no more than 10% of the 70% LDRRMF, not the QRF. Report to OCD within 45 days of lifting. Flash floods and landslides usually give less than 3 days, so city-level early action at the LGU\'s discretion applies.')}</div>
     <div class="pillar"><b>Clusters.</b> ${gloss('Response clusters (e.g., FNI, CCCM, Health/WASH, Law and Order, SRR, MDM, ETC, Education, Logistics) supply resources; under NDRRMC Memo No. 43, s. 2016 they work with the IMT on scene.')}</div></div>`,
   refs: () => `<div class="grid" style="gap:8px">${REFERENCES.map(([t,d])=>`<div class="pillar" style="padding:12px"><b class="cond" style="color:var(--orange2)">${esc(t)}</b><p class="muted" style="font-size:13.5px;margin-top:2px">${esc(d)}</p></div>`).join('')}
     <p class="dim" style="font-size:12.5px">Plain-language summaries for training. The official text governs. Pending national guidance (e.g., NDRRMC operational guidelines on AA triggers, DBM–COA AA funding rules) may change details.</p></div>`,
@@ -1534,6 +2021,45 @@ function closeModal(id){ $('#'+id).classList.add('hidden'); hideTip(); if (S.mod
 function pauseGame(){ if($('#game-screen').classList.contains('hidden')) return; S.paused = true; $('#pause-modal').classList.remove('hidden'); $('#btn-resume-game').focus(); }
 function resumeGame(){ S.paused = false; $('#pause-modal').classList.add('hidden'); }
 function quitGame(){ clearInterval(S.timer); S.paused=false; $('#pause-modal').classList.add('hidden'); showScreen('main-menu'); }
+
+/* ---------- learning module ---------- */
+let learnIdx = 0, quizState = null;
+function openLearn(i = learnIdx){
+  learnIdx = i;
+  $('#learn-nav').innerHTML = LEARN.map((s,k)=>`<button data-li="${k}" aria-current="${k===i}">${k+1}. ${esc(s.t)}</button>`).join('') + `<button data-li="quiz" aria-current="false">✔ Knowledge check</button>`;
+  $$('#learn-nav [data-li]').forEach(b => b.onclick = () => { if (b.dataset.li==='quiz'){ $('#quiz-card').scrollIntoView({behavior:reduceMotion?'auto':'smooth'}); return; } openLearn(+b.dataset.li); });
+  const s = LEARN[i];
+  $('#learn-body').innerHTML = `<span class="kicker">Module ${i+1} of ${LEARN.length}</span><h3 style="font-size:22px;margin:4px 0 6px">${esc(s.t)}</h3><div class="reveal"><div style="animation-delay:.05s">${s.h}</div></div>
+    <div class="row between" style="margin-top:16px"><button class="btn btn-ghost" id="lprev" ${i===0?'disabled':''}>Previous</button><button class="btn btn-primary" id="lnext">${i===LEARN.length-1?'Take the knowledge check':'Next module'}</button></div>`;
+  glossTerms($('#learn-body'));
+  $('#lprev').onclick = () => openLearn(i-1);
+  $('#lnext').onclick = () => i===LEARN.length-1 ? $('#quiz-card').scrollIntoView({behavior:reduceMotion?'auto':'smooth'}) : openLearn(i+1);
+  if (!quizState) renderQuiz(0, 0);
+  if ($('#learn-screen').classList.contains('hidden')) showScreen('learn-screen'); else $('#learn-body').scrollIntoView({behavior:reduceMotion?'auto':'smooth', block:'start'});
+}
+function glossTerms(root){
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, { acceptNode: n => n.parentElement.closest('a,abbr,button,th') ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT });
+  const nodes = []; while (walker.nextNode()) nodes.push(walker.currentNode);
+  const seen = new Set();
+  nodes.forEach(n => { if (!GLOSS_RE.test(n.nodeValue)) { GLOSS_RE.lastIndex = 0; return; } GLOSS_RE.lastIndex = 0;
+    const span = document.createElement('span'); span.innerHTML = gloss(n.nodeValue, seen); n.replaceWith(...span.childNodes); });
+}
+function renderQuiz(i, score){
+  quizState = {i, score};
+  if (i >= QUIZ.length){
+    $('#quiz-card').innerHTML = `<span class="kicker">Knowledge check</span><h3 style="font-size:20px;margin:6px 0">${score} of ${QUIZ.length} correct</h3><p class="muted">${score===QUIZ.length?'Ready for the simulator. Try Expert difficulty.':score>=6?'Good grounding. Review the modules where you missed, then run a scenario.':'Review the EOC, reporting and RA 12287 modules before running a scenario.'}</p><div class="row wrapf" style="margin-top:12px"><button class="btn btn-ghost" id="qz-again">Try again</button><button class="btn btn-orange" id="qz-sim">Go to the simulator</button></div>`;
+    $('#qz-again').onclick = () => renderQuiz(0,0); $('#qz-sim').onclick = () => openSetup('single'); if (score===QUIZ.length) confetti(); return;
+  }
+  const q = QUIZ[i], order = shuffle(q.o.map((_,k)=>k));
+  $('#quiz-card').innerHTML = `<div class="row between"><span class="kicker">Knowledge check · ${i+1} of ${QUIZ.length}</span><span class="chip">${score} correct</span></div><p style="font-size:16px;margin:10px 0 4px"><b>${esc(q.q)}</b></p><div class="qz">${order.map((k,n)=>`<button data-k="${k}"><b class="cond" style="color:var(--blue)">${n+1}.</b> ${esc(q.o[k])}</button>`).join('')}</div><div id="qz-fb"></div>`;
+  $$('#quiz-card .qz button').forEach(b => b.onclick = () => {
+    const ok = +b.dataset.k === q.a;
+    $$('#quiz-card .qz button').forEach(x => { x.disabled = true; if (+x.dataset.k === q.a) x.classList.add('ok'); });
+    if (!ok) b.classList.add('no');
+    $('#qz-fb').innerHTML = `<p style="margin-top:10px" class="${ok?'':'muted'}">${ok?'✅ Correct.':'Not quite.'} ${esc(q.w)}</p><button class="btn btn-primary" style="margin-top:10px" id="qz-next">${i===QUIZ.length-1?'See result':'Next question'}</button>`;
+    $('#qz-next').onclick = () => renderQuiz(i+1, score + (ok?1:0)); $('#qz-next').focus();
+  });
+}
 
 /* ---------- visual FX ---------- */
 const fx = (() => {
@@ -1566,6 +2092,9 @@ function confetti(){
 /* ---------- events ---------- */
 $('#mode-single').onclick = () => openSetup('single');
 $('#mode-multi').onclick = () => openSetup('multi');
+$('#mode-drill').onclick = () => openSetup('drill');
+$('#btn-learn').onclick = () => openLearn(); $('#btn-learn-hero').onclick = () => openLearn();
+$('#btn-back-learn').onclick = () => showScreen('main-menu');
 $('#btn-basics').onclick = () => openHelp('basics');
 $('#btn-back-setup').onclick = () => showScreen('main-menu');
 $('#btn-back-brief').onclick = () => showScreen('setup-screen');
