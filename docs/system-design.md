@@ -69,7 +69,7 @@ There is no custom application server. The rules live in SQL so they hold for ev
 | Today | `/` | — | Greeting, active declaration with next deadline, quick actions by role, running protocols, latest log, assessment progress |
 | Assessment | `/assess` | `assessment_cycles`, `responses`, `evidence`, `actions` | Evidence first, then score; caps by evidence strength; validator workflow; domain and maturity readouts; CSV export; action plan by priority |
 | Library | `/library` | `moo_documents`, `moo_versions`, `moo_document_indicators` | 19 manual sections (MOO and EOC Manual) as Markdown; draft → for review → approved (Head only), approved versions immutable; traceability, master requirements, framework crosswalk |
-| Protocols | `/protocols` | `protocol_templates`, `protocol_steps`, `protocol_runs`, `protocol_run_steps` | 9 draft protocols (54 steps) for CDRRMO validation; runs work offline; critical steps and required notes block completion |
+| Protocols | `/protocols` | `protocol_templates`, `protocol_steps`, `protocol_runs`, `protocol_run_steps` | 10 draft protocols (66 steps) for CDRRMO validation; runs work offline; critical steps and required notes block completion |
 | EOC | `/eoc` | `eoc_activations`, `logbook_entries`, `sitreps`, `barangay_reports`, `resource_requests` | Level board (White / Blue / Red), append-only logbook with corrections, SitRep numbering on submit, barangay counts only, forward-only request flow |
 | Anticipatory action | `/eoc/aa` | `pdra_sessions`, `declarations`, `aa_actions`, `aa_fund_years`, `aa_disbursements`, `aa_rules` | PDRA decision; declaration timeline per IRR; 29 AA checklist templates from IRR Rule IV; fund cap and tranche guard |
 | Document Vault | `/vault` | `vault_documents` (+ private `vault` bucket) | Register of laws, guidelines, City issuances, plans and records; each linked to indicators; Document Review checklist with request list download; reference catalogue. Assessors, validators, admin and CDRRMO staff only. Documents are superseded, never deleted |
@@ -166,7 +166,7 @@ The integration suite found two defects that the fake client could not show, and
 - **Reference notes.** The plain-language notes in `src/data/references.ts` are for orientation. They need validation by the CDRRMO with the City Legal Office. Citations inside manual section text (the "Basis" lines) are not yet tappable.
 
 - **Barangay list.** Ormoc’s 85 barangays (PSA PSGC, 4th quarter 2022 update) need importing from the PSA masterlist (Settings → Barangays → Import CSV) before operations use.
-- **Protocol validation.** The 9 protocols are drafts. Each needs validation by the CDRRMO and the owning office, then approval in the Library.
+- **Protocol validation.** The 10 protocols are drafts. Each needs validation by the CDRRMO and the owning office, then approval in the Library.
 - **Pending national guidance.** NDRRMC guidelines on anticipatory action triggers and DBM–COA rules on AA fund use and liquidation are expected under the IRR. Update `aa_rules` and the AA checklist when they are issued.
 - **Manual content.** The 19 manual sections hold skeleton text until the drafting and validation weeks.
 - **Possible later modules.** Responder roster and fatigue tracking (MR-09), and a risk-map layer (MR-03).
