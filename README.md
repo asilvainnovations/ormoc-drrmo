@@ -4,7 +4,7 @@ A mobile-first, offline-capable web app (PWA) for the City Disaster Risk Reducti
 
 - **Assessment.** Runs the Institutional Assessment Tool v1.1 (140 indicators). Scoring is gated by evidence, results are shown by domain and maturity, and gaps feed a prioritised action plan.
 - **Library.** Holds the manual sections with version control and approval by the CDRRMO Head. Each section traces to the indicators and master requirements MR-01 to MR-18, and to the UNDRR Scorecard and RA 12287 IRR crosswalk.
-- **Protocols.** Turns the manuals into checklists the CDRRMO can run, live or as drills, with an audit trail. Nine protocols are drafted for validation.
+- **Protocols.** Turns the manuals into checklists the CDRRMO can run, live or as drills, with an audit trail. Ten protocols are drafted for validation, including the State of Calamity and State of Imminent Disaster procedures (SOP GOV-04 and GOV-05).
 - **EOC.** Covers the White / Blue / Red alert level, an append-only logbook, SitReps, barangay status (counts only), and resource requests.
 - **Anticipatory action (RA 12287 and IRR).** Records the PDRA and the declaration timeline with its legal deadlines. It holds the 29-item AA checklist and enforces the fund cap (10% of the 70% LDRRMF) and the 30% / 70% tranche limits.
 
@@ -42,9 +42,10 @@ supabase/
   migrations/     schema, RLS, triggers, RPCs, views (apply in order)
   seed/seed.sql   reference data generated from the IAT v1.1 and Traceability v1.1 workbooks (for psql)
   seed/parts/     the same data in parts small enough for the Supabase SQL editor
+  seed/operational/ one-time working records: the October 2026 IAT baseline and the Vault register
   tests/          SQL rule and security suite (plus a local-only Supabase stub)
 scripts/          seed generator, test runners
-reference/        the source workbooks
+reference/        the source workbooks; reference/moo/ holds manual drafts loaded into the Library
 tests/integration supabase-js → PostgREST → Postgres tests
 e2e/              Playwright journeys, accessibility (axe) and offline tests
 docs/             system design, design system, architecture decision records
@@ -62,7 +63,8 @@ docs/             system design, design system, architecture decision records
 | `npm run test:it` | Integration tests through real PostgREST. Needs the same plus `POSTGREST_BIN` (PostgREST 12) |
 | `npm run test:e2e` | Playwright on phone and desktop sizes against the production build, PostgREST and a fresh local database with every migration: sign-up and approval, journeys, axe and offline checks. Needs the same as `test:it` |
 | `python3 scripts/brand_assets.py` | Rebuild the circular seals, banner copies and app icons from the originals in `public/` |
-| `npm run seed:generate` | Regenerate `supabase/seed/seed.sql`, `supabase/seed/parts/` and `src/data/reference.json` from `reference/*.xlsx` |
+| `npm run seed:generate` | Regenerate `supabase/seed/seed.sql`, `supabase/seed/parts/` and `src/data/reference.json` from `reference/*.xlsx` and the manual drafts in `reference/moo/` |
+| `npm run seed:operational` | Regenerate the one-time `supabase/seed/operational/` files (IAT baseline, Document Vault register) from the IAT workbook |
 | `npm run check` | Typecheck, unit tests and build |
 
 ## Changing reference data

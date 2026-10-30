@@ -62,13 +62,18 @@ There are two ways to do this. Both give the same result.
 
 ### Option A: Supabase SQL editor (no tools to install)
 
-The SQL editor rejects long scripts, so the reference data comes in seven parts in `supabase/seed/parts/`. Each part is under 400 lines and 400 rows.
+The SQL editor rejects long scripts, so the reference data comes in ten parts in `supabase/seed/parts/`. Each part is under 400 lines and 400 rows.
 
 1. **Migrations.** In SQL Editor → New query, paste and run each file in `supabase/migrations/` in name order, one at a time (`…000100_core.sql` first, `20261016000900_accounts_and_integrity.sql` last). Wait for "Success" before the next. Run each migration once only.
-2. **Reference data.** Paste and run `supabase/seed/parts/01_seed.sql`, then `02_seed.sql`, and so on to `07_seed.sql`. Use the parts, not `supabase/seed/seed.sql`, which is the same data in one file for `psql`.
-3. Part 7 ends with a check query. It should return **140 | 18 | 935 | 71 | 9 | 54 | 29**.
+2. **Reference data.** Paste and run `supabase/seed/parts/01_seed.sql`, then `02_seed.sql`, and so on to `10_seed.sql`. Use the parts, not `supabase/seed/seed.sql`, which is the same data in one file for `psql`.
+3. Part 10 ends with a check query. It should return **140 | 18 | 935 | 71 | 10 | 66 | 29**.
+4. **Operational data (once).** Paste and run, in order, the four files in `supabase/seed/operational/`:
+   - `01_iat_baseline_responses.sql`, `02_iat_baseline_evidence.sql`, `03_iat_baseline_scores_actions.sql`: the October 2026 IAT baseline as the cycle **2026 Baseline (IAT v1.1)**, with 140 provisional responses, their evidence notes and the action plan. Part 3 ends with the cycle results.
+   - `04_vault_register.sql`: Document Vault entries for the engagement's source documents. Attach the files in the app afterwards.
 
-Each part runs as a single transaction, so a part that fails changes nothing. During setup a part can be run again on its own, and it only replaces its own rows. If a part fails or you lose your place, run that part again and carry on from there. **After go-live, do not re-run part 6**: it rewrites the manual text and would replace versions the CDRRMO Head has approved since.
+   These are working records the City then edits in the app. Running them again never overwrites anything, and never changes a score someone has set. 27 baseline scores are loaded below the workbook score, because the evidence on record does not support them (see the note at the top of each response's Gap / Remarks).
+
+Each part runs as a single transaction, so a part that fails changes nothing. During setup a part can be run again on its own, and it only replaces its own rows. If a part fails or you lose your place, run that part again and carry on from there. Re-running the parts is safe after go-live: manual versions are only ever added, never rewritten, and the approval status of manual sections and protocols is kept.
 
 ### Option B: `psql` from a workstation
 
@@ -81,6 +86,8 @@ for f in supabase/migrations/*.sql; do
   echo "== $f"; psql "$DB_URL" -v ON_ERROR_STOP=1 -q -f "$f" || break
 done
 psql "$DB_URL" -v ON_ERROR_STOP=1 -q -f supabase/seed/seed.sql
+# once, on a new database:
+for f in supabase/seed/operational/*.sql; do psql "$DB_URL" -v ON_ERROR_STOP=1 -q -f "$f" || break; done
 ```
 
 `psql` has no length limit, so it takes the whole seed in one file.
@@ -98,7 +105,7 @@ Check the result:
 ```sql
 select (select count(*) from iat_indicators)      as indicators,    -- 140
        (select count(*) from master_requirements) as requirements,  -- 18
-       (select count(*) from protocol_templates)  as protocols,     -- 9
+       (select count(*) from protocol_templates)  as protocols,     -- 10
        (select count(*) from aa_action_templates) as aa_actions,    -- 29
        (select count(*) from storage.buckets where id in ('evidence', 'vault')) as buckets;  -- 2
 ```
@@ -112,6 +119,7 @@ Then, in the dashboard:
 
 - **To 1.1** (database created before 16 October 2026): run `supabase/migrations/20261016000800_document_vault.sql` once. It adds the Document Vault table and its private `vault` bucket.
 - **To 1.2:** run `supabase/migrations/20261016000900_accounts_and_integrity.sql` once, **before** turning sign-up on (section 2). It makes accounts without a role read nothing, adds the administrator's account list, and locks finalised and approved records.
+- **To 1.3** (31 October 2026): no migration. Run the reference parts `01_seed.sql` to `10_seed.sql` again. They add the Chapter 1 v0.9 draft (a new version of MOO Ch.1), eight new Library documents (Annexes 1-0 to 1-G, including SOP GOV-04 and SOP GOV-05), the new protocol PR-SOC-DECLARE, and revised steps for PR-SOID-REQUEST, PR-EOC-ACTIVATE and PR-LIFT-REPORT. Then run `supabase/seed/operational/` once if the baseline has not been entered by hand.
 - **85 barangays:** if the seed was loaded before the 85-barangay correction, run parts `01_seed.sql` and `06_seed.sql` once more, but only if no manual version has been approved yet. Otherwise ask the developer for a one-off update of the three indicator texts (A3.7, A7.3, B3.2).
 
 ## 4. First administrator and the CDRRMO Head
