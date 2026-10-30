@@ -1,0 +1,17 @@
+{
+    "overview": "Gawad Kalasag is the Philippines’ premier award recognizing excellence in disaster risk reduction and management and humanitarian assistance.",
+    "criteria": [
+        "Impact on Community Safety",
+        "Coverage and Reach",
+        "Innovation and Replicability",
+        "Sustainability",
+        "Contribution to National DRRM Goals"
+    ],
+    "scoring": [
+        { "dimension": "Impact on lives and property", "weight": "30%" },
+        { "dimension": "Coverage and inclusivity", "weight": "20%" },
+        { "dimension": "Innovation and replicability", "weight": "20%" },
+        { "dimension": "Sustainability", "weight": "20%" },
+        { "dimension": "Contribution to national goals", "weight": "10%" }
+    ]
+}
