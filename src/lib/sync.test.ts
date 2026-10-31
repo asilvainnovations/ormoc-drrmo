@@ -6,7 +6,7 @@ vi.mock('@/lib/env', () => ({ env: { configError: null, supabaseUrl: 'http://fak
 vi.mock('@/lib/supabase', () => ({ supabase: null, AUTH_STORAGE_KEY: 'sb-fake-auth-token' }));
 
 import { db } from './db';
-import { save, setActingUser } from './store';
+import { discardFailed, queueUpload, retryHeldUpload, save, setActingUser } from './store';
 import { isTransient, push, pull, setSyncClient } from './sync';
 
 type Row = Record<string, unknown>;
@@ -17,6 +17,9 @@ class FakeServer {
   /** Apply the write but lose the reply (the device never hears back). */
   loseReply = false;
   offline = false;
+  /** Next storage upload answer (null = accept). */
+  uploadError: { message: string; statusCode?: string | number } | null = null;
+  uploads: string[] = [];
   writes: { table: string; mode: string }[] = [];
   t(name: string) { return (this.tables[name] ??= new Map()); }
   stamp() { this.clock += 1; return new Date(Date.UTC(2026, 9, 15, 0, 0, this.clock)).toISOString(); }
@@ -66,7 +69,10 @@ function fakeClient(s: FakeServer) {
   return {
     from,
     rpc: vi.fn(async () => (s.offline ? { error: { message: 'Failed to fetch' } } : { error: null })),
-    storage: { from: () => ({ upload: vi.fn(async () => ({ error: null })) }) },
+    storage: { from: () => ({ upload: vi.fn(async (path: string) => {
+      if (s.uploadError) { const error = s.uploadError; s.uploadError = null; return { error }; }
+      s.uploads.push(path); return { error: null };
+    }) }) },
     auth: { getSession: async () => ({ data: { session: { user: { id: 'u' } } } }) },
     channel: () => ({ on() { return this; }, subscribe() { return this; } }),
     removeChannel: async () => undefined,
@@ -272,5 +278,67 @@ describe('v1.2 hardening', () => {
     t.set('zz', { id: 'zz', cycle_id: 'c', indicator_id: 'A1.2', updated_at: '2026-10-15T02:00:00.000Z', version: 1 });
     await pull(['responses']);
     expect(await db.responses.count()).toBe(1006);
+  });
+});
+
+describe('evidence uploads (1.5.1)', () => {
+  const photo = () => new File([new Uint8Array([1, 2, 3])], 'field-photo.jpg', { type: 'image/jpeg' });
+
+  it('deletes the device copy only after the server has the file', async () => {
+    await queueUpload(photo(), 'c1/e1/field-photo.jpg', 'e1');
+    expect(await push('u')).toBe(true);
+    expect(server.uploads).toEqual(['c1/e1/field-photo.jpg']);
+    expect(await db.files.get('e1')).toBeUndefined();
+  });
+
+  it('keeps the file on the device when storage refuses the upload', async () => {
+    await queueUpload(photo(), 'c1/e1/field-photo.jpg', 'e1');
+    server.uploadError = { message: 'new row violates row-level security policy', statusCode: '403' };
+    expect(await push('u')).toBe(true);
+    expect(await db.outbox.count()).toBe(0);                        // a refusal does not block the queue
+    expect(await db.files.get('e1')).toBeDefined();                 // the only copy is still here
+    const [held] = await db.failed.toArray();
+    expect(held).toMatchObject({ fileId: 'e1', path: 'c1/e1/field-photo.jpg', bucket: 'evidence', fileName: 'field-photo.jpg', userId: 'u' });
+    expect(held!.error).toMatch(/kept on this device/);
+  });
+
+  it('keeps the upload queued on a temporary storage error', async () => {
+    await queueUpload(photo(), 'c1/e1/field-photo.jpg', 'e1');
+    server.uploadError = { message: 'Bad gateway', statusCode: 502 };
+    expect(await push('u')).toBe(false);
+    expect(await db.outbox.count()).toBe(1);
+    expect(await db.failed.count()).toBe(0);
+    expect(await db.files.get('e1')).toBeDefined();
+  });
+
+  it('a retry sends the held file under the same path and account, then clears it', async () => {
+    await queueUpload(photo(), 'c1/e1/field-photo.jpg', 'e1');
+    server.uploadError = { message: 'Parent evidence row not found', statusCode: 400 };
+    await push('u');
+    const [held] = await db.failed.toArray();
+    await retryHeldUpload(held!.id!);
+    expect(await db.failed.count()).toBe(0);
+    expect((await db.outbox.toArray())[0]).toMatchObject({ kind: 'upload', fileId: 'e1', path: 'c1/e1/field-photo.jpg', userId: 'u' });
+    expect(await push('u')).toBe(true);
+    expect(server.uploads).toEqual(['c1/e1/field-photo.jpg']);
+    expect(await db.files.get('e1')).toBeUndefined();
+  });
+
+  it('discarding a held upload deletes the file, and only then', async () => {
+    await queueUpload(photo(), 'c1/e1/field-photo.jpg', 'e1');
+    server.uploadError = { message: 'Forbidden', statusCode: 403 };
+    await push('u');
+    const [held] = await db.failed.toArray();
+    expect(await db.files.get('e1')).toBeDefined();
+    await discardFailed(held!.id!);
+    expect(await db.failed.count()).toBe(0);
+    expect(await db.files.get('e1')).toBeUndefined();
+  });
+
+  it('counts a held upload as unsent, so sign-out still warns', async () => {
+    await queueUpload(photo(), 'c1/e1/field-photo.jpg', 'e1');
+    server.uploadError = { message: 'Forbidden', statusCode: 403 };
+    await push('u');
+    expect((await db.outbox.count()) + (await db.failed.count())).toBe(1);
   });
 });

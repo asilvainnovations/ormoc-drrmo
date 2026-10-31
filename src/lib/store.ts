@@ -137,6 +137,42 @@ export async function queueUpload(file: File, path: string, fileId: string, buck
 }
 
 /**
+ * Queue a refused upload again (Sync screen → Retry upload). The file never left the
+ * device; the retry keeps its path, bucket and the account that made it.
+ */
+export async function retryHeldUpload(failedId: number): Promise<void> {
+  const f = await db.failed.get(failedId);
+  if (!f?.fileId || !f.path) return;
+  if (!(await db.files.get(f.fileId))) throw new Error('The file is no longer on this device.');
+  await db.transaction('rw', db.outbox, db.failed, async () => {
+    await db.outbox.add({ kind: 'upload', fileId: f.fileId, path: f.path, bucket: f.bucket ?? 'evidence',
+      label: f.label, createdAt: now(), attempts: 0, userId: f.userId ?? actingUser });
+    await db.failed.delete(failedId);
+  });
+  scheduleSync();
+}
+
+/** The held file itself, for "Save a copy". */
+export async function heldFile(fileId: string) {
+  return db.files.get(fileId);
+}
+
+/**
+ * Remove a refused item from the Sync screen. For a refused upload this also deletes
+ * the file from the device, so the screen asks first.
+ */
+export async function discardFailed(failedId: number): Promise<void> {
+  await db.transaction('rw', db.failed, db.files, db.outbox, async () => {
+    const f = await db.failed.get(failedId);
+    if (f?.fileId) {
+      const stillQueued = await db.outbox.filter((o) => o.kind === 'upload' && o.fileId === f.fileId).count();
+      if (!stillQueued) await db.files.delete(f.fileId);
+    }
+    await db.failed.delete(failedId);
+  });
+}
+
+/**
  * Open an evidence file: the copy on this device if there is one (works offline),
  * otherwise a five-minute signed link from the private bucket.
  */

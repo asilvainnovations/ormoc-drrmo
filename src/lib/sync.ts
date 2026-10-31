@@ -167,7 +167,12 @@ async function pushRpc(item: OutboxItem): Promise<'done' | 'stop'> {
   return 'done';
 }
 
-async function pushUpload(item: OutboxItem): Promise<'done' | 'stop'> {
+/**
+ * Send one queued file. `kept` means storage refused it: the item leaves the queue,
+ * but the file stays on the device and a held item on the Sync screen offers Retry
+ * and Save a copy. A refused upload never deletes the only copy of evidence (1.5.1).
+ */
+async function pushUpload(item: OutboxItem): Promise<'done' | 'stop' | 'kept'> {
   const f = await db.files.get(item.fileId!);
   if (!f) return 'done';
   const { error } = await client.storage.from(item.bucket ?? 'evidence').upload(item.path!, f.blob, { contentType: f.type, upsert: false });
@@ -176,7 +181,13 @@ async function pushUpload(item: OutboxItem): Promise<'done' | 'stop'> {
     const status = Number((error as { statusCode?: string | number }).statusCode ?? (error as { status?: number }).status ?? NaN);
     if (/exists|duplicate/i.test(msg)) return 'done';       // replayed upload
     if (isTransient(error, Number.isFinite(status) ? status : undefined)) return 'stop';
-    await db.failed.add({ label: item.label, error: `${msg} The file is still on this device.`, at: new Date().toISOString() });
+    await db.failed.add({
+      label: item.label,
+      error: `${msg || 'The server refused the file.'} The file is kept on this device. Retry the upload, or save a copy.`,
+      at: new Date().toISOString(),
+      fileId: item.fileId, path: item.path, bucket: item.bucket ?? 'evidence', fileName: f.name, userId: item.userId ?? null,
+    });
+    return 'kept';
   }
   return 'done';
 }
@@ -202,7 +213,8 @@ export async function push(userId: string | null = null): Promise<boolean> {
       return false;
     }
     await db.outbox.delete(fresh.seq!);
-    if (fresh.kind === 'upload') await db.files.delete(fresh.fileId!).catch(() => undefined);
+    // Delete the device copy only once the server has the file.
+    if (fresh.kind === 'upload' && outcome === 'done') await db.files.delete(fresh.fileId!).catch(() => undefined);
   }
   return true;
 }

@@ -29,6 +29,16 @@ export interface FailedItem {
   id?: number; label: string; error: string; at: string; table?: string; pk?: string;
   /** What the person entered, kept so a refused entry is never lost (this edit and any later queued edits of the row). */
   rows?: Record<string, unknown>[];
+  /**
+   * A refused upload (1.5.1). The file stays in `files` under this id until the upload
+   * succeeds or the person discards it; Retry queues it again with the same path.
+   */
+  fileId?: string;
+  path?: string;
+  bucket?: 'evidence' | 'vault';
+  fileName?: string;
+  /** Account that queued the upload (a retry is sent only under that account). */
+  userId?: string | null;
 }
 export interface ConflictItem {
   id?: number; table: string; pk: string; local: Record<string, unknown>; server: Record<string, unknown> | null; at: string; label: string;
