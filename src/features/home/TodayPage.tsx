@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { ClipboardCheck, FolderLock, ListChecks, NotebookPen, Settings, Siren, Users } from 'lucide-react';
+import { ClipboardCheck, FolderLock, ListChecks, NotebookPen, Settings, Siren, Users, Wrench } from 'lucide-react';
 import { db } from '@/lib/db';
 import { useAuth } from '@/lib/auth';
 import { useActiveDeclaration, useNow } from '@/lib/hooks';
@@ -41,6 +41,7 @@ export function TodayPage() {
     has('cdrrmo_head', 'eoc_manager', 'eoc_staff') && { to: '/eoc/aa/pdra/new', label: 'New PDRA', icon: Siren, tip: 'Assess a forecast hazard and decide: monitor, act early or request a declaration' },
     has('assessor', 'validator', 'lead_office_focal') && { to: data?.cycle ? `/assess/${data.cycle.id}` : '/assess', label: 'Continue assessment', icon: ClipboardCheck, tip: 'Go back to the indicators you are scoring' },
     canUseVault(has) && { to: '/vault', label: 'Document Vault', icon: FolderLock, tip: 'Laws, guidelines and documents for Document Review' },
+    { to: '/tools', label: 'Tools and hazard maps', icon: Wrench, tip: 'ICS exercises, continuity plan, Gawad KALASAG readiness, HazardHunterPH, GeoAnalyticsPH, Zoom Earth, DDRiVE-M' },
   ].filter(Boolean) as { to: string; label: string; icon: typeof NotebookPen; tip: string }[];
 
   return (
@@ -71,7 +72,7 @@ export function TodayPage() {
       )}
 
       {quick.length > 0 && (
-        <nav aria-label="Quick actions" className="mb-8 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-6">
+        <nav aria-label="Quick actions" className="mb-8 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-7">
           {quick.map(({ to, label, icon: Icon, tip: t }) => (
             <Link key={label} to={to} {...tip(t)} className="flex min-h-[4.5rem] flex-col justify-between rounded-control border border-line bg-surface p-3 font-semibold hover:bg-sunken">
               <Icon className="h-5 w-5 text-accent" aria-hidden />{label}
