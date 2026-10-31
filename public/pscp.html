@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Command Center</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Tailwind Config for Custom Colors -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            500: '#0ea5e9', // Sky blue for primary actions
+                            600: '#0284c7',
+                            800: '#075985', // Deep blue for headers (Govt feel)
+                            900: '#0c4a6e',
+                        },
+                        alert: {
+                            level1: '#fcd34d', // Yellow
+                            level2: '#f97316', // Orange
+                            level3: '#ef4444', // Red
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8; 
+        }
+
+        /* Chart Container Specifics (Mandatory per requirements) */
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px; /* Max width to prevent stretching */
+            height: 400px;    /* Base height */
+            max-height: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        @media (max-width: 768px) {
+            .chart-container {
+                height: 300px;
+            }
+        }
+
+        /* Interactive Card Hover Effects */
+        .interactive-card {
+            transition: all 0.3s ease;
+        }
+        .interactive-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Timeline Connector Lines */
+        .timeline-line::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            width: 2px;
+            background-color: #e2e8f0;
+            z-index: 0;
+            transform: translateX(-50%);
+        }
+    </style>
+
+    <!-- Chosen Palette: "Government Professional" - Deep Navy/Slate Blues for stability, White backgrounds, Slate grays for text. 
+         Alert colors (Yellow/Orange/Red) used specifically for Activation Levels. 
+    -->
+
+    <!-- Application Structure Plan:
+         The app is designed as a "Command Center" Dashboard rather than a linear document reader.
+         
+         1. **Sidebar Navigation**: Persistent access to the 5 core phases of the PSCP Cycle.
+         2. **Dashboard (Home)**: High-level overview of the PSCP purpose and the "Continuity Cycle" visualized.
+         3. **Governance Module**: Interactive Org Chart. Users click roles to see responsibilities (translating Section 2 of Template).
+         4. **Risk & BIA Lab**: Interactive Analysis tools. 
+            - Scatter Plot for Risk Assessment (Likelihood vs Impact).
+            - Bar Chart for RTO (Recovery Time Objective) prioritization.
+         5. **Activation Protocol**: A "Digital Checklist" and interactive Flowchart for the First 4 Hours of a disaster.
+         6. **Digital Plan View**: A clean, read-only render of the "Enhanced Template" structure for quick reference.
+         
+         Rationale: Users need to understand the *process* (Risk/BIA) before seeing the *output* (The Plan). The dashboard format simulates the active management of a continuity program.
+    -->
+
+    <!-- Visualization & Content Choices:
+         1. **Governance Tree (HTML Grid)**: Goal: Show hierarchy. Interaction: Click to reveal details. No SVG needed.
+         2. **Risk Matrix (Chart.js Bubble/Scatter)**: Goal: Visualize hazard priority. Interaction: Tooltips show specific threats.
+         3. **RTO Comparison (Chart.js Bar)**: Goal: Compare Service Criticality. Interaction: Hover to see RPO details.
+         4. **Activation Flow (CSS/HTML Timeline)**: Goal: Step-by-step guidance. Interaction: Visual highlighting of active steps.
+         
+         CONFIRMATION: NO SVG graphics used. NO Mermaid JS used.
+    -->
+</head>
+<body class="bg-gray-50 text-slate-800 font-sans antialiased h-screen flex overflow-hidden">
+
+    <!-- Mobile Menu Button (Visible on small screens) -->
+    <button id="mobile-menu-btn" class="md:hidden fixed top-4 right-4 z-50 bg-brand-800 text-white p-2 rounded shadow-lg">
+        ☰
+    </button>
+
+    <!-- Sidebar Navigation -->
+    <aside id="sidebar" class="bg-brand-900 text-white w-64 flex-shrink-0 flex flex-col transition-transform transform -translate-x-full md:translate-x-0 fixed md:relative h-full z-40">
+        <div class="p-6 border-b border-brand-800 bg-brand-950">
+            <h1 class="text-xl font-bold tracking-wider">PSCP <span class="text-sky-400">DASHBOARD</span></h1>
+            <p class="text-xs text-slate-400 mt-1">Based on 2nd Version of the PCSP Guidelines</p>
+        </div>
+        
+        <nav class="flex-1 overflow-y-auto py-4">
+            <ul class="space-y-1">
+                <li>
+                    <button onclick="navTo('dashboard')" class="nav-item w-full text-left px-6 py-3 hover:bg-brand-800 focus:bg-brand-800 focus:outline-none transition-colors border-l-4 border-transparent hover:border-sky-400 active-nav" id="nav-dashboard">
+                        <span class="mr-2">📊</span> Dashboard
+                    </button>
+                </li>
+                <li>
+                    <button onclick="navTo('governance')" class="nav-item w-full text-left px-6 py-3 hover:bg-brand-800 focus:bg-brand-800 focus:outline-none transition-colors border-l-4 border-transparent hover:border-sky-400" id="nav-governance">
+                        <span class="mr-2">🏛️</span> Governance & Team
+                    </button>
+                </li>
+                <li>
+                    <button onclick="navTo('analysis')" class="nav-item w-full text-left px-6 py-3 hover:bg-brand-800 focus:bg-brand-800 focus:outline-none transition-colors border-l-4 border-transparent hover:border-sky-400" id="nav-analysis">
+                        <span class="mr-2">📉</span> Risk & Public Service Impact Analysis
+                    </button>
+                </li>
+                <li>
+                    <button onclick="navTo('strategies')" class="nav-item w-full text-left px-6 py-3 hover:bg-brand-800 focus:bg-brand-800 focus:outline-none transition-colors border-l-4 border-transparent hover:border-sky-400" id="nav-strategies">
+                        <span class="mr-2">🛡️</span> Continuity Strategies
+                    </button>
+                </li>
+                <li>
+                    <button onclick="navTo('activation')" class="nav-item w-full text-left px-6 py-3 hover:bg-brand-800 focus:bg-brand-800 focus:outline-none transition-colors border-l-4 border-transparent hover:border-sky-400" id="nav-activation">
+                        <span class="mr-2">🚨</span> Activation Protocol
+                    </button>
+                </li>
+                <li>
+                    <button onclick="navTo('template')" class="nav-item w-full text-left px-6 py-3 hover:bg-brand-800 focus:bg-brand-800 focus:outline-none transition-colors border-l-4 border-transparent hover:border-sky-400" id="nav-template">
+                        <span class="mr-2">📝</span> Digital Plan Template
+                    </button>
+                </li>
+            </ul>
+        </nav>
+
+        <div class="p-4 border-t border-brand-800 text-xs text-slate-400">
+            <p>This PSCP platfrom is compliant with ISO and Philippine Frameworks in Risk Management</p>
+            <p>This version of PSCP focuses on promoting Public Service Continuity.</p>
+        </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 overflow-y-auto relative w-full" id="main-scroll">
+        
+        <!-- SECTION 1: DASHBOARD -->
+        <section id="dashboard" class="content-section p-6 md:p-10 max-w-7xl mx-auto">
+            <div class="mb-8">
+                <h2 class="text-3xl font-bold text-brand-900">PSCP Overview</h2>
+                <p class="mt-2 text-slate-600 max-w-3xl">
+                    The PSCP ensures that essential government services continue to be delivered during and after a disruptive incident. This dashboard facilitates the planning, analysis, and activation of continuity protocols.
+                </p>
+            </div>
+
+            <!-- Stats/Cycle Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+                <div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200 interactive-card">
+                    <div class="text-4xl mb-3">🎯</div>
+                    <h3 class="text-lg font-bold text-brand-800">Policy & Objective</h3>
+                    <p class="text-sm text-slate-500 mt-2">Establish the continuity policy, scope, and objectives. Define the commitment of the agency to service resilience.</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200 interactive-card">
+                    <div class="text-4xl mb-3">🔍</div>
+                    <h3 class="text-lg font-bold text-brand-800">Risk & Impact Analysis</h3>
+                    <p class="text-sm text-slate-500 mt-2">Identify essential functions and assess potential threats (Risk Assessment) that could disrupt operations.</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200 interactive-card">
+                    <div class="text-4xl mb-3">⚡</div>
+                    <h3 class="text-lg font-bold text-brand-800">Response & Recovery</h3>
+                    <p class="text-sm text-slate-500 mt-2">Develop strategies, procedures, and the Activation Plan to restore services within the Recovery Time Objective (RTO).</p>
+                </div>
+            </div>
+
+            <!-- Intro to Guidebook Context -->
+            <div class="bg-blue-50 border-l-4 border-brand-500 p-6 rounded-r-lg">
+                <h3 class="text-xl font-bold text-brand-900 mb-2">Why PSCP Matters</h3>
+                <p class="text-slate-700 leading-relaxed">
+                    Unlike standard emergency response which focuses on saving lives and property, <strong>Public Service Continuity</strong> focuses on the <em>organization's ability to perform its mandate</em>. When a disaster strikes, the public relies on the government the most. This application guides you through building a plan that ensures your agency doesn't stop working when it's needed most.
+                </p>
+            </div>
+        </section>
+
+
+        <!-- SECTION 2: GOVERNANCE -->
+        <section id="governance" class="content-section hidden p-6 md:p-10 max-w-7xl mx-auto">
+            <div class="mb-8">
+                <h2 class="text-3xl font-bold text-brand-900">Governance & Organization</h2>
+                <p class="mt-2 text-slate-600">The Continuity Management Team (CMT) is the decision-making body during a crisis. Click on a role to view detailed responsibilities.</p>
+            </div>
+
+            <!-- Org Chart Layout -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                <!-- Chart Visual -->
+                <div class="lg:col-span-7 bg-white p-8 rounded-xl shadow-sm border border-slate-200 overflow-x-auto">
+                    <div class="flex flex-col items-center min-w-[300px]">
+                        <!-- Head -->
+                        <div onclick="showRole('leader')" class="cursor-pointer bg-brand-800 text-white px-6 py-4 rounded-lg shadow-md hover:bg-brand-700 transition w-64 text-center mb-8 relative z-10">
+                            <div class="font-bold text-lg">CMT Head</div>
+                            <div class="text-xs opacity-80">Head of Agency</div>
+                        </div>
+                        
+                        <!-- Connecting Line Vertical -->
+                        <div class="h-8 w-0.5 bg-slate-300 -mt-8 mb-8"></div>
+                        
+                        <!-- Horizontal Bar -->
+                        <div class="w-full h-0.5 bg-slate-300 mb-8 max-w-md relative">
+                            <div class="absolute left-0 -top-2 w-0.5 h-4 bg-slate-300"></div> <!-- Left connector -->
+                            <div class="absolute right-0 -top-2 w-0.5 h-4 bg-slate-300"></div> <!-- Right connector -->
+                            <div class="absolute left-1/2 -top-2 w-0.5 h-4 bg-slate-300"></div> <!-- Center connector -->
+                        </div>
+
+                        <!-- Sub Teams -->
+                        <div class="flex justify-between w-full max-w-xl gap-4">
+                            <!-- Ops -->
+                            <div onclick="showRole('ops')" class="cursor-pointer bg-white border-2 border-brand-200 hover:border-brand-500 hover:bg-brand-50 text-slate-700 p-3 rounded-lg shadow-sm transition text-center w-1/3">
+                                <div class="font-bold text-sm">Operations</div>
+                                <div class="text-[10px] text-slate-500">Service Recovery</div>
+                            </div>
+                            <!-- Logs -->
+                            <div onclick="showRole('logs')" class="cursor-pointer bg-white border-2 border-brand-200 hover:border-brand-500 hover:bg-brand-50 text-slate-700 p-3 rounded-lg shadow-sm transition text-center w-1/3">
+                                <div class="font-bold text-sm">Logistics</div>
+                                <div class="text-[10px] text-slate-500">Resources & Sites</div>
+                            </div>
+                            <!-- Admin/Comm -->
+                            <div onclick="showRole('admin')" class="cursor-pointer bg-white border-2 border-brand-200 hover:border-brand-500 hover:bg-brand-50 text-slate-700 p-3 rounded-lg shadow-sm transition text-center w-1/3">
+                                <div class="font-bold text-sm">Comms & IT</div>
+                                <div class="text-[10px] text-slate-500">Info & Tech</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-8 text-center text-xs text-slate-400 italic">Click boxes to see duties</div>
+                </div>
+
+                <!-- Role Details Panel -->
+                <div class="lg:col-span-5 bg-slate-800 text-white p-6 rounded-xl shadow-lg flex flex-col justify-center">
+                    <div id="role-display">
+                        <h3 class="text-2xl font-bold text-sky-400 mb-2" id="role-title">Select a Role</h3>
+                        <p class="text-slate-300 italic mb-4" id="role-subtitle">Click on the organizational chart to see detailed responsibilities.</p>
+                        <div class="bg-slate-700/50 p-4 rounded border border-slate-600">
+                            <h4 class="font-semibold text-white mb-2">Key Responsibilities:</h4>
+                            <ul class="list-disc list-inside space-y-2 text-slate-300 text-sm" id="role-responsibilities">
+                                <li>Waiting for selection...</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- SECTION 3: ANALYSIS (RISK & BIA) -->
+        <section id="analysis" class="content-section hidden p-6 md:p-10 max-w-7xl mx-auto">
+            <div class="mb-8">
+                <h2 class="text-3xl font-bold text-brand-900">Analysis Lab: BIA & Risk</h2>
+                <p class="mt-2 text-slate-600">Determine which services are critical (Business Impact Analysis) and what threatens them (Risk Assessment).</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
+                <!-- RISK ASSESSMENT -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                    <h3 class="text-xl font-bold text-slate-800 mb-4 flex items-center">
+                        <span class="bg-orange-100 text-orange-600 p-2 rounded mr-3 text-sm">Step 1</span> Risk Assessment Matrix
+                    </h3>
+                    <p class="text-sm text-slate-500 mb-4">Visualizing the Likelihood vs. Impact of potential hazards. High Impact + High Likelihood (Top Right) requires immediate mitigation.</p>
+                    
+                    <!-- Chart Container -->
+                    <div class="chart-container">
+                        <canvas id="riskChart"></canvas>
+                    </div>
+                    
+                    <!-- Sim Input -->
+                    <div class="mt-4 bg-slate-50 p-4 rounded border border-slate-200">
+                        <h4 class="font-bold text-sm text-slate-700 mb-2">Simulate New Hazard</h4>
+                        <div class="flex gap-4">
+                            <input type="text" id="newHazardName" placeholder="Hazard Name" class="border p-1 rounded text-sm w-1/3">
+                            <select id="newHazardLikelihood" class="border p-1 rounded text-sm w-1/3">
+                                <option value="1">Low Likelihood</option>
+                                <option value="3">Med Likelihood</option>
+                                <option value="5">High Likelihood</option>
+                            </select>
+                            <select id="newHazardImpact" class="border p-1 rounded text-sm w-1/3">
+                                <option value="1">Low Impact</option>
+                                <option value="3">Med Impact</option>
+                                <option value="5">High Impact</option>
+                            </select>
+                        </div>
+                        <button onclick="addHazard()" class="mt-2 w-full bg-brand-600 text-white text-sm py-1 rounded hover:bg-brand-700">Plot Hazard</button>
+                    </div>
+                </div>
+
+                <!-- BIA / RTO -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                    <h3 class="text-xl font-bold text-slate-800 mb-4 flex items-center">
+                        <span class="bg-sky-100 text-sky-600 p-2 rounded mr-3 text-sm">Step 2</span> Critical Service RTO
+                    </h3>
+                    <p class="text-sm text-slate-500 mb-4">Comparing Recovery Time Objectives (RTO). Shorter bars mean higher urgency (Mission Critical).</p>
+                    
+                    <!-- Chart Container -->
+                    <div class="chart-container">
+                        <canvas id="biaChart"></canvas>
+                    </div>
+
+                    <div class="mt-4 text-xs text-slate-500 bg-blue-50 p-3 rounded">
+                        <strong>RTO (Recovery Time Objective):</strong> The maximum time a service can be down. <br>
+                        <strong>RPO (Recovery Point Objective):</strong> How much data loss is acceptable (e.g., 1 hour of data).
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- SECTION 4: STRATEGIES -->
+        <section id="strategies" class="content-section hidden p-6 md:p-10 max-w-7xl mx-auto">
+            <div class="mb-8">
+                <h2 class="text-3xl font-bold text-brand-900">Continuity Strategies</h2>
+                <p class="mt-2 text-slate-600">Strategies to continue operations when the primary facility or resources are unavailable.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Strategy Card 1 -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border-t-4 border-emerald-500 interactive-card">
+                    <h3 class="font-bold text-lg text-slate-800 mb-2">Alternate Sites</h3>
+                    <p class="text-sm text-slate-600 mb-4">Designated locations to relocate critical staff.</p>
+                    <ul class="text-xs space-y-2 text-slate-500">
+                        <li class="flex items-center"><span class="w-2 h-2 bg-emerald-500 rounded-full mr-2"></span>Hot Site (Ready immediately)</li>
+                        <li class="flex items-center"><span class="w-2 h-2 bg-yellow-500 rounded-full mr-2"></span>Warm Site (Partially equipped)</li>
+                        <li class="flex items-center"><span class="w-2 h-2 bg-slate-400 rounded-full mr-2"></span>Cold Site (Space only)</li>
+                    </ul>
+                </div>
+
+                <!-- Strategy Card 2 -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border-t-4 border-blue-500 interactive-card">
+                    <h3 class="font-bold text-lg text-slate-800 mb-2">Vital Records</h3>
+                    <p class="text-sm text-slate-600 mb-4">Protection of essential documents and data.</p>
+                    <div class="bg-slate-100 p-3 rounded text-xs">
+                        <strong>The 3-2-1 Rule:</strong><br>
+                        3 Copies of data<br>
+                        2 Different media types<br>
+                        1 Off-site location
+                    </div>
+                </div>
+
+                <!-- Strategy Card 3 -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border-t-4 border-purple-500 interactive-card">
+                    <h3 class="font-bold text-lg text-slate-800 mb-2">Telecommuting</h3>
+                    <p class="text-sm text-slate-600 mb-4">Work-from-home protocols for non-location dependent staff.</p>
+                    <button class="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded hover:bg-purple-200 w-full text-left">
+                        ✅ VPN Requirements<br>
+                        ✅ Hardware Availability<br>
+                        ✅ Communication Plan
+                    </button>
+                </div>
+            </div>
+
+            <!-- Resource Calculation Table (Static Interaction) -->
+            <div class="mt-8 bg-white rounded-xl border border-slate-200 overflow-hidden">
+                <div class="bg-slate-50 px-6 py-4 border-b border-slate-200">
+                    <h3 class="font-bold text-slate-700">Alternate Site Requirements Calculator (Sample)</h3>
+                </div>
+                <div class="p-6 overflow-x-auto">
+                    <table class="w-full text-sm text-left">
+                        <thead class="bg-slate-100 text-slate-600 uppercase text-xs">
+                            <tr>
+                                <th class="px-4 py-3">Resource Type</th>
+                                <th class="px-4 py-3">Normal Operation</th>
+                                <th class="px-4 py-3">Minimum Continuity (30%)</th>
+                                <th class="px-4 py-3">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-200">
+                            <tr>
+                                <td class="px-4 py-3 font-medium">Personnel (Core Team)</td>
+                                <td class="px-4 py-3">100 Staff</td>
+                                <td class="px-4 py-3 font-bold text-brand-600">30 Staff</td>
+                                <td class="px-4 py-3"><span class="bg-green-100 text-green-700 px-2 py-1 rounded text-xs">Identified</span></td>
+                            </tr>
+                            <tr>
+                                <td class="px-4 py-3 font-medium">Workstations/Laptops</td>
+                                <td class="px-4 py-3">100 Units</td>
+                                <td class="px-4 py-3 font-bold text-brand-600">30 Units</td>
+                                <td class="px-4 py-3"><span class="bg-yellow-100 text-yellow-700 px-2 py-1 rounded text-xs">Needs Procurement</span></td>
+                            </tr>
+                            <tr>
+                                <td class="px-4 py-3 font-medium">Internet Bandwidth</td>
+                                <td class="px-4 py-3">1 Gbps</td>
+                                <td class="px-4 py-3 font-bold text-brand-600">100 Mbps</td>
+                                <td class="px-4 py-3"><span class="bg-green-100 text-green-700 px-2 py-1 rounded text-xs">Secured (4G Backup)</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- SECTION 5: ACTIVATION -->
+        <section id="activation" class="content-section hidden p-6 md:p-10 max-w-7xl mx-auto">
+            <div class="mb-8 flex justify-between items-center flex-wrap gap-4">
+                <div>
+                    <h2 class="text-3xl font-bold text-brand-900">Activation Protocol</h2>
+                    <p class="mt-2 text-slate-600">Procedures for the First 4 Hours of a disruptive incident.</p>
+                </div>
+                
+                <!-- Status Toggle -->
+                <div class="flex items-center bg-white border border-slate-300 rounded-lg p-2 shadow-sm">
+                    <span class="text-sm font-bold mr-3 text-slate-600">Current Status:</span>
+                    <select id="incidentStatus" onchange="updateAlertLevel()" class="bg-slate-100 border-none rounded text-sm py-1 px-2 focus:ring-0 cursor-pointer font-bold">
+                        <option value="normal">🟢 Normal Operations</option>
+                        <option value="level1">🟡 Level 1 (Minor)</option>
+                        <option value="level2">🟠 Level 2 (Moderate)</option>
+                        <option value="level3">🔴 Level 3 (Major)</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Dynamic Alert Banner -->
+            <div id="alertBanner" class="bg-green-50 border-l-4 border-green-500 p-4 mb-8 transition-all duration-300">
+                <h3 class="font-bold text-green-800" id="alertTitle">Status: Normal</h3>
+                <p class="text-green-700 text-sm" id="alertDesc">Monitor for potential threats. Regular maintenance of PSCP.</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Activation Flowchart -->
+                <div class="lg:col-span-1 bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                    <h3 class="font-bold text-slate-800 mb-6 border-b pb-2">Activation Flow</h3>
+                    
+                    <div class="relative pl-4 space-y-8 timeline-line">
+                        <div class="relative z-10 flex items-start">
+                            <div class="w-8 h-8 bg-slate-200 rounded-full flex items-center justify-center text-xs font-bold mr-3 shrink-0 flow-step" id="step1">1</div>
+                            <div>
+                                <h4 class="font-bold text-sm">Incident Detection</h4>
+                                <p class="text-xs text-slate-500">Security/Staff reports anomaly.</p>
+                            </div>
+                        </div>
+                        <div class="relative z-10 flex items-start">
+                            <div class="w-8 h-8 bg-slate-200 rounded-full flex items-center justify-center text-xs font-bold mr-3 shrink-0 flow-step" id="step2">2</div>
+                            <div>
+                                <h4 class="font-bold text-sm">Initial Assessment</h4>
+                                <p class="text-xs text-slate-500">CMT determines impact level.</p>
+                            </div>
+                        </div>
+                        <div class="relative z-10 flex items-start">
+                            <div class="w-8 h-8 bg-slate-200 rounded-full flex items-center justify-center text-xs font-bold mr-3 shrink-0 flow-step" id="step3">3</div>
+                            <div>
+                                <h4 class="font-bold text-sm">Activation Decision</h4>
+                                <p class="text-xs text-slate-500">Head of Agency activates PSCP.</p>
+                            </div>
+                        </div>
+                        <div class="relative z-10 flex items-start">
+                            <div class="w-8 h-8 bg-slate-200 rounded-full flex items-center justify-center text-xs font-bold mr-3 shrink-0 flow-step" id="step4">4</div>
+                            <div>
+                                <h4 class="font-bold text-sm">Notification</h4>
+                                <p class="text-xs text-slate-500">Call trees initiated.</p>
+                            </div>
+                        </div>
+                        <div class="relative z-10 flex items-start">
+                            <div class="w-8 h-8 bg-slate-200 rounded-full flex items-center justify-center text-xs font-bold mr-3 shrink-0 flow-step" id="step5">5</div>
+                            <div>
+                                <h4 class="font-bold text-sm">Relocation</h4>
+                                <p class="text-xs text-slate-500">Move to Alternate Site.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Interactive Checklist -->
+                <div class="lg:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                    <h3 class="font-bold text-slate-800 mb-4 border-b pb-2">Immediate Action Checklist (First 4 Hours)</h3>
+                    <div class="space-y-3" id="checklist-container">
+                        <!-- JS generated items -->
+                    </div>
+                    <div class="mt-4 pt-4 border-t flex justify-between items-center">
+                        <span class="text-xs text-slate-500" id="checklist-progress">0/5 Tasks Completed</span>
+                        <button onclick="resetChecklist()" class="text-xs text-brand-600 hover:text-brand-800 font-semibold">Reset Checklist</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- SECTION 6: DIGITAL TEMPLATE (ENHANCED) -->
+  <section id="template" class="content-section hidden p-6 md:p-10 max-w-7xl mx-auto">
+    <div class="mb-8">
+      <h2 class="text-3xl font-bold text-brand-900 flex items-center">
+        <span class="mr-3">📝</span>
+        Digital PSCP Template
+      </h2>
+      <p class="mt-2 text-slate-600 max-w-3xl">
+        Official document structure compliant with PSCP Guidelines Version 2. Use this template as the foundation for your agency's continuity plan.
+      </p>
+      <div class="mt-4 flex flex-wrap gap-2">
+        <span class="badge badge-critical">Official Template</span>
+        <span class="badge badge-medium">ISO 22301 Compliant</span>
+        <span class="badge badge-low">Version 2.1</span>
+      </div>
+    </div>
+    
+    <div class="bg-white shadow-xl rounded-xl overflow-hidden border border-slate-200 max-w-5xl mx-auto">
+      <div class="bg-gradient-to-r from-brand-900 to-brand-800 p-5 md:p-6">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between">
+          <div>
+            <h3 class="font-bold text-xl md:text-2xl text-white template-heading">Public Service Continuity Plan</h3>
+            <p class="text-blue-200 mt-1">Official Agency Template • Confidential</p>
+          </div>
+          <div class="mt-3 md:mt-0 flex-shrink-0">
+            <a href="https://asilvainnovations.com/PSCP-Digital-Template" target="_blank" class="btn-primary inline-flex items-center">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+              </svg>
+              Access Full Template
+            </a>
+          </div>
+        </div>
+      </div>
+      
+      <div id="template-section" class="p-6 md:p-8 space-y-7 bg-slate-50">
+        <!-- Document Control -->
+        <div class="document-header">
+          <h4 class="font-bold text-lg template-heading mb-3">Document Control</h4>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <p class="text-sm text-slate-600 mb-1">Organization Name</p>
+              <p class="font-medium">[Insert Agency Name]</p>
+            </div>
+            <div>
+              <p class="text-sm text-slate-600 mb-1">Plan Owner</p>
+              <p class="font-medium">[Insert Name & Position]</p>
+            </div>
+            <div>
+              <p class="text-sm text-slate-600 mb-1">Effective Date</p>
+              <p class="font-medium">[DD/MM/YYYY]</p>
+            </div>
+            <div>
+              <p class="text-sm text-slate-600 mb-1">Next Review Date</p>
+              <p class="font-medium">[DD/MM/YYYY]</p>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Section 1: Introduction -->
+        <div>
+          <h4 class="section-title template-heading">1. Introduction & Policy Statement</h4>
+          <p class="mt-3">
+            This Public Service Continuity Plan (PSCP) establishes the framework to ensure the continuation of critical public services during and after disruptive incidents. It defines roles, responsibilities, and procedures to maintain essential operations.
+          </p>
+          
+          <div class="policy-statement mt-4">
+            <h5 class="font-bold template-heading mb-1">Policy Statement</h5>
+            <p>
+              "[Insert Agency Name] is committed to the safety of personnel and the uninterrupted delivery of critical public services, regardless of the nature or scale of disruption. This plan ensures organizational resilience through proactive preparation and coordinated response."
+            </p>
+            <p class="mt-2 font-medium text-brand-900">— [Agency Head Name], [Title]</p>
+          </div>
+        </div>
+        
+        <!-- Section 2: Governance -->
+        <div>
+          <h4 class="section-title template-heading">2. Governance Structure</h4>
+          <p class="mb-4">Continuity Management Team (CMT) roles and responsibilities:</p>
+          
+          <div class="overflow-x-auto">
+            <table class="min-w-full bg-white rounded-lg overflow-hidden border border-slate-200">
+              <thead>
+                <tr class="bg-brand-50">
+                  <th class="p-3 text-left template-heading text-sm font-bold text-brand-900 uppercase tracking-wider">Role</th>
+                  <th class="p-3 text-left template-heading text-sm font-bold text-brand-900 uppercase tracking-wider">Key Responsibilities</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="border-b border-slate-200 hover:bg-slate-50">
+                  <td class="p-3 font-bold template-heading">CMT Leader<br><span class="text-sm font-normal text-slate-500">(Head of Agency)</span></td>
+                  <td class="p-3">
+                    <ul class="list-disc pl-5 space-y-1">
+                      <li>Declares PSCP activation and deactivation</li>
+                      <li>Final decision-making authority during incidents</li>
+                      <li>Primary liaison with national authorities</li>
+                      <li>Approves emergency resource allocation</li>
+                    </ul>
+                  </td>
+                </tr>
+                <tr class="border-b border-slate-200 bg-slate-50 hover:bg-slate-100">
+                  <td class="p-3 font-bold template-heading">Operations Lead</td>
+                  <td class="p-3">
+                    <ul class="list-disc pl-5 space-y-1">
+                      <li>Directs recovery of Tier 1 critical services</li>
+                      <li>Manages personnel deployment at alternate sites</li>
+                      <li>Implements manual workarounds during system outages</li>
+                      <li>Reports recovery status to CMT Leader hourly</li>
+                    </ul>
+                  </td>
+                </tr>
+                <tr class="border-b border-slate-200 hover:bg-slate-50">
+                  <td class="p-3 font-bold template-heading">Logistics Lead</td>
+                  <td class="p-3">
+                    <ul class="list-disc pl-5 space-y-1">
+                      <li>Secures and prepares alternate site facilities</li>
+                      <li>Coordinates transport of personnel and equipment</li>
+                      <li>Manages emergency supplies (food, water, medical)</li>
+                      <li>Ensures physical security of assets and sites</li>
+                    </ul>
+                  </td>
+                </tr>
+                <tr class="hover:bg-slate-50">
+                  <td class="p-3 font-bold template-heading">Communications & IT Lead</td>
+                  <td class="p-3">
+                    <ul class="list-disc pl-5 space-y-1">
+                      <li>Restores critical IT systems and communications</li>
+                      <li>Manages internal notification systems (call trees)</li>
+                      <li>Recovers vital records (digital and physical)</li>
+                      <li>Provides technical support to all CMT functions</li>
+                    </ul>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          
+          <div class="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
+            <h5 class="font-bold template-heading mb-2">Note on Activation Levels:</h5>
+            <p class="text-sm">
+              <span class="font-medium">Level 1 (Minor):</span> Department-level response, no CMT activation<br>
+              <span class="font-medium">Level 2 (Moderate):</span> Partial CMT activation, alternate site preparation<br>
+              <span class="font-medium">Level 3 (Major):</span> Full CMT activation, immediate relocation to alternate site
+            </p>
+          </div>
+        </div>
+        
+        <!-- Footer Note -->
+        <div class="border-t border-slate-200 pt-6 mt-4 text-center text-sm text-slate-500">
+          <p>This template complies with the Philippine Public Service Continuity Planning Guidelines (NDRRMC MC No. 2022-01)</p>
+          <p class="mt-1 font-medium text-brand-700">Document ID: PSCP-TEMPLATE-v2.1 • Classification: OFFICIAL</p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="mt-8 bg-blue-50 rounded-xl p-5 border border-blue-200 max-w-3xl mx-auto">
+      <div class="flex items-start">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-600 mt-1 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <div class="ml-3">
+          <h4 class="font-bold text-lg text-brand-900 mb-1">Implementation Guidance</h4>
+          <p class="text-slate-700">
+            This digital template provides the structural framework. For the complete editable version with all sections (Risk Assessment, BIA, Strategies, Activation Procedures), download the official template using the button above. Customize all bracketed [ ] content to reflect your agency's specific requirements.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+    </main>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // --- 1. Navigation Logic ---
+        function navTo(sectionId) {
+            // Hide all sections
+            document.querySelectorAll('.content-section').forEach(el => {
+                el.classList.add('hidden');
+            });
+            // Show selected
+            document.getElementById(sectionId).classList.remove('hidden');
+            
+            // Scroll to top
+            document.getElementById('main-scroll').scrollTop = 0;
+
+            // Update Sidebar Styling
+            document.querySelectorAll('.nav-item').forEach(el => {
+                el.classList.remove('bg-brand-800', 'border-sky-400');
+                el.classList.add('border-transparent');
+            });
+            const activeNav = document.getElementById('nav-' + sectionId);
+            if(activeNav) {
+                activeNav.classList.add('bg-brand-800', 'border-sky-400');
+                activeNav.classList.remove('border-transparent');
+            }
+
+            // Trigger Chart Resize/Updates if entering Analysis tab
+            if (sectionId === 'analysis') {
+                if (window.riskChartInstance) window.riskChartInstance.resize();
+                if (window.biaChartInstance) window.biaChartInstance.resize();
+            }
+
+            // Close mobile menu if open
+            if(window.innerWidth < 768) {
+                document.getElementById('sidebar').classList.add('-translate-x-full');
+            }
+        }
+
+        // Mobile Menu Toggle
+        document.getElementById('mobile-menu-btn').addEventListener('click', () => {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('-translate-x-full');
+        });
+
+        // --- 2. Governance Logic (Roles) ---
+        const roleData = {
+            'leader': {
+                title: 'CMT Leader (Head of Agency)',
+                subtitle: 'Ultimate Decision Maker',
+                responsibilities: [
+                    'Declares the activation of the PSCP.',
+                    'Authorizes the move to the Alternate Site.',
+                    'Serves as primary spokesperson to the public/media.',
+                    'Approves emergency expenditures.'
+                ]
+            },
+            'ops': {
+                title: 'Operations Team Lead',
+                subtitle: 'Mission Execution',
+                responsibilities: [
+                    'Directs the recovery of Critical Services (Tier 1).',
+                    'Manages personnel shifts at the alternate site.',
+                    'Reports recovery status to the CMT Leader.',
+                    'Implements manual workarounds if IT is down.'
+                ]
+            },
+            'logs': {
+                title: 'Logistics Team Lead',
+                subtitle: 'Resource Management',
+                responsibilities: [
+                    'Secures the Alternate Site facility.',
+                    'Coordinates transport for staff and equipment.',
+                    'Procures food, water, and emergency supplies.',
+                    'Ensures physical security of assets.'
+                ]
+            },
+            'admin': {
+                title: 'Communications & IT Lead',
+                subtitle: 'Connectivity & Info Flow',
+                responsibilities: [
+                    'Restores IT systems, servers, and internet access.',
+                    'Manages internal communication (call trees).',
+                    'Recovers Vital Records (digital and physical).',
+                    'Provides technical support to the Operations team.'
+                ]
+            }
+        };
+
+        function showRole(roleKey) {
+            const data = roleData[roleKey];
+            document.getElementById('role-title').innerText = data.title;
+            document.getElementById('role-subtitle').innerText = data.subtitle;
+            const list = document.getElementById('role-responsibilities');
+            list.innerHTML = '';
+            data.responsibilities.forEach(item => {
+                const li = document.createElement('li');
+                li.innerText = item;
+                list.appendChild(li);
+            });
+            // Visual highlight
+            document.getElementById('role-display').classList.add('animate-pulse');
+            setTimeout(() => document.getElementById('role-display').classList.remove('animate-pulse'), 500);
+        }
+
+        // --- 3. Analysis Logic (Chart.js) ---
+        
+        // Initial Data
+        let riskDataPoints = [
+            { x: 5, y: 5, r: 15, label: 'Major Typhoon' },
+            { x: 3, y: 5, r: 12, label: 'Cyber Attack' },
+            { x: 2, y: 3, r: 10, label: 'Office Fire' },
+            { x: 1, y: 2, r: 8,  label: 'Power Outage' },
+            { x: 4, y: 4, r: 12, label: 'Pandemic' }
+        ];
+
+        window.onload = function() {
+            // RISK CHART (Bubble/Scatter)
+            const ctxRisk = document.getElementById('riskChart').getContext('2d');
+            window.riskChartInstance = new Chart(ctxRisk, {
+                type: 'bubble',
+                data: {
+                    datasets: [{
+                        label: 'Identified Hazards',
+                        data: riskDataPoints,
+                        backgroundColor: function(context) {
+                            const val = context.raw;
+                            if (val && (val.x + val.y > 8)) return 'rgba(239, 68, 68, 0.7)'; // Red (High Risk)
+                            if (val && (val.x + val.y > 5)) return 'rgba(249, 115, 22, 0.7)'; // Orange (Med)
+                            return 'rgba(59, 130, 246, 0.7)'; // Blue (Low)
+                        },
+                        borderColor: 'rgba(0,0,0,0.1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            min: 0, max: 6,
+                            title: { display: true, text: 'Likelihood (1-5)' },
+                            grid: { color: '#e2e8f0' }
+                        },
+                        y: {
+                            min: 0, max: 6,
+                            title: { display: true, text: 'Impact (1-5)' },
+                            grid: { color: '#e2e8f0' }
+                        }
+                    },
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.raw.label + ` (L:${context.raw.x}, I:${context.raw.y})`;
+                                }
+                            }
+                        },
+                        legend: { display: false }
+                    }
+                }
+            });
+
+            // BIA CHART (Bar)
+            const ctxBia = document.getElementById('biaChart').getContext('2d');
+            window.biaChartInstance = new Chart(ctxBia, {
+                type: 'bar',
+                data: {
+                    labels: ['Emergency Dispatch', 'Health Services', 'Social Welfare', 'Payroll', 'Licensing'],
+                    datasets: [{
+                        label: 'Recovery Time Objective (Hours)',
+                        data: [4, 24, 48, 72, 168], // Hours
+                        backgroundColor: [
+                            'rgba(239, 68, 68, 0.8)', // 4 hrs (Critical)
+                            'rgba(249, 115, 22, 0.8)', // 24 hrs
+                            'rgba(250, 204, 21, 0.8)', // 48 hrs
+                            'rgba(59, 130, 246, 0.8)', // 72 hrs
+                            'rgba(148, 163, 184, 0.8)' // 1 week
+                        ],
+                        borderWidth: 0,
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: 'y', // Horizontal bar is better for labels
+                    scales: {
+                        x: {
+                            title: { display: true, text: 'Max Tolerable Downtime (Hours)' }
+                        }
+                    }
+                }
+            });
+
+            // Init Checkbox
+            renderChecklist();
+        };
+
+        function addHazard() {
+            const name = document.getElementById('newHazardName').value;
+            const like = parseInt(document.getElementById('newHazardLikelihood').value);
+            const imp = parseInt(document.getElementById('newHazardImpact').value);
+
+            if(name) {
+                window.riskChartInstance.data.datasets[0].data.push({
+                    x: like, y: imp, r: 10, label: name
+                });
+                window.riskChartInstance.update();
+                // Clear inputs
+                document.getElementById('newHazardName').value = '';
+            } else {
+                alert("Please name the hazard.");
+            }
+        }
+
+        // --- 4. Activation Logic (Checklist & Status) ---
+        const checklistItems = [
+            { id: 1, text: "Verify Incident & Declare Level", role: "CMT Leader" },
+            { id: 2, text: "Account for all Personnel (Headcount)", role: "Comms Lead" },
+            { id: 3, text: "Secure Primary Site Assets", role: "Security Officer" },
+            { id: 4, text: "Notify Alternate Site Manager", role: "Logistics Lead" },
+            { id: 5, text: "Initiate Transport to Alternate Site", role: "Logistics Lead" }
+        ];
+        let checklistState = [false, false, false, false, false];
+
+        function renderChecklist() {
+            const container = document.getElementById('checklist-container');
+            container.innerHTML = '';
+            let completed = 0;
+
+            checklistItems.forEach((item, index) => {
+                const isChecked = checklistState[index];
+                if(isChecked) completed++;
+
+                const div = document.createElement('div');
+                div.className = `flex items-center p-3 rounded border transition ${isChecked ? 'bg-green-50 border-green-200' : 'bg-slate-50 border-slate-200 hover:bg-slate-100'}`;
+                
+                div.innerHTML = `
+                    <input type="checkbox" id="check-${index}" class="w-5 h-5 text-brand-600 rounded focus:ring-brand-500" ${isChecked ? 'checked' : ''} onchange="toggleCheck(${index})">
+                    <div class="ml-3 flex-1">
+                        <label for="check-${index}" class="text-sm font-medium ${isChecked ? 'text-green-800 line-through' : 'text-slate-800'} cursor-pointer">${item.text}</label>
+                        <p class="text-xs text-slate-500">Role: ${item.role}</p>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+
+            document.getElementById('checklist-progress').innerText = `${completed}/${checklistItems.length} Tasks Completed`;
+        }
+
+        function toggleCheck(index) {
+            checklistState[index] = !checklistState[index];
+            renderChecklist();
+        }
+
+        function resetChecklist() {
+            checklistState = [false, false, false, false, false];
+            renderChecklist();
+        }
+
+        function updateAlertLevel() {
+            const status = document.getElementById('incidentStatus').value;
+            const banner = document.getElementById('alertBanner');
+            const title = document.getElementById('alertTitle');
+            const desc = document.getElementById('alertDesc');
+            const steps = document.querySelectorAll('.flow-step');
+
+            // Reset visual steps
+            steps.forEach(s => { s.classList.remove('bg-green-500', 'bg-yellow-500', 'bg-orange-500', 'bg-red-500', 'text-white'); s.classList.add('bg-slate-200'); });
+
+            if (status === 'normal') {
+                banner.className = "bg-green-50 border-l-4 border-green-500 p-4 mb-8 transition-all duration-300";
+                title.innerText = "Status: Normal";
+                desc.innerText = "Monitor for potential threats. Regular maintenance of PSCP.";
+                title.className = "font-bold text-green-800";
+            } else if (status === 'level1') {
+                banner.className = "bg-yellow-50 border-l-4 border-yellow-500 p-4 mb-8 transition-all duration-300";
+                title.innerText = "Status: Level 1 (Minor)";
+                desc.innerText = "Localized disruption. Internal mitigation. No full activation needed.";
+                title.className = "font-bold text-yellow-800";
+                // Highlight Steps 1, 2
+                highlightSteps(['step1', 'step2'], 'bg-yellow-500');
+            } else if (status === 'level2') {
+                banner.className = "bg-orange-50 border-l-4 border-orange-500 p-4 mb-8 transition-all duration-300";
+                title.innerText = "Status: Level 2 (Moderate)";
+                desc.innerText = "Significant loss. RTO threatened. Prepare Alternate Site.";
+                title.className = "font-bold text-orange-800";
+                // Highlight Steps 1-3
+                highlightSteps(['step1', 'step2', 'step3'], 'bg-orange-500');
+            } else if (status === 'level3') {
+                banner.className = "bg-red-50 border-l-4 border-red-500 p-4 mb-8 transition-all duration-300";
+                title.innerText = "Status: Level 3 (Major - ACTIVATED)";
+                desc.innerText = "Full PSCP Activation. Relocate to Alternate Site immediately.";
+                title.className = "font-bold text-red-800";
+                // Highlight All Steps
+                highlightSteps(['step1', 'step2', 'step3', 'step4', 'step5'], 'bg-red-500');
+            }
+        }
+
+        function highlightSteps(ids, colorClass) {
+            ids.forEach(id => {
+                const el = document.getElementById(id);
+                el.classList.remove('bg-slate-200');
+                el.classList.add(colorClass, 'text-white');
+            });
+        }
+
+    </script>
+</body>
+</html>
