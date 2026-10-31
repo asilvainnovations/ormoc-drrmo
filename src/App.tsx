@@ -22,6 +22,7 @@ const EocRoutes = lazy(() => import('@/features/eoc/routes'));
 const LibraryRoutes = lazy(() => import('@/features/library/routes'));
 const SettingsRoutes = lazy(() => import('@/features/settings/routes'));
 const VaultRoutes = lazy(() => import('@/features/vault/routes'));
+const ToolsRoutes = lazy(() => import('@/features/tools/routes'));
 
 
 /** Signed in AND approved: an account without a role sees only the waiting page, never City data. */
@@ -71,6 +72,7 @@ export function App() {
                 <Route path="library/*" element={<Suspense fallback={<Loading />}><LibraryRoutes /></Suspense>} />
                 <Route path="settings/*" element={<Suspense fallback={<Loading />}><SettingsRoutes /></Suspense>} />
                 <Route path="vault/*" element={<Suspense fallback={<Loading />}><VaultRoutes /></Suspense>} />
+                <Route path="tools/*" element={<Suspense fallback={<Loading />}><ToolsRoutes /></Suspense>} />
                 <Route path="*" element={<div className="page"><PageHeader title="Page not found" subtitle="Use the menu to go to a section." /></div>} />
               </Route>
             </Routes>
