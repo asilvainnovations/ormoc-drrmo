@@ -153,7 +153,7 @@ The platform provides **the means** for each requirement. The MOO and EOC Manual
 
 | Suite | What it proves | Command |
 |---|---|---|
-| SQL rules and security (172 checks) | Every rule and RLS policy, run as each role on Postgres 16 | `scripts/db_test.sh` |
+| SQL rules and security (177 checks) | Every rule and RLS policy, run as each role on Postgres 16 | `scripts/db_test.sh` |
 | Unit (81) | Scoring, AA rules, ids, sync engine with a fake client, CSV import, citation parsing against every reference in the data; TS = SQL scoring parity | `npm test` |
 | Integration (11) | Real supabase-js → PostgREST 12 → Postgres: evidence gate, conflict, RLS refusal, offline protocol ids, logbook replay, AA checklist ids, viewer pull, vault sync and access, repeated edits, keyset paging past 1,000 rows, a pending account reads nothing | `npm run test:it` |
 | End-to-end (Playwright, phone and desktop) | Against real migrations and RLS through PostgREST: sign-up, email confirmation, waiting for approval, approval by an administrator, password reset, sign-out; main journeys; offline open and logbook save; dark mode contrast; vault journey; reference notes; tooltip on every control of 21 screens, hover, keyboard and long press | `npm run test:e2e` |
