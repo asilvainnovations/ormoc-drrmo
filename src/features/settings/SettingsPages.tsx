@@ -26,6 +26,7 @@ export function SettingsPage() {
         <p className="text-muted">{email}{profile?.position ? `, ${profile.position}` : ''}</p>
         <p className="mt-2 flex flex-wrap gap-1.5">{roles.map((r) => <Badge key={r}>{ROLE_LABEL[r]}</Badge>)}</p>
         <p className="mt-3"><TextLink to="/auth/reset" tip="Choose a new password for this account">Change password</TextLink></p>
+        <p className="mt-1"><TextLink to="/settings/apps" tip="See and withdraw the other City systems you allowed to sign you in with this account">Connected apps</TextLink></p>
       </Section>
       <Section title="This device">
         <List>
