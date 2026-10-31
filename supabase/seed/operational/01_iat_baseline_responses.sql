@@ -6,8 +6,7 @@
 begin;
 
 insert into public.assessment_cycles (id, name, cycle_year, iat_version, status, period_from, period_to, notes)
-values ('8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, '2026 Baseline (IAT v1.1)', 2026, '1.1', 'fieldwork', '2026-10-01', '2026-10-30', 'Imported from the IAT v1.1 workbook (file v1-3, desk review completed 30 Oct 2026). Scores are provisional until the validation workshop.
-')
+values ('8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, '2026 Baseline (IAT v1.1)', 2026, '1.1', 'fieldwork', '2026-10-01', '2026-10-30', E'Imported from the IAT v1.1 workbook (file v1-3, desk review completed 30 Oct 2026). Scores are provisional until the validation workshop.\n')
 on conflict (id) do nothing;
 
 -- Responses first, without scores: the evidence gate needs the evidence in place before a score.

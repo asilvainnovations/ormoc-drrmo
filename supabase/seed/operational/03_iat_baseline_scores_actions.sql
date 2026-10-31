@@ -151,426 +151,146 @@ from (values
 where r.id = v.id and r.score is null and not r.is_na;
 
 insert into public.actions (id, cycle_id, indicator_id, action, responsible_person, budget_source, status) values
-('6f51075d-047d-5ceb-ab32-3cf97d1bd3e1'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A1.1', 'Draft an ordinance creating the CDRRMO as a regular department with Admin & Training, Research & Planning and Operations & Warning divisions and their functions (RA 10121 Sec. 12(c); JMC 2014-1). Attach the organogram and staffing pattern from MOO Ch.2.
-
-Target (from the Action Plan): Q1 2027 (SP filing)', 'CDRRMO Head; City Legal Office; SP Committee on DRRM', 'No cost (legislative); staffing cost under A2.3', 'not_started'),
-('8ac398ab-bff1-56a2-9394-10a87ff433f2'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A1.2', 'Issue an updated EO on CDRRMC composition listing every RA 10121 Sec. 11 seat by office, with at least 4 accredited CSOs and a private-sector seat (e.g., EDC). Record the roster as an MOO Ch.1 annex and review it yearly.
-
-Target (from the Action Plan): Dec 2026', 'Mayor''s Office; CDRRMO (secretariat)', 'No cost', 'not_started'),
-('f0d9b51a-3b98-5c87-9b91-3554f0ed78a6'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A1.3', 'Keep the quarterly schedule; add a standing agenda item on RA 12287 readiness and the action plan from this assessment. Use the minutes template in MOO Ch.1.
-
-Target (from the Action Plan): Quarterly', 'CDRRMO (secretariat)', 'LDRRMF 70% (meetings)', 'ongoing'),
-('6e301d50-9273-5048-b3a3-e74f900c37de'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A1.4', 'Write the secretariat procedure (notice, agenda, quorum, minutes, resolutions, tracking) into MOO Ch.2.
-
-Target (from the Action Plan): Jan 2027 (with MOP)', 'CDRRMO Admin & Training', 'No cost', 'ongoing'),
-('550ad96b-16fc-5391-93b4-112ae7a534c5'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A1.5', 'Amend the evacuation ordinance to add procedural statements: triggers tied to the warning-action matrix (A6.2), authority to order, assistance to PWD/elderly, livestock and pets (RA 12287 IRR Rule IV), and enforcement. Add granular (barangay/school-level) class and work suspension. In the CLUP/ZO update, add flood, landslide, storm-surge, liquefaction and tsunami overlay zones (CDRA MDA 1).
-
-Target (from the Action Plan): Q2 2027', 'CDRRMO; City Legal Office; SP', 'No cost', 'not_started'),
-('0803adf5-ce0f-5b1e-a547-cca54a410da0'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A1.6', 'Write a State of Calamity protocol in MOO Ch.1: criteria (NDRRMC Memo on SoC criteria), RDANA/PDNA basis, CDRRMC recommendation, SP resolution template, post-declaration measures (price freeze, QRF use, reporting). Add a note on how to read national/regional declarations that affect Ormoc.
-
-Target (from the Action Plan): Jan 2027 (with MOP)', 'CDRRMO Research & Planning; City Legal Office', 'No cost', 'ongoing'),
-('326c5cd8-0457-5e63-bec5-c9a0af68c09e'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A1.7', 'Keep representation; use the LFC seat to secure the AA line (A4.6) and the EOC budget (B7.5) in the FY2028 budget call.
-
-Target (from the Action Plan): Budget call 2027', 'CDRRMO Head', 'No cost', 'ongoing'),
-('17578930-03c5-5533-8ee8-c73d58c62a98'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A1.8', 'Draft the State of Imminent Disaster procedure (IRR Rule II Sec. 6; Rule III Secs. 2-4): PDRA trigger, CDRRMC resolution, request to RDRRMC VIII, Mayor''s EO template, adoption rule, lifting and the 45-day report (A10.8). Confirm with OCD VIII whether a Provincial declaration applies to an ICC. Walk it through in a tabletop to reach score 3.
-
-Target (from the Action Plan): Jan 2027 (with MOP)', 'CDRRMO Head; City Legal Office; Mayor''s Office', 'No cost', 'ongoing'),
-('26509b46-5964-5a18-b53f-f98c959f27dc'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A2.1', 'Adopt the JMC 2014-1 organogram (Head + 3 divisions) with separate normal-operations and response (EOC) roles, through the ordinance in A1.1 and MOO Ch.2.
-
-Target (from the Action Plan): Jan 2027 (with MOP)', 'CDRRMO Head; HRMO', 'No cost', 'ongoing'),
-('ff485be2-6b68-54b0-8f34-535b506674f8'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A2.2', 'Maintain; document succession (OIC order of precedence) in MOO Ch.2.
-
-Target (from the Action Plan): Jan 2027 (succession in MOO Ch.2)', 'HRMO; CDRRMO Head', 'No cost', 'ongoing'),
-('2c46a3f3-ef1d-5bec-95da-2170e2a58ac7'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A2.3', 'Get the Plantilla of Personnel and vacancy list; compute filled/required. Request creation and funding of the 10 planned items in the FY2028 budget, prioritising Operations & Warning (24/7 OpCen) and Research & Planning (GIS).
-
-Target (from the Action Plan): FY2028 budget', 'CDRRMO Head; HRMO; City Budget Office', 'General Fund (PS)', 'not_started'),
-('23523370-dce0-585e-ac99-48a8b6fbf563'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A2.4', 'Write position descriptions for every CDRRMO and EOC role (MOO annex), aligned to RA 10121 functions; link them to IPCR/OPCR targets.
-
-Target (from the Action Plan): Jan 2027 (with MOP)', 'CDRRMO Admin & Training; HRMO', 'No cost', 'ongoing'),
-('4d71aad2-13e7-55a1-b935-306522ba7fc1'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A2.5', 'Write the OpCen normal-operations SOP (shifts, handover, monitoring, logbook, reporting times 6AM/6PM per RDRRMC8 Res. 12-006) as EOC Manual Ch.4/Ch.5, using the RDRRMOC SOPG 2022 forms (turn-over document, swapping form, duty composition by alert level); have it approved and keep 3 months of rosters as proof of use.
-
-Target (from the Action Plan): Jan 2027 (with MOP)', 'CDRRMO Operations & Warning', 'MOP engagement', 'ongoing'),
-('bbcb216b-c1b7-5852-8590-70294dceb398'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A2.6', 'Run a TNA for all CDRRMO/EOC staff against the competency list (ICS, BLS/SFA, WASAR, CSSR, EOC, PDNA, GIS); produce a 3-year training plan with OCD VIII courses in MOO Ch.6.
-
-Target (from the Action Plan): Q1 2027', 'CDRRMO Admin & Training', 'LDRRMF 70% (capacity building)', 'not_started'),
-('639c0ee0-1d06-5957-acc1-9c39d1da92a6'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A2.7', 'Adopt a responder welfare policy: group accident insurance (staff and accredited volunteers), PPE issue list, rest cycles, MHPSS referral with CHO (RA 11036). Memo 131 also requires EOC personnel welfare.
-
-Target (from the Action Plan): FY2027 AIP', 'CDRRMO; HRMO; CHO', 'LDRRMF 70%', 'not_started'),
-('c2c9fa80-c0ad-5deb-9380-09ec01657f03'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A2.8', 'Formalise the ACDV registry with accreditation, insurance and deployment rules, and add AA tasks for ACDVs.
-
-Target (from the Action Plan): Q2 2027', 'CDRRMO Admin & Training', 'LDRRMF 70%', 'ongoing'),
-('32080951-c855-53c1-a286-443a92d2c897'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A2.9', 'Designate an AA focal person by office order and enrol them, BDRRMC officers, ACDVs and partner CSOs in AA training when OCD VIII cascades the IRR.
-
-Target (from the Action Plan): Dec 2026', 'CDRRMO Head', 'No cost; training via OCD VIII', 'not_started'),
-('e7ee7f23-541b-508b-9dce-ef80cd63d85a'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A2.10', 'Build a skills inventory (SAR, engineering, logistics, GIS, PDNA, MHPSS) covering CDRRMO, CDRRMC offices and BDRRMCs; update it every 12 months (UNDRR DRSC 6.1.1).
-
-Target (from the Action Plan): Q1 2027', 'CDRRMO Admin & Training', 'No cost', 'not_started'),
-('0e3b1e97-a0df-53b6-89c4-4120c3fca0cc'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A3.1', 'Maintain; in the next update correct the barangay count to 85 and add RA 12287 anticipatory action PPAs.
-
-Target (from the Action Plan): Next LDRRMP review', 'CDRRMO Research & Planning', 'LDRRMF 70% (planning)', 'ongoing'),
-('33bb218b-2933-50a2-867d-353bdae34e97'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A3.2', 'Use the CLUP/ZO update to adopt CDRA hazard overlays and the MDA 1-8 interventions; tag CDP/AIP and LCCAP projects to CDRA risk-register entries; review mainstreaming in CDP, CLUP, ELA and LCCAP (see C1.1-C1.4).
-
-Target (from the Action Plan): With CLUP update', 'CPDO; CDRRMO Research & Planning', 'General Fund (CPDO)', 'ongoing'),
-('d5ea574c-d2e6-5fdd-a19b-f0cb567a9079'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A3.3', 'Prepare CPs for the remaining priority hazards and test each by tabletop; add AA annexes (A8.8) and pre-disaster recovery annex (A9.5).
-
-Target (from the Action Plan): 2027', 'CDRRMO Research & Planning; response cluster leads', 'LDRRMF 70%', 'ongoing'),
-('d0563f2e-e791-5182-a9e1-9407abd4a3ab'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A3.4', 'Complete the PSCP using the PSCP Guidebook: essential functions, BIA, alternate site (links to B2.7), orders of succession, vital records. Exercise it once.
-
-Target (from the Action Plan): Q2 2027', 'CDRRMO Research & Planning; all city offices', 'LDRRMF 70%', 'ongoing'),
-('fc84b7a5-98b3-545f-ab50-83130bfa986d'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A3.5', 'Maintain; add the AA line (A4.6) and EOC operations line (B7.5) explicitly.
-
-Target (from the Action Plan): FY2028 LDRRMFIP', 'CDRRMO; City Budget Office', 'LDRRMF 70%', 'ongoing'),
-('a870bd12-5f98-5d74-b306-0c6ecf99706e'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A3.6', 'Produce barangay evacuation maps (routes, safe zones, ECs) for all 85 barangays, starting with the 46 critical flood barangays, and link triggers to the warning-action matrix (A6.2).
-
-Target (from the Action Plan): Q2 2027 (46 critical first)', 'CDRRMO Research & Planning; BDRRMCs', 'LDRRMF 70%', 'not_started'),
-('a45a58f1-7f21-5949-9b44-4299ed877cad'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A3.7', 'Maintain; add AA and evacuation-map status columns to the matrix.
-
-Target (from the Action Plan): Annual', 'CDRRMO Research & Planning', 'No cost', 'ongoing'),
-('846b8dff-4710-53be-b723-d84aa0fd3efc'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A4.1', 'Maintain; keep the computation sheet with the budget.
-
-Target (from the Action Plan): Annual', 'City Budget Office', 'No cost', 'ongoing'),
-('afb4866e-ad4a-51fd-bc11-ecbcb796da09'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A4.2', 'Maintain the 70/30 split; show the AA sub-allocation inside the 70% (A4.6).
-
-Target (from the Action Plan): Annual', 'City Budget Office; CDRRMO', 'No cost', 'ongoing'),
-('33610e40-d2d1-5271-903c-3350055381b9'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A4.3', 'Maintain; list STF balances as an AA fund source (A4.6).
-
-Target (from the Action Plan): Annual', 'City Accountant; City Treasurer', 'No cost', 'ongoing'),
-('8f819abc-8676-5065-a287-c4403b7e7fb2'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A4.4', 'Track LDRRMF utilisation quarterly in the CDRRMC meeting; flag PPAs at risk by Q3.
-
-Target (from the Action Plan): Quarterly', 'CDRRMO; City Budget Office', 'No cost', 'ongoing'),
-('7fdbd68a-4ed6-5cf4-886a-b31cfc55c9f9'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A4.5', 'Keep a pre-qualified supplier list updated each year; set framework agreements for relief goods, fuel and heavy equipment under RA 12009 IRR, usable for AA (B6.6).
-
-Target (from the Action Plan): Q1 2027', 'BAC; GSO; CDRRMO', 'No cost (procurement planning)', 'ongoing'),
-('fa33e154-0199-5988-9d47-62baf9b79d62'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A4.6', 'Put an AA line (up to 10% of the 70% LDRRMF) in the FY2028 LDRRMFIP; map other sources (STF, donations, ODA); write Budget/Accounting/BAC steps for immediate disbursement with the 30%/70% tranche rule. Revisit when DBM-COA guidelines issue.
-
-Target (from the Action Plan): FY2028 LDRRMFIP', 'CDRRMO; City Budget Office; City Accountant; BAC', 'LDRRMF 70% (AA line)', 'not_started'),
-('08dc9204-ad47-5eb2-a993-55b9916aac70'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A4.7', 'Check that the EOC, ECs and city-owned critical facilities are on the GSIS indemnity schedule; use the CDRA facility list to set coverage priorities.
-
-Target (from the Action Plan): Annual', 'City Treasurer; GSO', 'General Fund (GSIS premiums)', 'ongoing'),
-('9be57e00-60ac-5fc4-b73a-0953058572be'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A4.8', 'Set an internal audit check of LDRRMF before year-end.
-
-Target (from the Action Plan): Q4 annually', 'Internal Audit; City Accountant', 'No cost', 'ongoing'),
-('056211c3-738a-5bc4-8ada-1033066335c9'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A4.9', 'Cost response and early recovery (relief, evacuation, debris, emergency repair) for a Thelma-type flash flood and a Yolanda-type typhoon from the flood and TC CPs; compare with the current QRF, STF balances and NDRRM Fund access; record the shortfall and fallback sources in the LDRRMFIP.
-
-Target (from the Action Plan): Q2 2027', 'City Budget Office; CDRRMO Research & Planning', 'No cost', 'not_started'),
-('baf97a0d-6274-530e-8ae9-da787bd59af3'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A5.1', 'Maintain; publish barangay hazard maps through the shared source (A5.7).
-
-Target (from the Action Plan): Annual', 'CDRRMO Research & Planning', 'LDRRMF 70% (GIS)', 'ongoing'),
-('ae2ee456-0a32-542d-9106-23e2d86bc9ef'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A5.2', 'Add earthquake, liquefaction and tsunami DRA; correct the Naval/Biliran table labels; adopt the CDRA with the CLUP update and set its update cycle (A5.9); cover exposure of critical facilities (A5.8) and non-asset losses (C1.3).
-
-Target (from the Action Plan): With CLUP update (2027)', 'CPDO; CDRRMO Research & Planning', 'General Fund (CPDO); LDRRMF 70% (hazard studies)', 'ongoing'),
-('154d1a9d-e016-5ae9-ab16-7bc30cbc2a9b'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A5.3', 'Validate CBMS currency; use it as the AA targeting list (A8.9).
-
-Target (from the Action Plan): Q1 2027 (CBMS validation)', 'CPDO; CDRRMO', 'General Fund (CBMS)', 'ongoing'),
-('e4ebeae2-0d45-5c78-843a-4502c67ba3a5'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A5.4', 'Set up a disaster event and loss database (Sendai/DesInventar fields) and back-load past RDANA/PDNA data.
-
-Target (from the Action Plan): Q2 2027', 'CDRRMO Research & Planning', 'LDRRMF 70% (database)', 'not_started'),
-('bc84b47c-ac80-52b5-9822-8ecd4152bc32'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A5.5', 'Confirm the City DPO; sign data-sharing agreements with CSWDO/CPDO for beneficiary data; add privacy notices to registration forms.
-
-Target (from the Action Plan): Q1 2027', 'City DPO; CDRRMO; CSWDO', 'No cost', 'not_started'),
-('8ef318ca-08f0-576b-8b4b-e5ed2c1d04b2'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A5.6', 'Confirm GIS staff and software; train at least 2 R&P staff.
-
-Target (from the Action Plan): Q2 2027', 'CDRRMO Research & Planning; CPDO', 'LDRRMF 70% (training)', 'not_started'),
-('1fabcf64-c759-5fe7-9bad-db019691121e'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A5.7', 'Set up one shared repository (hazard maps, plans, contacts, readiness summary) for CDRRMC offices and post a public summary, respecting RA 10173.
-
-Target (from the Action Plan): Q2 2027', 'CDRRMO Research & Planning', 'LDRRMF 70% (ICT)', 'not_started'),
-('7b3c647d-a784-5164-91d8-d0461e193c04'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A5.8', 'Start from the CDRA facility and lifeline tables; map dependencies among power, water, telecom, roads, hospitals, ECs and the EOC (CDRA MDA 2 items 1, 5, 6); use CREST systems-mapping to draw failure chains and set restoration priorities.
-
-Target (from the Action Plan): Q2 2027 (start from CDRA tables)', 'CDRRMO Research & Planning; City Engineer', 'No cost', 'not_started'),
-('ed16afb1-f14a-5c7d-b7c6-73049a1ed8a4'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A5.9', 'Adopt an update cycle in MOO Ch.7: hazard data <=3 years; exposure, vulnerability and critical facilities <=18 months.
-
-Target (from the Action Plan): Jan 2027 (with MOP)', 'CDRRMO Research & Planning', 'No cost', 'ongoing'),
-('985a8958-7ea8-5851-b9c9-4954942e7c90'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A6.1', 'Restore and insure the flood/rain gauges; set a monthly functionality check; write an EWS SOP (planned PPA).
-
-Target (from the Action Plan): 2027', 'CDRRMO Operations & Warning', 'LDRRMF 70% (EWS)', 'ongoing'),
-('a0d9a39a-1eeb-5e91-a6a7-4dac743ab765'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A6.2', 'Write the warning-action matrix (PAGASA/PHIVOLCS levels -> pre-emptive evacuation, class/work suspension, EOC level, SID request), built to take NDRRMC impact-based triggers when issued.
-
-Target (from the Action Plan): Jan 2027 (with MOP)', 'CDRRMO Operations & Warning', 'No cost', 'ongoing'),
-('a98e6047-9c25-5608-af72-0d80969eac3f'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A6.3', 'Revise the dissemination SOP with non-telecom fallbacks (VHF, sirens, criers) and test to purok level twice a year with logs.
-
-Target (from the Action Plan): Jan 2027 (with MOP)', 'CDRRMO Operations & Warning; BDRRMCs', 'LDRRMF 70%', 'ongoing'),
-('640850e8-cde6-54f4-9af3-01eaa381ac90'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A6.4', 'Maintain; add PWD-inclusive EWS (planned PPA).
-
-Target (from the Action Plan): Q3 2027', 'CDRRMO', 'LDRRMF 70% (PWD-inclusive EWS)', 'ongoing'),
-('be232ce8-08fc-5e8e-bbf8-c845ed2ae528'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A6.5', 'Designate the PIO and write the risk communication plan, including rumour management.
-
-Target (from the Action Plan): Q1 2027', 'CDRRMO; City Information Office', 'No cost', 'not_started'),
-('e89c19ba-60d8-590a-a8ab-e047f033f9d0'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A6.6', 'Set annual reach targets per barangay and report them.
-
-Target (from the Action Plan): Annual', 'CDRRMO Admin & Training', 'LDRRMF 70% (IEC)', 'ongoing'),
-('356d1b46-30bc-5b7c-9dbe-07dee80a2b1c'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A6.7', 'Prepare SID public notice templates and sector-specific advisories with channels to isolated barangays.
-
-Target (from the Action Plan): Jan 2027 (with MOP)', 'CDRRMO; City Information Office', 'No cost', 'ongoing'),
-('c78612d8-3f8d-5cd4-95e1-ef8861d50ffa'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A7.1', 'Maintain; merge with the TNA plan (A2.6).
-
-Target (from the Action Plan): Annual', 'CDRRMO Admin & Training', 'LDRRMF 70%', 'ongoing'),
-('838f6d20-b7b9-59c3-a2fa-b29d75846ad3'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A7.2', 'Maintain.
-
-Target (from the Action Plan): Quarterly', 'CDRRMO', 'No cost', 'ongoing'),
-('90272834-a380-5c2b-b1bd-a5d7c74c9310'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A7.3', 'Maintain; target low-functioning barangays first.
-
-Target (from the Action Plan): Annual', 'CDRRMO; DILG CLGOO', 'No cost', 'ongoing'),
-('457b1ec8-43d9-5cf7-81fb-5dd131616da3'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A7.4', 'Audit ECs against RA 12076/DSWD standards; prioritise retrofits for the 46 critical flood barangays.
-
-Target (from the Action Plan): 2027', 'CDRRMO; City Engineer; CSWDO', 'LDRRMF 70% (infrastructure)', 'ongoing'),
-('12ff7023-cd0d-5741-9c5b-0aebb2c2c1ad'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A7.5', 'Maintain; add AA prepositioning triggers.
-
-Target (from the Action Plan): Before typhoon season (May 2027)', 'CSWDO; CDRRMO', 'LDRRMF 70% (prepositioning)', 'ongoing'),
-('70cf7858-d85d-5346-8873-6fd41de7bec2'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A7.6', 'Hold a short FGD with PWD, senior, women and youth representatives to confirm engagement.
-
-Target (from the Action Plan): Q1 2027', 'CDRRMO; GAD Focal Point', 'GAD fund', 'not_started'),
-('1701e1a1-4f3f-5f26-8a81-0c2621c0dfae'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A7.7', 'Maintain; include schools and hospitals in the next CP tabletop.
-
-Target (from the Action Plan): Q2 2027 (CP tabletop)', 'CDRRMO; DepEd; CHO', 'No cost', 'ongoing'),
-('b5d404a4-8d83-5a46-8e15-81c98981c0e7'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A7.8', 'Set an annual refresher cycle for responders, EOC staff and BDRRMC members and track attendance.
-
-Target (from the Action Plan): 2027', 'CDRRMO Admin & Training', 'LDRRMF 70%', 'not_started'),
-('9f01af22-69c3-5d33-a254-75d722012675'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A7.9', 'Add a 12-hour welfare-check step to BDRRMC protocols, using purok household lists (CBMS) and the CDRA exposed-household counts; test it in the next drill and log the time taken.
-
-Target (from the Action Plan): Next drill (Q1 2027)', 'BDRRMCs; CDRRMO', 'No cost', 'not_started'),
-('410d77a1-aa23-58be-8de3-ad4930065f2a'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A8.1', 'Issue an EO institutionalising ICS with pre-designated ICs and IMT roster; complete ICS training.
-
-Target (from the Action Plan): Q1 2027', 'Mayor''s Office; CDRRMO', 'LDRRMF 70% (training)', 'not_started'),
-('b5456b9f-0bf0-54d8-a41f-0589bc2201ab'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A8.2', 'Update the response team EO and the BFP MOA; keep certificates current.
-
-Target (from the Action Plan): Q1 2027', 'CDRRMO Operations & Warning', 'LDRRMF 70%', 'not_started'),
-('447ee4fd-fa77-547b-a465-2670e8bcb0dd'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A8.3', 'Program a PM schedule for vehicles and equipment and keep logs.
-
-Target (from the Action Plan): Q1 2027', 'CDRRMO; GSO', 'LDRRMF 70% (MOOE)', 'ongoing'),
-('5e9bf5bb-04cb-5172-aca5-08e08416d594'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A8.4', 'Integrate the hotline with E911 and write the dispatch SOP with response-time tracking.
-
-Target (from the Action Plan): 2027', 'CDRRMO Operations & Warning', 'LDRRMF 70% (ICT)', 'not_started'),
-('4c403884-9cf0-5200-a41a-76b1bb4a69f3'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A8.5', 'Assess cluster capability and adopt a cluster EO aligned to the national response clusters (RDRRMOC SOPG 2022, Table 6: 11 clusters), naming lead and member offices.
-
-Target (from the Action Plan): Q2 2027', 'CDRRMO; cluster lead offices', 'No cost', 'ongoing'),
-('6ca3306b-82d1-5cc7-b1d9-eccc51547aff'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A8.6', 'Maintain; record anticipatory actions in each PDRA.
-
-Target (from the Action Plan): Each forecast event', 'CDRRMO', 'No cost', 'ongoing'),
-('4ca1ee27-3e45-5517-80ac-2703b42fe94e'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A8.7', 'Designate MDM and RDANA teams by EO and train them.
-
-Target (from the Action Plan): 2027', 'CDRRMO; CHO; PNP', 'LDRRMF 70% (training)', 'not_started'),
-('f16b45c9-eee7-5067-adbf-cf21fb0460cd'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A8.8', 'Write AA protocols by hazard and lead time with office-order templates; walk them through in a PDRA tabletop to reach 3.
-
-Target (from the Action Plan): Jan 2027 (with MOP)', 'CDRRMO', 'No cost', 'ongoing'),
-('fc88ad5e-2926-5d0b-92f4-c7559b456d57'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A8.9', 'Issue local guidelines with CSWDO for anticipatory cash/vouchers using CBMS, with a DSA.
-
-Target (from the Action Plan): 2027', 'CSWDO; CDRRMO; City DPO', 'LDRRMF 70% (AA line)', 'not_started'),
-('b10f56cc-54ab-51b7-91dd-85b949cdd9b9'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A9.1', 'Form and train a PDNA team using OCD templates.
-
-Target (from the Action Plan): 2027', 'CDRRMO Research & Planning', 'LDRRMF 70%', 'not_started'),
-('f5105d4a-b9c2-51aa-968d-444a9de2c65a'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A9.2', 'Maintain; state assumptions in projections.
-
-Target (from the Action Plan): After each major event', 'CDRRMO', 'LDRRMF 70% / Special Trust Fund', 'ongoing'),
-('542bacc7-ca0f-55d5-bf9d-e64db66b5149'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A9.3', 'Add a recovery monitoring matrix to the event database (A5.4).
-
-Target (from the Action Plan): Q3 2027', 'CDRRMO Research & Planning', 'No cost', 'not_started'),
-('36b17143-c42e-532f-b2b1-6207fc7e9b1b'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A9.4', 'Write referral pathways with CSWDO, CHO and PESO.
-
-Target (from the Action Plan): Q3 2027', 'CSWDO; CHO; PESO', 'No cost (MOA)', 'not_started'),
-('ad3e0815-da28-5d25-b1c2-e2a0b6f2bef2'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A9.5', 'Use the OCD/World Bank Ready to Rebuild workbook to prepare a pre-disaster recovery framework.
-
-Target (from the Action Plan): 2027', 'CDRRMO Research & Planning', 'LDRRMF 70%', 'not_started'),
-('3b629c38-a084-5e74-8718-32893c994201'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A10.1', 'Reframe as technical mutual-aid MOAs with Kananga, Albuera, Merida, Isabel and the Province; join the Leyte DRRMCs Telecom and Response Network (planned PPA).
-
-Target (from the Action Plan): 2027', 'CDRRMO Head; Mayor''s Office', 'No cost', 'not_started'),
-('88328981-2978-5b3d-af2e-bd63614bf10b'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A10.2', 'Maintain; add AA roles to partner MOAs.
-
-Target (from the Action Plan): Q2 2027', 'CDRRMO', 'No cost', 'ongoing'),
-('1235ca7e-6091-571c-9fb8-0c6a1a3a7f36'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A10.3', 'Adopt RDRRMC8 Res. 12-006 locally by CDRRMC resolution.
-
-Target (from the Action Plan): Dec 2026', 'CDRRMO', 'No cost', 'ongoing'),
-('2d6a2f38-e50f-5f54-92db-5d3f749ce3a2'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A10.4', 'Produce the first annual RBME report (Form 5D) and baseline database; present it to the CDRRMC and LDC; include the IAT results and the CDRA monitoring indicators (CDRA 6.7.1).
-
-Target (from the Action Plan): Jan 2027 (first annual RBME report)', 'CDRRMO Research & Planning', 'No cost', 'not_started'),
-('468a7d69-5ddd-5261-b167-9543407915a0'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A10.5', 'Maintain.
-
-Target (from the Action Plan): Quarterly', 'City Budget Office', 'No cost', 'ongoing'),
-('fbcf2934-a246-5403-9a71-fd17c781480c'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A10.6', 'Maintain.
-
-Target (from the Action Plan): After each event', 'CDRRMO', 'No cost', 'ongoing'),
-('844dc812-eed0-568d-bb34-e530b39a534c'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A10.7', 'Keep participating; track gaps from GKS/SGLG results.
-
-Target (from the Action Plan): Annual', 'CDRRMO', 'No cost', 'ongoing'),
-('76434482-e3b7-560c-8899-1a0204222968'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A10.8', 'Prepare the 45-day post-declaration report template and confirm the reporting route with OCD VIII.
-
-Target (from the Action Plan): Jan 2027 (with MOP)', 'CDRRMO', 'No cost', 'ongoing'),
-('b88c4d9e-80e7-50c0-aa1d-1fd43eb9b85f'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A10.9', 'Document changes adopted from exchanges.
-
-Target (from the Action Plan): Annual', 'CDRRMO', 'LDRRMF 70% (learning exchanges)', 'ongoing'),
-('a3d3f207-fcb1-5ab3-9626-3c44e7adc093'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'B1.1', 'Issue an EO establishing the City EOC per NDRRMC Memo 131 s.2018: OpCen becomes the EOC on activation; EOC links clusters (resource providers) and IMT (resource user); EOC not co-located with the ICP.
-
-Target (from the Action Plan): Jan 2027 (with MOP)', 'Mayor''s Office; CDRRMO', 'No cost', 'ongoing'),
-('4c5d4ba3-5203-5793-8752-97f6d1b0de99'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'B1.2', 'Write the activation matrix using NDRRMC Memo 131 s.2018 triggers (9.2.1) and standard alert codes, with the SID posture (IRR Rule IV Sec. 1). Use the RDRRMOC SOPG 2022 alert model (White/Blue/Red; Standby/Alpha/Bravo/Charlie protocols) as the template.
-
-Target (from the Action Plan): Jan 2027 (with MOP)', 'CDRRMO Operations & Warning', 'No cost', 'ongoing'),
-('7bc55afb-51f2-5e06-b3cf-19287a3b2c90'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'B1.3', 'Add escalation/de-escalation/deactivation steps and authority (NDRRMC Memo 131 s.2018 deactivation triggers; RDRRMOC SOPG 2022 raising and downgrading rules) to EOC Manual Ch.2.
-
-Target (from the Action Plan): Jan 2027 (with MOP)', 'CDRRMO', 'No cost', 'ongoing'),
-('6e67bff8-7b10-541d-b6ed-6e682afb0541'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'B1.4', 'Write the ConOps in EOC Manual Ch.2 around the five NDRRMC Memo 131 s.2018 functions: Management, Operations, Planning, Logistics, Finance/Admin.
-
-Target (from the Action Plan): Jan 2027 (with MOP)', 'CDRRMO', 'MOP engagement', 'ongoing'),
-('18779cfb-e34a-5d0d-83f7-76b06f4454a7'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'B1.5', 'Write the vertical coordination protocol (reporting times by alert level, channels, RDRRMC 24-h reply for SID requests).
-
-Target (from the Action Plan): Jan 2027 (with MOP)', 'CDRRMO', 'No cost', 'ongoing'),
-('e0bd11fd-6527-5a1c-b388-85dd3b76deae'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'B2.1', 'Overlay the primary and alternate EOC sites on CDRA/GeoRiskPH flood, landslide, storm-surge, liquefaction and tsunami maps; record results on the Site Selection and Mitigation sheets of the OCD EOC Capability Assessment Checklist; if a site is in a high-hazard zone, record mitigation (elevated floor, relocation trigger).
-
-Target (from the Action Plan): Q4 2026 site visit', 'CDRRMO Research & Planning', 'No cost', 'not_started'),
-('4e103f6d-2933-5862-afd5-5ebe05a0c4bd'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'B2.2', 'Ask the Building Official for a structural and seismic assessment of the EOC building (NBCP, NSCP) and its occupancy certificate; record results on the Building Design sheet of the EOC Capability Checklist; schedule retrofit if needed (see C2.1).
-
-Target (from the Action Plan): Q1 2027', 'City Engineer / Building Official', 'General Fund', 'not_started'),
-('e2cdd5f8-3c76-5b04-aa8a-4bd0d9e66f5f'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'B2.3', 'Inventory the generator (kVA) and UPS; test the generator at full load monthly with a log; keep 72-hour fuel on site and a fuel supply contract for longer events (EOC Checklist, SOP and Supplies sheets).
-
-Target (from the Action Plan): Q4 2026 site visit; monthly tests after', 'CDRRMO; GSO', 'LDRRMF 70% (MOOE)', 'not_started'),
-('c411b4a7-b112-50f2-aa35-5dec001eb4f1'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'B2.4', 'Draw the EOC floor plan and check it against the Room Design and Personnel Space sheets of the EOC Capability Checklist (operations room, comms room, briefing room, rest, food, sanitation); list fixes in an EOC Manual annex.
-
-Target (from the Action Plan): Q4 2026 site visit', 'CDRRMO', 'No cost (assessment); LDRRMF 70% for fixes', 'not_started'),
-('42ff9318-8e6b-5923-bfd7-455d07b0a7fc'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'B2.5', 'Stock and log 72-hour water, food, hygiene and medical supplies for the full activated EOC roster; check them quarterly with the warehouse inventory (A7.5).
-
-Target (from the Action Plan): Q1 2027', 'CDRRMO; GSO', 'LDRRMF 70%', 'not_started'),
-('e2ed2f59-3534-5a1c-97a4-b1538c4714e0'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'B2.6', 'Write access rules in the EOC Manual: staff IDs, visitor log, badges for agency liaisons, restricted areas (comms, servers); add CCTV at entrances when the OpCen CCTV system is procured.
-
-Target (from the Action Plan): Q1 2027', 'CDRRMO', 'LDRRMF 70% (MOOE)', 'not_started'),
-('c70b4421-68e9-5b9c-a9f2-f4989328b3fb'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'B2.7', 'Designate an alternate EOC outside the primary site''s hazard zones through the PSCP; equip it with a go-kit (radios, laptops, forms, power); write relocation triggers and steps; drill relocation once a year.
-
-Target (from the Action Plan): Q2 2027', 'CDRRMO; GSO; PSCP team', 'LDRRMF 70%', 'not_started'),
-('e8bc55c7-a1e4-518f-a8e4-76cfa36f2ede'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'B3.1', 'Inventory comms and test at least 3 independent channels (VHF, HF or satellite, landline/mobile); log a weekly radio check (RDRRMC8 practice: HF Tue/Fri, VHF Wed/Fri).
-
-Target (from the Action Plan): Q1 2027', 'CDRRMO Operations & Warning', 'LDRRMF 70% (equipment)', 'not_started'),
-('f4a0617a-cde3-5e0b-b8d1-9869a238024d'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'B3.2', 'Run a radio coverage test for all 85 barangays; write net-control procedure and call signs; confirm NTC licences.
-
-Target (from the Action Plan): Q1 2027', 'CDRRMO Operations & Warning', 'LDRRMF 70%', 'not_started'),
-('9c11b7ad-1706-5fdb-b34d-e0b45a26df39'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'B3.3', 'Contract a second ISP or satellite terminal on a separate path; test failover quarterly; keep offline copies of forms and contact lists (the DRRM platform works offline).
-
-Target (from the Action Plan): 2027', 'CDRRMO; City ICT', 'LDRRMF 70% (ICT)', 'not_started'),
-('a58f1dc1-9f3a-5658-b68d-a19cf3ba92e8'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'B3.4', 'Publish a dated directory (agencies, 85 barangays, cluster leads, utilities, media) as an EOC Manual annex; update it every 6 months and after elections or reassignments.
-
-Target (from the Action Plan): Jan 2027 (with MOP)', 'CDRRMO', 'No cost', 'not_started'),
-('753879bf-3bcc-52c6-bbc1-fd227d5bdb81'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'B3.5', 'Adopt an EOC information-security policy: named accounts and role-based access, MFA for admin accounts, daily backups, device sign-out rules, incident reporting to the City DPO (RA 10173).
-
-Target (from the Action Plan): 2027', 'City ICT; CDRRMO', 'No cost (policy); City ICT budget', 'not_started'),
-('2a0510b3-e00a-5df7-9d28-d8e3098bef66'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'B3.6', 'Confirm displays for PAGASA/PHIVOLCS feeds, CCTV and the common operating picture; if missing, include a display wall in the OpCen EWS procurement.
-
-Target (from the Action Plan): Q1 2027', 'CDRRMO', 'LDRRMF 70% (OpCen EWS/CCTV line)', 'not_started'),
-('394cdec1-6ceb-5324-80d4-60ef42e975fb'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'B4.1', 'Define the EOC organogram (EOC Manager, Operations, Planning, Logistics, Finance/Admin, liaison desks) in EOC Manual Ch.5.
-
-Target (from the Action Plan): Jan 2027 (with MOP)', 'CDRRMO', 'No cost', 'ongoing'),
-('715bb3c5-b66d-5f75-957c-bbceee32c49b'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'B4.2', 'Name a primary and 2 alternates for each key EOC position (EOC Manager, Operations, Planning, Logistics, Finance/Admin, liaison), drawing on CDRRMC member offices where CDRRMO staff are short; review the roster each quarter.
-
-Target (from the Action Plan): Jan 2027 (with MOP)', 'CDRRMO', 'No cost', 'not_started'),
-('648b3e6c-b45d-5b3d-8f31-0fdb828ad431'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'B4.3', 'Adopt a shift handover form based on the RDRRMOC SOPG 2022 turn-over document and swapping form; keep rosters and signed handovers as proof of use.
-
-Target (from the Action Plan): Jan 2027 (with MOP)', 'CDRRMO Operations & Warning', 'No cost', 'ongoing'),
-('f8f474b9-220c-54a8-bb19-28318f0fcefc'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'B4.4', 'List liaison desks (CSWDO, CHO, CEO, PNP, BFP, AFP, DepEd, utilities, Red Cross) with focal persons.
-
-Target (from the Action Plan): Jan 2027 (with MOP)', 'CDRRMO', 'No cost', 'ongoing'),
-('69d22fd6-2263-5e76-a360-74153f7f5296'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'B4.5', 'Write job action sheets for every EOC role.
-
-Target (from the Action Plan): Jan 2027 (with MOP)', 'CDRRMO', 'MOP engagement', 'ongoing'),
-('20a67b12-c899-51d0-8311-7acdc6d27802'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'B4.6', 'Add rest cycles, meals and MHPSS to EOC Manual Ch.5.
-
-Target (from the Action Plan): Jan 2027 (with MOP)', 'CDRRMO; CHO', 'LDRRMF 70%', 'ongoing'),
-('239decad-d7c5-5fcf-8459-1a1eb875e710'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'B5.1', 'Adopt the harmonized template and reporting schedule by CDRRMC resolution and put it in EOC Manual Ch.6, with file-naming rules modelled on RDRRMOC SOPG 2022 (Tables 4-5).
-
-Target (from the Action Plan): Dec 2026', 'CDRRMO', 'No cost', 'ongoing'),
-('5e0d2201-5847-59c8-8877-ecac1d77f027'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'B5.2', 'Write the BDRRMC -> EOC reporting flow with times (before the city''s 6AM/6PM submission) and formats.
-
-Target (from the Action Plan): Jan 2027 (with MOP)', 'CDRRMO', 'No cost', 'ongoing'),
-('7cbe8cdb-9444-543f-8a5b-e3fbab0f97f7'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'B5.3', 'Set up a COP map of incidents, evacuees and resources (the DRRM platform can serve).
-
-Target (from the Action Plan): 2027', 'CDRRMO Research & Planning', 'MOP engagement (DRRM platform)', 'not_started'),
-('3c9137b0-fc1c-555b-ae46-ed9665b8be0c'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'B5.4', 'Use DSWD DAFAC at all ECs; set an EC-to-EOC count report (families, persons, sex/age/PWD) at fixed times; keep names in CSWDO records only and counts in EOC dashboards (RA 10173).
-
-Target (from the Action Plan): 2027', 'CSWDO; CDRRMO', 'No cost', 'not_started'),
-('97face83-4b25-5ac7-974d-8d40f4cd3d1d'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'B5.5', 'Keep a bound or append-only digital significant-events log (time, source, action, initials); adopt a records retention schedule with the City Records Officer.
-
-Target (from the Action Plan): Jan 2027 (with MOP)', 'CDRRMO', 'No cost', 'not_started'),
-('1d685258-0afc-599b-8595-b77b20c5783a'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'B5.6', 'Keep a bulletin log with time received and disseminated.
-
-Target (from the Action Plan): Jan 2027 (with MOP)', 'CDRRMO Operations & Warning', 'No cost', 'ongoing'),
-('93a4b53f-4d27-5777-a3f5-545d48d69850'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'B5.7', 'Add an intake and verification step for hotline/SMS/social media reports.
-
-Target (from the Action Plan): Jan 2027 (with MOP)', 'CDRRMO', 'No cost', 'ongoing'),
-('ddbc15cd-f48b-56d3-ba9e-4077e384248f'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'B6.1', 'Define the interface per NDRRMC Memo 131 s.2018: EOC supports the IC; clusters provide resources; no command from the EOC.
-
-Target (from the Action Plan): Jan 2027 (with MOP)', 'CDRRMO', 'No cost', 'ongoing'),
-('9eb466f7-8c74-5278-8410-0886cb7fd10b'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'B6.2', 'Adopt ICS resource request and tracking forms.
-
-Target (from the Action Plan): Jan 2027 (with MOP)', 'CDRRMO', 'No cost', 'ongoing'),
-('71a1289f-c69c-5655-bd18-fdc26bc9f205'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'B6.3', 'Extend the inventory to barangays, partners and suppliers.
-
-Target (from the Action Plan): 2027', 'CDRRMO; GSO', 'No cost', 'not_started'),
-('f4bc107d-e8be-5538-b579-bbb5513376ad'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'B6.4', 'Write the donations and volunteer SOP.
-
-Target (from the Action Plan): Jan 2027 (with MOP)', 'CDRRMO; CSWDO', 'No cost', 'ongoing'),
-('25d7ad5a-0988-58d5-9b7b-d41d57b1b10b'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'B6.5', 'Set briefing times by alert level (e.g., Blue: twice daily; Red: every 6 hours) to the Mayor/CDRRMC; use a one-page briefing template linked to the SitRep; file the briefing notes.
-
-Target (from the Action Plan): Jan 2027 (with MOP)', 'CDRRMO', 'No cost', 'not_started'),
-('27ad7bb4-dea3-5c4c-8d65-1cbd3f7d7af0'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'B6.6', 'Sign agreements listing item, quantity, trigger and contact, usable for AA (IRR Rule IV Sec. 6).
-
-Target (from the Action Plan): 2027', 'CDRRMO; BAC', 'No cost (agreements); LDRRMF 70% AA line when used', 'not_started'),
-('7b4339a5-8a2b-5401-a878-35b6af77ea5a'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'B7.1', 'Complete, approve and distribute the EOC Manual.
-
-Target (from the Action Plan): Jan 2027 (with MOP)', 'CDRRMO; MOP consultant', 'MOP engagement', 'ongoing'),
-('87073e89-3b5e-594a-8ed4-df96cd5a3930'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'B7.2', 'Complete EOC Management and ICS courses for all EOC staff.
-
-Target (from the Action Plan): 2027', 'CDRRMO Admin & Training', 'LDRRMF 70% (training)', 'not_started'),
-('a3ce83e5-865c-5c98-9eed-62a3978e339e'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'B7.3', 'Add an annual EOC functional exercise.
-
-Target (from the Action Plan): 2027', 'CDRRMO', 'LDRRMF 70%', 'not_started'),
-('21474c92-a524-59b0-853d-49c122e7768d'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'B7.4', 'Track AAR actions in an improvement plan.
-
-Target (from the Action Plan): After each activation', 'CDRRMO', 'No cost', 'ongoing'),
-('d5796081-22c5-5aac-b42e-453bc1ef2300'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'B7.5', 'Keep the line in each LDRRMFIP.
-
-Target (from the Action Plan): Annual', 'CDRRMO; City Budget Office', 'LDRRMF 70%', 'ongoing'),
-('fd636773-cb22-5fc3-bebf-db78089a98d2'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'B7.6', 'Set a PM schedule and an annual EOC readiness self-check (EOC Capability Assessment Checklist).
-
-Target (from the Action Plan): 2027', 'CDRRMO', 'LDRRMF 70% (OpCen Program, maintenance)', 'not_started'),
-('9d85a9ef-d9da-51e7-b01f-99227b0c90d0'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'C1.1', 'Define most-probable and most-severe scenarios per priority hazard from the CDRA and GeoRiskPH; use them to set CDP/CLUP priorities and the siting of major investments in the CLUP update (CDRA MDA 1).
-
-Target (from the Action Plan): With CLUP update', '=C_Interface!E6', 'General Fund (CPDO)', 'ongoing'),
-('31b2ed5c-d56b-583a-bac0-06f830bcc8b5'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'C1.2', 'Add a one-page DRR/CCA screening form to LDC/LFC project review (hazard overlay, exposure, design standard, climate expenditure tag), owned by CPDO with CDRRMO sign-off.
-
-Target (from the Action Plan): Q2 2027 (before FY2028 LDC/LFC review)', '=C_Interface!E7', 'No cost', 'not_started'),
-('4c6c36e7-cab3-5b41-a28e-991d868acd16'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'C1.3', 'In the CDRA update, estimate jobs and income lost, displacement days, ecosystem services and heritage assets in the Heritage Overlay Zone; use the 10-Yr Plan business data (establishments, employment) as the baseline.
-
-Target (from the Action Plan): With CLUP update', '=C_Interface!E8', 'General Fund (CPDO, CDRA update)', 'not_started'),
-('66b77fba-ee2e-5d77-8bb3-7aac4ad88602'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'C1.4', 'Add hazard overlay zones and permit conditions (floor elevation, setbacks, geotechnical study) in the ZO update; have the Zoning Administrator check hazard maps for each locational clearance; use the CDRRMO seat on the LZRC to review hazard cases.
-
-Target (from the Action Plan): With ZO update (2027)', '=C_Interface!E9', 'No cost', 'ongoing'),
-('65b79682-6488-5ec8-a1e5-14cd0cd7b7d5'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'C2.1', 'Have the Building Official assess the EOC, ECs and critical public facilities, starting with those rated ''Poor'' in the CDRA; write a rapid pre-impact inspection checklist used at the PDRA stage.
-
-Target (from the Action Plan): Q1 2027', '=C_Interface!E11', 'General Fund', 'not_started'),
-('6225f82b-2cbe-59fa-900d-0eb78bfab2f3'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'C2.2', 'Sign restoration-priority arrangements with power, water and telecom providers.
-
-Target (from the Action Plan): Q2 2027 (before typhoon season)', '=C_Interface!E12', 'No cost (MOAs)', 'not_started'),
-('9dffac1c-5514-57de-8178-092b3d2ca77b'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'C2.3', 'With DPWH, the City Engineer, the traffic office and the port authority, write transport anticipatory actions: bridge pre-inspection list, alternate routes, traffic teams, port and terminal suspension, and care for stranded passengers.
-
-Target (from the Action Plan): Q2 2027', '=C_Interface!E13', 'No cost', 'not_started'),
-('27f92c61-ec1f-544d-bc7b-f6ff7f19d131'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'C3.1', 'Complete the watershed study; monitor forest cover in the upper Anilao-Malbasag watershed and mangrove area each year and report it to the CDRRMC (CDRA MDA 3 and 5).
-
-Target (from the Action Plan): 2027-2028', '=C_Interface!E15', 'General Fund (CENRO); LDRRMF 70% (watershed study)', 'not_started'),
-('f9b8ca55-b614-555e-a573-4aed8a0bdc45'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'C3.2', 'Formalise watershed arrangements with DENR, EDC and neighbouring LGUs.
-
-Target (from the Action Plan): 2028', '=C_Interface!E16', 'No cost (MOA)', 'not_started'),
-('7cb5a74c-a2ef-5890-936b-89c800c30034'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'C3.3', 'Write the declogging and debris protocol.
-
-Target (from the Action Plan): Before typhoon season each year', '=C_Interface!E17', 'General Fund (CEO/GSO maintenance)', 'not_started'),
-('bce539cc-a1d0-5e13-9d53-8e3c7377ccdb'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'C4.1', 'Prepare the health AA plan with CHO and hospitals.
-
-Target (from the Action Plan): Q3 2027', '=C_Interface!E19', 'General Fund (CHO); DOH support', 'not_started'),
-('144b853e-5ad5-5e2e-b947-9b302f3f47db'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'C4.2', 'Ask DepEd SDO Ormoc for school contingency/AA plans and learning-continuity modalities; agree triggers for class suspension and school use as ECs (link A1.5, A6.2).
-
-Target (from the Action Plan): Q1 2027 (KII)', '=C_Interface!E20', 'No cost', 'not_started'),
-('e476234a-6576-580e-b6e2-e695c5663196'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'C4.3', 'With CAO and CVO, draft agri-fisheries early action guidelines (early harvest advisories, seed and input prepositioning, livestock evacuation, animal health) using RSBSA/FishR lists and the CDRA high-risk production areas.
-
-Target (from the Action Plan): Q3 2027', '=C_Interface!E21', 'General Fund (CAO/CVO)', 'not_started'),
-('7c12fceb-6ed7-560d-b07d-8a02b907c473'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'C4.4', 'Agree with DTI Leyte and the city market office to monitor basic-goods prices from the PDRA stage and report them to the EOC (RA 7581).
-
-Target (from the Action Plan): Q1 2027', '=C_Interface!E22', 'No cost', 'not_started'),
-('293faa09-999d-5110-be89-c52f034f8b3c'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'C5.1', 'Run BCP outreach with the Chamber using CDRA hazard scenarios; track the number of MSMEs with BCPs as the 10-Yr Plan indicator.
-
-Target (from the Action Plan): Q4 2027', '=C_Interface!E24', 'No cost', 'not_started')
+('6f51075d-047d-5ceb-ab32-3cf97d1bd3e1'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A1.1', E'Draft an ordinance creating the CDRRMO as a regular department with Admin & Training, Research & Planning and Operations & Warning divisions and their functions (RA 10121 Sec. 12(c); JMC 2014-1). Attach the organogram and staffing pattern from MOO Ch.2.\n\nTarget (from the Action Plan): Q1 2027 (SP filing)', 'CDRRMO Head; City Legal Office; SP Committee on DRRM', 'No cost (legislative); staffing cost under A2.3', 'not_started'),
+('8ac398ab-bff1-56a2-9394-10a87ff433f2'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A1.2', E'Issue an updated EO on CDRRMC composition listing every RA 10121 Sec. 11 seat by office, with at least 4 accredited CSOs and a private-sector seat (e.g., EDC). Record the roster as an MOO Ch.1 annex and review it yearly.\n\nTarget (from the Action Plan): Dec 2026', 'Mayor''s Office; CDRRMO (secretariat)', 'No cost', 'not_started'),
+('f0d9b51a-3b98-5c87-9b91-3554f0ed78a6'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A1.3', E'Keep the quarterly schedule; add a standing agenda item on RA 12287 readiness and the action plan from this assessment. Use the minutes template in MOO Ch.1.\n\nTarget (from the Action Plan): Quarterly', 'CDRRMO (secretariat)', 'LDRRMF 70% (meetings)', 'ongoing'),
+('6e301d50-9273-5048-b3a3-e74f900c37de'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A1.4', E'Write the secretariat procedure (notice, agenda, quorum, minutes, resolutions, tracking) into MOO Ch.2.\n\nTarget (from the Action Plan): Jan 2027 (with MOP)', 'CDRRMO Admin & Training', 'No cost', 'ongoing'),
+('550ad96b-16fc-5391-93b4-112ae7a534c5'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A1.5', E'Amend the evacuation ordinance to add procedural statements: triggers tied to the warning-action matrix (A6.2), authority to order, assistance to PWD/elderly, livestock and pets (RA 12287 IRR Rule IV), and enforcement. Add granular (barangay/school-level) class and work suspension. In the CLUP/ZO update, add flood, landslide, storm-surge, liquefaction and tsunami overlay zones (CDRA MDA 1).\n\nTarget (from the Action Plan): Q2 2027', 'CDRRMO; City Legal Office; SP', 'No cost', 'not_started'),
+('0803adf5-ce0f-5b1e-a547-cca54a410da0'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A1.6', E'Write a State of Calamity protocol in MOO Ch.1: criteria (NDRRMC Memo on SoC criteria), RDANA/PDNA basis, CDRRMC recommendation, SP resolution template, post-declaration measures (price freeze, QRF use, reporting). Add a note on how to read national/regional declarations that affect Ormoc.\n\nTarget (from the Action Plan): Jan 2027 (with MOP)', 'CDRRMO Research & Planning; City Legal Office', 'No cost', 'ongoing'),
+('326c5cd8-0457-5e63-bec5-c9a0af68c09e'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A1.7', E'Keep representation; use the LFC seat to secure the AA line (A4.6) and the EOC budget (B7.5) in the FY2028 budget call.\n\nTarget (from the Action Plan): Budget call 2027', 'CDRRMO Head', 'No cost', 'ongoing'),
+('17578930-03c5-5533-8ee8-c73d58c62a98'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A1.8', E'Draft the State of Imminent Disaster procedure (IRR Rule II Sec. 6; Rule III Secs. 2-4): PDRA trigger, CDRRMC resolution, request to RDRRMC VIII, Mayor''s EO template, adoption rule, lifting and the 45-day report (A10.8). Confirm with OCD VIII whether a Provincial declaration applies to an ICC. Walk it through in a tabletop to reach score 3.\n\nTarget (from the Action Plan): Jan 2027 (with MOP)', 'CDRRMO Head; City Legal Office; Mayor''s Office', 'No cost', 'ongoing'),
+('26509b46-5964-5a18-b53f-f98c959f27dc'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A2.1', E'Adopt the JMC 2014-1 organogram (Head + 3 divisions) with separate normal-operations and response (EOC) roles, through the ordinance in A1.1 and MOO Ch.2.\n\nTarget (from the Action Plan): Jan 2027 (with MOP)', 'CDRRMO Head; HRMO', 'No cost', 'ongoing'),
+('ff485be2-6b68-54b0-8f34-535b506674f8'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A2.2', E'Maintain; document succession (OIC order of precedence) in MOO Ch.2.\n\nTarget (from the Action Plan): Jan 2027 (succession in MOO Ch.2)', 'HRMO; CDRRMO Head', 'No cost', 'ongoing'),
+('2c46a3f3-ef1d-5bec-95da-2170e2a58ac7'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A2.3', E'Get the Plantilla of Personnel and vacancy list; compute filled/required. Request creation and funding of the 10 planned items in the FY2028 budget, prioritising Operations & Warning (24/7 OpCen) and Research & Planning (GIS).\n\nTarget (from the Action Plan): FY2028 budget', 'CDRRMO Head; HRMO; City Budget Office', 'General Fund (PS)', 'not_started'),
+('23523370-dce0-585e-ac99-48a8b6fbf563'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A2.4', E'Write position descriptions for every CDRRMO and EOC role (MOO annex), aligned to RA 10121 functions; link them to IPCR/OPCR targets.\n\nTarget (from the Action Plan): Jan 2027 (with MOP)', 'CDRRMO Admin & Training; HRMO', 'No cost', 'ongoing'),
+('4d71aad2-13e7-55a1-b935-306522ba7fc1'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A2.5', E'Write the OpCen normal-operations SOP (shifts, handover, monitoring, logbook, reporting times 6AM/6PM per RDRRMC8 Res. 12-006) as EOC Manual Ch.4/Ch.5, using the RDRRMOC SOPG 2022 forms (turn-over document, swapping form, duty composition by alert level); have it approved and keep 3 months of rosters as proof of use.\n\nTarget (from the Action Plan): Jan 2027 (with MOP)', 'CDRRMO Operations & Warning', 'MOP engagement', 'ongoing'),
+('bbcb216b-c1b7-5852-8590-70294dceb398'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A2.6', E'Run a TNA for all CDRRMO/EOC staff against the competency list (ICS, BLS/SFA, WASAR, CSSR, EOC, PDNA, GIS); produce a 3-year training plan with OCD VIII courses in MOO Ch.6.\n\nTarget (from the Action Plan): Q1 2027', 'CDRRMO Admin & Training', 'LDRRMF 70% (capacity building)', 'not_started'),
+('639c0ee0-1d06-5957-acc1-9c39d1da92a6'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A2.7', E'Adopt a responder welfare policy: group accident insurance (staff and accredited volunteers), PPE issue list, rest cycles, MHPSS referral with CHO (RA 11036). Memo 131 also requires EOC personnel welfare.\n\nTarget (from the Action Plan): FY2027 AIP', 'CDRRMO; HRMO; CHO', 'LDRRMF 70%', 'not_started'),
+('c2c9fa80-c0ad-5deb-9380-09ec01657f03'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A2.8', E'Formalise the ACDV registry with accreditation, insurance and deployment rules, and add AA tasks for ACDVs.\n\nTarget (from the Action Plan): Q2 2027', 'CDRRMO Admin & Training', 'LDRRMF 70%', 'ongoing'),
+('32080951-c855-53c1-a286-443a92d2c897'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A2.9', E'Designate an AA focal person by office order and enrol them, BDRRMC officers, ACDVs and partner CSOs in AA training when OCD VIII cascades the IRR.\n\nTarget (from the Action Plan): Dec 2026', 'CDRRMO Head', 'No cost; training via OCD VIII', 'not_started'),
+('e7ee7f23-541b-508b-9dce-ef80cd63d85a'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A2.10', E'Build a skills inventory (SAR, engineering, logistics, GIS, PDNA, MHPSS) covering CDRRMO, CDRRMC offices and BDRRMCs; update it every 12 months (UNDRR DRSC 6.1.1).\n\nTarget (from the Action Plan): Q1 2027', 'CDRRMO Admin & Training', 'No cost', 'not_started'),
+('0e3b1e97-a0df-53b6-89c4-4120c3fca0cc'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A3.1', E'Maintain; in the next update correct the barangay count to 85 and add RA 12287 anticipatory action PPAs.\n\nTarget (from the Action Plan): Next LDRRMP review', 'CDRRMO Research & Planning', 'LDRRMF 70% (planning)', 'ongoing'),
+('33bb218b-2933-50a2-867d-353bdae34e97'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A3.2', E'Use the CLUP/ZO update to adopt CDRA hazard overlays and the MDA 1-8 interventions; tag CDP/AIP and LCCAP projects to CDRA risk-register entries; review mainstreaming in CDP, CLUP, ELA and LCCAP (see C1.1-C1.4).\n\nTarget (from the Action Plan): With CLUP update', 'CPDO; CDRRMO Research & Planning', 'General Fund (CPDO)', 'ongoing'),
+('d5ea574c-d2e6-5fdd-a19b-f0cb567a9079'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A3.3', E'Prepare CPs for the remaining priority hazards and test each by tabletop; add AA annexes (A8.8) and pre-disaster recovery annex (A9.5).\n\nTarget (from the Action Plan): 2027', 'CDRRMO Research & Planning; response cluster leads', 'LDRRMF 70%', 'ongoing'),
+('d0563f2e-e791-5182-a9e1-9407abd4a3ab'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A3.4', E'Complete the PSCP using the PSCP Guidebook: essential functions, BIA, alternate site (links to B2.7), orders of succession, vital records. Exercise it once.\n\nTarget (from the Action Plan): Q2 2027', 'CDRRMO Research & Planning; all city offices', 'LDRRMF 70%', 'ongoing'),
+('fc84b7a5-98b3-545f-ab50-83130bfa986d'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A3.5', E'Maintain; add the AA line (A4.6) and EOC operations line (B7.5) explicitly.\n\nTarget (from the Action Plan): FY2028 LDRRMFIP', 'CDRRMO; City Budget Office', 'LDRRMF 70%', 'ongoing'),
+('a870bd12-5f98-5d74-b306-0c6ecf99706e'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A3.6', E'Produce barangay evacuation maps (routes, safe zones, ECs) for all 85 barangays, starting with the 46 critical flood barangays, and link triggers to the warning-action matrix (A6.2).\n\nTarget (from the Action Plan): Q2 2027 (46 critical first)', 'CDRRMO Research & Planning; BDRRMCs', 'LDRRMF 70%', 'not_started'),
+('a45a58f1-7f21-5949-9b44-4299ed877cad'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A3.7', E'Maintain; add AA and evacuation-map status columns to the matrix.\n\nTarget (from the Action Plan): Annual', 'CDRRMO Research & Planning', 'No cost', 'ongoing'),
+('846b8dff-4710-53be-b723-d84aa0fd3efc'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A4.1', E'Maintain; keep the computation sheet with the budget.\n\nTarget (from the Action Plan): Annual', 'City Budget Office', 'No cost', 'ongoing'),
+('afb4866e-ad4a-51fd-bc11-ecbcb796da09'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A4.2', E'Maintain the 70/30 split; show the AA sub-allocation inside the 70% (A4.6).\n\nTarget (from the Action Plan): Annual', 'City Budget Office; CDRRMO', 'No cost', 'ongoing'),
+('33610e40-d2d1-5271-903c-3350055381b9'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A4.3', E'Maintain; list STF balances as an AA fund source (A4.6).\n\nTarget (from the Action Plan): Annual', 'City Accountant; City Treasurer', 'No cost', 'ongoing'),
+('8f819abc-8676-5065-a287-c4403b7e7fb2'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A4.4', E'Track LDRRMF utilisation quarterly in the CDRRMC meeting; flag PPAs at risk by Q3.\n\nTarget (from the Action Plan): Quarterly', 'CDRRMO; City Budget Office', 'No cost', 'ongoing'),
+('7fdbd68a-4ed6-5cf4-886a-b31cfc55c9f9'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A4.5', E'Keep a pre-qualified supplier list updated each year; set framework agreements for relief goods, fuel and heavy equipment under RA 12009 IRR, usable for AA (B6.6).\n\nTarget (from the Action Plan): Q1 2027', 'BAC; GSO; CDRRMO', 'No cost (procurement planning)', 'ongoing'),
+('fa33e154-0199-5988-9d47-62baf9b79d62'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A4.6', E'Put an AA line (up to 10% of the 70% LDRRMF) in the FY2028 LDRRMFIP; map other sources (STF, donations, ODA); write Budget/Accounting/BAC steps for immediate disbursement with the 30%/70% tranche rule. Revisit when DBM-COA guidelines issue.\n\nTarget (from the Action Plan): FY2028 LDRRMFIP', 'CDRRMO; City Budget Office; City Accountant; BAC', 'LDRRMF 70% (AA line)', 'not_started'),
+('08dc9204-ad47-5eb2-a993-55b9916aac70'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A4.7', E'Check that the EOC, ECs and city-owned critical facilities are on the GSIS indemnity schedule; use the CDRA facility list to set coverage priorities.\n\nTarget (from the Action Plan): Annual', 'City Treasurer; GSO', 'General Fund (GSIS premiums)', 'ongoing'),
+('9be57e00-60ac-5fc4-b73a-0953058572be'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A4.8', E'Set an internal audit check of LDRRMF before year-end.\n\nTarget (from the Action Plan): Q4 annually', 'Internal Audit; City Accountant', 'No cost', 'ongoing'),
+('056211c3-738a-5bc4-8ada-1033066335c9'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A4.9', E'Cost response and early recovery (relief, evacuation, debris, emergency repair) for a Thelma-type flash flood and a Yolanda-type typhoon from the flood and TC CPs; compare with the current QRF, STF balances and NDRRM Fund access; record the shortfall and fallback sources in the LDRRMFIP.\n\nTarget (from the Action Plan): Q2 2027', 'City Budget Office; CDRRMO Research & Planning', 'No cost', 'not_started'),
+('baf97a0d-6274-530e-8ae9-da787bd59af3'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A5.1', E'Maintain; publish barangay hazard maps through the shared source (A5.7).\n\nTarget (from the Action Plan): Annual', 'CDRRMO Research & Planning', 'LDRRMF 70% (GIS)', 'ongoing'),
+('ae2ee456-0a32-542d-9106-23e2d86bc9ef'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A5.2', E'Add earthquake, liquefaction and tsunami DRA; correct the Naval/Biliran table labels; adopt the CDRA with the CLUP update and set its update cycle (A5.9); cover exposure of critical facilities (A5.8) and non-asset losses (C1.3).\n\nTarget (from the Action Plan): With CLUP update (2027)', 'CPDO; CDRRMO Research & Planning', 'General Fund (CPDO); LDRRMF 70% (hazard studies)', 'ongoing'),
+('154d1a9d-e016-5ae9-ab16-7bc30cbc2a9b'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A5.3', E'Validate CBMS currency; use it as the AA targeting list (A8.9).\n\nTarget (from the Action Plan): Q1 2027 (CBMS validation)', 'CPDO; CDRRMO', 'General Fund (CBMS)', 'ongoing'),
+('e4ebeae2-0d45-5c78-843a-4502c67ba3a5'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A5.4', E'Set up a disaster event and loss database (Sendai/DesInventar fields) and back-load past RDANA/PDNA data.\n\nTarget (from the Action Plan): Q2 2027', 'CDRRMO Research & Planning', 'LDRRMF 70% (database)', 'not_started'),
+('bc84b47c-ac80-52b5-9822-8ecd4152bc32'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A5.5', E'Confirm the City DPO; sign data-sharing agreements with CSWDO/CPDO for beneficiary data; add privacy notices to registration forms.\n\nTarget (from the Action Plan): Q1 2027', 'City DPO; CDRRMO; CSWDO', 'No cost', 'not_started'),
+('8ef318ca-08f0-576b-8b4b-e5ed2c1d04b2'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A5.6', E'Confirm GIS staff and software; train at least 2 R&P staff.\n\nTarget (from the Action Plan): Q2 2027', 'CDRRMO Research & Planning; CPDO', 'LDRRMF 70% (training)', 'not_started'),
+('1fabcf64-c759-5fe7-9bad-db019691121e'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A5.7', E'Set up one shared repository (hazard maps, plans, contacts, readiness summary) for CDRRMC offices and post a public summary, respecting RA 10173.\n\nTarget (from the Action Plan): Q2 2027', 'CDRRMO Research & Planning', 'LDRRMF 70% (ICT)', 'not_started'),
+('7b3c647d-a784-5164-91d8-d0461e193c04'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A5.8', E'Start from the CDRA facility and lifeline tables; map dependencies among power, water, telecom, roads, hospitals, ECs and the EOC (CDRA MDA 2 items 1, 5, 6); use CREST systems-mapping to draw failure chains and set restoration priorities.\n\nTarget (from the Action Plan): Q2 2027 (start from CDRA tables)', 'CDRRMO Research & Planning; City Engineer', 'No cost', 'not_started'),
+('ed16afb1-f14a-5c7d-b7c6-73049a1ed8a4'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A5.9', E'Adopt an update cycle in MOO Ch.7: hazard data <=3 years; exposure, vulnerability and critical facilities <=18 months.\n\nTarget (from the Action Plan): Jan 2027 (with MOP)', 'CDRRMO Research & Planning', 'No cost', 'ongoing'),
+('985a8958-7ea8-5851-b9c9-4954942e7c90'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A6.1', E'Restore and insure the flood/rain gauges; set a monthly functionality check; write an EWS SOP (planned PPA).\n\nTarget (from the Action Plan): 2027', 'CDRRMO Operations & Warning', 'LDRRMF 70% (EWS)', 'ongoing'),
+('a0d9a39a-1eeb-5e91-a6a7-4dac743ab765'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A6.2', E'Write the warning-action matrix (PAGASA/PHIVOLCS levels -> pre-emptive evacuation, class/work suspension, EOC level, SID request), built to take NDRRMC impact-based triggers when issued.\n\nTarget (from the Action Plan): Jan 2027 (with MOP)', 'CDRRMO Operations & Warning', 'No cost', 'ongoing'),
+('a98e6047-9c25-5608-af72-0d80969eac3f'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A6.3', E'Revise the dissemination SOP with non-telecom fallbacks (VHF, sirens, criers) and test to purok level twice a year with logs.\n\nTarget (from the Action Plan): Jan 2027 (with MOP)', 'CDRRMO Operations & Warning; BDRRMCs', 'LDRRMF 70%', 'ongoing'),
+('640850e8-cde6-54f4-9af3-01eaa381ac90'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A6.4', E'Maintain; add PWD-inclusive EWS (planned PPA).\n\nTarget (from the Action Plan): Q3 2027', 'CDRRMO', 'LDRRMF 70% (PWD-inclusive EWS)', 'ongoing'),
+('be232ce8-08fc-5e8e-bbf8-c845ed2ae528'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A6.5', E'Designate the PIO and write the risk communication plan, including rumour management.\n\nTarget (from the Action Plan): Q1 2027', 'CDRRMO; City Information Office', 'No cost', 'not_started'),
+('e89c19ba-60d8-590a-a8ab-e047f033f9d0'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A6.6', E'Set annual reach targets per barangay and report them.\n\nTarget (from the Action Plan): Annual', 'CDRRMO Admin & Training', 'LDRRMF 70% (IEC)', 'ongoing'),
+('356d1b46-30bc-5b7c-9dbe-07dee80a2b1c'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A6.7', E'Prepare SID public notice templates and sector-specific advisories with channels to isolated barangays.\n\nTarget (from the Action Plan): Jan 2027 (with MOP)', 'CDRRMO; City Information Office', 'No cost', 'ongoing'),
+('c78612d8-3f8d-5cd4-95e1-ef8861d50ffa'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A7.1', E'Maintain; merge with the TNA plan (A2.6).\n\nTarget (from the Action Plan): Annual', 'CDRRMO Admin & Training', 'LDRRMF 70%', 'ongoing'),
+('838f6d20-b7b9-59c3-a2fa-b29d75846ad3'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A7.2', E'Maintain.\n\nTarget (from the Action Plan): Quarterly', 'CDRRMO', 'No cost', 'ongoing'),
+('90272834-a380-5c2b-b1bd-a5d7c74c9310'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A7.3', E'Maintain; target low-functioning barangays first.\n\nTarget (from the Action Plan): Annual', 'CDRRMO; DILG CLGOO', 'No cost', 'ongoing'),
+('457b1ec8-43d9-5cf7-81fb-5dd131616da3'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A7.4', E'Audit ECs against RA 12076/DSWD standards; prioritise retrofits for the 46 critical flood barangays.\n\nTarget (from the Action Plan): 2027', 'CDRRMO; City Engineer; CSWDO', 'LDRRMF 70% (infrastructure)', 'ongoing'),
+('12ff7023-cd0d-5741-9c5b-0aebb2c2c1ad'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A7.5', E'Maintain; add AA prepositioning triggers.\n\nTarget (from the Action Plan): Before typhoon season (May 2027)', 'CSWDO; CDRRMO', 'LDRRMF 70% (prepositioning)', 'ongoing'),
+('70cf7858-d85d-5346-8873-6fd41de7bec2'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A7.6', E'Hold a short FGD with PWD, senior, women and youth representatives to confirm engagement.\n\nTarget (from the Action Plan): Q1 2027', 'CDRRMO; GAD Focal Point', 'GAD fund', 'not_started'),
+('1701e1a1-4f3f-5f26-8a81-0c2621c0dfae'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A7.7', E'Maintain; include schools and hospitals in the next CP tabletop.\n\nTarget (from the Action Plan): Q2 2027 (CP tabletop)', 'CDRRMO; DepEd; CHO', 'No cost', 'ongoing'),
+('b5d404a4-8d83-5a46-8e15-81c98981c0e7'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A7.8', E'Set an annual refresher cycle for responders, EOC staff and BDRRMC members and track attendance.\n\nTarget (from the Action Plan): 2027', 'CDRRMO Admin & Training', 'LDRRMF 70%', 'not_started'),
+('9f01af22-69c3-5d33-a254-75d722012675'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A7.9', E'Add a 12-hour welfare-check step to BDRRMC protocols, using purok household lists (CBMS) and the CDRA exposed-household counts; test it in the next drill and log the time taken.\n\nTarget (from the Action Plan): Next drill (Q1 2027)', 'BDRRMCs; CDRRMO', 'No cost', 'not_started'),
+('410d77a1-aa23-58be-8de3-ad4930065f2a'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A8.1', E'Issue an EO institutionalising ICS with pre-designated ICs and IMT roster; complete ICS training.\n\nTarget (from the Action Plan): Q1 2027', 'Mayor''s Office; CDRRMO', 'LDRRMF 70% (training)', 'not_started'),
+('b5456b9f-0bf0-54d8-a41f-0589bc2201ab'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A8.2', E'Update the response team EO and the BFP MOA; keep certificates current.\n\nTarget (from the Action Plan): Q1 2027', 'CDRRMO Operations & Warning', 'LDRRMF 70%', 'not_started'),
+('447ee4fd-fa77-547b-a465-2670e8bcb0dd'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A8.3', E'Program a PM schedule for vehicles and equipment and keep logs.\n\nTarget (from the Action Plan): Q1 2027', 'CDRRMO; GSO', 'LDRRMF 70% (MOOE)', 'ongoing'),
+('5e9bf5bb-04cb-5172-aca5-08e08416d594'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A8.4', E'Integrate the hotline with E911 and write the dispatch SOP with response-time tracking.\n\nTarget (from the Action Plan): 2027', 'CDRRMO Operations & Warning', 'LDRRMF 70% (ICT)', 'not_started'),
+('4c403884-9cf0-5200-a41a-76b1bb4a69f3'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A8.5', E'Assess cluster capability and adopt a cluster EO aligned to the national response clusters (RDRRMOC SOPG 2022, Table 6: 11 clusters), naming lead and member offices.\n\nTarget (from the Action Plan): Q2 2027', 'CDRRMO; cluster lead offices', 'No cost', 'ongoing'),
+('6ca3306b-82d1-5cc7-b1d9-eccc51547aff'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A8.6', E'Maintain; record anticipatory actions in each PDRA.\n\nTarget (from the Action Plan): Each forecast event', 'CDRRMO', 'No cost', 'ongoing'),
+('4ca1ee27-3e45-5517-80ac-2703b42fe94e'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A8.7', E'Designate MDM and RDANA teams by EO and train them.\n\nTarget (from the Action Plan): 2027', 'CDRRMO; CHO; PNP', 'LDRRMF 70% (training)', 'not_started'),
+('f16b45c9-eee7-5067-adbf-cf21fb0460cd'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A8.8', E'Write AA protocols by hazard and lead time with office-order templates; walk them through in a PDRA tabletop to reach 3.\n\nTarget (from the Action Plan): Jan 2027 (with MOP)', 'CDRRMO', 'No cost', 'ongoing'),
+('fc88ad5e-2926-5d0b-92f4-c7559b456d57'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A8.9', E'Issue local guidelines with CSWDO for anticipatory cash/vouchers using CBMS, with a DSA.\n\nTarget (from the Action Plan): 2027', 'CSWDO; CDRRMO; City DPO', 'LDRRMF 70% (AA line)', 'not_started'),
+('b10f56cc-54ab-51b7-91dd-85b949cdd9b9'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A9.1', E'Form and train a PDNA team using OCD templates.\n\nTarget (from the Action Plan): 2027', 'CDRRMO Research & Planning', 'LDRRMF 70%', 'not_started'),
+('f5105d4a-b9c2-51aa-968d-444a9de2c65a'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A9.2', E'Maintain; state assumptions in projections.\n\nTarget (from the Action Plan): After each major event', 'CDRRMO', 'LDRRMF 70% / Special Trust Fund', 'ongoing'),
+('542bacc7-ca0f-55d5-bf9d-e64db66b5149'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A9.3', E'Add a recovery monitoring matrix to the event database (A5.4).\n\nTarget (from the Action Plan): Q3 2027', 'CDRRMO Research & Planning', 'No cost', 'not_started'),
+('36b17143-c42e-532f-b2b1-6207fc7e9b1b'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A9.4', E'Write referral pathways with CSWDO, CHO and PESO.\n\nTarget (from the Action Plan): Q3 2027', 'CSWDO; CHO; PESO', 'No cost (MOA)', 'not_started'),
+('ad3e0815-da28-5d25-b1c2-e2a0b6f2bef2'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A9.5', E'Use the OCD/World Bank Ready to Rebuild workbook to prepare a pre-disaster recovery framework.\n\nTarget (from the Action Plan): 2027', 'CDRRMO Research & Planning', 'LDRRMF 70%', 'not_started'),
+('3b629c38-a084-5e74-8718-32893c994201'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A10.1', E'Reframe as technical mutual-aid MOAs with Kananga, Albuera, Merida, Isabel and the Province; join the Leyte DRRMCs Telecom and Response Network (planned PPA).\n\nTarget (from the Action Plan): 2027', 'CDRRMO Head; Mayor''s Office', 'No cost', 'not_started'),
+('88328981-2978-5b3d-af2e-bd63614bf10b'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A10.2', E'Maintain; add AA roles to partner MOAs.\n\nTarget (from the Action Plan): Q2 2027', 'CDRRMO', 'No cost', 'ongoing'),
+('1235ca7e-6091-571c-9fb8-0c6a1a3a7f36'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A10.3', E'Adopt RDRRMC8 Res. 12-006 locally by CDRRMC resolution.\n\nTarget (from the Action Plan): Dec 2026', 'CDRRMO', 'No cost', 'ongoing'),
+('2d6a2f38-e50f-5f54-92db-5d3f749ce3a2'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A10.4', E'Produce the first annual RBME report (Form 5D) and baseline database; present it to the CDRRMC and LDC; include the IAT results and the CDRA monitoring indicators (CDRA 6.7.1).\n\nTarget (from the Action Plan): Jan 2027 (first annual RBME report)', 'CDRRMO Research & Planning', 'No cost', 'not_started'),
+('468a7d69-5ddd-5261-b167-9543407915a0'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A10.5', E'Maintain.\n\nTarget (from the Action Plan): Quarterly', 'City Budget Office', 'No cost', 'ongoing'),
+('fbcf2934-a246-5403-9a71-fd17c781480c'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A10.6', E'Maintain.\n\nTarget (from the Action Plan): After each event', 'CDRRMO', 'No cost', 'ongoing'),
+('844dc812-eed0-568d-bb34-e530b39a534c'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A10.7', E'Keep participating; track gaps from GKS/SGLG results.\n\nTarget (from the Action Plan): Annual', 'CDRRMO', 'No cost', 'ongoing'),
+('76434482-e3b7-560c-8899-1a0204222968'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A10.8', E'Prepare the 45-day post-declaration report template and confirm the reporting route with OCD VIII.\n\nTarget (from the Action Plan): Jan 2027 (with MOP)', 'CDRRMO', 'No cost', 'ongoing'),
+('b88c4d9e-80e7-50c0-aa1d-1fd43eb9b85f'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'A10.9', E'Document changes adopted from exchanges.\n\nTarget (from the Action Plan): Annual', 'CDRRMO', 'LDRRMF 70% (learning exchanges)', 'ongoing'),
+('a3d3f207-fcb1-5ab3-9626-3c44e7adc093'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'B1.1', E'Issue an EO establishing the City EOC per NDRRMC Memo 131 s.2018: OpCen becomes the EOC on activation; EOC links clusters (resource providers) and IMT (resource user); EOC not co-located with the ICP.\n\nTarget (from the Action Plan): Jan 2027 (with MOP)', 'Mayor''s Office; CDRRMO', 'No cost', 'ongoing'),
+('4c5d4ba3-5203-5793-8752-97f6d1b0de99'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'B1.2', E'Write the activation matrix using NDRRMC Memo 131 s.2018 triggers (9.2.1) and standard alert codes, with the SID posture (IRR Rule IV Sec. 1). Use the RDRRMOC SOPG 2022 alert model (White/Blue/Red; Standby/Alpha/Bravo/Charlie protocols) as the template.\n\nTarget (from the Action Plan): Jan 2027 (with MOP)', 'CDRRMO Operations & Warning', 'No cost', 'ongoing'),
+('7bc55afb-51f2-5e06-b3cf-19287a3b2c90'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'B1.3', E'Add escalation/de-escalation/deactivation steps and authority (NDRRMC Memo 131 s.2018 deactivation triggers; RDRRMOC SOPG 2022 raising and downgrading rules) to EOC Manual Ch.2.\n\nTarget (from the Action Plan): Jan 2027 (with MOP)', 'CDRRMO', 'No cost', 'ongoing'),
+('6e67bff8-7b10-541d-b6ed-6e682afb0541'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'B1.4', E'Write the ConOps in EOC Manual Ch.2 around the five NDRRMC Memo 131 s.2018 functions: Management, Operations, Planning, Logistics, Finance/Admin.\n\nTarget (from the Action Plan): Jan 2027 (with MOP)', 'CDRRMO', 'MOP engagement', 'ongoing'),
+('18779cfb-e34a-5d0d-83f7-76b06f4454a7'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'B1.5', E'Write the vertical coordination protocol (reporting times by alert level, channels, RDRRMC 24-h reply for SID requests).\n\nTarget (from the Action Plan): Jan 2027 (with MOP)', 'CDRRMO', 'No cost', 'ongoing'),
+('e0bd11fd-6527-5a1c-b388-85dd3b76deae'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'B2.1', E'Overlay the primary and alternate EOC sites on CDRA/GeoRiskPH flood, landslide, storm-surge, liquefaction and tsunami maps; record results on the Site Selection and Mitigation sheets of the OCD EOC Capability Assessment Checklist; if a site is in a high-hazard zone, record mitigation (elevated floor, relocation trigger).\n\nTarget (from the Action Plan): Q4 2026 site visit', 'CDRRMO Research & Planning', 'No cost', 'not_started'),
+('4e103f6d-2933-5862-afd5-5ebe05a0c4bd'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'B2.2', E'Ask the Building Official for a structural and seismic assessment of the EOC building (NBCP, NSCP) and its occupancy certificate; record results on the Building Design sheet of the EOC Capability Checklist; schedule retrofit if needed (see C2.1).\n\nTarget (from the Action Plan): Q1 2027', 'City Engineer / Building Official', 'General Fund', 'not_started'),
+('e2cdd5f8-3c76-5b04-aa8a-4bd0d9e66f5f'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'B2.3', E'Inventory the generator (kVA) and UPS; test the generator at full load monthly with a log; keep 72-hour fuel on site and a fuel supply contract for longer events (EOC Checklist, SOP and Supplies sheets).\n\nTarget (from the Action Plan): Q4 2026 site visit; monthly tests after', 'CDRRMO; GSO', 'LDRRMF 70% (MOOE)', 'not_started'),
+('c411b4a7-b112-50f2-aa35-5dec001eb4f1'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'B2.4', E'Draw the EOC floor plan and check it against the Room Design and Personnel Space sheets of the EOC Capability Checklist (operations room, comms room, briefing room, rest, food, sanitation); list fixes in an EOC Manual annex.\n\nTarget (from the Action Plan): Q4 2026 site visit', 'CDRRMO', 'No cost (assessment); LDRRMF 70% for fixes', 'not_started'),
+('42ff9318-8e6b-5923-bfd7-455d07b0a7fc'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'B2.5', E'Stock and log 72-hour water, food, hygiene and medical supplies for the full activated EOC roster; check them quarterly with the warehouse inventory (A7.5).\n\nTarget (from the Action Plan): Q1 2027', 'CDRRMO; GSO', 'LDRRMF 70%', 'not_started'),
+('e2ed2f59-3534-5a1c-97a4-b1538c4714e0'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'B2.6', E'Write access rules in the EOC Manual: staff IDs, visitor log, badges for agency liaisons, restricted areas (comms, servers); add CCTV at entrances when the OpCen CCTV system is procured.\n\nTarget (from the Action Plan): Q1 2027', 'CDRRMO', 'LDRRMF 70% (MOOE)', 'not_started'),
+('c70b4421-68e9-5b9c-a9f2-f4989328b3fb'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'B2.7', E'Designate an alternate EOC outside the primary site''s hazard zones through the PSCP; equip it with a go-kit (radios, laptops, forms, power); write relocation triggers and steps; drill relocation once a year.\n\nTarget (from the Action Plan): Q2 2027', 'CDRRMO; GSO; PSCP team', 'LDRRMF 70%', 'not_started'),
+('e8bc55c7-a1e4-518f-a8e4-76cfa36f2ede'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'B3.1', E'Inventory comms and test at least 3 independent channels (VHF, HF or satellite, landline/mobile); log a weekly radio check (RDRRMC8 practice: HF Tue/Fri, VHF Wed/Fri).\n\nTarget (from the Action Plan): Q1 2027', 'CDRRMO Operations & Warning', 'LDRRMF 70% (equipment)', 'not_started'),
+('f4a0617a-cde3-5e0b-b8d1-9869a238024d'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'B3.2', E'Run a radio coverage test for all 85 barangays; write net-control procedure and call signs; confirm NTC licences.\n\nTarget (from the Action Plan): Q1 2027', 'CDRRMO Operations & Warning', 'LDRRMF 70%', 'not_started'),
+('9c11b7ad-1706-5fdb-b34d-e0b45a26df39'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'B3.3', E'Contract a second ISP or satellite terminal on a separate path; test failover quarterly; keep offline copies of forms and contact lists (the DRRM platform works offline).\n\nTarget (from the Action Plan): 2027', 'CDRRMO; City ICT', 'LDRRMF 70% (ICT)', 'not_started'),
+('a58f1dc1-9f3a-5658-b68d-a19cf3ba92e8'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'B3.4', E'Publish a dated directory (agencies, 85 barangays, cluster leads, utilities, media) as an EOC Manual annex; update it every 6 months and after elections or reassignments.\n\nTarget (from the Action Plan): Jan 2027 (with MOP)', 'CDRRMO', 'No cost', 'not_started'),
+('753879bf-3bcc-52c6-bbc1-fd227d5bdb81'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'B3.5', E'Adopt an EOC information-security policy: named accounts and role-based access, MFA for admin accounts, daily backups, device sign-out rules, incident reporting to the City DPO (RA 10173).\n\nTarget (from the Action Plan): 2027', 'City ICT; CDRRMO', 'No cost (policy); City ICT budget', 'not_started'),
+('2a0510b3-e00a-5df7-9d28-d8e3098bef66'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'B3.6', E'Confirm displays for PAGASA/PHIVOLCS feeds, CCTV and the common operating picture; if missing, include a display wall in the OpCen EWS procurement.\n\nTarget (from the Action Plan): Q1 2027', 'CDRRMO', 'LDRRMF 70% (OpCen EWS/CCTV line)', 'not_started'),
+('394cdec1-6ceb-5324-80d4-60ef42e975fb'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'B4.1', E'Define the EOC organogram (EOC Manager, Operations, Planning, Logistics, Finance/Admin, liaison desks) in EOC Manual Ch.5.\n\nTarget (from the Action Plan): Jan 2027 (with MOP)', 'CDRRMO', 'No cost', 'ongoing'),
+('715bb3c5-b66d-5f75-957c-bbceee32c49b'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'B4.2', E'Name a primary and 2 alternates for each key EOC position (EOC Manager, Operations, Planning, Logistics, Finance/Admin, liaison), drawing on CDRRMC member offices where CDRRMO staff are short; review the roster each quarter.\n\nTarget (from the Action Plan): Jan 2027 (with MOP)', 'CDRRMO', 'No cost', 'not_started'),
+('648b3e6c-b45d-5b3d-8f31-0fdb828ad431'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'B4.3', E'Adopt a shift handover form based on the RDRRMOC SOPG 2022 turn-over document and swapping form; keep rosters and signed handovers as proof of use.\n\nTarget (from the Action Plan): Jan 2027 (with MOP)', 'CDRRMO Operations & Warning', 'No cost', 'ongoing'),
+('f8f474b9-220c-54a8-bb19-28318f0fcefc'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'B4.4', E'List liaison desks (CSWDO, CHO, CEO, PNP, BFP, AFP, DepEd, utilities, Red Cross) with focal persons.\n\nTarget (from the Action Plan): Jan 2027 (with MOP)', 'CDRRMO', 'No cost', 'ongoing'),
+('69d22fd6-2263-5e76-a360-74153f7f5296'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'B4.5', E'Write job action sheets for every EOC role.\n\nTarget (from the Action Plan): Jan 2027 (with MOP)', 'CDRRMO', 'MOP engagement', 'ongoing'),
+('20a67b12-c899-51d0-8311-7acdc6d27802'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'B4.6', E'Add rest cycles, meals and MHPSS to EOC Manual Ch.5.\n\nTarget (from the Action Plan): Jan 2027 (with MOP)', 'CDRRMO; CHO', 'LDRRMF 70%', 'ongoing'),
+('239decad-d7c5-5fcf-8459-1a1eb875e710'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'B5.1', E'Adopt the harmonized template and reporting schedule by CDRRMC resolution and put it in EOC Manual Ch.6, with file-naming rules modelled on RDRRMOC SOPG 2022 (Tables 4-5).\n\nTarget (from the Action Plan): Dec 2026', 'CDRRMO', 'No cost', 'ongoing'),
+('5e0d2201-5847-59c8-8877-ecac1d77f027'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'B5.2', E'Write the BDRRMC -> EOC reporting flow with times (before the city''s 6AM/6PM submission) and formats.\n\nTarget (from the Action Plan): Jan 2027 (with MOP)', 'CDRRMO', 'No cost', 'ongoing'),
+('7cbe8cdb-9444-543f-8a5b-e3fbab0f97f7'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'B5.3', E'Set up a COP map of incidents, evacuees and resources (the DRRM platform can serve).\n\nTarget (from the Action Plan): 2027', 'CDRRMO Research & Planning', 'MOP engagement (DRRM platform)', 'not_started'),
+('3c9137b0-fc1c-555b-ae46-ed9665b8be0c'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'B5.4', E'Use DSWD DAFAC at all ECs; set an EC-to-EOC count report (families, persons, sex/age/PWD) at fixed times; keep names in CSWDO records only and counts in EOC dashboards (RA 10173).\n\nTarget (from the Action Plan): 2027', 'CSWDO; CDRRMO', 'No cost', 'not_started'),
+('97face83-4b25-5ac7-974d-8d40f4cd3d1d'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'B5.5', E'Keep a bound or append-only digital significant-events log (time, source, action, initials); adopt a records retention schedule with the City Records Officer.\n\nTarget (from the Action Plan): Jan 2027 (with MOP)', 'CDRRMO', 'No cost', 'not_started'),
+('1d685258-0afc-599b-8595-b77b20c5783a'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'B5.6', E'Keep a bulletin log with time received and disseminated.\n\nTarget (from the Action Plan): Jan 2027 (with MOP)', 'CDRRMO Operations & Warning', 'No cost', 'ongoing'),
+('93a4b53f-4d27-5777-a3f5-545d48d69850'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'B5.7', E'Add an intake and verification step for hotline/SMS/social media reports.\n\nTarget (from the Action Plan): Jan 2027 (with MOP)', 'CDRRMO', 'No cost', 'ongoing'),
+('ddbc15cd-f48b-56d3-ba9e-4077e384248f'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'B6.1', E'Define the interface per NDRRMC Memo 131 s.2018: EOC supports the IC; clusters provide resources; no command from the EOC.\n\nTarget (from the Action Plan): Jan 2027 (with MOP)', 'CDRRMO', 'No cost', 'ongoing'),
+('9eb466f7-8c74-5278-8410-0886cb7fd10b'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'B6.2', E'Adopt ICS resource request and tracking forms.\n\nTarget (from the Action Plan): Jan 2027 (with MOP)', 'CDRRMO', 'No cost', 'ongoing'),
+('71a1289f-c69c-5655-bd18-fdc26bc9f205'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'B6.3', E'Extend the inventory to barangays, partners and suppliers.\n\nTarget (from the Action Plan): 2027', 'CDRRMO; GSO', 'No cost', 'not_started'),
+('f4bc107d-e8be-5538-b579-bbb5513376ad'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'B6.4', E'Write the donations and volunteer SOP.\n\nTarget (from the Action Plan): Jan 2027 (with MOP)', 'CDRRMO; CSWDO', 'No cost', 'ongoing'),
+('25d7ad5a-0988-58d5-9b7b-d41d57b1b10b'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'B6.5', E'Set briefing times by alert level (e.g., Blue: twice daily; Red: every 6 hours) to the Mayor/CDRRMC; use a one-page briefing template linked to the SitRep; file the briefing notes.\n\nTarget (from the Action Plan): Jan 2027 (with MOP)', 'CDRRMO', 'No cost', 'not_started'),
+('27ad7bb4-dea3-5c4c-8d65-1cbd3f7d7af0'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'B6.6', E'Sign agreements listing item, quantity, trigger and contact, usable for AA (IRR Rule IV Sec. 6).\n\nTarget (from the Action Plan): 2027', 'CDRRMO; BAC', 'No cost (agreements); LDRRMF 70% AA line when used', 'not_started'),
+('7b4339a5-8a2b-5401-a878-35b6af77ea5a'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'B7.1', E'Complete, approve and distribute the EOC Manual.\n\nTarget (from the Action Plan): Jan 2027 (with MOP)', 'CDRRMO; MOP consultant', 'MOP engagement', 'ongoing'),
+('87073e89-3b5e-594a-8ed4-df96cd5a3930'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'B7.2', E'Complete EOC Management and ICS courses for all EOC staff.\n\nTarget (from the Action Plan): 2027', 'CDRRMO Admin & Training', 'LDRRMF 70% (training)', 'not_started'),
+('a3ce83e5-865c-5c98-9eed-62a3978e339e'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'B7.3', E'Add an annual EOC functional exercise.\n\nTarget (from the Action Plan): 2027', 'CDRRMO', 'LDRRMF 70%', 'not_started'),
+('21474c92-a524-59b0-853d-49c122e7768d'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'B7.4', E'Track AAR actions in an improvement plan.\n\nTarget (from the Action Plan): After each activation', 'CDRRMO', 'No cost', 'ongoing'),
+('d5796081-22c5-5aac-b42e-453bc1ef2300'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'B7.5', E'Keep the line in each LDRRMFIP.\n\nTarget (from the Action Plan): Annual', 'CDRRMO; City Budget Office', 'LDRRMF 70%', 'ongoing'),
+('fd636773-cb22-5fc3-bebf-db78089a98d2'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'B7.6', E'Set a PM schedule and an annual EOC readiness self-check (EOC Capability Assessment Checklist).\n\nTarget (from the Action Plan): 2027', 'CDRRMO', 'LDRRMF 70% (OpCen Program, maintenance)', 'not_started'),
+('9d85a9ef-d9da-51e7-b01f-99227b0c90d0'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'C1.1', E'Define most-probable and most-severe scenarios per priority hazard from the CDRA and GeoRiskPH; use them to set CDP/CLUP priorities and the siting of major investments in the CLUP update (CDRA MDA 1).\n\nTarget (from the Action Plan): With CLUP update', '=C_Interface!E6', 'General Fund (CPDO)', 'ongoing'),
+('31b2ed5c-d56b-583a-bac0-06f830bcc8b5'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'C1.2', E'Add a one-page DRR/CCA screening form to LDC/LFC project review (hazard overlay, exposure, design standard, climate expenditure tag), owned by CPDO with CDRRMO sign-off.\n\nTarget (from the Action Plan): Q2 2027 (before FY2028 LDC/LFC review)', '=C_Interface!E7', 'No cost', 'not_started'),
+('4c6c36e7-cab3-5b41-a28e-991d868acd16'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'C1.3', E'In the CDRA update, estimate jobs and income lost, displacement days, ecosystem services and heritage assets in the Heritage Overlay Zone; use the 10-Yr Plan business data (establishments, employment) as the baseline.\n\nTarget (from the Action Plan): With CLUP update', '=C_Interface!E8', 'General Fund (CPDO, CDRA update)', 'not_started'),
+('66b77fba-ee2e-5d77-8bb3-7aac4ad88602'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'C1.4', E'Add hazard overlay zones and permit conditions (floor elevation, setbacks, geotechnical study) in the ZO update; have the Zoning Administrator check hazard maps for each locational clearance; use the CDRRMO seat on the LZRC to review hazard cases.\n\nTarget (from the Action Plan): With ZO update (2027)', '=C_Interface!E9', 'No cost', 'ongoing'),
+('65b79682-6488-5ec8-a1e5-14cd0cd7b7d5'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'C2.1', E'Have the Building Official assess the EOC, ECs and critical public facilities, starting with those rated ''Poor'' in the CDRA; write a rapid pre-impact inspection checklist used at the PDRA stage.\n\nTarget (from the Action Plan): Q1 2027', '=C_Interface!E11', 'General Fund', 'not_started'),
+('6225f82b-2cbe-59fa-900d-0eb78bfab2f3'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'C2.2', E'Sign restoration-priority arrangements with power, water and telecom providers.\n\nTarget (from the Action Plan): Q2 2027 (before typhoon season)', '=C_Interface!E12', 'No cost (MOAs)', 'not_started'),
+('9dffac1c-5514-57de-8178-092b3d2ca77b'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'C2.3', E'With DPWH, the City Engineer, the traffic office and the port authority, write transport anticipatory actions: bridge pre-inspection list, alternate routes, traffic teams, port and terminal suspension, and care for stranded passengers.\n\nTarget (from the Action Plan): Q2 2027', '=C_Interface!E13', 'No cost', 'not_started'),
+('27f92c61-ec1f-544d-bc7b-f6ff7f19d131'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'C3.1', E'Complete the watershed study; monitor forest cover in the upper Anilao-Malbasag watershed and mangrove area each year and report it to the CDRRMC (CDRA MDA 3 and 5).\n\nTarget (from the Action Plan): 2027-2028', '=C_Interface!E15', 'General Fund (CENRO); LDRRMF 70% (watershed study)', 'not_started'),
+('f9b8ca55-b614-555e-a573-4aed8a0bdc45'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'C3.2', E'Formalise watershed arrangements with DENR, EDC and neighbouring LGUs.\n\nTarget (from the Action Plan): 2028', '=C_Interface!E16', 'No cost (MOA)', 'not_started'),
+('7cb5a74c-a2ef-5890-936b-89c800c30034'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'C3.3', E'Write the declogging and debris protocol.\n\nTarget (from the Action Plan): Before typhoon season each year', '=C_Interface!E17', 'General Fund (CEO/GSO maintenance)', 'not_started'),
+('bce539cc-a1d0-5e13-9d53-8e3c7377ccdb'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'C4.1', E'Prepare the health AA plan with CHO and hospitals.\n\nTarget (from the Action Plan): Q3 2027', '=C_Interface!E19', 'General Fund (CHO); DOH support', 'not_started'),
+('144b853e-5ad5-5e2e-b947-9b302f3f47db'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'C4.2', E'Ask DepEd SDO Ormoc for school contingency/AA plans and learning-continuity modalities; agree triggers for class suspension and school use as ECs (link A1.5, A6.2).\n\nTarget (from the Action Plan): Q1 2027 (KII)', '=C_Interface!E20', 'No cost', 'not_started'),
+('e476234a-6576-580e-b6e2-e695c5663196'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'C4.3', E'With CAO and CVO, draft agri-fisheries early action guidelines (early harvest advisories, seed and input prepositioning, livestock evacuation, animal health) using RSBSA/FishR lists and the CDRA high-risk production areas.\n\nTarget (from the Action Plan): Q3 2027', '=C_Interface!E21', 'General Fund (CAO/CVO)', 'not_started'),
+('7c12fceb-6ed7-560d-b07d-8a02b907c473'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'C4.4', E'Agree with DTI Leyte and the city market office to monitor basic-goods prices from the PDRA stage and report them to the EOC (RA 7581).\n\nTarget (from the Action Plan): Q1 2027', '=C_Interface!E22', 'No cost', 'not_started'),
+('293faa09-999d-5110-be89-c52f034f8b3c'::uuid, '8911a053-1b14-587f-b906-c0fb2adaf7f3'::uuid, 'C5.1', E'Run BCP outreach with the Chamber using CDRA hazard scenarios; track the number of MSMEs with BCPs as the 10-Yr Plan indicator.\n\nTarget (from the Action Plan): Q4 2027', '=C_Interface!E24', 'No cost', 'not_started')
 on conflict (id) do nothing;
 
 commit;
