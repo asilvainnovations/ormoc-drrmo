@@ -13,3 +13,4 @@ Each record states a decision, why it was made, and what it costs. Change a deci
 | [007](007-design-system.md) | Token-based design system; status band; reserved level colours | Accepted (colour and type amended by 008) |
 | [008](008-city-identity.md) | City identity: seals, banner, light blue, gray and orange; Montserrat, Poppins, Roboto Condensed; tooltips everywhere | Accepted |
 | [009](009-open-signup-and-live-data.md) | Open sign-up with administrator approval; live data only, no demo mode | Accepted (amends 003 and 004) |
+| [010](010-oauth-provider-read-only-clients.md) | "Sign in with Ormoc DRRM" (OAuth 2.1 / OIDC provider); consent screen in the app; other apps read-only; JWKS checks | Accepted |
