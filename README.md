@@ -67,7 +67,7 @@ docs/             system design, design system, architecture decision records
 | `npm run build` | Typecheck and production build to `dist/` |
 | `npm run preview` | Serve the build on port 4173 |
 | `npm test` | Unit tests, including the scoring parity test against SQL |
-| `npm run test:db` | Rebuild a local Postgres database from the migrations and run the 177 rule and security checks. Needs `PGHOST`, `PGPORT` and `PGUSER` for a local superuser |
+| `npm run test:db` | Rebuild a local Postgres database from the migrations and run the 195 rule and security checks. Needs `PGHOST`, `PGPORT` and `PGUSER` for a local superuser |
 | `npm run test:it` | Integration tests through real PostgREST. Needs the same plus `POSTGREST_BIN` (PostgREST 12) |
 | `npm run test:e2e` | Playwright on phone and desktop sizes against the production build, PostgREST and a fresh local database with every migration: sign-up and approval, journeys, axe and offline checks. Needs the same as `test:it` |
 | `python3 scripts/brand_assets.py` | Rebuild the circular seals, banner copies and app icons from the originals in `public/` |

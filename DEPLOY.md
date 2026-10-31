@@ -141,6 +141,7 @@ Then, in the dashboard:
 - **To 1.3** (31 October 2026): no migration. Run the reference parts `01_seed.sql` to `07_seed.sql` again (delete any old `08`–`10` part files first). They add the Chapter 1 v0.9 draft (a new version of MOO Ch.1), eight new Library documents (Annexes 1-0 to 1-G, including SOP GOV-04 and SOP GOV-05), the new protocol PR-SOC-DECLARE, and revised steps for PR-SOID-REQUEST, PR-EOC-ACTIVATE and PR-LIFT-REPORT. Then run `supabase/seed/operational/` once if the baseline has not been entered by hand.
 - **To 1.4** (31 October 2026): run `supabase/migrations/20261031001000_oauth_clients_read_only.sql` once. It makes tokens issued to other apps read-only. Run it even if section 2a stays off; it is safe to run again. No seed changes.
 - **To 1.5** (31 October 2026): no migration. Delete the old part files, upload the new ones, and run every part in `supabase/seed/parts/` again (nine parts). They add Chapter 2 as a new version of MOO Ch.2 and 23 new Library documents (Annexes 2-A to 2-W, SOPs HR-01 to HR-08, forms HR-F01 to HR-F08). Run `supabase/seed/operational/04_vault_register.sql` again to add the Chapter 2 Vault entry. Chapter figures are in `public/library/ch2/` and deploy with the app.
+- **To 1.5.1** (31 October 2026): run `supabase/migrations/20261031001100_resource_request_lock.sql` once. It locks resource requests once they are decided and removes the delete grant on them. It is safe to run again. No seed changes. Then republish the app: a refused evidence upload now stays on the phone (Settings → Sync → Retry upload, Save a copy, or Discard).
 - **85 barangays:** if the seed was loaded before the 85-barangay correction, run parts `01_seed.sql` and `06_seed.sql` once more, but only if no manual version has been approved yet. Otherwise ask the developer for a one-off update of the three indicator texts (A3.7, A7.3, B3.2).
 
 ## 4. First administrator and the CDRRMO Head
@@ -248,6 +249,7 @@ location /assets/ { add_header Cache-Control "public, max-age=31536000, immutabl
 - [ ] Turn on airplane mode, add a logbook entry, turn it off, and confirm the entry reaches the server (Settings → Sync shows nothing waiting).
 - [ ] Raise the EOC to Blue and back to White on a test day. Confirm the logbook recorded both.
 - [ ] Viewer account: confirm it cannot create or change records.
+- [ ] Resource request: record one, approve it as the EOC Manager, then try to change its quantity. The app must refuse with "An approved request cannot be changed".
 - [ ] A new, unapproved account: confirm it sees only the waiting page, on a phone and a computer.
 - [ ] Password reset: request one and set a new password through the emailed link.
 - [ ] If section 2a is on: a test app can sign in through the consent screen, cannot write, and loses access when it is withdrawn.
