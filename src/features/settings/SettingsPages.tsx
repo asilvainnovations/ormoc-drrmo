@@ -4,7 +4,8 @@ import { useEffect, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { RefreshCw, Upload } from 'lucide-react';
 import { db } from '@/lib/db';
-import { save } from '@/lib/store';
+import { discardFailed, heldFile, retryHeldUpload, save } from '@/lib/store';
+import type { FailedItem } from '@/lib/db';
 import { syncNow, useSyncState } from '@/lib/sync';
 import { supabase } from '@/lib/supabase';
 import { ALL_ROLES, ROLE_LABEL, useAuth } from '@/lib/auth';
@@ -47,6 +48,42 @@ function entryText(rows: Record<string, unknown>[] | undefined): string {
   const skip = new Set(['id', 'version', 'created_at', 'updated_at']);
   return rows.map((r) => Object.entries(r).filter(([k, v]) => !skip.has(k) && v !== null && v !== '' && !(Array.isArray(v) && !v.length))
     .map(([k, v]) => `${k.replace(/_/g, ' ')}: ${Array.isArray(v) ? v.join(', ') : String(v)}`).join('\n')).join('\n\n');
+}
+
+/**
+ * A refused upload (1.5.1): the file is still on this device. Retry queues it again;
+ * Save a copy downloads it; Discard deletes it from the device only after a second tap.
+ */
+function HeldUploadActions({ item }: { item: FailedItem }) {
+  const toast = useToast();
+  const [confirming, setConfirming] = useState(false);
+  const retry = async () => {
+    try { await retryHeldUpload(item.id!); toast(`Upload queued again: ${item.fileName ?? item.label}`); }
+    catch (e) { toast((e as Error).message, 'bad'); }
+  };
+  const saveCopy = async () => {
+    const f = await heldFile(item.fileId!);
+    if (!f) { toast('The file is no longer on this device.', 'bad'); return; }
+    const url = URL.createObjectURL(f.blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = f.name || item.fileName || 'evidence';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 60_000);
+    toast(`Copy saved: ${a.download}`);
+  };
+  const discard = async () => { await discardFailed(item.id!); toast(`File discarded from this device: ${item.fileName ?? item.label}`); };
+  return (
+    <div className="mt-2 flex flex-wrap gap-2">
+      <Button tip="Queue this file for upload again. It is sent when there is a connection" variant="secondary" onClick={retry}>Retry upload</Button>
+      <Button tip="Download the file kept on this device, so you can keep it or send it another way" variant="secondary" onClick={saveCopy}>Save a copy</Button>
+      {confirming
+        ? <>
+            <Button tip="Delete the file from this device for good. It is not on the server" variant="danger" onClick={discard}>Discard file for good</Button>
+            <Button tip="Keep the file on this device" variant="quiet" onClick={() => setConfirming(false)}>Keep it</Button>
+          </>
+        : <Button tip="Remove this file from the device. You are asked to confirm first" variant="quiet" onClick={() => setConfirming(true)}>Discard</Button>}
+    </div>
+  );
 }
 
 export function SyncPage() {
@@ -95,13 +132,16 @@ export function SyncPage() {
         {data?.failed.length ? (
           <List>{data.failed.map((f) => <li key={f.id} className="py-3">
             <p className="font-semibold">{f.label}</p><p className="text-sm text-bad">{f.error}</p>
-            <p className="text-xs text-muted">{fmtDateTime(f.at)}. The record shows the server copy again.</p>
+            <p className="text-xs text-muted">{fmtDateTime(f.at)}. {f.fileId ? 'The file is kept on this device until it uploads or you discard it.' : 'The record shows the server copy again.'}</p>
             {f.rows?.length ? (
               <details className="mt-2"><summary className="min-h-tap cursor-pointer font-semibold" {...tip('Show what you entered, so you can enter it again')}>What you entered</summary>
                 <pre className="mt-1 whitespace-pre-wrap rounded-control bg-sunken p-3 text-sm">{entryText(f.rows)}</pre>
                 <Button tip="Copy what you entered" className="mt-1" variant="secondary" onClick={() => copy(entryText(f.rows))}>Copy</Button>
               </details>) : null}
-            <Button tip="Remove this message from the list" className="mt-1" variant="quiet" onClick={() => db.failed.delete(f.id!)}>Dismiss</Button></li>)}</List>
+            {f.fileId
+              ? <HeldUploadActions item={f} />
+              : <Button tip="Remove this message from the list" className="mt-1" variant="quiet" onClick={() => discardFailed(f.id!)}>Dismiss</Button>}
+          </li>)}</List>
         ) : <p className="text-muted">None.</p>}
       </Section>
       <Section title={`Edited by someone else first (${data?.conflicts.length ?? 0})`}>
