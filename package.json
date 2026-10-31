@@ -1,7 +1,7 @@
 {
   "name": "ormoc-drrm-ops",
   "private": true,
-  "version": "1.4.0",
+  "version": "1.5.0",
   "description": "Ormoc City CDRRMO & EOC Operations Platform – mobile-first PWA",
   "type": "module",
   "engines": {

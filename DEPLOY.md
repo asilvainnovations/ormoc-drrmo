@@ -81,11 +81,11 @@ There are two ways to do this. Both give the same result.
 
 ### Option A: Supabase SQL editor (no tools to install)
 
-The SQL editor rejects long scripts, so the reference data comes in seven parts in `supabase/seed/parts/`. Each part is under 400 lines; long manual text is written on a single line.
+The SQL editor rejects long scripts, so the reference data comes in parts in `supabase/seed/parts/` (nine at present). Each part is under 400 lines; long manual text is written on a single line.
 
 1. **Migrations.** In SQL Editor → New query, paste and run each file in `supabase/migrations/` in name order, one at a time (`…000100_core.sql` first, `20261016000900_accounts_and_integrity.sql` last). Wait for "Success" before the next. Run each migration once only.
-2. **Reference data.** Paste and run `supabase/seed/parts/01_seed.sql`, then `02_seed.sql`, and so on to `07_seed.sql`. Use the parts, not `supabase/seed/seed.sql`, which is the same data in one file for `psql`.
-3. Part 7 ends with a check query. It should return **140 | 18 | 935 | 71 | 10 | 66 | 29**.
+2. **Reference data.** Paste and run `supabase/seed/parts/01_seed.sql`, then `02_seed.sql`, and so on to the last part. Use the parts, not `supabase/seed/seed.sql`, which is the same data in one file for `psql`.
+3. The last part ends with a check query. It should return **140 | 18 | 935 | 71 | 10 | 66 | 29**.
 4. **Operational data (once).** Paste and run, in order, the four files in `supabase/seed/operational/`:
    - `01_iat_baseline_responses.sql`, `02_iat_baseline_evidence.sql`, `03_iat_baseline_scores_actions.sql`: the October 2026 IAT baseline as the cycle **2026 Baseline (IAT v1.1)**, with 140 provisional responses, their evidence notes and the action plan. Part 3 ends with the cycle results.
    - `04_vault_register.sql`: Document Vault entries for the engagement's source documents. Attach the files in the app afterwards.
@@ -140,6 +140,7 @@ Then, in the dashboard:
 - **To 1.2:** run `supabase/migrations/20261016000900_accounts_and_integrity.sql` once, **before** turning sign-up on (section 2). It makes accounts without a role read nothing, adds the administrator's account list, and locks finalised and approved records.
 - **To 1.3** (31 October 2026): no migration. Run the reference parts `01_seed.sql` to `07_seed.sql` again (delete any old `08`–`10` part files first). They add the Chapter 1 v0.9 draft (a new version of MOO Ch.1), eight new Library documents (Annexes 1-0 to 1-G, including SOP GOV-04 and SOP GOV-05), the new protocol PR-SOC-DECLARE, and revised steps for PR-SOID-REQUEST, PR-EOC-ACTIVATE and PR-LIFT-REPORT. Then run `supabase/seed/operational/` once if the baseline has not been entered by hand.
 - **To 1.4** (31 October 2026): run `supabase/migrations/20261031001000_oauth_clients_read_only.sql` once. It makes tokens issued to other apps read-only. Run it even if section 2a stays off; it is safe to run again. No seed changes.
+- **To 1.5** (31 October 2026): no migration. Delete the old part files, upload the new ones, and run every part in `supabase/seed/parts/` again (nine parts). They add Chapter 2 as a new version of MOO Ch.2 and 23 new Library documents (Annexes 2-A to 2-W, SOPs HR-01 to HR-08, forms HR-F01 to HR-F08). Run `supabase/seed/operational/04_vault_register.sql` again to add the Chapter 2 Vault entry. Chapter figures are in `public/library/ch2/` and deploy with the app.
 - **85 barangays:** if the seed was loaded before the 85-barangay correction, run parts `01_seed.sql` and `06_seed.sql` once more, but only if no manual version has been approved yet. Otherwise ask the developer for a one-off update of the three indicator texts (A3.7, A7.3, B3.2).
 
 ## 4. First administrator and the CDRRMO Head

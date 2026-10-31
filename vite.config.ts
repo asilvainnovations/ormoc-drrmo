@@ -48,7 +48,9 @@ export default defineConfig(({ command, mode }) => {
         globIgnores: ['App_Banner.png', 'Ormoc_City_Logo.png', 'Ormoc_CDRRMO_Logo.png', 'brand/*.jpg',
           // Latin is all the app needs; other script subsets still load on demand if ever used.
           '**/*-{cyrillic,cyrillic-ext,greek,greek-ext,vietnamese,devanagari,math,symbols,latin-ext}-*.woff2',
-          'brand/*-512.webp', 'brand/*-64.webp'],
+          'brand/*-512.webp', 'brand/*-64.webp',
+          // Manual figures load when online; the manual text itself is in the bundled reference data.
+          'library/**'],
         navigateFallback: '/index.html',
         navigateFallbackDenylist: [/^\/auth\//],
         // Supabase API calls are never cached by the service worker; the app keeps its own

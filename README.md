@@ -8,6 +8,12 @@ A mobile-first, offline-capable web app (PWA) for the City Disaster Risk Reducti
 - **EOC.** Covers the White / Blue / Red alert level, an append-only logbook, SitReps, barangay status (counts only), and resource requests.
 - **Anticipatory action (RA 12287 and IRR).** Records the PDRA and the declaration timeline with its legal deadlines. It holds the 29-item AA checklist and enforces the fund cap (10% of the 70% LDRRMF) and the 30% / 70% tranche limits.
 
+- **Tools.** Readiness tools and hazard information in one place:
+  - an ICS exercise simulator (individual drills, facilitated tabletops and position drills on six Ormoc scenarios, scored against Philippine ICS doctrine, with a printable after-action review);
+  - a Public Service Continuity Plan workbench (essential functions and business impact analysis, risks, alternate sites, succession, vital records, activation, printable plan);
+  - a Gawad KALASAG Seal readiness self-check (six criteria rated 0 to 3, weighted mean and rating, suggestions from the IAT);
+  - links to HazardHunterPH, GeoAnalyticsPH, Zoom Earth (centered on Ormoc) and DDRiVE-M.
+
 - **Document Vault.** One register of the laws, guidelines, City issuances, plans and records gathered for Document Review. Each document is linked to the indicators it evidences. The vault includes a Document Review checklist and a catalogue of the cited references, each explained in plain language. It is open to assessors, validators, administrators and CDRRMO staff.
 
 Every button, tab, card, link and field has a tooltip. Every cited law or guideline (for example "RA 10121 Sec. 21") opens a short note when tapped.
@@ -37,7 +43,7 @@ For training and validation workshops, use a separate training Supabase project 
 src/
   components/     shared UI primitives, app shell, sheet, toast
   domain/         rules mirrored from SQL: scoring, anticipatory action, EOC, protocols
-  features/       screens per module (iat, library, protocols, eoc, eoc/aa, settings, home)
+  features/       screens per module (iat, library, protocols, eoc, eoc/aa, tools, settings, home)
   lib/            local database, outbox store, sync engine, auth, time (Asia/Manila), ids
   styles/         design tokens and base CSS
 supabase/
@@ -66,6 +72,7 @@ docs/             system design, design system, architecture decision records
 | `npm run test:e2e` | Playwright on phone and desktop sizes against the production build, PostgREST and a fresh local database with every migration: sign-up and approval, journeys, axe and offline checks. Needs the same as `test:it` |
 | `python3 scripts/brand_assets.py` | Rebuild the circular seals, banner copies and app icons from the originals in `public/` |
 | `npm run seed:generate` | Regenerate `supabase/seed/seed.sql`, `supabase/seed/parts/` and `src/data/reference.json` from `reference/*.xlsx` and the manual drafts in `reference/moo/` |
+| `python3 scripts/split_manual_docx.py <chapter.docx> --slug chN --prefix MOO_ChN` | Turn a drafted chapter into Library sources in `reference/moo/` and compressed figures in `public/library/chN/` |
 | `npm run seed:operational` | Regenerate the one-time `supabase/seed/operational/` files (IAT baseline, Document Vault register) from the IAT workbook |
 | `npm run check` | Typecheck, unit tests and build |
 
