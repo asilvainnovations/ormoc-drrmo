@@ -31,6 +31,9 @@
   .prose-doc blockquote { @apply my-3 border-l-4 border-accent pl-3 text-muted; }
   .prose-doc table { @apply my-3 w-full border-collapse text-sm; }
   .prose-doc th, .prose-doc td { @apply border border-line px-2 py-1 text-left align-top; }
+  .prose-doc img { @apply my-4 h-auto max-w-full rounded-control border border-line bg-white; }
+  .ics-learn .lgrid { @apply my-3 grid gap-3 sm:grid-cols-2; }
+  .ics-learn .pillar { @apply rounded-control border border-line bg-surface p-3; }
 
   /* The City banner behind every signed-in screen. Content surfaces stay opaque, and the
      veil keeps the page wash dominant, so text contrast is the same as on plain paper. */
