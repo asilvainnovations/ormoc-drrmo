@@ -1,6 +1,6 @@
 import { NavLink, Link, Outlet } from 'react-router-dom';
 import clsx from 'clsx';
-import { BookOpen, ClipboardCheck, FolderLock, House, ListChecks, RadioTower, Settings, CloudOff, RefreshCw, AlertTriangle, Check } from 'lucide-react';
+import { BookOpen, ClipboardCheck, FolderLock, House, ListChecks, RadioTower, Settings, CloudOff, RefreshCw, AlertTriangle, Check, Wrench } from 'lucide-react';
 import { LEVEL_INFO } from '@/domain/eoc';
 import { useActiveDeclaration, useEocStatus, useNow, usePending } from '@/lib/hooks';
 import { useSyncState } from '@/lib/sync';
@@ -18,6 +18,8 @@ const NAV = [
   { to: '/eoc', label: 'EOC', icon: RadioTower, tip: 'Emergency Operations Center: level, logbook, SitReps, requests and anticipatory action' },
   { to: '/library', label: 'Library', icon: BookOpen, tip: 'The Manual of Operations and EOC Manual, with traceability to the indicators' },
   { to: '/vault', label: 'Vault', icon: FolderLock, tip: 'Document Vault: laws, guidelines and documents for Document Review', vault: true },
+  // Desktop rail only; on phones the Today screen links to Tools (the tab bar holds six).
+  { to: '/tools', label: 'Tools', icon: Wrench, tip: 'ICS exercises, continuity planning, Gawad KALASAG readiness, HazardHunterPH, GeoAnalyticsPH, Zoom Earth and DDRiVE-M', rail: true },
 ];
 
 /** The signature element: activation level, any declaration in force, and data freshness. */
@@ -40,7 +42,7 @@ export function StatusBand() {
   const detail = level === 'white' ? 'Normal operations' : `${info.meaning} since ${fmtTime(activation?.started_at)}`;
 
   return (
-    <div className={clsx('sticky top-0 z-30 pt-[env(safe-area-inset-top)]', tone)}>
+    <div className={clsx('sticky top-0 z-30 pt-[env(safe-area-inset-top)] print:hidden', tone)}>
       <div className="mx-auto flex max-w-page items-center gap-3 px-4 py-2 lg:px-8">
         <Link to="/eoc" {...tip('Open the EOC board. The band shows the current alert level and any declaration in force')} className="min-w-0 flex-1 rounded-control">
           <p className="text-sm leading-5 sm:text-base">
@@ -66,12 +68,13 @@ export function StatusBand() {
 export function AppShell() {
   const { has } = useAuth();
   const nav = NAV.filter((n) => !n.vault || canUseVault(has));
+  const tabs = nav.filter((n) => !n.rail);
   return (
-    <div className="min-h-dvh lg:pl-60">
+    <div className="min-h-dvh lg:pl-60 print:pl-0">
       <div className="app-backdrop" aria-hidden />
       <a href="#main" {...tip('Skip the menu and go to the page content')} className="sr-only focus:not-sr-only focus:fixed focus:left-2 focus:top-2 focus:z-50 focus:rounded-control focus:bg-surface focus:px-3 focus:py-2">Skip to content</a>
       {/* Desktop rail */}
-      <nav aria-label="Main" className="fixed inset-y-0 left-0 z-40 hidden w-60 flex-col border-r border-line bg-surface lg:flex">
+      <nav aria-label="Main" className="fixed inset-y-0 left-0 z-40 hidden w-60 flex-col border-r border-line bg-surface lg:flex print:!hidden">
         <div className="border-b border-line px-4 pb-4 pt-5">
           <BrandLockup size={44} stacked />
         </div>
@@ -97,9 +100,9 @@ export function AppShell() {
       <main id="main" tabIndex={-1} className="outline-none"><Outlet /></main>
 
       {/* Phone tab bar: thumb reach */}
-      <nav aria-label="Main" className="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-surface pb-safe-b lg:hidden">
-        <ul className={clsx('grid', nav.length === 6 ? 'grid-cols-6' : 'grid-cols-5')}>
-          {nav.map(({ to, label, icon: Icon, end, tip: t }) => (
+      <nav aria-label="Main" className="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-surface pb-safe-b lg:hidden print:hidden">
+        <ul className={clsx('grid', tabs.length === 6 ? 'grid-cols-6' : 'grid-cols-5')}>
+          {tabs.map(({ to, label, icon: Icon, end, tip: t }) => (
             <li key={to}>
               <NavLink to={to} end={end} {...tip(t)} className={({ isActive }) => clsx('flex min-h-[3.5rem] flex-col items-center justify-center gap-0.5 font-data text-[0.8125rem] font-semibold',
                 isActive ? 'text-ink' : 'text-muted')}>
