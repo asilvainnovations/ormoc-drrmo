@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import type { EmailOtpType } from '@supabase/supabase-js';
 import { supabase } from '@/lib/supabase';
 import { authMessage, MIN_PASSWORD, passwordProblem, useAuth } from '@/lib/auth';
+import { safeNext } from '@/lib/oauth';
 import { Button, Field, Input, Loading, Notice } from '@/components/ui';
 import { AuthLayout, formCard } from './AuthLayout';
 
@@ -28,7 +29,8 @@ export function AuthCallbackPage() {
       const q = new URLSearchParams(window.location.search);
       const h = new URLSearchParams(window.location.hash.replace(/^#/, ''));
       const linkError = q.get('error_description') ?? h.get('error_description');
-      const next = q.get('next') ?? '/';
+      // Only ever continue to a page of this app (never '//other-site' or 'https://…').
+      const next = safeNext(q.get('next'));
       try {
         if (linkError) throw new Error(linkError.replace(/\+/g, ' '));
         const type = (q.get('type') ?? h.get('type')) as EmailOtpType | null;
@@ -54,7 +56,7 @@ export function AuthCallbackPage() {
         await refreshAccount();
         // Invited people and password resets choose a password next.
         if (type === 'recovery' || type === 'invite' || next === '/auth/reset') { nav('/auth/reset', { replace: true }); return; }
-        nav(next.startsWith('/') ? next : '/', { replace: true });
+        nav(next, { replace: true });
       } catch (e) {
         setError(authMessage(e as Error));
       }

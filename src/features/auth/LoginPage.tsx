@@ -1,6 +1,7 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import { Navigate, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { MIN_PASSWORD, passwordProblem, useAuth } from '@/lib/auth';
+import { CONSENT_PATH, safeNext } from '@/lib/oauth';
 import { Button, Checkbox, Field, Input, Notice } from '@/components/ui';
 import { tip } from '@/components/Tooltip';
 import { AuthLayout, formCard } from './AuthLayout';
@@ -18,12 +19,22 @@ export function LoginPage() {
   const [params, setParams] = useSearchParams();
   const mode = (['signin', 'signup', 'forgot'].includes(params.get('mode') ?? '') ? params.get('mode') : 'signin') as Mode;
   const setMode = (m: Mode) => setParams(m === 'signin' ? {} : { mode: m }, { replace: true });
+  // Where to go after signing in: a page of this app only (state from RequireAuth or the consent screen).
+  const from = safeNext(loc.state?.from ?? params.get('next'), '/');
+  const forApp = from.startsWith(CONSENT_PATH);
 
-  if (ready && userId) return <Navigate to={loc.state?.from ?? '/'} replace />;
+  if (ready && userId) return <Navigate to={from} replace />;
 
   return (
     <AuthLayout title="Ormoc City DRRM and Emergency Operations"
       intro="For CDRRMO, EOC and partner office staff of the City of Ormoc. Any email address can be used, including a personal one.">
+      {forApp && (
+        <div className="mt-6">
+          <Notice tone="info" title="Another app is asking to use your account">
+            Sign in to Ormoc DRRM first. You will then see which app is asking and what it wants, and you can allow or refuse it.
+          </Notice>
+        </div>
+      )}
       {mode !== 'forgot' && (
         <div role="group" aria-label="Account" className="mt-8 grid grid-cols-2 gap-1 rounded-control border border-line bg-sunken p-1">
           {MODES.map((m) => (
@@ -32,7 +43,7 @@ export function LoginPage() {
           ))}
         </div>
       )}
-      {mode === 'signin' && <SignInForm onForgot={() => setMode('forgot')} from={loc.state?.from} />}
+      {mode === 'signin' && <SignInForm onForgot={() => setMode('forgot')} from={from} />}
       {mode === 'signup' && <SignUpForm onSignIn={() => setMode('signin')} />}
       {mode === 'forgot' && <ForgotForm onBack={() => setMode('signin')} />}
     </AuthLayout>
@@ -53,7 +64,7 @@ function SignInForm({ onForgot, from }: { onForgot: () => void; from?: string })
     e.preventDefault(); setBusy(true); setError(null); setSent(null);
     try {
       if (password) { await signInWithPassword(email.trim(), password); nav(from ?? '/', { replace: true }); }
-      else { await sendMagicLink(email.trim()); setSent(`If ${email.trim()} has an account, a sign-in link is on its way. Open it on this device.`); }
+      else { await sendMagicLink(email.trim(), from); setSent(`If ${email.trim()} has an account, a sign-in link is on its way. Open it on this device.`); }
     } catch (err) { setError((err as Error).message); } finally { setBusy(false); }
   };
   const resend = async () => {
