@@ -124,6 +124,40 @@ LIBRARY_DRAFTS = [  # code, manual, kind, title, file, label, indicators
      'v0.9 consolidated draft', ['A1.3', 'A1.4']),
 ]
 
+# Chapter 2: Organizational Structure, Staffing and Workforce (draft, 31 Oct 2026). Sources made with
+# scripts/split_manual_docx.py; its 20 figures are in public/library/ch2/.
+_CH2 = 'v0.1 assessment-informed draft'
+LIBRARY_DRAFTS += [
+    ('MOO Ch.2', 'MOO', 'chapter', None, 'MOO_Ch2_v0.9.md', _CH2, None),
+] + [
+    (code, 'MOO', kind, title, f'MOO_Ch2_Annex_{aid}.md', _CH2, inds)
+    for aid, code, kind, title, inds in [
+        ('2-A', 'MOO Annex 2-A', 'annex', 'Position description template', ['A2.4', 'B4.5']),
+        ('2-B', 'MOO Annex 2-B', 'annex', 'Workforce and plantilla gap matrix', ['A2.1', 'A2.3']),
+        ('2-C', 'MOO Annex 2-C', 'annex', 'Competency and training matrix', ['A2.6']),
+        ('2-D', 'MOO Annex 2-D', 'annex', 'EOC personnel designation register', ['B4.1', 'B4.2']),
+        ('2-E', 'MOO Annex 2-E', 'annex', 'Duty handover checklist', ['A2.5', 'B4.3']),
+        ('2-F', 'MOO Annex 2-F', 'annex', 'Legal and technical validation register', []),
+        ('2-G', 'SOP HR-01', 'sop', 'Annual workforce planning and plantilla review', ['A2.1', 'A2.3']),
+        ('2-H', 'SOP HR-02', 'sop', 'Position description and competency profile control', ['A2.4', 'B4.5']),
+        ('2-I', 'SOP HR-03', 'sop', 'Recruitment, appointment interface and onboarding', ['A2.2', 'A2.3']),
+        ('2-J', 'SOP HR-04', 'sop', 'Competency assessment and learning and development', ['A2.6']),
+        ('2-K', 'SOP HR-05', 'sop', 'Duty roster, shift handover and personnel availability', ['A2.5', 'B4.3']),
+        ('2-L', 'SOP HR-06', 'sop', 'EOC personnel designation and surge augmentation', ['B4.1', 'B4.2', 'B4.4']),
+        ('2-M', 'SOP HR-07', 'sop', 'Personnel safety, welfare, injury and psychosocial referral', ['A2.7', 'B4.6']),
+        ('2-N', 'SOP HR-08', 'sop', 'Performance management, records and corrective action', []),
+        ('2-O', 'FORM HR-F01', 'form', 'Workforce and plantilla review form', ['A2.1', 'A2.3']),
+        ('2-P', 'FORM HR-F02', 'form', 'Position description and competency profile', ['A2.4']),
+        ('2-Q', 'FORM HR-F03', 'form', 'Training needs and competency assessment', ['A2.6']),
+        ('2-R', 'FORM HR-F04', 'form', 'Duty roster and handover form', ['A2.5', 'B4.3']),
+        ('2-S', 'FORM HR-F05', 'form', 'EOC personnel designation register', ['B4.2']),
+        ('2-T', 'FORM HR-F06', 'form', 'Personnel safety, injury and welfare report', ['A2.7', 'B4.6']),
+        ('2-U', 'FORM HR-F07', 'form', 'Chapter 2 CAPA and quality review register', []),
+        ('2-V', 'FORM HR-F08', 'form', 'Chapter 2 records and controlled document register', []),
+        ('2-W', 'MOO Annex 2-W', 'annex', 'Chapter 2 SOP and form cross-reference register', []),
+    ]
+]
+
 
 def chapters_of(tag: str) -> list[str]:
     """'MOO Ch.2 / Ch.4' -> ['MOO Ch.2','MOO Ch.4']; 'EOC Manual (whole)' -> all EOC chapters."""
@@ -429,13 +463,13 @@ def main():
             sort += 1
             did = uid('doc', code)
             docs.append(dict(id=did, manual=manual, kind=kind, code=code, title=title,
-                             summary=f'Draft from the Chapter 1 consolidated document (v0.9, 31 Oct 2026). {len(inds)} IAT indicator(s) linked.',
+                             summary=f'Draft from the {"Chapter 2" if fname.startswith("MOO_Ch2") else "Chapter 1 consolidated"} document ({label}). {len(inds)} IAT indicator(s) linked.',
                              status='draft', sort=sort, current_version_id=None))
             bad = [i for i in inds if i not in ind_ids]
             assert not bad, (code, bad)
             doc_links += [dict(document_id=did, indicator_id=i) for i in inds]
         versions.append(dict(id=uid('docver', code, label), document_id=did, label=label, body_md=body,
-                             change_note=f'Loaded from reference/moo/{fname} (Chapter 1 consolidated draft v0.9, 31 Oct 2026)',
+                             change_note=f'Loaded from reference/moo/{fname} ({"Chapter 2 draft" if fname.startswith("MOO_Ch2") else "Chapter 1 consolidated draft v0.9"}, 31 Oct 2026)',
                              status='draft'))
     out['moo_documents'], out['moo_versions'], out['moo_document_indicators'] = docs, versions, doc_links
 
