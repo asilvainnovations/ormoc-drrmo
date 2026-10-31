@@ -12,6 +12,8 @@ import { AuthCallbackPage, SetPasswordPage } from '@/features/auth/AuthCallbackP
 import { DeactivatedPage, PendingApprovalPage } from '@/features/auth/AccountGatePages';
 import { UpdatePrompt } from '@/components/UpdatePrompt';
 import { TodayPage } from '@/features/home/TodayPage';
+import { OAuthConsentPage } from '@/features/auth/OAuthConsentPage';
+import { CONSENT_PATH } from '@/lib/oauth';
 
 // Modules load on demand to keep the first paint small on low-end phones.
 const AssessRoutes = lazy(() => import('@/features/iat/routes'));
@@ -27,7 +29,7 @@ function RequireAuth({ children }: { children: ReactNode }) {
   const { ready, status } = useAuth();
   const loc = useLocation();
   if (!ready) return <Loading />;
-  if (status === 'signed_out') return <Navigate to="/login" replace state={{ from: loc.pathname }} />;
+  if (status === 'signed_out') return <Navigate to="/login" replace state={{ from: loc.pathname + loc.search }} />;
   if (status === 'pending') return <PendingApprovalPage />;
   if (status === 'deactivated') return <DeactivatedPage />;
   return <>{children}</>;
@@ -59,6 +61,8 @@ export function App() {
               <Route path="/login" element={<LoginPage />} />
               <Route path="/auth/confirm" element={<AuthCallbackPage />} />
               <Route path="/auth/reset" element={<SetPasswordPage />} />
+              {/* Supabase Auth sends other apps' sign-in requests here (OAuth 2.1 server). */}
+              <Route path={CONSENT_PATH} element={<OAuthConsentPage />} />
               <Route element={<RequireAuth><AppShell /></RequireAuth>}>
                 <Route index element={<TodayPage />} />
                 <Route path="assess/*" element={<Suspense fallback={<Loading />}><AssessRoutes /></Suspense>} />
