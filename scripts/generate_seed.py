@@ -469,7 +469,13 @@ def lit(v):
         return str(v)
     if isinstance(v, list):
         return "array[" + ','.join(lit(x) for x in v) + "]::text[]" if v else "'{}'::text[]"
-    return "'" + str(v).replace("'", "''") + "'"
+    t = str(v)
+    if '\n' in t or '\r' in t:
+        # Multi-line text (manual drafts) goes on one line as an escape string, so a part never
+        # exceeds the SQL editor's line limit however long the chapter is.
+        t = t.replace('\\', '\\\\').replace("'", "''").replace('\r', '').replace('\n', '\\n')
+        return "E'" + t + "'"
+    return "'" + t.replace("'", "''") + "'"
 
 
 # The Supabase SQL editor rejects long scripts, so the seed is also written as parts:

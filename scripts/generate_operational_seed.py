@@ -61,7 +61,11 @@ def lit(v) -> str:
         return str(int(v)) if float(v).is_integer() else str(v)
     if isinstance(v, (list, tuple)):
         return "array[" + ','.join(lit(x) for x in v) + "]::text[]"
-    return "'" + str(v).replace("'", "''") + "'"
+    t = str(v)
+    if '\n' in t or '\r' in t:   # keep each row on one line (SQL editor line limit)
+        t = t.replace('\\', '\\\\').replace("'", "''").replace('\r', '').replace('\n', '\\n')
+        return "E'" + t + "'"
+    return "'" + t.replace("'", "''") + "'"
 
 
 # Positions only (RA 10173; workbook Profile): drop personal names that appear in the evidence text.
