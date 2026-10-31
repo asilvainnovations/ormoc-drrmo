@@ -16,5 +16,5 @@ export const env = {
   supabaseAnonKey: checked.key,
   /** Why the app cannot connect, or null when the settings look right. */
   configError: checked.error,
-  appVersion: '1.2.0',
+  appVersion: '1.4.0',
 };

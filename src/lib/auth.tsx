@@ -4,6 +4,7 @@ import { AUTH_STORAGE_KEY, supabase } from './supabase';
 import { db, getMeta, setMeta } from './db';
 import { setActingUser } from './store';
 import { resetSyncedData } from './sync';
+import { canVerifyLocally, fetchJwks, jwksIsStale, safeNext, type CachedJwks } from './oauth';
 import type { Profile, Role } from '@/types';
 
 export const ALL_ROLES: Role[] = ['admin', 'cdrrmo_head', 'assessor', 'validator', 'eoc_manager', 'eoc_staff', 'duty_officer', 'lead_office_focal', 'author', 'viewer'];
@@ -37,7 +38,8 @@ interface AuthState {
   signInWithPassword: (email: string, password: string) => Promise<void>;
   signUp: (email: string, password: string, fullName: string, position: string) => Promise<void>;
   resendConfirmation: (email: string) => Promise<void>;
-  sendMagicLink: (email: string) => Promise<void>;
+  /** `next`: a same-site path to open after the link signs the person in (for example the OAuth consent screen). */
+  sendMagicLink: (email: string, next?: string) => Promise<void>;
   requestPasswordReset: (email: string) => Promise<void>;
   updatePassword: (password: string) => Promise<void>;
   updateOwnProfile: (fullName: string, position: string) => Promise<void>;
@@ -72,6 +74,51 @@ export function passwordProblem(pw: string, email = ''): string | null {
   return null;
 }
 
+/**
+ * Check a session token's signature against the project's published keys (JWKS), using the
+ * copy cached on this device, so it also works with no signal. Expiry is not checked here:
+ * phone clocks drift, and supabase-js renews expired tokens with the server anyway.
+ *  - 'valid':   signed by this project's current keys
+ *  - 'invalid': the signature does not match (tampered or foreign token): do not trust it
+ *  - 'unknown': cannot be checked on the device (legacy shared-secret keys, no cached keys, offline)
+ */
+type SignatureCheck = 'valid' | 'invalid' | 'unknown';
+export async function checkTokenSignature(token: string | null | undefined): Promise<SignatureCheck> {
+  if (!token) return 'unknown';
+  const jwks = await getMeta<CachedJwks | null>('jwks', null);
+  if (!canVerifyLocally(jwks)) return 'unknown';
+  try {
+    const { error } = await supabase.auth.getClaims(token, { allowExpired: true, jwks: { keys: jwks!.keys } });
+    if (!error) return 'valid';
+    return error.name === 'AuthInvalidJwtError' && /signature/i.test(error.message) ? 'invalid' : 'unknown';
+  } catch { return 'unknown'; }
+}
+
+/** Refresh the cached signing keys once a day, when online. Never blocks sign-in. */
+async function refreshJwks(): Promise<void> {
+  if (typeof navigator !== 'undefined' && !navigator.onLine) return;
+  if (!jwksIsStale(await getMeta<CachedJwks | null>('jwks', null))) return;
+  const fresh = await fetchJwks();
+  if (fresh) await setMeta('jwks', fresh);
+}
+
+/** The account a token belongs to (its `sub`), read without trusting it; null if unreadable. */
+function subjectOf(token: string | null): string | null {
+  try {
+    const part = token?.split('.')[1];
+    if (!part) return null;
+    const json = atob(part.replace(/-/g, '+').replace(/_/g, '/').padEnd(Math.ceil(part.length / 4) * 4, '='));
+    return (JSON.parse(json) as { sub?: string }).sub ?? null;
+  } catch { return null; }
+}
+
+function storedAccessToken(): string | null {
+  try {
+    const raw = localStorage.getItem(AUTH_STORAGE_KEY);
+    return raw ? ((JSON.parse(raw) as { access_token?: string }).access_token ?? null) : null;
+  } catch { return null; }
+}
+
 /** Same role set, ignoring order. */
 const sameRoles = (a: Role[], b: Role[]) => a.length === b.length && a.every((r) => b.includes(r));
 
@@ -95,6 +142,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
    */
   const loadIdentity = useCallback(async (s: Session | null) => {
     if (!s) { clearIdentity(); return; }
+    await refreshJwks();
+    if ((await checkTokenSignature(s.access_token)) === 'invalid') {
+      // A session whose signature this project did not make: drop it before it touches local data.
+      await supabase.auth.signOut({ scope: 'local' }).catch(() => undefined);
+      clearIdentity(); return;
+    }
     const id = s.user.id;
     const owner = await getMeta<string | null>('deviceOwner', null);
     if (owner && owner !== id) await resetSyncedData();
@@ -139,7 +192,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const stored = (() => { try { return localStorage.getItem(AUTH_STORAGE_KEY); } catch { return null; } })();
       const last = await getMeta<Identity | null>('lastIdentity', null);
       const retryable = !navigator.onLine || (error && /fetch|network|retryable/i.test(`${error.name} ${error.message}`));
-      if (stored && last && retryable) {
+      // Only resume offline if the stored token was signed by this project (when the keys allow a check).
+      const token = storedAccessToken();
+      const trusted = (await checkTokenSignature(token)) !== 'invalid' && subjectOf(token) === last?.userId;
+      if (stored && last && retryable && trusted) {
         setActingUser(last.userId);
         setIdentity(last); setOfflineIdentity(true);
         setRoles(await getMeta<Role[]>(`roles:${last.userId}`, []));
@@ -201,8 +257,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const { error } = await supabase.auth.resend({ type: 'signup', email, options: { emailRedirectTo: authRedirect() } });
       if (error) throw new Error(authMessage(error));
     },
-    sendMagicLink: async (email) => {
-      const { error } = await supabase.auth.signInWithOtp({ email, options: { shouldCreateUser: false, emailRedirectTo: authRedirect() } });
+    sendMagicLink: async (email, next) => {
+      const back = safeNext(next, '');
+      const to = back ? authRedirect(`/auth/confirm?next=${encodeURIComponent(back)}`) : authRedirect();
+      const { error } = await supabase.auth.signInWithOtp({ email, options: { shouldCreateUser: false, emailRedirectTo: to } });
       // An address without an account gets the same answer as one with an account.
       if (error && !/signups? not allowed|user not found/i.test(error.message)) throw new Error(authMessage(error));
     },
