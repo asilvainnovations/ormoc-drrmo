@@ -572,6 +572,68 @@ select tests.expect_eq('the RDRRMC clock still runs from the original time',
 select tests.expect_error('an allocation cannot drop below what was disbursed',
   $$update public.aa_fund_years set aa_allocation = 1000, version = version where fiscal_year = 2026$$, '23514');
 
+-- 1.5.1: resource requests are fixed once decided (migration 20261031001100).
+select tests.login('00000000-0000-0000-0000-000000000013');  -- EOC staff
+insert into public.resource_requests (id, requesting_party, item, quantity, unit, priority, requested_at)
+values ('50000000-0000-0000-0000-0000000000a1', 'Brgy Cogon', 'Rice', 10, 'sack', 'urgent', '2026-01-01');
+select tests.expect_eq('a request time older than a day is replaced by the server time',
+  (select (requested_at > now() - interval '1 minute')::text from public.resource_requests where id = '50000000-0000-0000-0000-0000000000a1'), 'true');
+select tests.expect_ok('the request can be corrected while it is still requested',
+  $$update public.resource_requests set quantity = 12, version = 1 where id = '50000000-0000-0000-0000-0000000000a1'$$);
+select tests.login('00000000-0000-0000-0000-00000000000d');  -- EOC Manager
+select tests.expect_ok('manager approves the corrected request',
+  $$update public.resource_requests set status = 'approved', version = 2 where id = '50000000-0000-0000-0000-0000000000a1'$$);
+select tests.login('00000000-0000-0000-0000-000000000013');
+select tests.expect_error('staff cannot change the quantity of an approved request',
+  $$update public.resource_requests set quantity = 5000, version = 3 where id = '50000000-0000-0000-0000-0000000000a1'$$, '42501');
+select tests.expect_error('nor the item (the generator case)',
+  $$update public.resource_requests set item = 'Generator', quantity = 5000, unit = 'unit', version = 3 where id = '50000000-0000-0000-0000-0000000000a1'$$, '42501');
+select tests.login('00000000-0000-0000-0000-00000000000d');
+select tests.expect_error('not even the EOC Manager can rewrite an approved request',
+  $$update public.resource_requests set requesting_party = 'Another barangay', version = 3 where id = '50000000-0000-0000-0000-0000000000a1'$$, '42501');
+select tests.expect_error('nor its priority or needed-by time',
+  $$update public.resource_requests set priority = 'life_safety', needed_by = now(), version = 3 where id = '50000000-0000-0000-0000-0000000000a1'$$, '42501');
+select tests.expect_eq('the approved request still reads as approved',
+  (select item || ' ' || quantity::text || ' ' || status from public.resource_requests where id = '50000000-0000-0000-0000-0000000000a1'), 'Rice 12 approved');
+update public.resource_requests set approved_at = '2026-01-01', created_by = '00000000-0000-0000-0000-000000000011',
+  requested_at = '2026-01-02', decision_note = 'From the City warehouse', version = 3 where id = '50000000-0000-0000-0000-0000000000a1';
+select tests.expect_eq('the decision note stays open while the request is fulfilled',
+  (select decision_note from public.resource_requests where id = '50000000-0000-0000-0000-0000000000a1'), 'From the City warehouse');
+select tests.expect_eq('but approval time, request time and creator do not move',
+  (select ((approved_at > now() - interval '1 minute') and (requested_at > now() - interval '1 minute')
+           and created_by = '00000000-0000-0000-0000-000000000013')::text from public.resource_requests where id = '50000000-0000-0000-0000-0000000000a1'), 'true');
+reset role;
+insert into public.resources (id, name, category, unit, quantity)
+values ('5f000000-0000-0000-0000-000000000001', 'City warehouse rice stock', 'relief', 'sack', 400);
+select tests.login('00000000-0000-0000-0000-00000000000d');
+select tests.expect_ok('a resource can be assigned while approved',
+  $$update public.resource_requests set resource_id = '5f000000-0000-0000-0000-000000000001', version = 4 where id = '50000000-0000-0000-0000-0000000000a1'$$);
+select tests.expect_error('mobilising cannot carry a changed quantity',
+  $$update public.resource_requests set status = 'mobilized', quantity = 500, version = 5 where id = '50000000-0000-0000-0000-0000000000a1'$$, '42501');
+select tests.expect_ok('mobilise',
+  $$update public.resource_requests set status = 'mobilized', version = 5 where id = '50000000-0000-0000-0000-0000000000a1'$$);
+select tests.expect_eq('mobilised time is stamped and the approval time kept',
+  (select (mobilized_at is not null and approved_at < mobilized_at + interval '1 second')::text from public.resource_requests where id = '50000000-0000-0000-0000-0000000000a1'), 'true');
+select tests.expect_error('the assigned resource is fixed once mobilised',
+  $$update public.resource_requests set resource_id = null, version = 6 where id = '50000000-0000-0000-0000-0000000000a1'$$, '42501');
+select tests.expect_ok('deliver',
+  $$update public.resource_requests set status = 'delivered', version = 6 where id = '50000000-0000-0000-0000-0000000000a1'$$);
+select tests.expect_error('the note is fixed once delivered',
+  $$update public.resource_requests set decision_note = 'changed later', version = 7 where id = '50000000-0000-0000-0000-0000000000a1'$$, '42501');
+select tests.expect_ok('demobilise',
+  $$update public.resource_requests set status = 'demobilized', version = 7 where id = '50000000-0000-0000-0000-0000000000a1'$$);
+select tests.expect_error('a demobilised request is closed',
+  $$update public.resource_requests set decision_note = 'after the fact', version = 8 where id = '50000000-0000-0000-0000-0000000000a1'$$, '42501');
+insert into public.resource_requests (id, requesting_party, item, quantity) values ('50000000-0000-0000-0000-0000000000a2', 'Brgy Valencia', 'Tents', 30);
+select tests.expect_ok('reject with a reason',
+  $$update public.resource_requests set status = 'rejected', decision_note = 'Covered by DSWD stockpile', version = 1 where id = '50000000-0000-0000-0000-0000000000a2'$$);
+select tests.expect_error('a rejected request is closed',
+  $$update public.resource_requests set quantity = 3, version = 2 where id = '50000000-0000-0000-0000-0000000000a2'$$, '42501');
+select tests.expect_error('requests are never deleted',
+  $$delete from public.resource_requests where id = '50000000-0000-0000-0000-0000000000a2'$$, '42501');
+select tests.expect_eq('and the API role has no delete grant',
+  has_table_privilege('authenticated', 'public.resource_requests', 'DELETE')::text, 'false');
+
 reset role;
 select tests.expect_eq('audit trail recorded', ((select count(*) from public.audit_log) > 50)::text, 'true');
 \o
