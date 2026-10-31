@@ -18,6 +18,8 @@ It works with no signal. Entries are saved on the device and sent when a connect
 
 Anyone can create an account with an email address and a password. The account sees nothing until a system administrator approves it by granting a role (Settings → Users and roles). Invited staff, sign-in links by email and password reset all work too. See [ADR-009](docs/adr/009-open-signup-and-live-data.md).
 
+Other City systems can offer **Sign in with Ormoc DRRM**: the platform is the consent screen for the project's OAuth 2.1 / OpenID Connect server (`/oauth/consent`). People see and withdraw the apps they allowed under Settings → Connected apps. Tokens issued to other apps are read-only in the database. See [ADR-010](docs/adr/010-oauth-provider-read-only-clients.md) and DEPLOY.md section 2a.
+
 ## Run it
 
 The app always works against a Supabase project; there is no demo mode. Copy `.env.example` to `.env` and fill in `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY` (or `VITE_SUPABASE_ANON_KEY` on older projects), then:
@@ -59,7 +61,7 @@ docs/             system design, design system, architecture decision records
 | `npm run build` | Typecheck and production build to `dist/` |
 | `npm run preview` | Serve the build on port 4173 |
 | `npm test` | Unit tests, including the scoring parity test against SQL |
-| `npm run test:db` | Rebuild a local Postgres database from the migrations and run the 172 rule and security checks. Needs `PGHOST`, `PGPORT` and `PGUSER` for a local superuser |
+| `npm run test:db` | Rebuild a local Postgres database from the migrations and run the 177 rule and security checks. Needs `PGHOST`, `PGPORT` and `PGUSER` for a local superuser |
 | `npm run test:it` | Integration tests through real PostgREST. Needs the same plus `POSTGREST_BIN` (PostgREST 12) |
 | `npm run test:e2e` | Playwright on phone and desktop sizes against the production build, PostgREST and a fresh local database with every migration: sign-up and approval, journeys, axe and offline checks. Needs the same as `test:it` |
 | `python3 scripts/brand_assets.py` | Rebuild the circular seals, banner copies and app icons from the originals in `public/` |

@@ -56,6 +56,25 @@ Authentication → SMTP: **required** once sign-up is open. Set the City's mail 
 
 Authentication → Rate Limits: keep the defaults or lower them. Consider **Attack Protection → CAPTCHA** (hCaptcha or Turnstile) if the sign-up form attracts spam; tell the developer, because the app must then send the CAPTCHA token.
 
+### 2a. Sign in with Ormoc DRRM (OAuth 2.1 server), optional
+
+Turn this on when another City system should sign people in with their Ormoc DRRM account. The design is in [ADR-010](docs/adr/010-oauth-provider-read-only-clients.md). Apps signed in this way can read what the person's role allows, and cannot change anything (migration 0010).
+
+1. **Signing keys first.** Project Settings → JWT Keys: create an asymmetric key (ECC P-256 or RSA), and make it the current key once it has been on standby for a while. This is needed for OpenID Connect ID tokens, and lets the app check sessions on the device. Legacy shared-secret keys still work, but nothing is checked on the device.
+2. Authentication → OAuth Server: **enable** the OAuth 2.1 server. Set **Authorization Path** to `/oauth/consent`. Leave **dynamic client registration off**.
+3. The Site URL (section 2) plus the path must be the app's address, for example `https://drrm.ormoc.gov.ph/oauth/consent`.
+4. Authentication → OAuth Apps: register each app with its name, website and **exact** redirect URI (https only). Give its developer the client ID, and the client secret only for server-side apps. Public apps (mobile, single-page) use PKCE without a secret.
+5. Give the developer the endpoints. They are also listed in the app under Settings → Connected apps (administrators only):
+
+   | | Production project |
+   |---|---|
+   | Authorization | `https://jmctsspadywjcbbqwweh.supabase.co/auth/v1/oauth/authorize` |
+   | Token | `https://jmctsspadywjcbbqwweh.supabase.co/auth/v1/oauth/token` |
+   | JWKS | `https://jmctsspadywjcbbqwweh.supabase.co/auth/v1/.well-known/jwks.json` |
+   | OIDC discovery | `https://jmctsspadywjcbbqwweh.supabase.co/auth/v1/.well-known/openid-configuration` |
+
+6. Test it: start a sign-in from the other app, sign in, check that the consent screen names the right app and return address, then Allow. Try a write with the app's token: it must fail with "Apps signed in with Ormoc DRRM can read records but cannot change them". Then withdraw access under Settings → Connected apps.
+
 ## 3. Create the database
 
 There are two ways to do this. Both give the same result.
@@ -120,6 +139,7 @@ Then, in the dashboard:
 - **To 1.1** (database created before 16 October 2026): run `supabase/migrations/20261016000800_document_vault.sql` once. It adds the Document Vault table and its private `vault` bucket.
 - **To 1.2:** run `supabase/migrations/20261016000900_accounts_and_integrity.sql` once, **before** turning sign-up on (section 2). It makes accounts without a role read nothing, adds the administrator's account list, and locks finalised and approved records.
 - **To 1.3** (31 October 2026): no migration. Run the reference parts `01_seed.sql` to `07_seed.sql` again (delete any old `08`–`10` part files first). They add the Chapter 1 v0.9 draft (a new version of MOO Ch.1), eight new Library documents (Annexes 1-0 to 1-G, including SOP GOV-04 and SOP GOV-05), the new protocol PR-SOC-DECLARE, and revised steps for PR-SOID-REQUEST, PR-EOC-ACTIVATE and PR-LIFT-REPORT. Then run `supabase/seed/operational/` once if the baseline has not been entered by hand.
+- **To 1.4** (31 October 2026): run `supabase/migrations/20261031001000_oauth_clients_read_only.sql` once. It makes tokens issued to other apps read-only. Run it even if section 2a stays off; it is safe to run again. No seed changes.
 - **85 barangays:** if the seed was loaded before the 85-barangay correction, run parts `01_seed.sql` and `06_seed.sql` once more, but only if no manual version has been approved yet. Otherwise ask the developer for a one-off update of the three indicator texts (A3.7, A7.3, B3.2).
 
 ## 4. First administrator and the CDRRMO Head
@@ -229,6 +249,7 @@ location /assets/ { add_header Cache-Control "public, max-age=31536000, immutabl
 - [ ] Viewer account: confirm it cannot create or change records.
 - [ ] A new, unapproved account: confirm it sees only the waiting page, on a phone and a computer.
 - [ ] Password reset: request one and set a new password through the emailed link.
+- [ ] If section 2a is on: a test app can sign in through the consent screen, cannot write, and loses access when it is withdrawn.
 - [ ] Back up: confirm a daily backup exists (Database → Backups).
 - [ ] Record who holds admin, the database password and the service key, in the City's ICT asset register.
 
