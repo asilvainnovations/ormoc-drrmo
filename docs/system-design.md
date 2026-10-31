@@ -112,6 +112,8 @@ See ADR-003. In short:
 
 Conflicts and refusals are listed under Settings → Sync with the server's reason.
 
+A refused evidence or Vault upload keeps the file on the device (1.5.1). The Sync screen holds it with **Retry upload**, **Save a copy** and **Discard** (asked twice). The device copy is deleted only after the server has the file, or when the person discards it. Held files count as unsent, so signing out warns first.
+
 ## 7. Security and privacy
 
 - Sign-in uses Supabase Auth. Anyone can create an account (email confirmed); it reads nothing until an administrator grants a role, which is the approval step (ADR-009). The administrator sees the verified email, and grants only to confirmed addresses.
@@ -120,6 +122,7 @@ Conflicts and refusals are listed under Settings → Sync with the server's reas
   - Validated responses, approved SOP versions, approved SitReps, and closed protocol runs with their step snapshots cannot be edited.
   - AA action snapshots and lifted declarations accept report fields only.
   - Evidence cannot be moved to another response.
+  - Resource requests (1.5.1): the request itself (party, item, quantity, unit, priority, needed by) can be corrected only while it is still requested. After approval only fulfilment fields change: the assigned resource until mobilisation, the note until delivery. Rejected and demobilised requests are closed. Lifecycle times, the request time and the creator are the server's. Requests are never deleted.
 - Evidence files sit in a private bucket. They are opened from the device copy when there is one, otherwise through a five-minute signed URL.
 - Personal data is limited to staff identity and role. The platform holds no names of affected persons, evacuees, beneficiaries or informants, and screens remind users of this (ADR-002).
 - Signing out clears the local database on that device, also offline. Queued changes carry the account that made them and are sent only under that account; a different account signing in removes the previous account's synced copy first.
@@ -154,9 +157,9 @@ The platform provides **the means** for each requirement. The MOO and EOC Manual
 
 | Suite | What it proves | Command |
 |---|---|---|
-| SQL rules and security (177 checks) | Every rule and RLS policy, run as each role on Postgres 16 | `scripts/db_test.sh` |
-| Unit (81) | Scoring, AA rules, ids, sync engine with a fake client, CSV import, citation parsing against every reference in the data; TS = SQL scoring parity | `npm test` |
-| Integration (11) | Real supabase-js → PostgREST 12 → Postgres: evidence gate, conflict, RLS refusal, offline protocol ids, logbook replay, AA checklist ids, viewer pull, vault sync and access, repeated edits, keyset paging past 1,000 rows, a pending account reads nothing | `npm run test:it` |
+| SQL rules and security (195 checks) | Every rule and RLS policy, run as each role on Postgres 16 | `scripts/db_test.sh` |
+| Unit (122) | Scoring, AA rules, ids, sync engine with a fake client, CSV import, citation parsing against every reference in the data; TS = SQL scoring parity | `npm test` |
+| Integration (8) | Real supabase-js → PostgREST 12 → Postgres: evidence gate, conflict, RLS refusal, offline protocol ids, logbook replay, AA checklist ids, viewer pull, vault sync and access, repeated edits, keyset paging past 1,000 rows, a pending account reads nothing | `npm run test:it` |
 | End-to-end (Playwright, phone and desktop) | Against real migrations and RLS through PostgREST: sign-up, email confirmation, waiting for approval, approval by an administrator, password reset, sign-out; main journeys; offline open and logbook save; dark mode contrast; vault journey; reference notes; tooltip on every control of 21 screens, hover, keyboard and long press | `npm run test:e2e` |
 | Accessibility (axe, WCAG 2.1 AA) | No serious or critical violations on every main screen | part of `npm run test:e2e` |
 
