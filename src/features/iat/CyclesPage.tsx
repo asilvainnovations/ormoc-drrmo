@@ -18,7 +18,7 @@ export function CyclesPage() {
   const toast = useToast();
   const nav = useNavigate();
   const [open, setOpen] = useState(false);
-  const [name, setName] = useState(`Institutional assessment ${new Date().getFullYear()}`);
+  const [name, setName] = useState(`Institutional Assessment ${new Date().getFullYear()}`);
   const [notes, setNotes] = useState('');
   const [busy, setBusy] = useState(false);
   const canCreate = has('assessor', 'validator', 'cdrrmo_head');
