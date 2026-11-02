@@ -4,7 +4,7 @@ import reference from '@/data/reference.json';
 import { db, getMeta, setMeta } from './db';
 import { DEFAULT_AA_PARAMS } from '@/domain/aa';
 
-export const REFERENCE_VERSION = 'iat-1.1/2026-10-31-ch1-drafts';
+export const REFERENCE_VERSION = 'iat-1.1/2026-11-02-one-manual';
 
 type Ref = typeof reference;
 const R = reference as Ref;
@@ -12,9 +12,11 @@ const R = reference as Ref;
 export async function bootstrapReference(): Promise<void> {
   const loaded = await getMeta<string | null>('referenceVersion', null);
   if (loaded === REFERENCE_VERSION && (await db.iat_indicators.count()) > 0) return;
-  await db.transaction('rw', [db.iat_parts, db.iat_domains, db.iat_indicators, db.master_requirements, db.indicator_requirements,
+  await db.transaction('rw', [db.manual_parts, db.manual_areas, db.iat_parts, db.iat_domains, db.iat_indicators, db.master_requirements, db.indicator_requirements,
     db.offices, db.indicator_lead_offices, db.framework_crosswalk, db.hazards, db.aa_rules, db.aa_action_templates,
     db.moo_documents, db.moo_versions, db.moo_document_indicators, db.protocol_templates, db.protocol_steps, db.meta], async () => {
+    await db.manual_parts.bulkPut(R.manual_parts as never[]);
+    await db.manual_areas.bulkPut(R.manual_areas as never[]);
     await db.iat_parts.bulkPut(R.parts as never[]);
     await db.iat_domains.bulkPut(R.domains as never[]);
     await db.iat_indicators.bulkPut(R.indicators as never[]);
@@ -41,7 +43,11 @@ export async function bootstrapReference(): Promise<void> {
     if ((await db.moo_documents.count()) === 0) {
       await db.moo_documents.bulkPut(R.moo_documents.map((d) => ({ ...d, version: 1 })) as never[]);
       await db.moo_versions.bulkPut(R.moo_versions.map((v) => ({ ...v, version: 1 })) as never[]);
+    } else {
+      await restructureLibrary();
     }
+    // Links are reference data: replace them whole so links of merged sections do not linger.
+    await db.moo_document_indicators.clear();
     await db.moo_document_indicators.bulkPut(R.moo_document_indicators as never[]);
     if ((await db.protocol_templates.count()) === 0) {
       await db.protocol_templates.bulkPut(R.protocol_templates.map((t) => ({ ...t, version: 1 })) as never[]);
@@ -49,6 +55,28 @@ export async function bootstrapReference(): Promise<void> {
     }
     await setMeta('referenceVersion', REFERENCE_VERSION);
   });
+}
+
+/**
+ * v1.6 one-manual structure for a device whose Library was filled before (demo mode or offline).
+ * Adds missing documents and versions and refreshes the structural fields (code, title, area,
+ * aliases, parent) of the others. Text and approval stay as synced: the next pull brings the
+ * server's copy anyway. Merged sections become superseded unless already approved.
+ */
+async function restructureLibrary(): Promise<void> {
+  const superseded = new Set<string>(R.superseded_documents);
+  for (const d of R.moo_documents) {
+    const local = await db.moo_documents.get(d.id);
+    if (!local) { await db.moo_documents.put({ ...d, version: 1 } as never); continue; }
+    const status = superseded.has(d.id) && local.status !== 'approved' ? 'superseded' : local.status;
+    await db.moo_documents.put({ ...local, code: d.code, title: d.title, kind: d.kind, parent_id: d.parent_id, area_no: d.area_no,
+      chapter_no: d.chapter_no, aliases: d.aliases, also_areas: d.also_areas, sort: d.sort, status } as never);
+  }
+  // Chapter 2 figures live in /library/chp2/ (migration 20261102001200 does the same on the server).
+  await db.moo_versions.filter((v) => v.status !== 'approved' && v.body_md.includes('/library/ch2/'))
+    .modify((v) => { v.body_md = v.body_md.split('/library/ch2/').join('/library/chp2/'); });
+  const have = new Set(await db.moo_versions.toCollection().primaryKeys());
+  await db.moo_versions.bulkPut(R.moo_versions.filter((v) => !have.has(v.id)).map((v) => ({ ...v, version: 1 })) as never[]);
 }
 
 /**

@@ -62,6 +62,8 @@ export class DrrmDB extends Dexie {
   aa_action_templates!: Table<T.AaTemplate, string>;
   profiles!: Table<T.Profile, string>;
   // library & protocols
+  manual_parts!: Table<T.ManualPart, number>;
+  manual_areas!: Table<T.ManualArea, number>;
   moo_documents!: Table<T.MooDocument, string>;
   moo_versions!: Table<T.MooVersion, string>;
   moo_document_indicators!: Table<T.MooDocumentIndicator, [string, string]>;
@@ -141,6 +143,12 @@ export class DrrmDB extends Dexie {
     });
     // v2 (1.1): Document Vault.
     this.version(2).stores({ vault_documents: 'id, category, ref_key, status, *indicator_ids, updated_at' });
+    // v3 (1.6): one manual, five Parts, ten functional areas; documents carry an area and aliases.
+    this.version(3).stores({
+      manual_parts: 'no, sort',
+      manual_areas: 'no, part_no, sort',
+      moo_documents: 'id, manual, code, sort, area_no, parent_id, *aliases',
+    });
   }
 }
 

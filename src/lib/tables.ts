@@ -13,6 +13,8 @@ const STAMPS = ['created_at', 'updated_at'];
 
 export const TABLES: TableConfig[] = [
   // reference (admin-maintained, refreshed whole)
+  { name: 'manual_parts', pk: 'no', cursor: null, write: 'none' },
+  { name: 'manual_areas', pk: 'no', cursor: null, write: 'none' },
   { name: 'iat_parts', pk: 'code', cursor: null, write: 'none' },
   { name: 'iat_domains', pk: 'code', cursor: null, write: 'none' },
   { name: 'iat_indicators', pk: 'id', cursor: null, write: 'none' },
