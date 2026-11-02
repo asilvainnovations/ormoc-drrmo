@@ -68,7 +68,7 @@ Modular scale 1.2 on a 16 px base:
 | `text-2xl` | 28 / 34 | Page titles (phone) |
 | `text-3xl` | 33 / 38 | Page titles (`lg`) |
 
-Weights: 400 body, 600 labels and list titles, 700 to 800 headings. Sentence case everywhere except the EOC level in the status band (section 8). Body text is limited to `max-w-prose` (68ch). Figures use tabular numerals.
+Weights: 400 body, 600 labels and list titles, 700 to 800 headings. Page titles (the one `h1` per screen, set through `PageHeader`) use **Title Case**: capitalise each main word and keep articles, short prepositions and conjunctions in lower case ("Sync and Offline Data", "Set Up a Tabletop"); acronyms keep their form (PDRA, EOC, KALASAG). Everything else is sentence case: section headings, tabs, buttons, fields, tips, toasts and notices. Titles that come from data (a cycle name, a document title) are shown as written. The EOC level in the status band is the other exception (section 8). Body text is limited to `max-w-prose` (68ch). Figures use tabular numerals.
 
 ### City identity
 

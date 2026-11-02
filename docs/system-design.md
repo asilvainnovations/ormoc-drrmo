@@ -11,7 +11,7 @@ The platform supports the two outputs of the engagement: the CDRRMO Manual of Op
 3. **Run** the manuals as protocols: step-by-step checklists with owners, timings and an audit trail.
 4. **Operate** the EOC and the anticipatory-action process under RA 12287 and its IRR (14 Sep 2026). This covers the alert level, logbook, SitReps, barangay status, resource requests, PDRA, declarations, the AA checklist and fund tranches.
 
-The platform supports the manuals but is not the manual. The approved MOO and EOC Manual remain the legal documents. The platform holds their current text, their version history and the evidence that they are used.
+The platform supports the manuals but is not the manual. The approved Manual of Operations (one manual for the CDRRMO and the EOC since v1.6, ADR-012) remains the legal document. The platform holds their current text, their version history and the evidence that they are used.
 
 ## 2. Users and roles
 
@@ -68,7 +68,7 @@ There is no custom application server. The rules live in SQL so they hold for ev
 |---|---|---|---|
 | Today | `/` | — | Greeting, active declaration with next deadline, quick actions by role, running protocols, latest log, assessment progress |
 | Assessment | `/assess` | `assessment_cycles`, `responses`, `evidence`, `actions` | Evidence first, then score; caps by evidence strength; validator workflow; domain and maturity readouts; CSV export; action plan by priority |
-| Library | `/library` | `moo_documents`, `moo_versions`, `moo_document_indicators` | 19 manual sections (MOO and EOC Manual) as Markdown; draft → for review → approved (Head only), approved versions immutable; traceability, master requirements, framework crosswalk |
+| Library | `/library` | `manual_parts`, `manual_areas`, `moo_documents`, `moo_versions`, `moo_document_indicators` | One manual: 5 Parts, 10 functional areas (area outlines carry each indicator's gap by its primary area), drafted Chapters 1–3 with their annexes, SOPs and forms, as Markdown; old codes kept as aliases; draft → for review → approved (Head only), approved versions immutable; traceability, master requirements, framework crosswalk |
 | Tools | `/tools` | — (kept in the browser; exported or printed) | ICS exercise simulator, PSCP workbench, Gawad KALASAG Seal readiness, links to HazardHunterPH, GeoAnalyticsPH, Zoom Earth and DDRiVE-M |
 | Protocols | `/protocols` | `protocol_templates`, `protocol_steps`, `protocol_runs`, `protocol_run_steps` | 10 draft protocols (66 steps) for CDRRMO validation; runs work offline; critical steps and required notes block completion |
 | EOC | `/eoc` | `eoc_activations`, `logbook_entries`, `sitreps`, `barangay_reports`, `resource_requests` | Level board (White / Blue / Red), append-only logbook with corrections, SitRep numbering on submit, barangay counts only, forward-only request flow |
@@ -81,6 +81,8 @@ There is no custom application server. The rules live in SQL so they hold for ev
 All editable tables have `id uuid`, `version int`, `created_at`, `updated_at`, maintained by `app.touch_row()`. The audit trigger writes every insert, update and delete of institutional records to `audit_log` (who, when, before, after).
 
 **Reference (seeded from the v1.1 workbooks).** These are `iat_parts` (3), `iat_domains` (22), `iat_indicators` (140), `master_requirements` (18), `indicator_requirements` (935 links), `indicator_lead_offices` (Part C), `framework_crosswalk` (71 rows: 57 UNDRR Disaster Resilience Scorecard items, 14 RA 12287 IRR provisions), `offices` (26), `hazards` (10) and `aa_action_templates` (29).
+
+**Manual structure (v1.6, ADR-012).** `manual_parts` (5) and `manual_areas` (10) come from the Inception Report (Annex A). Each `iat_indicators` row has a `functional_area` (Traceability Dictionary v1.1). Each `moo_documents` row has `area_no`, `also_areas`, `chapter_no`, `aliases` (old codes) and `parent_id` (an annex to its chapter; a merged shell to its new home). `kind` is `area`, `chapter`, `annex`, `sop` or `form`. Merged shells are `superseded` and hold no indicator links.
 
 **Assessment.** A cycle has one response per indicator. A response has evidence items (kind and strength) and a history of score changes. Actions are the improvement plan rows generated from gaps. The views `v_response_results`, `v_domain_results` and `v_cycle_results` compute caps, gap priority, maturity, mandatory compliance, the IMI and the Interface Index.
 
@@ -130,12 +132,12 @@ A refused evidence or Vault upload keeps the file on the device (1.5.1). The Syn
 
 ## 8. Traceability to the master requirements
 
-The platform provides **the means** for each requirement. The MOO and EOC Manual content, validated by the City, provides **the substance**.
+The platform provides **the means** for each requirement. The Manual of Operations content, validated by the City, provides **the substance**.
 
 | MR | Requirement | Platform support |
 |---|---|---|
 | MR-01 | Validated, actionable MOO | Library with versioning and Head approval; protocols turn sections into checklists; usage evidence from runs |
-| MR-02 | Mandate, organisation, authority, roles | Role model mirrors authority; MOO Ch. 1 sections; IAT Domain A1 |
+| MR-02 | Mandate, organisation, authority, roles | Role model mirrors authority; Chapter 1 and Area 1; IAT Domain A1 |
 | MR-03 | Risk intelligence and risk-informed planning | IAT indicators and evidence; hazard list; MOO sections. No risk-map module (outside scope) |
 | MR-04 | Preparedness, contingency planning, drills | IAT; any protocol can be run as a drill (recorded as such, with step times and notes as evidence for the "tested" level) |
 | MR-05 | EOC activation, ICS interface, escalation, anticipatory action | EOC level board, activation protocol, PDRA, declaration timeline, AA checklist |
@@ -172,5 +174,7 @@ The integration suite found two defects that the fake client could not show, and
 - **Barangay list.** Ormoc’s 85 barangays (PSA PSGC, 4th quarter 2022 update) need importing from the PSA masterlist (Settings → Barangays → Import CSV) before operations use.
 - **Protocol validation.** The 10 protocols are drafts. Each needs validation by the CDRRMO and the owning office, then approval in the Library.
 - **Pending national guidance.** NDRRMC guidelines on anticipatory action triggers and DBM–COA rules on AA fund use and liquidation are expected under the IRR. Update `aa_rules` and the AA checklist when they are issued.
-- **Manual content.** The 19 manual sections hold skeleton text until the drafting and validation weeks.
+- **Manual content.** Chapters 1 (v1.0), 2 (v0.1) and 3 (v0.9) are drafted and await validation (1–4 Dec workshop). The ten area outlines list the requirements still to be written up; chapters for Areas 4–10 follow the drafting plan.
+- **Area 8 has no indicators.** No indicator in the Traceability Dictionary v1.1 names Area 8 (Responder Safety, Welfare and Inclusive Emergency Operations) as its primary area. A2.7, B4.6 and A7.6 are candidates. A dictionary revision decides; the platform follows it on the next seed.
+- **Annex 1-C alert levels.** The draft EO uses Levels 0–3; Memo 131, SOP GOV-05 and the EOC board use White, Blue and Red. Settle one scheme or a crosswalk before the workshop.
 - **Possible later modules.** Responder roster and fatigue tracking (MR-09), and a risk-map layer (MR-03).
