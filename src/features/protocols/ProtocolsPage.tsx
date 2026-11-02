@@ -43,7 +43,7 @@ export function ProtocolsPage() {
 
   return (
     <div className="page">
-      <PageHeader title="CDRRMO protocols" subtitle="Step-by-step procedures from the Manual of Operations. Each run keeps a time-stamped record of who did what." />
+      <PageHeader title="CDRRMO Protocols" subtitle="Step-by-step procedures from the Manual of Operations. Each run keeps a time-stamped record of who did what." />
       {data?.templates.some((t) => t.status === 'draft') && (
         <Notice tone="warn" title="Draft protocols">These protocols are drafts for CDRRMO validation. Use them for drills and validation sessions until the CDRRMO Head approves them.</Notice>
       )}
