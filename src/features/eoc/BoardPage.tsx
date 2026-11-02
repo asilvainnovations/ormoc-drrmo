@@ -49,7 +49,7 @@ export function BoardPage() {
 
   return (
     <div className="page">
-      <PageHeader title="EOC operations" />
+      <PageHeader title="EOC Operations" />
       <Tabs items={EOC_TABS} />
 
       <section className={clsx('mb-8 rounded-sheet px-5 py-5', tone)} aria-label="Activation level">
