@@ -43,7 +43,7 @@ Chapter 1 established the legal and governance relationships among the City Disa
 
 The chapter treats organizational capacity as a system property. It is not measured solely by the number of positions or the existence of an organizational chart. It depends on the alignment of mandates, staffing, competencies, supervision, work processes, information flows, equipment, funding and inter-office relationships. A position is operationally meaningful only when its mandate, authority, expected outputs, reporting relationship, required competencies and performance measures are clear.
 
-![Figure 1: 1. Introduction and Rationale](/library/ch2/fig-01.webp)
+![Figure 1: 1. Introduction and Rationale](/library/chp2/fig-01.webp)
 
 The October 2026 Institutional Assessment identifies the CDRRMO's organizational structure and human-resource arrangements as a priority improvement area. The A2 domain tests alignment with Joint Memorandum Circular (JMC) No. 2014-1, the permanent status and qualifications of the CDRRMO Head, minimum staffing, position descriptions, 24/7 operational capability, competency-based training and personnel welfare. The EOC B4 domain separately tests the EOC's incident-time organizational structure, pre-designated personnel and alternates, duty rosters, liaison desks, job action sheets and welfare arrangements. These are related but distinct workforce systems.
 
@@ -89,7 +89,7 @@ This chapter applies to the CDRRMO as a permanent office of the City Government 
 
 The chapter covers normal operations, heightened preparedness and emergency operations. It does not authorize the CDRRMO to exercise powers assigned to other City offices, national government agencies, utilities, professional regulators or incident commanders.
 
-![Figure 2: 3. Scope and Application](/library/ch2/fig-02.webp)
+![Figure 2: 3. Scope and Application](/library/chp2/fig-02.webp)
 
 # 4. Legal, Policy and Administrative Framework
 
@@ -110,7 +110,7 @@ Organizational and personnel arrangements shall be implemented in accordance wit
 
 Where a local organizational chart, staffing proposal, designation or SOP conflicts with a statute, national rule or approved plantilla, the higher legal or administrative authority shall prevail. This chapter does not independently create plantilla positions, authorize compensation, confer professional licenses or amend the City's approved organizational structure.
 
-![Figure 3: 4. Legal, Policy and Administrative Framework](/library/ch2/fig-03.webp)
+![Figure 3: 4. Legal, Policy and Administrative Framework](/library/chp2/fig-03.webp)
 
 # 5. Organizational Design Principles
 
@@ -126,7 +126,7 @@ Where a local organizational chart, staffing proposal, designation or SOP confli
 | Inclusion and duty of care                      | Workforce arrangements must be safe, accessible, gender-responsive and attentive to fatigue and psychosocial needs.                 |
 | Evidence and performance                        | Organizational effectiveness must be demonstrated through approved records, work outputs, exercises and review.                     |
 
-![Figure 4: 5. Organizational Design Principles](/library/ch2/fig-04.webp)
+![Figure 4: 5. Organizational Design Principles](/library/chp2/fig-04.webp)
 
 The organizational model shall be proportionate to Ormoc City's risk profile, geographic and sectoral diversity, service obligations and available resources. It shall not assume that a larger organizational chart automatically produces better performance. The objective is a fit-for-purpose structure with clear accountability and sufficient capability to discharge mandatory functions.
 
@@ -151,7 +151,7 @@ The CDRRMO Head may establish internal work teams, focal-person arrangements or 
 
 City Mayor / Local Chief Executive → CDRRMC (policy oversight and coordination) → CDRRMO Head (permanent office leadership) → three core functional divisions: Administration and Training; Research and Planning; Operations and Warning. The EOC is shown as an operational coordination mechanism supported by designated CDRRMO and inter-agency personnel when activated. It is not a fourth permanent CDRRMO division and does not replace ICS command.
 
-![Figure 5: 6.1 Organizational Chart – Functional Reference](/library/ch2/fig-05.webp)
+![Figure 5: 6.1 Organizational Chart – Functional Reference](/library/chp2/fig-05.webp)
 
 ## 6.2 Management and Reporting Relationships
 
@@ -259,13 +259,13 @@ The Operations and Warning Division maintains the CDRRMO's operational readiness
 
 The Division's internal duty officer system shall operate during normal periods and heightened readiness. Its activation and shift arrangements shall be aligned with the EOC procedures in the relevant chapters and shall not be used to imply that the full EOC is continuously activated.
 
-![Figure 6: 7.4 Operations and Warning Division](/library/ch2/fig-06.webp)
+![Figure 6: 7.4 Operations and Warning Division](/library/chp2/fig-06.webp)
 
 # 8. Staffing Establishment, Plantilla and Workforce Planning
 
 The CDRRMO shall maintain a staffing complement that is lawful, functionally sufficient, competency-based and sustainable. Staffing decisions shall be anchored in the statutory functions of the office, JMC No. 2014-1, the City's approved organizational structure and staffing pattern, CSC qualification standards, DBM requirements and available appropriations.
 
-![Figure 7: 8. Staffing Establishment, Plantilla and Workforce Planning](/library/ch2/fig-07.webp)
+![Figure 7: 8. Staffing Establishment, Plantilla and Workforce Planning](/library/chp2/fig-07.webp)
 
 ## 8.1 Staffing Establishment Principles
 
@@ -355,7 +355,7 @@ The EOC staffing model shall be elaborated in the dedicated EOC organization and
 | Administration / Finance               | Authorized administrative, budget, accounting and HR personnel.                                        | Maintain lawful approval and transaction controls.                                    |
 | Agency / cluster liaison               | CSWD, CHO, Engineering, PNP, BFP, AFP, DepEd, utilities, Red Cross and other relevant partners.        | Written focal-person designation and alternate; agency retains its mandate.           |
 
-![Figure 8: 10. EOC Staffing Interface and Operational Augmentation](/library/ch2/fig-08.webp)
+![Figure 8: 10. EOC Staffing Interface and Operational Augmentation](/library/chp2/fig-08.webp)
 
 The Institutional Assessment B4 indicators require a defined EOC structure, pre-designated staff with alternates, duty rosters and handover protocols, agency/cluster liaison assignments, job action sheets and responder welfare. These are to be implemented through the EOC-specific chapters and annexes; Chapter 2 establishes the workforce and designation controls that support them.
 
@@ -385,7 +385,7 @@ A controlled duty roster shall identify primary personnel, alternates, contact d
 
 Duty schedules shall provide reasonable rest periods, relief arrangements, meals, hydration and safe transport where required. Supervisors shall monitor fatigue and fitness for duty, particularly during prolonged operations. The EOC's shift cycle and rest arrangements shall be specified in its dedicated operational procedures.
 
-![Figure 9: 11.3 Fatigue management](/library/ch2/fig-09.webp)
+![Figure 9: 11.3 Fatigue management](/library/chp2/fig-09.webp)
 
 # 12. Competency Development and Professionalization
 
@@ -419,7 +419,7 @@ The CDRRMO shall maintain a competency-based human-resource development system. 
 
 Training records shall include course title, provider, dates, participant, competency addressed, certificate or evidence, assessment result and renewal requirement where applicable. Attendance alone shall not be treated as proof of operational competence.
 
-![Figure 10: 12.2 Training needs assessment and annual plan](/library/ch2/fig-10.webp)
+![Figure 10: 12.2 Training needs assessment and annual plan](/library/chp2/fig-10.webp)
 
 # 13. Personnel Welfare, Occupational Safety and Psychosocial Support
 
@@ -445,7 +445,7 @@ The City shall apply a duty-of-care approach to CDRRMO personnel and responders.
 
 - Post-deployment check-in, incident reporting, injury/near-miss reporting and learning review.
 
-![Figure 11: 13.1 Minimum welfare and safety controls](/library/ch2/fig-11.webp)
+![Figure 11: 13.1 Minimum welfare and safety controls](/library/chp2/fig-11.webp)
 
 ## 13.2 Inclusion and reasonable accommodation
 
@@ -584,7 +584,7 @@ The following matrices allocate operational responsibility. They are subject to 
 
 # 17. Performance Standards, Records and Quality Assurance
 
-![Figure 12: 17. Performance Standards, Records and Quality Assurance](/library/ch2/fig-12.webp)
+![Figure 12: 17. Performance Standards, Records and Quality Assurance](/library/chp2/fig-12.webp)
 
 The CDRRMO shall apply a Plan–Do–Check–Act (PDCA) approach to organizational and human-resource management. The objective is to ensure that the structure is not only approved on paper but functions reliably and improves through evidence.
 
@@ -637,7 +637,7 @@ Targets shall be set only after baseline validation and alignment with City perf
 
 The October 2026 assessment indicates that the CDRRMO's organizational and staffing arrangements require strengthening. The following actions are proposed for validation and sequencing. They are not a substitute for HRMO, Budget, DBM, CSC or City Legal Office approvals.
 
-![Figure 13: 18. Priority Institutional Improvement Actions](/library/ch2/fig-13.webp)
+![Figure 13: 18. Priority Institutional Improvement Actions](/library/chp2/fig-13.webp)
 
 | **Priority action**                                                              | **Lead owner**                   | **Supporting actors**                  | **Required output / evidence**                                       | **Priority** |
 |----------------------------------------------------------------------------------|----------------------------------|----------------------------------------|----------------------------------------------------------------------|--------------|
@@ -689,7 +689,7 @@ To operationalize the organizational model, the CDRRMO shall manage workforce an
 
 ## 21.1 End-to-end Workforce Management Cycle
 
-![Figure 14: 21.1 End-to-end Workforce Management Cycle](/library/ch2/fig-14.webp)
+![Figure 14: 21.1 End-to-end Workforce Management Cycle](/library/chp2/fig-14.webp)
 
 A**nnual cycle**: City DRRM priorities and approved plans → workload and capability analysis → review of approved structure and plantilla → identify critical gaps and risks → prepare staffing, succession and learning proposals → HRMO/Finance/legal review → approval by competent authority → recruitment or lawful designation → induction and competency development → performance and welfare monitoring → annual evaluation and corrective action. Any proposal requiring a new or reclassified position, compensation adjustment or additional appropriation must pass the applicable City, CSC and DBM processes before implementation.
 
@@ -705,7 +705,7 @@ A**nnual cycle**: City DRRM priorities and approved plans → workload and capab
 
 ## 21.2 Process flow – Organizational and Plantilla Change
 
-![Figure 15: 21.2 Process flow – Organizational and Plantilla Change](/library/ch2/fig-15.webp)
+![Figure 15: 21.2 Process flow – Organizational and Plantilla Change](/library/chp2/fig-15.webp)
 
 **Trigger**: new mandate, material workload change, assessment finding, vacancy pattern or approved restructuring priority.  
 CDRRMO documents need → HRMO validates organizational and position requirements → Budget assesses fiscal space and recurring cost → City Legal reviews legal authority and instrument → competent authority approves or rejects → HRMO processes authorized staffing action → CDRRMO updates organogram, role assignments and MOO → implementation is monitored and reviewed.  
@@ -713,31 +713,31 @@ HOLD POINT: no position may be treated as created, funded or fillable until the 
 
 ## 21.3 Process flow – Recruitment, Appointment and Onboarding Interface
 
-![Figure 16: 21.3 Process flow – Recruitment, Appointment and Onboarding Interface](/library/ch2/fig-16.webp)
+![Figure 16: 21.3 Process flow – Recruitment, Appointment and Onboarding Interface](/library/chp2/fig-16.webp)
 
 Vacancy / approved staffing need confirmed → HRMO verifies authorized vacant plantilla and qualification standards → CDRRMO validates technical competency profile → HRMO applies approved Merit Selection Plan and recruitment procedures → selection and recommendation → appointing authority acts → HRMO completes appointment documentation and assumption → CDRRMO conducts role-specific induction and safety briefing → supervisor sets performance outputs and learning plan → probationary / periodic performance review as applicable. CDRRMO does not conduct appointments or waive civil-service requirements.
 
 ## 21.4 Process flow – Competency and Learning Cycle
 
-![Figure 17: 21.4 Process flow – Competency and Learning Cycle](/library/ch2/fig-17.webp)
+![Figure 17: 21.4 Process flow – Competency and Learning Cycle](/library/chp2/fig-17.webp)
 
 Position competency profile → individual competency assessment → consolidate competency gaps → prioritize by life-safety, statutory, operational and service risk → approve annual learning plan and resources → deliver training / coaching / exercise → assess demonstrated competence (not attendance alone) → update individual records and duty eligibility → reassess and close gaps. Critical assignments must be limited to personnel who meet the approved competency and safety prerequisites, with supervised development pathways for trainees.
 
 **21.5 Process flow – duty roster, handover and operational augmentation**
 
-![Figure 18: 21.5 Process flow – duty roster, handover and operational augmentation](/library/ch2/fig-18.webp)
+![Figure 18: 21.5 Process flow – duty roster, handover and operational augmentation](/library/chp2/fig-18.webp)
 
 Forecast duty demand and availability → supervisor prepares roster from trained and available personnel → division head verifies coverage, alternates and fatigue controls → CDRRMO Head approves roster under delegated authority → personnel acknowledge assignment → outgoing/incoming duty officers complete structured handover → exceptions or unfilled shifts escalated immediately → EOC activation or surge request is processed under the relevant EOC chapter → duty records reconciled after shift → gaps entered into CAPA. This chapter establishes personnel readiness; activation levels, EOC configuration and incident command remain in Chapters 4 and 6.
 
 ## 21.6 Process flow – Personnel Safety, Welfare and Incident Reporting
 
-![Figure 19: 21.6 Process flow – Personnel Safety, Welfare and Incident Reporting](/library/ch2/fig-19.webp)
+![Figure 19: 21.6 Process flow – Personnel Safety, Welfare and Incident Reporting](/library/chp2/fig-19.webp)
 
 Unsafe condition / injury / exposure / fatigue / psychosocial concern identified → make area safe and obtain immediate medical or protective assistance → notify supervisor and designated safety focal person → preserve incident facts and protect privacy → refer to HRMO / OSH / health provider / MHPSS provider as appropriate → assess fitness for duty and accommodation → investigate systemic causes without prejudging personnel accountability → implement corrective action → verify effectiveness and close record. Emergency response and medical care take precedence over administrative reporting.
 
 ## 21.7 Process flow – Performance Management and Corrective Action
 
-![Figure 20: 21.7 Process flow – Performance Management and Corrective Action](/library/ch2/fig-20.webp)
+![Figure 20: 21.7 Process flow – Performance Management and Corrective Action](/library/chp2/fig-20.webp)
 
 Approved office and individual outputs → periodic coaching and evidence capture → performance review under the City's approved SPMS → identify performance or process gap → distinguish individual competency issue from systemic constraint → agree improvement action and support → monitor milestones → evaluate results → recognize good performance or initiate appropriate administrative process where warranted → feed systemic lessons into workforce planning and MOO revision.
 
