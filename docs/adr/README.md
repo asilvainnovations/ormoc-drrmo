@@ -15,3 +15,4 @@ Each record states a decision, why it was made, and what it costs. Change a deci
 | [009](009-open-signup-and-live-data.md) | Open sign-up with administrator approval; live data only, no demo mode | Accepted (amends 003 and 004) |
 | [010](010-oauth-provider-read-only-clients.md) | "Sign in with Ormoc DRRM" (OAuth 2.1 / OIDC provider); consent screen in the app; other apps read-only; JWKS checks | Accepted |
 | [011](011-readiness-tools.md) | ICS simulator, PSCP workbench and Gawad KALASAG readiness as app screens; hazard services linked, not embedded | Accepted |
+| [012](012-single-manual.md) | One Manual of Operations: five Parts, ten functional areas; old chapter codes kept as aliases | Accepted |
