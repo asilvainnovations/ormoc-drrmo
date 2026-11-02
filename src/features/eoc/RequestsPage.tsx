@@ -65,7 +65,7 @@ export function RequestsPage() {
 
   return (
     <div className="page">
-      <PageHeader title="Resource requests" subtitle="Requested, approved, mobilized, delivered, demobilized. Only the EOC Manager approves or rejects."
+      <PageHeader title="Resource Requests" subtitle="Requested, approved, mobilized, delivered, demobilized. Only the EOC Manager approves or rejects."
         actions={canOperate(roles) && <Button tip="Record a new request for resources (vehicles, equipment, relief, teams)" icon={Plus} onClick={() => setOpen(true)}>New request</Button>} />
       <Tabs items={EOC_TABS} />
       <Section title={`Open (${active.length})`}>{active.length ? <List>{active.map(row)}</List> : <EmptyState title="No open requests" />}</Section>

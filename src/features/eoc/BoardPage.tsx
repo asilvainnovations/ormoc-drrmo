@@ -49,7 +49,7 @@ export function BoardPage() {
 
   return (
     <div className="page">
-      <PageHeader title="EOC Operations" />
+      <PageHeader title="EOC Operations" subtitle="The alert level, the active incident and what needs doing now. Level changes need a connection and the EOC Manager or CDRRMO Head." />
       <Tabs items={EOC_TABS} />
 
       <section className={clsx('mb-8 rounded-sheet px-5 py-5', tone)} aria-label="Activation level">

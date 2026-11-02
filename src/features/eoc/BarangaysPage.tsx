@@ -41,7 +41,7 @@ export function BarangaysPage() {
 
   return (
     <div className="page">
-      <PageHeader title="Barangay status" subtitle="Latest report per barangay. Counts only: no names of evacuees." />
+      <PageHeader title="Barangay Status" subtitle="Latest report per barangay. Counts only: no names of evacuees." />
       <Tabs items={EOC_TABS} />
       {data && data.brgys.length === 0 ? (
         <EmptyState title="No barangays loaded" body="An administrator imports the barangay list (PSGC code and name) in Settings, then duty officers can record reports here." />
