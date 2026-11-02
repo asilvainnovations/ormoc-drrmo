@@ -1,9 +1,9 @@
 n# Ormoc DRRM Operations Platform
 
-A mobile-first, offline-capable web app (PWA) for the City Disaster Risk Reduction and Management Office (CDRRMO) and the Emergency Operations Center (EOC) of the City Government of Ormoc. It supports the CDRRMO Manual of Operations and the EOC Manual. The platform has five modules:
+A mobile-first, offline-capable web app (PWA) for the City Disaster Risk Reduction and Management Office (CDRRMO) and the Emergency Operations Center (EOC) of the City Government of Ormoc. It supports the single Manual of Operations for the CDRRMO and the EOC (five Parts, ten functional areas; ADR-012). The platform has five modules:
 
 - **Assessment.** Runs the Institutional Assessment Tool v1.1 (140 indicators). Scoring is gated by evidence, results are shown by domain and maturity, and gaps feed a prioritised action plan.
-- **Library.** Holds the manual sections with version control and approval by the CDRRMO Head. Each section traces to the indicators and master requirements MR-01 to MR-18, and to the UNDRR Scorecard and RA 12287 IRR crosswalk.
+- **Library.** Holds the Manual of Operations by Part and functional area: area outlines, drafted chapters and their annexes, SOPs and forms, with version control and approval by the CDRRMO Head. Old chapter codes (MOO Ch.4, EOC Ch.2) still find their new home. Each section traces to the indicators and master requirements MR-01 to MR-18, and to the UNDRR Scorecard and RA 12287 IRR crosswalk.
 - **Protocols.** Turns the manuals into checklists the CDRRMO can run, live or as drills, with an audit trail. Ten protocols are drafted for validation, including the State of Calamity and State of Imminent Disaster procedures (SOP GOV-04 and GOV-05).
 - **EOC.** Covers the White / Blue / Red alert level, an append-only logbook, SitReps, barangay status (counts only), and resource requests.
 - **Anticipatory action (RA 12287 and IRR).** Records the PDRA and the declaration timeline with its legal deadlines. It holds the 29-item AA checklist and enforces the fund cap (10% of the 70% LDRRMF) and the 30% / 70% tranche limits.
@@ -72,7 +72,7 @@ docs/             system design, design system, architecture decision records
 | `npm run test:e2e` | Playwright on phone and desktop sizes against the production build, PostgREST and a fresh local database with every migration: sign-up and approval, journeys, axe and offline checks. Needs the same as `test:it` |
 | `python3 scripts/brand_assets.py` | Rebuild the circular seals, banner copies and app icons from the originals in `public/` |
 | `npm run seed:generate` | Regenerate `supabase/seed/seed.sql`, `supabase/seed/parts/` and `src/data/reference.json` from `reference/*.xlsx` and the manual drafts in `reference/moo/` |
-| `python3 scripts/split_manual_docx.py <chapter.docx> --slug chN --prefix MOO_ChN` | Turn a drafted chapter into Library sources in `reference/moo/` and compressed figures in `public/library/chN/` |
+| `python3 scripts/split_manual_docx.py <chapter.docx> --slug chN --prefix MOO_ChN` | Turn a drafted chapter into Library sources in `reference/moo/` and compressed figures in `public/library/chN/` (Chapter 2's figures are in `chp2/`). Then add the chapter to `CHAPTERS` and `LIBRARY_DRAFTS` in `generate_seed.py` |
 | `npm run seed:operational` | Regenerate the one-time `supabase/seed/operational/` files (IAT baseline, Document Vault register) from the IAT workbook |
 | `npm run check` | Typecheck, unit tests and build |
 
@@ -95,4 +95,4 @@ Raise `REFERENCE_VERSION` in `src/lib/bootstrap.ts` so devices reload the bundle
 
 ## Ownership
 
-The City Government of Ormoc owns this code and its data. It was prepared under the CDRRMO Manual of Operations and EOC Manual engagement by Alvin M. Silva (Cognitio Plus).
+The City Government of Ormoc owns this code and its data. It was prepared under the Manual of Operations for the CDRRMO and EOC engagement by Alvin M. Silva (Cognitio Plus).
