@@ -15,7 +15,7 @@ test('assessment: evidence gate, scoring, dashboard', async ({ page }) => {
   await page.goto('/assess');
   await page.getByRole('button', { name: 'Start the baseline' }).click();
   await page.getByRole('button', { name: 'Create cycle' }).click();
-  await expect(page.getByRole('heading', { name: /Institutional assessment \d{4}/ })).toBeVisible();
+  await expect(page.getByRole('heading', { name: /Institutional assessment \d{4}/i })).toBeVisible();
   await shot(page, '02-cycle-empty');
   await page.getByRole('link', { name: /^A1 / }).first().click();
   await page.getByRole('link', { name: /A1\.1/ }).click();
@@ -105,10 +105,17 @@ test('EOC level, logbook, anticipatory action and funds', async ({ page }) => {
 
 test('library and traceability', async ({ page }) => {
   await page.goto('/library');
+  await expect(page.getByRole('heading', { name: 'Part 2. SOPs by alert level' })).toBeVisible();
   await shot(page, '11-library');
-  await page.getByRole('link', { name: /EOC Ch\.2 Concept of Operations/ }).click();
-  await expect(page.getByText('Requirements this section must meet')).toBeVisible();
+  // An old code still finds its new home (ADR-012).
+  await page.getByLabel('Find a section').fill('EOC Ch.2');
+  await page.getByRole('link', { name: /Area 4: EOC Activation/ }).click();
+  await expect(page.getByRole('heading', { name: /Requirements this area must meet/ })).toBeVisible();
   await shot(page, '12-document');
+  // Chapter 2's figures are wired to public/library/chp2/.
+  await page.goto('/library');
+  await page.getByRole('link', { name: /Chapter 2: CDRRMO Organizational Structure/ }).first().click();
+  await expect(page.locator('article img[src^="/library/chp2/"]').first()).toBeVisible();
   await page.goto('/library/trace');
   await page.getByLabel('Theme').selectOption('RA 12287 / anticipatory action');
   await expect(page.getByText(/22 indicator\(s\)/)).toBeVisible();
