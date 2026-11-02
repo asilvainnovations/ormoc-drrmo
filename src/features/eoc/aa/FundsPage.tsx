@@ -39,7 +39,7 @@ export function FundsPage() {
 
   return (
     <div className="page">
-      <PageHeader title="Anticipatory action funds" back="/eoc/aa"
+      <PageHeader title="Anticipatory Action Funds" back="/eoc/aa"
         subtitle={`Up to ${params.aa_share_of_ldrrmf_70 * 100}% of the 70% LDRRMF. Interventions more than 3 days before impact may use up to ${params.tranche_beyond_max * 100}% of the allocation; within 3 days, up to ${params.tranche_within_max * 100}% (IRR Rule V).`}
         actions={has('cdrrmo_head') && <Button tip="Set this year’s LDRRMF total and the anticipatory action allocation" onClick={() => setEdit({ year: String(new Date().getFullYear()), total: '', alloc: '', ref: '', version: 1, isNew: true })}>Set allocation</Button>} />
       <Notice tone="info">The DBM–COA guidelines on funding, budgeting and utilization of AA measures are pending (IRR Rule V Sec. 4). Other lawful sources (Special Trust Fund, donations, ODA) are not limited by the 30%/70% graduation.</Notice>

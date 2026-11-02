@@ -65,7 +65,7 @@ export function PdraNewPage() {
 
   return (
     <div className="page">
-      <PageHeader title="Pre-disaster risk assessment" back="/eoc/aa" subtitle="Record the forecast, the exposure and the decision. The lead time is counted from now." />
+      <PageHeader title="Pre-Disaster Risk Assessment" back="/eoc/aa" subtitle="Record the forecast, the exposure and the decision. The lead time is counted from now." />
       <div className="max-w-3xl">
         <Section title="Forecast">
           <div className="grid gap-4 sm:grid-cols-2">

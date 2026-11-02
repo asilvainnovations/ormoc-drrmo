@@ -21,7 +21,7 @@ export function AaHomePage() {
   const past = data?.decls.filter((d) => !live.includes(d)) ?? [];
   return (
     <div className="page">
-      <PageHeader title="Anticipatory action" subtitle="RA 12287 and its IRR: pre-disaster risk assessment, State of Imminent Disaster, anticipatory actions, funds and reporting."
+      <PageHeader title="Anticipatory Action" subtitle="RA 12287 and its IRR: pre-disaster risk assessment, State of Imminent Disaster, anticipatory actions, funds and reporting."
         actions={<>
           {has('cdrrmo_head', 'eoc_manager', 'eoc_staff') && <ButtonLink tip="Record a pre-disaster risk assessment for a forecast hazard" to="/eoc/aa/pdra/new" variant="primary" icon={Plus}>New PDRA</ButtonLink>}
           <ButtonLink tip="See the anticipatory action fund for the year: the 10% cap and the 30%/70% tranches" to="/eoc/aa/funds" icon={Wallet}>AA funds</ButtonLink>
