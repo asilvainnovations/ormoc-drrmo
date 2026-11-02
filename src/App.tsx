@@ -73,7 +73,7 @@ export function App() {
                 <Route path="settings/*" element={<Suspense fallback={<Loading />}><SettingsRoutes /></Suspense>} />
                 <Route path="vault/*" element={<Suspense fallback={<Loading />}><VaultRoutes /></Suspense>} />
                 <Route path="tools/*" element={<Suspense fallback={<Loading />}><ToolsRoutes /></Suspense>} />
-                <Route path="*" element={<div className="page"><PageHeader title="Page not found" subtitle="Use the menu to go to a section." /></div>} />
+                <Route path="*" element={<div className="page"><PageHeader title="Page Not Found" subtitle="Use the menu to go to a section." /></div>} />
               </Route>
             </Routes>
           </Boot>

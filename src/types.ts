@@ -13,6 +13,8 @@ export interface Indicator {
   id: string; domain: string; statement: string; reference: string; type: 'M' | 'GP'; weight: 1 | 2 | 3;
   means_of_verification: string | null; methods: string | null; moo_chapter: string | null;
   lead_office: string | null; tags: string[]; version_status: string; sort: number;
+  /** Primary functional area of the manual (Traceability Dictionary v1.1). Since v1.6. */
+  functional_area?: number | null;
 }
 export interface MasterRequirement {
   id: string; title: string; statement: string; source_basis: string; iat_coverage: string; evidence: string;
@@ -45,9 +47,16 @@ export interface Action extends Versioned {
 }
 
 // ------------------------------------------------------------------ Library & protocols
+/** One manual since v1.6 (ADR-012): five Parts, ten functional areas. */
+export interface ManualPart { no: number; title: string; summary: string | null; sort: number }
+export interface ManualArea {
+  no: number; part_no: number; title: string; scope: string | null; mcr_primary: string | null; mcr_supporting: string | null; sort: number;
+}
 export interface MooDocument extends Versioned {
-  manual: 'MOO' | 'EOC'; kind: 'chapter' | 'sop' | 'form' | 'annex'; code: string; title: string; parent_id?: string | null;
+  /** Legacy (MOO or EOC); not shown since v1.6. */
+  manual: 'MOO' | 'EOC'; kind: 'chapter' | 'sop' | 'form' | 'annex' | 'area'; code: string; title: string; parent_id?: string | null;
   summary: string | null; status: 'draft' | 'in_review' | 'approved' | 'superseded'; current_version_id: string | null; sort: number;
+  area_no?: number | null; chapter_no?: number | null; aliases?: string[]; also_areas?: number[];
 }
 export interface MooVersion extends Versioned {
   document_id: string; label: string; body_md: string; change_note: string | null;
