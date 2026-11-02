@@ -102,9 +102,15 @@ export function ChoiceGroup<V extends string | number>({ legend, value, onChange
 }
 
 // ------------------------------------------------------------------ layout
-export function PageHeader({ title, subtitle, back, actions }: { title: string; subtitle?: ReactNode; back?: string; actions?: ReactNode }) {
+/** `back` is a route; `onBack` is for steps inside one screen (e.g. an exercise set-up). Both render the same Back control. */
+export function PageHeader({ title, subtitle, back, onBack, actions }: { title: string; subtitle?: ReactNode; back?: string; onBack?: () => void; actions?: ReactNode }) {
   return (
     <header className="mb-5 space-y-2">
+      {onBack && !back && (
+        <button type="button" onClick={onBack} {...tipAttr('Go back to the previous screen')} className="-ml-1 inline-flex min-h-tap items-center gap-1 rounded-control pr-2 text-sm font-semibold text-muted hover:text-ink">
+          <ChevronLeft className="h-4 w-4" aria-hidden /> Back
+        </button>
+      )}
       {back && (
         <Link to={back} {...tipAttr('Go back to the previous screen')} className="-ml-1 inline-flex min-h-tap items-center gap-1 rounded-control pr-2 text-sm font-semibold text-muted hover:text-ink">
           <ChevronLeft className="h-4 w-4" aria-hidden /> Back
