@@ -101,31 +101,31 @@ MOO_TITLES = {
 ANNEX_JD = 'MOO Annex JDs'
 
 # Drafted manual text, loaded as DRAFT versions for review and approval in the Library.
-# Source: reference/Ormoc_CDRRMO_EOC_MOO_Chapter1_Consolidated_v0.9.docx (31 Oct 2026), split into
-# reference/moo/*.md. Existing codes get a new version; new codes become new Library documents.
-# Seeding never overwrites a draft version once loaded (the Library workflow owns it after that).
+# Seeding never overwrites a version once loaded (the Library workflow owns it after that); a new label is a new version.
+# Chapter 1 v1.0: revised working draft (Drive, 2 Nov 2026) with its eight annexes 1-A to 1-H, which are now
+# separate Google Docs. reference/moo/MOO_Ch1_v1.0.md and Annex_1-*.md were exported from them.
+_CH1 = 'v1.0 revised working draft'
 LIBRARY_DRAFTS = [  # code, manual, kind, title, file, label, indicators
-    ('MOO Ch.1', 'MOO', 'chapter', None, 'MOO_Ch1_v0.9.md', 'v0.9 consolidated draft', None),
-    ('MOO Annex 1-0', 'MOO', 'annex', 'Chapter 1 Implementation Package: document control and annex register',
-     'Annex_1_00_package_control.md', 'v0.9 consolidated draft', []),
+    ('MOO Ch.1', 'MOO', 'chapter', None, 'MOO_Ch1_v1.0.md', _CH1, None),
     ('MOO Annex 1-A', 'MOO', 'annex', 'Proposed ordinance institutionalizing the CDRRMO', 'Annex_1-A.md',
-     'v0.9 consolidated draft', ['A1.1', 'A2.1', 'A2.2', 'A2.3', 'A2.5']),
+     _CH1, ['A1.1', 'A2.1', 'A2.2', 'A2.3', 'A2.5']),
     ('MOO Annex 1-B', 'MOO', 'annex', 'Proposed Executive Order reconstituting the CDRRMC', 'Annex_1-B.md',
-     'v0.9 consolidated draft', ['A1.2', 'A1.3', 'A1.4']),
+     _CH1, ['A1.2', 'A1.3', 'A1.4']),
     ('MOO Annex 1-C', 'MOO', 'annex', 'Proposed Executive Order establishing the City EOC', 'Annex_1-C.md',
-     'v0.9 consolidated draft', ['B1.1', 'B1.2', 'B1.3', 'B4.1', 'B6.1']),
+     _CH1, ['B1.1', 'B1.2', 'B1.3', 'B4.1', 'B6.1']),
     ('SOP GOV-04', 'MOO', 'sop', 'State of Calamity: declaration, implementation and lifting', 'Annex_1-D.md',
-     'v0.9 consolidated draft', ['A1.6']),
+     _CH1, ['A1.6']),
     ('SOP GOV-05', 'MOO', 'sop', 'State of Imminent Disaster: declaration, anticipatory action, lifting and reporting',
-     'Annex_1-E.md', 'v0.9 consolidated draft', ['A1.8', 'A2.9', 'A10.8']),
-    ('MOO Annex 1-F', 'MOO', 'annex', 'Master RACI and institutional interface matrix', 'Annex_1-F.md',
-     'v0.9 consolidated draft', ['A1.4', 'B6.1']),
+     'Annex_1-E.md', _CH1, ['A1.8', 'A2.9', 'A10.8']),
+    ('MOO Annex 1-F', 'MOO', 'annex', 'Integrated RACI accountability framework', 'Annex_1-F.md',
+     _CH1, ['A1.4', 'B6.1']),
     ('MOO Annex 1-G', 'MOO', 'form', 'Governance forms, templates and registers (GOV-F01 to GOV-F16)', 'Annex_1-G.md',
-     'v0.9 consolidated draft', ['A1.3', 'A1.4']),
+     _CH1, ['A1.3', 'A1.4']),
+    ('MOO Annex 1-H', 'MOO', 'annex', 'Implementation and institutionalization roadmap', 'Annex_1-H.md', _CH1, []),
 ]
 
 # Chapter 2: Organizational Structure, Staffing and Workforce (draft, 31 Oct 2026). Sources made with
-# scripts/split_manual_docx.py; its 20 figures are in public/library/ch2/.
+# scripts/split_manual_docx.py; its 20 figures are in public/library/chp2/ (the sources point there).
 _CH2 = 'v0.1 assessment-informed draft'
 LIBRARY_DRAFTS += [
     ('MOO Ch.2', 'MOO', 'chapter', None, 'MOO_Ch2_v0.9.md', _CH2, None),
@@ -159,6 +159,32 @@ LIBRARY_DRAFTS += [
 ]
 
 
+# Chapter 3: Risk Intelligence, DRRM and Contingency Planning, and Institutional Preparedness (v0.9, 31 Oct 2026,
+# Drive). Made with: split_manual_docx.py Chapter3.docx --slug ch3 --prefix MOO_Ch3. One figure, in public/library/ch3/.
+# Annex 3-A is the indicator-to-process traceability matrix; its 15 IAT IDs link to the chapter, and each form
+# links to the indicators of the process it records (Annex 3-A, column 'Chapter process').
+_CH3 = 'v0.9 working draft'
+_CH3_INDS = ['A3.1', 'A3.2', 'A3.3', 'A3.4', 'A3.7', 'A5.1', 'A5.2', 'A5.3', 'A5.8', 'A7.6', 'C1.1', 'C1.2', 'C1.3', 'C1.4', 'C3.1']
+LIBRARY_DRAFTS += [('MOO Ch.3', 'MOO', 'chapter', None, 'MOO_Ch3_v0.9.md', _CH3, None)] + [
+    (f'Annex {aid}', 'MOO', kind, title, f'MOO_Ch3_Annex_{aid}.md', _CH3, inds)
+    for aid, kind, title, inds in [
+        ('3-A', 'annex', 'Indicator-to-process traceability matrix', _CH3_INDS),
+        ('3-B', 'form', 'Form 3-01: Risk information and map request', ['A5.1', 'C1.4']),
+        ('3-C', 'form', 'Form 3-02: Dataset metadata and quality checklist', ['A5.1']),
+        ('3-D', 'form', 'Form 3-03: CDRA hazard-impact scoping matrix', ['A5.2', 'C1.3']),
+        ('3-E', 'form', 'Form 3-04: CDRA Major Decision Area register', ['A5.2', 'C1.1']),
+        ('3-F', 'form', 'Form 3-05: Critical facilities and dependency register', ['A5.8']),
+        ('3-G', 'form', 'Form 3-06: Contingency plan quality and exercise record', ['A3.3']),
+        ('3-H', 'form', 'Form 3-07: Essential functions inventory and BIA', ['A3.4']),
+        ('3-I', 'form', 'Form 3-08: Barangay DRRM plan review status', ['A3.7']),
+        ('3-J', 'form', 'Form 3-09: DRR/CCA project screening', ['A3.2', 'C1.2']),
+        ('3-K', 'form', 'Form 3-10: Consultation and inclusion validation record', ['A5.3', 'A7.6', 'C3.1']),
+        ('3-L', 'form', 'Form 3-11: Corrective action and document revision register', []),
+        ('3-M', 'annex', 'Source and methodology register', []),
+    ]
+]
+
+
 def chapters_of(tag: str) -> list[str]:
     """'MOO Ch.2 / Ch.4' -> ['MOO Ch.2','MOO Ch.4']; 'EOC Manual (whole)' -> all EOC chapters."""
     if 'EOC Manual (whole)' in tag:
@@ -174,6 +200,80 @@ def chapters_of(tag: str) -> list[str]:
         if part.startswith('Annex JDs'):
             out.append(ANNEX_JD)
     return list(dict.fromkeys(out))
+
+
+# ------------------------------------------------------- one manual (v1.6) ---
+# Inception Report sec. 3.4 and Annex A: ten functional areas bound into five Parts. The same rows are
+# inserted by migration 20261102001200_single_manual.sql; the seed repeats them so a fresh load is complete.
+MANUAL_PARTS = [  # no, title, summary
+    (1, 'Legal mandate and governance', 'Mandate, structure, authorities and accountability of the CDRRMO, the CDRRMC and the EOC.'),
+    (2, 'SOPs by alert level', 'Preparedness, EOC activation, logistics and responder safety. The core of EOC operations and the largest Part.'),
+    (3, 'Information management and public communication', 'Risk intelligence, early warning and public information, situational awareness and GIS.'),
+    (4, 'Continuity and infrastructure safeguards', 'Digital continuity, cybersecurity and systems resilience.'),
+    (5, 'Recovery and continuous improvement', 'Recovery, learning, performance and manual revision.'),
+]
+MANUAL_AREAS = [  # no, part, title, scope, MCR2030 primary, supporting  (sorted within the manual by Part)
+    (1, 1, 'Governance, Organization & Institutional Arrangements',
+     'CDRRMO/EOC mandate; organizational structure; LDRRMC relationships; authorities; delegation; duty officers; ICS roles; inter-agency coordination; public-private partnerships; accountability',
+     'Essential 1 – Organize for Disaster Resilience', 'Essentials 6, 7, 9'),
+    (3, 2, 'Preparedness, Planning & Capacity Development',
+     'Emergency plans; contingency plans; SOPs; preparedness standards; training; drills; simulations; competency requirements; EOC readiness; BDRRMC capacity; mutual-aid arrangements',
+     'Essential 6 – Strengthen Institutional Capacity for Resilience', 'Essentials 1, 7, 9'),
+    (4, 2, 'EOC Activation, Incident Management & Coordination',
+     'Alert levels; activation/deactivation; ICS integration; incident objectives; command and coordination; operational periods; EOC staffing; escalation; transition from response to recovery',
+     'Essential 9 – Ensure Effective Disaster Response', 'Essentials 1, 6, 10'),
+    (7, 2, 'Resource, Logistics & Emergency Support Management',
+     'Resource inventory; resource requests; procurement; stockpiling; staging; transport; warehousing; fuel; relief supplies; mutual aid; supplier networks; emergency support services',
+     'Essential 9 – Ensure Effective Disaster Response', 'Essentials 3, 8, 6'),
+    (8, 2, 'Responder Safety, Welfare & Inclusive Emergency Operations',
+     'Duty of care; PPE; responder health and safety; psychosocial support; fatigue management; workforce rotation; gender/inclusion considerations; protection of vulnerable groups; safe operating procedures',
+     'Essential 9 – Ensure Effective Disaster Response', 'Essentials 6, 7, 8'),
+    (2, 3, 'Risk Intelligence, Prevention & Mitigation',
+     'Multi-hazard risk assessment; hazard/exposure/vulnerability analysis; climate risk; risk scenarios; GIS-based risk information; prevention and mitigation measures; risk-informed development planning',
+     'Essential 2 – Identify, Understand and Use Current and Future Risk Scenarios', 'Essentials 4, 5, 8'),
+    (5, 3, 'Early Warning, Emergency Communications & Public Information',
+     'Monitoring; detection; warning thresholds; multi-channel dissemination; public information; risk communication; accessible alerts; community feedback; rumor management; warning verification',
+     'Essential 9 – Ensure Effective Disaster Response', 'Essentials 2, 7, 6'),
+    (6, 3, 'Situational Awareness, Information Management & GIS',
+     'Data collection; validation; common operating picture; GIS; dashboards; incident reports; SITREPs; data standards; information-sharing; decision support; risk intelligence',
+     'Essential 2 – Identify, Understand and Use Current and Future Risk Scenarios', 'Essentials 6, 9, 8'),
+    (9, 4, 'Digital Continuity, Cybersecurity & Systems Resilience',
+     'Critical information systems; cybersecurity; data protection; backups; cloud redundancy; alternate communications; power continuity; disaster recovery; system interoperability; continuity of operations',
+     'Essential 8 – Increase Infrastructure Resilience', 'Essentials 6, 9, 4'),
+    (10, 5, 'Recovery, Learning, Performance & Continuous Improvement',
+     'Recovery transition; damage/loss assessment; debris management; rehabilitation/reconstruction; Build Back Better; economic recovery; AARs; M&E; audits; exercises; lessons learned; manual revision',
+     'Essential 10 – Expedite Recovery and Build Back Better', 'Essentials 3, 6, 7, 8, 9'),
+]
+AREA_TITLE = {a[0]: a[2] for a in MANUAL_AREAS}
+
+# The 18 shells of v1.0-1.5 (nine MOO and nine EOC chapters) and the JD annex. Three became the drafted
+# Chapters 1-3 (same ids, new codes). The rest merge into the area outline that now carries their
+# indicators; their old code stays as an alias so links, protocols and IAT routing keep working.
+CHAPTERS = {  # legacy code -> (new code, chapter no, primary area, also areas, title)
+    'MOO Ch.1': ('Chapter 1', 1, 1, [], 'Legal Mandate, DRRM Governance and Institutional Accountability'),
+    'MOO Ch.2': ('Chapter 2', 2, 1, [3, 8], 'CDRRMO Organizational Structure, Staffing and Human Resource Management'),
+    'MOO Ch.3': ('Chapter 3', 3, 2, [3], 'Risk Intelligence, DRRM and Contingency Planning, and Institutional Preparedness'),
+}
+MERGED = {  # legacy shell -> functional area
+    'MOO Ch.4': 4, 'MOO Ch.5': 1, 'MOO Ch.6': 3, 'MOO Ch.7': 10, 'MOO Ch.8': 10, 'MOO Ch.9': 1,
+    'EOC Ch.1': 1, 'EOC Ch.2': 4, 'EOC Ch.3': 9, 'EOC Ch.4': 5, 'EOC Ch.5': 4, 'EOC Ch.6': 6,
+    'EOC Ch.7': 7, 'EOC Ch.8': 3, 'EOC Ch.9': 10,
+}
+LEGACY_TITLES = {ANNEX_JD: 'Job descriptions', 'MOO Annex 1-0': 'Chapter 1 Implementation Package: document control and annex register'}
+RETIRED = {ANNEX_JD: 'MOO Ch.2', 'MOO Annex 1-0': 'MOO Ch.1'}  # merged into a chapter (JDs; package control is in Ch.1 v1.0)
+
+
+def new_code(code: str) -> str:
+    """'MOO Ch.1' -> 'Chapter 1'; 'MOO Annex 2-A' -> 'Annex 2-A'; SOP and FORM codes are kept."""
+    if code in CHAPTERS:
+        return CHAPTERS[code][0]
+    return re.sub(r'^MOO Annex ', 'Annex ', code)
+
+
+def chapter_of(code: str) -> int | None:
+    m = re.search(r'(?:Annex|Ch)[ ._]*(\d+)', code)
+    return int(m.group(1)) if m else None
+
 
 
 # ------------------------------------------------------------------ offices ---
@@ -384,7 +484,10 @@ def main():
     mrs, doms_mrt, dd = read_mrt()
     assert len(indicators) == 140, len(indicators)
 
-    out = dict(parts=[dict(code='A', name='Part A – CDRRMO institutional capacity', in_imi=True, sort=1),
+    out = dict(manual_parts=[dict(no=n, title=t, summary=sm, sort=n) for n, t, sm in MANUAL_PARTS],
+               manual_areas=[dict(no=n, part_no=pt, title=t, scope=sc, mcr_primary=mp, mcr_supporting=ms, sort=i)
+                             for i, (n, pt, t, sc, mp, ms) in enumerate(MANUAL_AREAS, 1)],
+               parts=[dict(code='A', name='Part A – CDRRMO institutional capacity', in_imi=True, sort=1),
                       dict(code='B', name='Part B – Emergency Operations Center', in_imi=True, sort=2),
                       dict(code='C', name='Part C – Interface indicators', in_imi=False, sort=3)])
     out['domains'] = []
@@ -395,7 +498,9 @@ def main():
     out['indicators'] = []
     for i, ind in enumerate(indicators, 1):
         tags = [t.strip() for t in str(dd[ind['id']]['Thematic Tags*']).split(';') if t.strip() and t.strip() != '—']
-        out['indicators'].append(dict(ind, tags=tags, version_status=dd[ind['id']]['Version Status (v1.1)'], sort=i))
+        fa = int(str(dd[ind['id']]['Primary Functional Area']).split()[0])
+        out['indicators'].append(dict(ind, tags=tags, version_status=dd[ind['id']]['Version Status (v1.1)'],
+                                      functional_area=fa, sort=i))
     out['master_requirements'] = [dict(
         id=m['Req ID'], title=m['Requirement / Source Objective'], statement=m['Requirement Statement'],
         source_basis=m['Source Basis'], iat_coverage=m['IAT Coverage'], evidence=m['Evidence / Verification'],
@@ -424,60 +529,139 @@ def main():
     out['hazards'] = [dict(code=c, name=n, forecastable=f, typical_lead_hours=l, declaration_eligible=e, note=no, sort=i)
                       for i, (c, n, f, l, e, no) in enumerate(HAZARDS, 1)]
 
-    # Manual sections: one skeleton per chapter listing the indicators it must answer.
+    # ---- Library: one manual, five Parts, ten functional areas (ADR-012) ----
     docs, doc_links, versions = [], [], []
     by_ch: dict[str, list[dict]] = {}
     for ind in indicators:
         for ch in chapters_of(ind['moo_chapter']):
             by_ch.setdefault(ch, []).append(ind)
-    codes = list(MOO_TITLES) + [ANNEX_JD]
-    missing = [c for c in by_ch if c not in codes]
+    legacy = list(MOO_TITLES) + [ANNEX_JD]
+    missing = [c for c in by_ch if c not in legacy]
+    legacy.append('MOO Annex 1-0')
     assert not missing, missing
-    for i, code in enumerate(codes, 1):
-        manual = code.split()[0]
-        title = MOO_TITLES.get(code, 'Job descriptions')
+    by_fa: dict[int, list[dict]] = {}
+    for ind in out['indicators']:
+        by_fa.setdefault(ind['functional_area'], []).append(ind)
+    area_id = {n: uid('doc', f'Area {n}') for n, *_ in MANUAL_AREAS}
+    sort = 0
+
+    def requirement_lines(inds):
+        lines = []
+        for ind in inds:
+            lines.append(f'- **{ind["id"]}** ({ind["type"]}, weight {ind["weight"]}) {ind["statement"]}  ')
+            lines.append(f'  *Basis:* {ind["reference"]}')
+        return lines or ['- None yet. No indicator in the Traceability Dictionary v1.1 names this as its primary area.']
+
+    # 1. Area outlines: the home of every gap whose primary functional area this is.
+    part_title = {n: t for n, t, _ in MANUAL_PARTS}
+    for n, part, title, scope, mcr_p, mcr_s in MANUAL_AREAS:
+        sort += 1
+        merged = [c for c, fa in MERGED.items() if fa == n]
+        inds = by_fa.get(n, [])
+        chapters = [f'{v[0]}: {v[4]}' for v in CHAPTERS.values() if v[2] == n or n in v[3]]
+        body = [f'# Area {n}. {title}', '',
+                f'**Part {part}: {part_title[part]}**', '',
+                '> Outline generated from the Inception Report (Annex A) and the Traceability Dictionary v1.1. '
+                'Drafted chapters that serve this area are listed below; write the remaining procedures here or in a new chapter.', '',
+                '## Scope', '', scope + '.', '',
+                '## MCR2030 alignment', '', f'- Primary: {mcr_p}', f'- Supporting: {mcr_s}', '',
+                '## Drafted chapters for this area', '']
+        body += [f'- {c}' for c in chapters] or ['- None yet.']
+        body += ['', '## Sections merged into this area', '',
+                 'These sections of the earlier two-manual outline were merged here in v1.6. Their codes still find this page.', '']
+        body += [f'- {c} ({MOO_TITLES[c]})' for c in merged] or ['- None.']
+        body += ['', f'## Requirements this area must meet ({len(inds)} indicators)', ''] + requirement_lines(inds)
+        did = area_id[n]
+        docs.append(dict(id=did, manual='MOO', kind='area', code=f'Area {n}', title=title, parent_id=None,
+                         summary=f'Part {part}. {len(inds)} IAT indicator(s) name this as their primary area.',
+                         status='draft', sort=sort, current_version_id=None, area_no=n, chapter_no=None,
+                         aliases=merged, also_areas=[]))
+        versions.append(dict(id=uid('docver', f'Area {n}', 'v0.1'), document_id=did, label='v0.1 outline',
+                             body_md='\n'.join(body), change_note='Generated from the Inception Report (Annex A) and Traceability v1.1',
+                             status='draft'))
+        doc_links += [dict(document_id=did, indicator_id=i['id']) for i in inds]
+
+    # 2. Legacy shells: three become Chapters 1-3, the rest are superseded by their area.
+    superseded = []
+    for code in legacy:
         did = uid('doc', code)
         inds = by_ch.get(code, [])
-        body = [f'# {code} – {title}', '',
+        sort += 1
+        if code in CHAPTERS:
+            nc, no, fa, also, title = CHAPTERS[code]
+            docs.append(dict(id=did, manual='MOO', kind='chapter', code=nc, title=title, parent_id=None,
+                             summary=None, status='draft', sort=sort, current_version_id=None, area_no=fa,
+                             chapter_no=no, aliases=[code] + [k for k, v in RETIRED.items() if v == code and k == ANNEX_JD],
+                             also_areas=also))
+            extra = _CH3_INDS if code == 'MOO Ch.3' else []
+            doc_links += [dict(document_id=did, indicator_id=i) for i in dict.fromkeys([i['id'] for i in inds] + extra)]
+        else:
+            parent = uid('doc', RETIRED[code]) if code in RETIRED else area_id[MERGED[code]]
+            into = new_code(RETIRED[code]) if code in RETIRED else f'Area {MERGED[code]}'
+            docs.append(dict(id=did, manual=code.split()[0], kind='annex' if code in RETIRED else 'chapter', code=code,
+                             title=MOO_TITLES.get(code, LEGACY_TITLES.get(code, '')), parent_id=parent,
+                             summary=f'Merged into {into} in v1.6. Kept for history; open {into} instead.',
+                             status='superseded', sort=sort, current_version_id=None,
+                             area_no=MERGED.get(code) or CHAPTERS[RETIRED[code]][2], chapter_no=None, aliases=[], also_areas=[]))
+            superseded.append(did)
+        if code == 'MOO Annex 1-0':  # the v0.9 package-control annex keeps its own text
+            versions.append(dict(id=uid('docver', code, 'v0.9 consolidated draft'), document_id=did, label='v0.9 consolidated draft',
+                                 body_md=(ROOT / 'reference' / 'moo' / 'Annex_1_00_package_control.md').read_text(encoding='utf-8'),
+                                 change_note='Chapter 1 consolidated draft v0.9 (31 Oct 2026)', status='draft'))
+            continue
+        body = [f'# {code} – {MOO_TITLES.get(code, LEGACY_TITLES.get(code))}', '',
                 '> Skeleton generated from IAT v1.1. Replace each requirement with the City\'s procedure, standard or form.', '',
-                '## Requirements this section must meet', '']
-        for ind in inds:
-            body.append(f'- **{ind["id"]}** ({ind["type"]}, weight {ind["weight"]}) {ind["statement"]}  ')
-            body.append(f'  *Basis:* {ind["reference"]}')
-        vid = uid('docver', code, 'v0.1')
-        docs.append(dict(id=did, manual=manual, kind='annex' if code == ANNEX_JD else 'chapter', code=code, title=title,
-                         summary=f'{len(inds)} IAT indicator(s) route their gaps here.', status='draft', sort=i,
-                         current_version_id=None))
-        versions.append(dict(id=vid, document_id=did, label='v0.1 skeleton', body_md='\n'.join(body),
+                '## Requirements this section must meet', ''] + requirement_lines(inds)
+        versions.append(dict(id=uid('docver', code, 'v0.1'), document_id=did, label='v0.1 skeleton', body_md='\n'.join(body),
                              change_note='Generated from IAT v1.1', status='draft'))
-        for ind in inds:
-            doc_links.append(dict(document_id=did, indicator_id=ind['id']))
-    known = {d['code']: d for d in docs}
+
+    # 3. Drafted text (chapters, annexes, SOPs, forms).
+    known = {d['id']: d for d in docs}
     ind_ids = {i['id'] for i in indicators}
-    sort = len(docs)
     for code, manual, kind, title, fname, label, inds in LIBRARY_DRAFTS:
         body = (ROOT / 'reference' / 'moo' / fname).read_text(encoding='utf-8')
-        if code in known:
-            did = known[code]['id']
-        else:
+        did = uid('doc', code)
+        ch = chapter_of(code) or chapter_of(fname)
+        chap_legacy = f'MOO Ch.{ch}'
+        if did not in known:
             sort += 1
-            did = uid('doc', code)
-            docs.append(dict(id=did, manual=manual, kind=kind, code=code, title=title,
-                             summary=f'Draft from the {"Chapter 2" if fname.startswith("MOO_Ch2") else "Chapter 1 consolidated"} document ({label}). {len(inds)} IAT indicator(s) linked.',
-                             status='draft', sort=sort, current_version_id=None))
+            nc = new_code(code)
+            docs.append(dict(id=did, manual='MOO', kind=kind, code=nc, title=title, parent_id=uid('doc', chap_legacy),
+                             summary=f'Chapter {ch} draft ({label}). {len(inds)} IAT indicator(s) linked.',
+                             status='draft', sort=sort, current_version_id=None, area_no=CHAPTERS[chap_legacy][2],
+                             chapter_no=ch, aliases=[code] if nc != code else [], also_areas=[]))
+            known[did] = docs[-1]
             bad = [i for i in inds if i not in ind_ids]
             assert not bad, (code, bad)
             doc_links += [dict(document_id=did, indicator_id=i) for i in inds]
         versions.append(dict(id=uid('docver', code, label), document_id=did, label=label, body_md=body,
-                             change_note=f'Loaded from reference/moo/{fname} ({"Chapter 2 draft" if fname.startswith("MOO_Ch2") else "Chapter 1 consolidated draft v0.9"}, 31 Oct 2026)',
-                             status='draft'))
+                             change_note=f'Loaded from reference/moo/{fname} (Chapter {ch}, {label})', status='draft'))
+    for d in docs:
+        if d['kind'] == 'chapter' and d['status'] != 'superseded':
+            n = sum(1 for x in docs if x['parent_id'] == d['id'] and x['status'] != 'superseded')
+            d['summary'] = f'Area {d["area_no"]}. Drafted chapter with {n} annex(es), SOP(s) and form(s).'
+
+    # Links inside drafted text: (doc:<code or alias>) -> /library/doc/<id>
+    by_code = {}
+    for d in docs:
+        for c in [d['code']] + d['aliases']:
+            by_code.setdefault(c, d['id'])
+    for v in versions:
+        def link(m):
+            assert m.group(1) in by_code, ('unknown doc link', m.group(1))
+            return f'(/library/doc/{by_code[m.group(1)]})'
+        v['body_md'] = re.sub(r'\(doc:([^)]+)\)', link, v['body_md'])
+    doc_links = [l for l in doc_links if l['document_id'] not in superseded]
+    out['superseded_documents'] = superseded
     out['moo_documents'], out['moo_versions'], out['moo_document_indicators'] = docs, versions, doc_links
 
+    def doc_home(code):  # merged shells hand their protocols to the area outline
+        return uid('doc', f'Area {MERGED[code]}') if code in MERGED else uid('doc', code)
     tpls, steps = [], []
     for p in PROTOCOLS:
         tid = uid('protocol', p['code'])
         tpls.append(dict(id=tid, code=p['code'], title=p['title'], purpose=p['purpose'], trigger_text=p['trigger'],
-                         document_id=uid('doc', p['doc']), owner_role=p['owner_role'], category=p['category'],
+                         document_id=doc_home(p['doc']), owner_role=p['owner_role'], category=p['category'],
                          status='draft', template_rev=1))
         for seq, (instr, crit, note, due) in enumerate(p['steps'], 1):
             steps.append(dict(id=uid('pstep', p['code'], str(seq)), template_id=tid, seq=seq, instruction=instr,
@@ -578,6 +762,8 @@ def replace_links_by_indicator(links):
 
 def statements(o):
     st = []
+    st += upsert_chunks('manual_parts', o['manual_parts'], 'no')
+    st += upsert_chunks('manual_areas', o['manual_areas'], 'no')
     st += upsert_chunks('iat_parts', o['parts'], 'code')
     st += upsert_chunks('iat_domains', o['domains'], 'code')
     st += upsert_chunks('iat_indicators', o['indicators'], 'id')
@@ -592,9 +778,17 @@ def statements(o):
     st += upsert_chunks('offices', o['offices'], 'id', cast={'id': '::uuid'})
     st += upsert_chunks('indicator_lead_offices', o['indicator_lead_offices'], ['indicator_id', 'office_id'], cast={'office_id': '::uuid'})
     st += upsert_chunks('hazards', o['hazards'], 'code')
-    st += upsert_chunks('moo_documents', o['moo_documents'], 'id',
-                        cols=['id', 'manual', 'kind', 'code', 'title', 'summary', 'status', 'sort'], cast={'id': '::uuid'},
+    # Parents first: area outlines and chapters, then everything that points at them.
+    docs = sorted(o['moo_documents'], key=lambda d: d['parent_id'] is not None)
+    st += upsert_chunks('moo_documents', docs, 'id',
+                        cols=['id', 'manual', 'kind', 'code', 'title', 'parent_id', 'summary', 'status', 'sort',
+                              'area_no', 'chapter_no', 'aliases', 'also_areas'],
+                        cast={'id': '::uuid', 'parent_id': '::uuid', 'also_areas': '::smallint[]'},
                         keep=('status',))
+    # v1.6: the merged shells step aside (only while still unapproved), and their indicator links move to the areas.
+    ids = ','.join(lit(i) + '::uuid' for i in o['superseded_documents'])
+    st.append(('moo_documents', f"update public.moo_documents set status = 'superseded' where id in ({ids}) and status in ('draft','in_review');\n"
+                                f"delete from public.moo_document_indicators where document_id in ({ids});\n\n"))
     # Versions belong to the Library workflow once loaded (drafts get edited, reviewed, approved).
     st += upsert_chunks('moo_versions', o['moo_versions'], 'id', cast={'id': '::uuid', 'document_id': '::uuid'}, keep='*')
     st += upsert_chunks('moo_document_indicators', o['moo_document_indicators'], ['document_id', 'indicator_id'], cast={'document_id': '::uuid'})
@@ -606,14 +800,16 @@ def statements(o):
     return st
 
 
-CHECK_SQL = """-- Expected: 140 | 18 | 935 | 71 | 10 | 66 | 29
+CHECK_SQL = """-- Expected: 140 | 18 | 935 | 71 | 10 | 66 | 29 | 10 | 140
 select (select count(*) from public.iat_indicators)         as indicators,
        (select count(*) from public.master_requirements)    as requirements,
        (select count(*) from public.indicator_requirements) as indicator_links,
        (select count(*) from public.framework_crosswalk)    as crosswalk,
        (select count(*) from public.protocol_templates)     as protocols,
        (select count(*) from public.protocol_steps)         as protocol_steps,
-       (select count(*) from public.aa_action_templates)    as aa_actions;
+       (select count(*) from public.aa_action_templates)    as aa_actions,
+       (select count(*) from public.manual_areas)           as manual_areas,
+       (select count(*) from public.iat_indicators where functional_area is not null) as indicators_with_area;
 """
 
 HEADER = ('-- GENERATED by scripts/generate_seed.py from reference/*.xlsx — do not edit by hand.\n'
