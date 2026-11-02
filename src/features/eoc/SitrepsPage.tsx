@@ -29,7 +29,7 @@ export function SitrepsPage() {
   };
   return (
     <div className="page">
-      <PageHeader title="Situation reports" subtitle="Numbered when submitted. Approved SitReps are locked."
+      <PageHeader title="Situation Reports" subtitle="Numbered when submitted. Approved SitReps are locked."
         actions={canOperate(roles) && <Button tip="Start a new situation report draft for this operational period" icon={Plus} onClick={create}>New SitRep</Button>} />
       <Tabs items={EOC_TABS} />
       {rows.length === 0 ? <EmptyState title="No SitReps yet" body="Start one each operational period during an activation." /> : (
