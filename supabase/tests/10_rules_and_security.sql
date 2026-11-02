@@ -372,9 +372,13 @@ select tests.expect_eq('approved version becomes current',
   (select current_version_id::text from public.moo_documents where code = 'EOC Ch.2'), 'a0000000-0000-0000-0000-000000000001');
 select tests.expect_error('approved version is immutable',
   $$update public.moo_versions set body_md = 'edited', version = 3 where id = 'a0000000-0000-0000-0000-000000000001'$$, '42501');
+insert into public.moo_versions (id, document_id, label, body_md)
+values ('a0000000-0000-0000-0000-000000000002', (select id from public.moo_documents where code = 'EOC Ch.2'), 'v0.2b returned draft', '# EOC Ch.2 returned');
+select tests.expect_ok('Head returns a draft to the author',
+  $$update public.moo_versions set status = 'rejected', version = 1 where id = 'a0000000-0000-0000-0000-000000000002'$$);
 select tests.login('00000000-0000-0000-0000-000000000010');  -- viewer
-select tests.expect_rows('viewer sees approved text only',
-  $$select count(*) from public.moo_versions where document_id = (select id from public.moo_documents where code = 'EOC Ch.2')$$, 1);
+select tests.expect_rows('viewer reads approved text and drafts under review, not returned drafts (v1.6)',
+  $$select count(*) from public.moo_versions where document_id = (select id from public.moo_documents where code = 'EOC Ch.2')$$, 2);
 
 -- ================================================ Profiles ===================
 select tests.login('00000000-0000-0000-0000-00000000000f');
@@ -633,6 +637,26 @@ select tests.expect_error('requests are never deleted',
   $$delete from public.resource_requests where id = '50000000-0000-0000-0000-0000000000a2'$$, '42501');
 select tests.expect_eq('and the API role has no delete grant',
   has_table_privilege('authenticated', 'public.resource_requests', 'DELETE')::text, 'false');
+
+-- ---------------------------------------------------- one manual (v1.6) ----
+select tests.login('00000000-0000-0000-0000-000000000010');  -- viewer
+select tests.expect_rows('the viewer reads the five Parts', $$select count(*) from public.manual_parts$$, 5);
+select tests.expect_rows('and the ten functional areas', $$select count(*) from public.manual_areas$$, 10);
+select tests.expect_error('only an admin changes the manual structure',
+  $$insert into public.manual_parts (no, title, sort) values (6, 'Extra', 6)$$, '42501');
+select tests.expect_eq('the viewer can read draft chapters under review',
+  ((select count(*) from public.moo_versions v join public.moo_documents d on d.id = v.document_id where d.code = 'Chapter 1' and v.status = 'draft') > 0)::text, 'true');
+select tests.expect_rows('an old code resolves through aliases', $$select count(*) from public.moo_documents where 'EOC Ch.2' = any(aliases) and status <> 'superseded'$$, 1);
+select tests.expect_rows('merged shells hold no indicator links',
+  $$select count(*) from public.moo_document_indicators mdi join public.moo_documents d on d.id = mdi.document_id where d.status = 'superseded'$$, 0);
+select tests.expect_rows('every indicator has a functional area', $$select count(*) from public.iat_indicators where functional_area is null$$, 0);
+select tests.expect_rows('each area outline holds the gaps of its area',
+  $$select count(*) from public.iat_indicators i where not exists (select 1 from public.moo_document_indicators mdi join public.moo_documents d on d.id = mdi.document_id
+     where mdi.indicator_id = i.id and d.kind = 'area' and d.area_no = i.functional_area)$$, 0);
+select tests.expect_rows('traceability leaves merged sections out',
+  $$select count(*) from public.v_traceability t, jsonb_array_elements(t.documents) e where e->>'status' = 'superseded'$$, 0);
+select tests.expect_rows('a viewer cannot rename a manual section',
+  $$with u as (update public.moo_documents set title = 'x' where code = 'Area 4' returning 1) select count(*) from u$$, 0);
 
 reset role;
 select tests.expect_eq('audit trail recorded', ((select count(*) from public.audit_log) > 50)::text, 'true');
