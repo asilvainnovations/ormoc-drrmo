@@ -22,7 +22,7 @@ export const EXTERNAL_TOOLS: ExternalTool[] = [
   { id: 'zoomearth', name: 'Zoom Earth', by: 'Live satellite and weather map', url: `https://zoom.earth/maps/satellite-hd/#view=${ORMOC.lat},${ORMOC.lon},9z`, icon: Satellite,
     use: 'Near real-time satellite imagery, tropical cyclone tracks, rain and wind layers, centered on Ormoc.',
     when: 'Situational awareness for the duty officer and EOC. Official warnings still come from PAGASA and PHIVOLCS; act on their bulletins.' },
-  { id: 'ddrivem', name: 'DDRiVE-M', by: 'ASilva Innovations', url: 'https://asilvainnovations.github.io/ddrive-m/public/platform.html', icon: Layers,
+  { id: 'ddrivem', name: 'DDRiVE-M', by: 'ASilva Innovations', url: 'https://ddrive-m.asilvainnovations.com/', icon: Layers,
     use: 'Detect and direct, respond and recover, mitigate: the DRRM decision-support platform behind the ICS exercises.',
     when: 'Scenario planning and DRRM decision support alongside the Manual of Operations.' },
 ];
