@@ -1,8 +1,0 @@
-v1.8.1 delta (5 Nov 2026), on top of v1.8.0.
-
-Delete from the repo:
-  public/brand/App_Banner.png   (stops the production build: too large for the offline cache)
-  e2e/demo.spec.ts              (from 1.8.0, still in the repo)
-
-Apply 1.7.0 and 1.8.0 first if they are not uploaded yet.
-This DELETE.txt is a note for you: do not upload it to the repo.
