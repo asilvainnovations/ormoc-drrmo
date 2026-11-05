@@ -99,7 +99,7 @@ export interface Barangay { psgc: string; name: string; classification: string[]
 export type BarangayCondition = 'normal' | 'monitoring' | 'affected' | 'isolated' | 'evacuating';
 export interface BarangayReport {
   id: string; barangay_psgc: string; activation_id: string | null; reported_at: string; condition: BarangayCondition;
-  families_evacuated: number; persons_evacuated: number; remarks: string | null; channel: string | null; reported_by?: string | null; created_at: string;
+  families_evacuated: number | null; persons_evacuated: number | null; remarks: string | null; channel: string | null; reported_by?: string | null; created_at: string;
 }
 export type RequestStatus = 'requested' | 'approved' | 'mobilized' | 'delivered' | 'demobilized' | 'rejected';
 export interface ResourceRequest extends Versioned {
