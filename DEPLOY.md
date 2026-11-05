@@ -148,6 +148,7 @@ Then, in the dashboard:
   3. Run `supabase/seed/operational/04_vault_register.sql` again. It adds Vault entries for Chapter 1 v1.0 and Chapter 3 and leaves existing entries alone.
   4. Republish the app. Phones update their Library on the next open. Figures: `public/library/ch1/` (two flowcharts in SOPs GOV-04 and GOV-05), `public/library/chp2/` (unchanged) and `public/library/ch3/`.
 - **To 1.6.1** (5 November 2026): no database change. Upload the files and redeploy. Repairs the Tools page (the 4 November edit stopped the build) and keeps its new service list.
+- **To 1.6.2** (5 November 2026): run `supabase/migrations/20261105001300_barangay_report_counts.sql` once (safe to run again), then redeploy. A blank evacuation count is now stored as "not reported" instead of 0; an evacuating barangay needs both counts; persons cannot be fewer than families. The EOC board, the barangay list and "Fill from barangay reports" on a SitRep count only the current event (a past typhoon no longer adds to today's totals). Run the migration **before** redeploying: the new app sends blank counts as empty, which the old columns refuse.
 - **85 barangays:** if the seed was loaded before the 85-barangay correction, run parts `01_seed.sql` and `06_seed.sql` once more, but only if no manual version has been approved yet. Otherwise ask the developer for a one-off update of the three indicator texts (A3.7, A7.3, B3.2).
 
 ## 4. First administrator and the CDRRMO Head
