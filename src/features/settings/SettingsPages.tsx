@@ -6,11 +6,11 @@ import { RefreshCw, Upload } from 'lucide-react';
 import { db } from '@/lib/db';
 import { discardFailed, heldFile, retryHeldUpload, save } from '@/lib/store';
 import type { FailedItem } from '@/lib/db';
-import { syncNow, useSyncState } from '@/lib/sync';
+import { ATTENTION_AFTER_ATTEMPTS, syncNow, useSyncState } from '@/lib/sync';
 import { supabase } from '@/lib/supabase';
 import { ALL_ROLES, ROLE_LABEL, useAuth } from '@/lib/auth';
 import { env } from '@/lib/env';
-import { fmtDateTime, relative } from '@/lib/time';
+import { fmtDateTime, fmtTime, relative } from '@/lib/time';
 import { useOnline } from '@/lib/hooks';
 import { Badge, Button, Checkbox, Field, Input, List, ListRow, Loading, Notice, PageHeader, Section, Select, Textarea, TextLink } from '@/components/ui';
 import { SignOutBlock } from '@/features/auth/AccountGatePages';
@@ -94,8 +94,15 @@ export function SyncPage() {
   const data = useLiveQuery(async () => ({
     outbox: await db.outbox.orderBy('seq').toArray(), failed: await db.failed.reverse().toArray(), conflicts: await db.conflicts.reverse().toArray(),
   }), []);
-  const mine = data?.outbox.filter((o) => !o.userId || o.userId === userId) ?? [];
-  const held = data?.outbox.filter((o) => o.userId && o.userId !== userId) ?? [];
+  const isMine = (u?: string | null) => !u || u === userId;
+  const mine = data?.outbox.filter((o) => isMine(o.userId)) ?? [];
+  const held = data?.outbox.filter((o) => !isMine(o.userId)) ?? [];
+  // Another account's refusals and conflicts are theirs to resolve (1.7): "apply my change on top" must never act under someone else's name.
+  const failed = data?.failed.filter((f) => isMine(f.userId)) ?? [];
+  const conflicts = data?.conflicts.filter((c) => isMine(c.userId)) ?? [];
+  const heldOther = (data?.failed.length ?? 0) - failed.length + (data?.conflicts.length ?? 0) - conflicts.length;
+  const stuck = mine.filter((o) => o.lastError && o.nextAttemptAt);
+  const retry = async () => { await syncNow({ retry: true }); toast('Trying the waiting changes again'); };
   // Apply only the fields this person changed on top of the server's latest version.
   const retryConflict = async (id: number) => {
     const c = await db.conflicts.get(id);
@@ -115,22 +122,31 @@ export function SyncPage() {
     <div className="page">
       <PageHeader title="Sync and offline data" back="/settings"
         subtitle={`${online ? 'Online' : 'Offline'}. ${sync.lastSyncAt ? `Last synced ${relative(sync.lastSyncAt)}.` : 'Not synced yet.'}`}
-        actions={<Button tip="Send waiting changes and fetch the latest data now" icon={RefreshCw} busy={sync.status === 'syncing'} disabled={!online} onClick={() => syncNow({ forceReference: true })}>Sync now</Button>} />
+        actions={<Button tip="Send waiting changes and fetch the latest data now" icon={RefreshCw} busy={sync.status === 'syncing'} disabled={!online} onClick={() => syncNow({ forceReference: true, retry: true })}>Sync now</Button>} />
       {sync.status === 'error' && <Notice tone="bad" title="Sync stopped">{sync.message}</Notice>}
       {sync.status === 'signed_out' && <Notice tone="warn" title="Signed out">Sign in again to send your changes.</Notice>}
+      {stuck.length > 0 && (
+        <Notice tone="warn" title={`The server could not take ${stuck.length} change${stuck.length === 1 ? '' : 's'} yet`}
+          action={<Button tip="Try the waiting changes again now (needs a connection)" variant="secondary" disabled={!online} onClick={retry}>Retry now</Button>}>
+          They are kept on this device and retried on their own, at most every 30 minutes. Other changes keep sending. The server's reason is shown under each one.
+        </Notice>
+      )}
       <Section title={`Waiting to send (${mine.length})`}>
-        {mine.length ? <List>{mine.map((o) => <ListRow key={o.seq} title={o.label} meta={`${fmtDateTime(o.createdAt)}${o.attempts ? `, ${o.attempts} attempt(s)` : ''}`} />)}</List>
+        {mine.length ? <List>{mine.map((o) => <ListRow key={o.seq} title={o.label}
+          tone={o.attempts >= ATTENTION_AFTER_ATTEMPTS ? 'bad' : undefined}
+          meta={`${fmtDateTime(o.createdAt)}${o.attempts ? `, ${o.attempts} attempt${o.attempts === 1 ? '' : 's'}` : ''}${o.lastError ? `. Server: ${o.lastError}` : ''}${o.nextAttemptAt ? ` Next try ${fmtTime(o.nextAttemptAt)}.` : ''}`} />)}</List>
           : <p className="text-muted">Nothing waiting. Changes save on this device first and send automatically when there is a connection.</p>}
       </Section>
-      {held.length > 0 && (
-        <Section title={`From another account (${held.length})`}>
-          <Notice tone="warn">These changes were made on this device by someone who has since signed out. They are sent only when that person signs in here again. They are never sent under your account.</Notice>
+      {(held.length > 0 || heldOther > 0) && (
+        <Section title={`From another account (${held.length + heldOther})`}>
+          <Notice tone="warn">These were made on this device by someone who has since signed out. They are sent, or shown for review, only when that person signs in here again. They are never sent under your account, and signing out does not delete them.</Notice>
           <List>{held.map((o) => <ListRow key={o.seq} title={o.label} meta={fmtDateTime(o.createdAt)} />)}</List>
+          {heldOther > 0 && <p className="mt-2 text-sm text-muted">{heldOther} refused or conflicting change{heldOther === 1 ? '' : 's'} also wait for their account.</p>}
         </Section>
       )}
-      <Section title={`Refused by the server (${data?.failed.length ?? 0})`}>
-        {data?.failed.length ? (
-          <List>{data.failed.map((f) => <li key={f.id} className="py-3">
+      <Section title={`Refused by the server (${failed.length})`}>
+        {failed.length ? (
+          <List>{failed.map((f) => <li key={f.id} className="py-3">
             <p className="font-semibold">{f.label}</p><p className="text-sm text-bad">{f.error}</p>
             <p className="text-xs text-muted">{fmtDateTime(f.at)}. {f.fileId ? 'The file is kept on this device until it uploads or you discard it.' : 'The record shows the server copy again.'}</p>
             {f.rows?.length ? (
@@ -144,9 +160,9 @@ export function SyncPage() {
           </li>)}</List>
         ) : <p className="text-muted">None.</p>}
       </Section>
-      <Section title={`Edited by someone else first (${data?.conflicts.length ?? 0})`}>
-        {data?.conflicts.length ? (
-          <List>{data.conflicts.map((c) => <li key={c.id} className="py-3">
+      <Section title={`Edited by someone else first (${conflicts.length})`}>
+        {conflicts.length ? (
+          <List>{conflicts.map((c) => <li key={c.id} className="py-3">
             <p className="font-semibold">{c.label}</p>
             <p className="text-sm text-muted">{c.server ? 'Another person saved this record before your change arrived. The record now shows their version.' : 'This record is no longer on the server or not visible to your role.'}</p>
             <div className="mt-2 flex flex-wrap gap-2">
