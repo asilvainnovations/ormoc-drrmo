@@ -140,6 +140,6 @@ export function pscpMarkdown(p: Pscp): string {
     '### Vital records', '', row(['Record', 'Location', 'Backup', 'Custodian']), row(['---', '---', '---', '---']), ...p.records.map((r) => row([r.record, r.location, r.backup, r.custodian])), '',
     '## 6. Activation', '', ...p.phases.flatMap((ph) => [`### ${ph.name}`, '', `Trigger: ${ph.trigger}`, '', ...ph.steps.map((s) => `- ${s.text}`), '']),
     '## 7. Testing and maintenance', '', `Last test: ${p.testing.lastTest || 'none recorded'}. Next test: ${p.testing.nextTest || 'not scheduled'}. Exercise: ${p.testing.exerciseType}.`, '', p.testing.notes, '',
-    '_Basis: CSC MC No. 2, s. 2021; NDRRMC–OCD PSCP Guidebook; ISO 22301. Prepared with the Ormoc DRRM platform PSCP workbench._', '',
+    '_Basis: CSC MC No. 2, s. 2021; NDRRMC–OCD PSCP Guidebook; ISO 22301. Prepared with the MODE platform PSCP workbench._', '',
   ].join('\n');
 }
