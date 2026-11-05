@@ -9,15 +9,27 @@ const { IcsPage } = await import('./ics/IcsPage');
 const { ToolsHome, EXTERNAL_TOOLS } = await import('./ToolsHome');
 
 describe('Tools hub', () => {
-  it('links the four external services in new tabs, safely', () => {
-    render(<MemoryRouter><ToolsHome /></MemoryRouter>);
+  it('links every external service in a new tab, safely, over HTTPS', () => {
+    const { container } = render(<MemoryRouter><ToolsHome /></MemoryRouter>);
+    expect(EXTERNAL_TOOLS.length).toBeGreaterThan(0);
+    expect(new Set(EXTERNAL_TOOLS.map((t) => t.id)).size).toBe(EXTERNAL_TOOLS.length);
     for (const t of EXTERNAL_TOOLS) {
-      const a = screen.getByText(t.name).closest('a')!;
-      expect(a.getAttribute('href')).toBe(t.url);
+      expect(new URL(t.url).protocol).toBe('https:');
+      const a = container.querySelector<HTMLAnchorElement>(`a[href="${t.url}"]`)!;
+      expect(a).not.toBeNull();
+      expect(a.textContent).toContain(t.name);
       expect(a.getAttribute('target')).toBe('_blank');
       expect(a.getAttribute('rel')).toContain('noopener');
+      expect(a.getAttribute('rel')).toContain('noreferrer');
     }
-    expect(EXTERNAL_TOOLS.map((t) => new URL(t.url).host)).toEqual(['hazardhunter.georisk.gov.ph', 'geoanalytics.georisk.gov.ph', 'zoom.earth', 'asilvainnovations.github.io']);
+    // ADR-011: services are linked, never framed.
+    expect(container.querySelector('iframe')).toBeNull();
+  });
+
+  it('puts the official PAGASA and PHIVOLCS bulletins first', () => {
+    const official = EXTERNAL_TOOLS.filter((t) => t.category === 'official').map((t) => t.id);
+    expect(official).toEqual(['pagasa', 'phivolcs']);
+    expect(EXTERNAL_TOOLS.filter((t) => t.priority === 'official').every((t) => /\.gov\.ph$/.test(new URL(t.url).host))).toBe(true);
   });
 });
 
