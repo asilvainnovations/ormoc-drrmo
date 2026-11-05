@@ -1,4 +1,4 @@
-# System design: Ormoc DRRM Operations Platform
+# System design: MODE (Ormoc City DRRMO & EOC Manual of Operations Development Platform)
 
 Version 1.0 · 15 October 2026 · Prepared for the City Government of Ormoc (CDRRMO) by Alvin M. Silva
 
@@ -116,18 +116,27 @@ Conflicts and refusals are listed under Settings → Sync with the server's reas
 
 A refused evidence or Vault upload keeps the file on the device (1.5.1). The Sync screen holds it with **Retry upload**, **Save a copy** and **Discard** (asked twice). The device copy is deleted only after the server has the file, or when the person discards it. Held files count as unsent, so signing out warns first.
 
+**One stuck item does not hold up the queue (1.7.1).** No connection, an expired token or a rate limit stop sending at once. A server problem with one item (an error page, a timeout) puts that item on a backoff (15 s, doubling, at most 30 minutes) with the server's reason shown on the Sync screen. Items that depend on it wait with it: the same row, rows that refer to it, files under it. Everything else keeps sending, and the latest data is still fetched. Two server problems in one round stop the round. The status band shows "Server problem, N waiting"; **Retry now** and **Sync now** try again at once. Nothing is dropped.
+
+**Shared devices (1.7.1, ADR-014).** Signing out removes this account's data from the device. Another account's unsent changes, held files, refusals and conflicts stay, with the local rows they need, and are sent or shown only when that account signs in again. Each person sees and resolves only their own refusals and conflicts. Sign-out warns only about the signed-in account's own unsent items.
+
 ## 7. Security and privacy
 
 - Sign-in uses Supabase Auth. Anyone can create an account (email confirmed); it reads nothing until an administrator grants a role, which is the approval step (ADR-009). The administrator sees the verified email, and grants only to confirmed addresses.
-- RLS is enabled on every table. SECURITY DEFINER helpers use a fixed `search_path`. Grants are minimal: the logbook allows insert and select only.
+- RLS is enabled on every table. SECURITY DEFINER helpers use a fixed `search_path`. Grants are minimal: the logbook and barangay reports allow insert and select only.
 - Record locks:
   - Validated responses, approved SOP versions, approved SitReps, and closed protocol runs with their step snapshots cannot be edited.
   - AA action snapshots and lifted declarations accept report fields only.
   - Evidence cannot be moved to another response.
+  - Protocols (1.7, ADR-013): only the CDRRMO Head approves, retires or reopens one; approved text and steps are fixed. A draft runs as a drill, or live when the EOC Manager or Head starts it; each run records whether its protocol was a draft. The IRR checklist templates are the Head's and are never deleted.
+  - Library documents (1.7): only the Head marks a document approved or changes its approved text (the guard now runs as the caller; it had never fired).
+  - PDRAs (1.7): fixed once a declaration that cites them leaves draft; the time a PDRA was held is the server's unless the device time is within the last 24 hours.
+  - No deletes (1.7): DELETE is revoked on PDRAs, declarations, AA actions, funds and disbursements, the AA rules and checklist, protocol templates and runs, activations, incidents, SitReps, resource requests, the logbook, barangay reports, the Vault and the audit log. TRUNCATE is revoked everywhere. The logbook and barangay reports are insert-only.
   - Resource requests (1.5.1): the request itself (party, item, quantity, unit, priority, needed by) can be corrected only while it is still requested. After approval only fulfilment fields change: the assigned resource until mobilisation, the note until delivery. Rejected and demobilised requests are closed. Lifecycle times, the request time and the creator are the server's. Requests are never deleted.
 - Evidence files sit in a private bucket. They are opened from the device copy when there is one, otherwise through a five-minute signed URL.
 - Personal data is limited to staff identity and role. The platform holds no names of affected persons, evacuees, beneficiaries or informants, and screens remind users of this (ADR-002).
-- Signing out clears the local database on that device, also offline. Queued changes carry the account that made them and are sent only under that account; a different account signing in removes the previous account's synced copy first.
+- Signing out clears that account's data from the device, also offline; another account's unsent changes and held files stay for that account (ADR-014). Queued changes, refusals and conflicts carry the account that made them and are sent or resolved only under that account; a different account signing in removes the previous account's synced copy first.
+- Crash reports (1.8.0): a screen that crashes shows a recovery screen and sends the app version, screen path and error to `client_errors` in the City's own project (no third-party service, no CSP change). Email addresses and long numbers are blanked out first; no form contents are sent. Administrator only; kept 90 days.
 - Who-did-what columns (created by, prepared by, validated by, done by) are set by the server, never by the client. Legal clocks for declarations use server time (a device time is accepted only within the last 24 hours).
 
 ## 8. Traceability to the master requirements
@@ -145,7 +154,7 @@ The platform provides **the means** for each requirement. The Manual of Operatio
 | MR-07 | Situational awareness, SitReps, reporting | SitReps with numbering and approval; barangay status; logbook; realtime board |
 | MR-08 | Resources, logistics, mutual aid | Resource request flow (requested → approved → mobilised → delivered → demobilised). The `resources` inventory table exists; its screen is a later addition |
 | MR-09 | Responder safety and welfare, inclusion | IAT indicators and MOO sections; duty handover protocol. No roster or fatigue module (future) |
-| MR-10 | Digital continuity, alternate EOC, protected data | Offline-first PWA; City-owned hosting; backups; portable to self-hosting; audit log |
+| MR-10 | Digital continuity, alternate EOC, protected data | Offline-first PWA; City-owned hosting; backups of the database and the file buckets with a quarterly restore test (`docs/runbook-backup-restore.md`); crash screen and error reports; uptime check; portable to self-hosting; audit log |
 | MR-11 | Recovery, learning, AARs, reassessment | Annual IAT cycles compared over time; action plan tracking; lifting and report protocol |
 | MR-12 | Evidence standard | Evidence gate enforced in SQL; evidence kinds and strengths; Document Vault register for Document Review |
 | MR-13 | Scoring and priority engine | SQL views; TypeScript mirror with parity test (ADR-005) |
@@ -159,10 +168,10 @@ The platform provides **the means** for each requirement. The Manual of Operatio
 
 | Suite | What it proves | Command |
 |---|---|---|
-| SQL rules and security (211 checks) | Every rule and RLS policy, run as each role on Postgres 16 | `scripts/db_test.sh` |
-| Unit (131) | Scoring, AA rules, EOC event windows and barangay counts, ids, sync engine with a fake client, CSV import, citation parsing against every reference in the data; TS = SQL scoring parity | `npm test` |
+| SQL rules and security (250 checks) | Every rule and RLS policy, run as each role on Postgres 16 with Supabase's default grants | `scripts/db_test.sh` |
+| Unit (150) | Scoring, AA rules, EOC event windows and barangay counts, sync backoff and shared-device sign-out, ids, sync engine with a fake client, CSV import, citation parsing against every reference in the data; TS = SQL scoring parity | `npm test` |
 | Integration (8) | Real supabase-js → PostgREST 12 → Postgres: evidence gate, conflict, RLS refusal, offline protocol ids, logbook replay, AA checklist ids, viewer pull, vault sync and access, repeated edits, keyset paging past 1,000 rows, a pending account reads nothing | `npm run test:it` |
-| End-to-end (Playwright, phone and desktop) | Against real migrations and RLS through PostgREST: sign-up, email confirmation, waiting for approval, approval by an administrator, password reset, sign-out; main journeys; offline open and logbook save; dark mode contrast; vault journey; reference notes; tooltip on every control of 21 screens, hover, keyboard and long press | `npm run test:e2e` |
+| End-to-end (Playwright, phone and desktop) | Against real migrations and RLS through PostgREST: sign-in, wrong-password answers, sign-out; main journeys (sign-up, email confirmation and password reset are written but marked `fixme`: the local gateway has no sign-up or email stand-in); offline open and logbook save; dark mode contrast; vault journey; reference notes; tooltip on every control of 21 screens, hover, keyboard and long press | `npm run test:e2e` |
 | Accessibility (axe, WCAG 2.1 AA) | No serious or critical violations on every main screen | part of `npm run test:e2e` |
 
 The integration suite found two defects that the fake client could not show, and both are fixed. First, version conflicts used SQLSTATE 40001, which PostgREST retries forever. Second, append-only rows were sent with a `version` column that does not exist.
