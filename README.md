@@ -1,4 +1,6 @@
-n# Ormoc DRRM Operations Platform
+# MODE: Ormoc City DRRMO & EOC Manual of Operations Development Platform
+
+**MODE** stands for *Manual of Operations for the DRRMO and EOC*.
 
 A mobile-first, offline-capable web app (PWA) for the City Disaster Risk Reduction and Management Office (CDRRMO) and the Emergency Operations Center (EOC) of the City Government of Ormoc. It supports the single Manual of Operations for the CDRRMO and the EOC (five Parts, ten functional areas; ADR-012). The platform has five modules:
 
@@ -24,7 +26,7 @@ It works with no signal. Entries are saved on the device and sent when a connect
 
 Anyone can create an account with an email address and a password. The account sees nothing until a system administrator approves it by granting a role (Settings → Users and roles). Invited staff, sign-in links by email and password reset all work too. See [ADR-009](docs/adr/009-open-signup-and-live-data.md).
 
-Other City systems can offer **Sign in with Ormoc DRRM**: the platform is the consent screen for the project's OAuth 2.1 / OpenID Connect server (`/oauth/consent`). People see and withdraw the apps they allowed under Settings → Connected apps. Tokens issued to other apps are read-only in the database. See [ADR-010](docs/adr/010-oauth-provider-read-only-clients.md) and DEPLOY.md section 2a.
+Other City systems can offer **Sign in with MODE**: the platform is the consent screen for the project's OAuth 2.1 / OpenID Connect server (`/oauth/consent`). People see and withdraw the apps they allowed under Settings → Connected apps. Tokens issued to other apps are read-only in the database. See [ADR-010](docs/adr/010-oauth-provider-read-only-clients.md) and DEPLOY.md section 2a.
 
 ## Run it
 

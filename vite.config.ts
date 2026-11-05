@@ -2,7 +2,10 @@ import { defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
 import { fileURLToPath, URL } from 'node:url';
+import { readFileSync } from 'node:fs';
 import { checkSupabaseConfig } from './src/lib/envCheck';
+
+const APP_VERSION = (JSON.parse(readFileSync(new URL('./package.json', import.meta.url), 'utf8')) as { version: string }).version;
 
 export default defineConfig(({ command, mode }) => {
   // A production build must point at the City's Supabase project with a browser-safe key.
@@ -13,6 +16,7 @@ export default defineConfig(({ command, mode }) => {
     if (c.error) throw new Error(`Build stopped: ${c.error} Set it in the hosting environment variables (DEPLOY.md, section 6).`);
   }
   return {
+  define: { __APP_VERSION__: JSON.stringify(APP_VERSION) },
   resolve: { alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) } },
   plugins: [
     react(),
@@ -21,9 +25,10 @@ export default defineConfig(({ command, mode }) => {
       injectRegister: false,
       includeAssets: ['icons/*.svg', 'icons/*.png'],
       manifest: {
-        name: 'Ormoc City DRRM and Emergency Operations',
-        short_name: 'DRRM Ops',
-        description: 'CDRRMO and EOC operations, assessment and manuals for the City of Ormoc',
+        // Keep in step with src/lib/product.ts.
+        name: 'MODE: Ormoc City DRRMO & EOC Manual of Operations',
+        short_name: 'MODE',
+        description: 'Ormoc City DRRMO & EOC Manual of Operations Development Platform: assessment, manuals, protocols and EOC operations',
         lang: 'en-PH',
         start_url: '/',
         scope: '/',
@@ -46,6 +51,8 @@ export default defineConfig(({ command, mode }) => {
         // The original logo and banner files are kept for print and reuse, but are too large to
         // ship to every phone; the app uses the compressed copies in /brand.
         globIgnores: ['App_Banner.png', 'Ormoc_City_Logo.png', 'Ormoc_CDRRMO_Logo.png', 'brand/*.jpg',
+          // Full-size source images never ship to phones (a 3.4 MB copy here stopped the 5 Nov build).
+          'brand/*.png',
           // Latin is all the app needs; other script subsets still load on demand if ever used.
           '**/*-{cyrillic,cyrillic-ext,greek,greek-ext,vietnamese,devanagari,math,symbols,latin-ext}-*.woff2',
           'brand/*-512.webp', 'brand/*-64.webp',

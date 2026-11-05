@@ -56,9 +56,9 @@ Authentication → SMTP: **required** once sign-up is open. Set the City's mail 
 
 Authentication → Rate Limits: keep the defaults or lower them. Consider **Attack Protection → CAPTCHA** (hCaptcha or Turnstile) if the sign-up form attracts spam; tell the developer, because the app must then send the CAPTCHA token.
 
-### 2a. Sign in with Ormoc DRRM (OAuth 2.1 server), optional
+### 2a. Sign in with MODE (OAuth 2.1 server), optional
 
-Turn this on when another City system should sign people in with their Ormoc DRRM account. The design is in [ADR-010](docs/adr/010-oauth-provider-read-only-clients.md). Apps signed in this way can read what the person's role allows, and cannot change anything (migration 0010).
+Turn this on when another City system should sign people in with their MODE account. The design is in [ADR-010](docs/adr/010-oauth-provider-read-only-clients.md). Apps signed in this way can read what the person's role allows, and cannot change anything (migration 0010).
 
 1. **Signing keys first.** Project Settings → JWT Keys: create an asymmetric key (ECC P-256 or RSA), and make it the current key once it has been on standby for a while. This is needed for OpenID Connect ID tokens, and lets the app check sessions on the device. Legacy shared-secret keys still work, but nothing is checked on the device.
 2. Authentication → OAuth Server: **enable** the OAuth 2.1 server. Set **Authorization Path** to `/oauth/consent`. Leave **dynamic client registration off**.
@@ -149,6 +149,23 @@ Then, in the dashboard:
   4. Republish the app. Phones update their Library on the next open. Figures: `public/library/ch1/` (two flowcharts in SOPs GOV-04 and GOV-05), `public/library/chp2/` (unchanged) and `public/library/ch3/`.
 - **To 1.6.1** (5 November 2026): no database change. Upload the files and redeploy. Repairs the Tools page (the 4 November edit stopped the build) and keeps its new service list.
 - **To 1.6.2** (5 November 2026): run `supabase/migrations/20261105001300_barangay_report_counts.sql` once (safe to run again), then redeploy. A blank evacuation count is now stored as "not reported" instead of 0; an evacuating barangay needs both counts; persons cannot be fewer than families. The EOC board, the barangay list and "Fill from barangay reports" on a SitRep count only the current event (a past typhoon no longer adds to today's totals). Run the migration **before** redeploying: the new app sends blank counts as empty, which the old columns refuse.
+- **To 1.7.0** (5 November 2026), record integrity:
+  1. Run `supabase/migrations/20261105001400_record_integrity_2.sql` once (safe to run again). Only the CDRRMO Head now approves, retires or reopens protocols and Library documents; approved protocols are fixed; a draft protocol runs as a drill unless the EOC Manager or Head starts it; the IRR checklist is the Head's; the PDRA behind a requested declaration is fixed; nothing legal, financial or operational can be deleted (ADR-013).
+  2. Check the grants in the SQL editor: `select has_table_privilege('authenticated', 'public.declarations', 'DELETE');` must return **false**, and so must the same query with `'TRUNCATE'`.
+  3. Redeploy the app.
+- **To 1.7.1** (5 November 2026): no database change. Upload the files and redeploy. One stuck change no longer holds up the others (it retries on its own, with the server's reason on the Sync screen), and signing out on a shared phone no longer deletes another person's unsent entries or photos (ADR-014).
+- **To 1.8.0** (5 November 2026), crash screen, error reports, backups and CI:
+  1. Run `supabase/migrations/20261105001500_client_errors.sql` once (safe to run again). It adds the `client_errors` table that receives crash reports (administrator only; Settings → Error reports).
+  2. Delete `e2e/demo.spec.ts` (a pre-1.2 copy of the journeys that no longer matches the app and breaks the test order).
+  3. **Push with git**, or create the two files `.github/workflows/ci.yml` and `.github/workflows/uptime.yml` in the GitHub website editor (Add file → Create new file). The upload page drops the `.github/` folder.
+  4. In GitHub, Settings → Secrets and variables → Actions → **Variables**: add `APP_URL`, `SUPABASE_URL` and `SUPABASE_PUBLISHABLE_KEY` for the uptime check.
+  5. Run `supabase/admin/migration_status.sql` in the SQL editor: every migration should say `applied` and every grant `ok`. Keep the result.
+  6. Redeploy the app. Then follow section 11 for the first backup.
+- **To 1.8.1** (5 November 2026), the platform's name is **MODE** (*Manual of Operations for the DRRMO and EOC*; formally the Ormoc City DRRMO & EOC Manual of Operations Development Platform). No database change.
+  1. Delete `public/brand/App_Banner.png`. It duplicates `public/App_Banner.png` and is too large for the offline cache, which **stopped the production build**. The app uses the resized copies `public/brand/app-banner-{800,1600}.{webp,jpg}`, which this release regenerates from the new banner.
+  2. Upload the files and redeploy. Installed phones show the new name after the update prompt; on some phones the home-screen label changes only after reinstalling.
+  3. Supabase Dashboard → Authentication → Emails: paste the six templates in `supabase/email/` again (the header and footer now say MODE).
+  4. To change the banner later: replace `public/App_Banner.png` only, then run `python3 scripts/brand_assets.py` (or ask the developer) and upload the four `public/brand/app-banner-*` files.
 - **85 barangays:** if the seed was loaded before the 85-barangay correction, run parts `01_seed.sql` and `06_seed.sql` once more, but only if no manual version has been approved yet. Otherwise ask the developer for a one-off update of the three indicator texts (A3.7, A7.3, B3.2).
 
 ## 4. First administrator and the CDRRMO Head
@@ -259,6 +276,9 @@ location /assets/ { add_header Cache-Control "public, max-age=31536000, immutabl
 - [ ] Resource request: record one, approve it as the EOC Manager, then try to change its quantity. The app must refuse with "An approved request cannot be changed".
 - [ ] A new, unapproved account: confirm it sees only the waiting page, on a phone and a computer.
 - [ ] Password reset: request one and set a new password through the emailed link.
+- [ ] Backups: the first database dump and bucket copy are done, and one restore test into the training project has passed (section 11).
+- [ ] `supabase/admin/migration_status.sql` on production: all `applied`, all `ok`.
+- [ ] CI is green on `main`, and the uptime check has run at least once.
 - [ ] If section 2a is on: a test app can sign in through the consent screen, cannot write, and loses access when it is withdrawn.
 - [ ] Back up: confirm a daily backup exists (Database → Backups).
 - [ ] Record who holds admin, the database password and the service key, in the City's ICT asset register.
@@ -282,7 +302,7 @@ location /assets/ { add_header Cache-Control "public, max-age=31536000, immutabl
 
 ## 10. Updating the platform
 
-- **Schema changes.** Never edit a migration that has been applied. Add a new file `supabase/migrations/<timestamp>_<name>.sql`. Run `npm run test:db`, `npm run test:it` and `npm run test:e2e` locally (GitHub Actions runs them on every push), apply it to production with `psql`, then deploy the app.
+- **Schema changes.** Never edit a migration that has been applied. Add a new file `supabase/migrations/<timestamp>_<name>.sql`. Run `npm run test:db`, `npm run test:it` and `npm run test:e2e` locally (GitHub Actions runs them on every push: `.github/workflows/ci.yml`, since 1.8.0), apply it to production with `psql`, then deploy the app.
 - **Uploading through the GitHub website** drops file permissions and can drop hidden files (`.github/`, `.env.example`, `.gitignore`). Prefer `git push`; if you upload, check that those files are still there.
 - **Reference data (IAT or traceability workbooks).** Follow the steps in the README.
 - **National guidance pending under the RA 12287 IRR.** When the NDRRMC guidelines on triggers and the DBM–COA rules on AA fund use and liquidation are issued:
@@ -293,3 +313,13 @@ location /assets/ { add_header Cache-Control "public, max-age=31536000, immutabl
 ```sql
 update public.aa_rules set value = 0.10, source_ref = 'IRR Rule V Sec. __; JMC No. __' where key = 'aa_share_of_ldrrmf_70';
 ```
+
+## 11. Backup, restore and monitoring
+
+Supabase's daily backups cover the database only. The evidence and Vault **files are not in them**. Follow `docs/runbook-backup-restore.md`:
+
+- every week: check the daily backup, take a `pg_dump`, copy the `evidence` and `vault` buckets with rclone, delete error reports older than 90 days;
+- every quarter (and before go-live): restore into the **training** project and run the checklist;
+- before and after every update: run `supabase/admin/migration_status.sql` and keep the result;
+- monitoring: the uptime workflow (section 10), Settings → Error reports, and the Supabase usage alerts.
+
