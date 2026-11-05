@@ -17,7 +17,10 @@ export interface OutboxItem {
   label: string;                     // human description for the Sync screen
   createdAt: string;
   attempts: number;
+  /** The server's reason for the last failed attempt (shown on the Sync screen). */
   lastError?: string;
+  /** Do not try again before this time (backoff after a server problem, 1.7). */
+  nextAttemptAt?: string;
   /** Account that made the change. Only that account's session sends it (v1.2). */
   userId?: string | null;
   /** The row did not exist yet when this was queued: send as an insert, not an update. */
@@ -43,6 +46,8 @@ export interface FailedItem {
 export interface ConflictItem {
   id?: number; table: string; pk: string; local: Record<string, unknown>; server: Record<string, unknown> | null; at: string; label: string;
   base?: Record<string, unknown> | null;
+  /** Account whose change this was (1.7). Only that account resolves it. */
+  userId?: string | null;
 }
 export interface StoredFile { id: string; blob: Blob; name: string; type: string; createdAt: string }
 export interface Meta { key: string; value: unknown }

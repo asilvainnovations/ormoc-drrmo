@@ -3,7 +3,7 @@ import type { AuthError, Session } from '@supabase/supabase-js';
 import { AUTH_STORAGE_KEY, supabase } from './supabase';
 import { db, getMeta, setMeta } from './db';
 import { setActingUser } from './store';
-import { resetSyncedData } from './sync';
+import { clearDeviceAfterSignOut, resetSyncedData, unsentFor } from './sync';
 import { canVerifyLocally, fetchJwks, jwksIsStale, safeNext, type CachedJwks } from './oauth';
 import type { Profile, Role } from '@/types';
 
@@ -231,10 +231,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => { document.removeEventListener('visibilitychange', onVisible); clearInterval(t); };
   }, [status, refreshAccount]);
 
-  const unsent = useCallback(async () => {
-    const mine = (await db.outbox.toArray()).filter((o) => !o.userId || o.userId === identity?.userId).length;
-    return mine + (await db.failed.count()) + (await db.conflicts.count());
-  }, [identity]);
+  // Only this account's items: another account's held changes never block (or get wiped by) this sign-out (1.7).
+  const unsent = useCallback(async () => unsentFor(identity?.userId ?? null), [identity]);
 
   const value = useMemo<AuthState>(() => ({
     ready, status, offlineIdentity,
@@ -292,7 +290,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       await supabase.auth.signOut({ scope: 'local' }).catch(() => undefined);
       try { localStorage.removeItem(AUTH_STORAGE_KEY); localStorage.removeItem(`${AUTH_STORAGE_KEY}-code-verifier`); } catch { /* storage blocked */ }
       setActingUser(null);
-      await db.delete();          // leave nothing on a shared device
+      // Leave nothing of this account on a shared device; other accounts' unsent changes stay for them.
+      await clearDeviceAfterSignOut(identity?.userId ?? null);
       window.location.assign('/login');
     },
   }), [ready, status, offlineIdentity, identity, profile, roles, refreshAccount, unsent]);

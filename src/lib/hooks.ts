@@ -26,9 +26,15 @@ export const useEocStatus = () => useLiveQuery(async () => currentLevel(await db
 export const useActiveDeclaration = () =>
   useLiveQuery<Declaration | undefined>(() => db.declarations.where('status').anyOf('requested', 'recommended', 'declared').first(), []);
 
-export const usePending = () => useLiveQuery(async () => ({
-  outbox: await db.outbox.count(), failed: await db.failed.count(), conflicts: await db.conflicts.count(),
-}), [], { outbox: 0, failed: 0, conflicts: 0 });
+/** This account's waiting, refused and conflicting items (other accounts' held items are not counted, 1.7). */
+export const usePending = (userId: string | null = null) => useLiveQuery(async () => {
+  const mine = (u?: string | null) => !u || !userId || u === userId;
+  return {
+    outbox: await db.outbox.filter((o) => mine(o.userId)).count(),
+    failed: await db.failed.filter((f) => mine(f.userId)).count(),
+    conflicts: await db.conflicts.filter((c) => mine(c.userId)).count(),
+  };
+}, [userId], { outbox: 0, failed: 0, conflicts: 0 });
 
 export function useAaParams(): AaParams {
   return useLiveQuery(async () => {

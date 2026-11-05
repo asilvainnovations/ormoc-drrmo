@@ -7,13 +7,15 @@ vi.mock('@/lib/supabase', () => ({ supabase: null, AUTH_STORAGE_KEY: 'sb-fake-au
 
 import { db } from './db';
 import { discardFailed, queueUpload, retryHeldUpload, save, setActingUser } from './store';
-import { isTransient, push, pull, setSyncClient } from './sync';
+import { backoffMs, clearDeviceAfterSignOut, getPushProblem, isConnectionProblem, isTransient, push, pull, reasonOf, retryNow, setSyncClient, unsentFor } from './sync';
 
 type Row = Record<string, unknown>;
 class FakeServer {
   tables: Record<string, Map<string, Row>> = {};
   clock = 0;
   failNext: { code?: string; message: string; hint?: string; status?: number } | null = null;
+  /** Fail every write of this primary key (a row the server keeps choking on). */
+  failFor = new Map<string, { code?: string; message: string; status?: number }>();
   /** Apply the write but lose the reply (the device never hears back). */
   loseReply = false;
   offline = false;
@@ -27,6 +29,7 @@ class FakeServer {
     this.writes.push({ table, mode });
     if (this.offline) return { data: null, error: { message: 'TypeError: Failed to fetch' }, status: 0 };
     if (this.failNext) { const e = this.failNext; this.failNext = null; return { data: null, error: e, status: e.status ?? 400 }; }
+    const stuck = this.failFor.get(String(row[pkName])); if (stuck) return { data: null, error: stuck, status: stuck.status ?? 500 };
     if (this.loseReply) { this.loseReply = false; this.apply(table, row, mode, pkName); return { data: null, error: { message: 'TypeError: Failed to fetch' }, status: 0 }; }
     return this.apply(table, row, mode, pkName);
   }
@@ -209,10 +212,12 @@ describe('v1.2 hardening', () => {
     for (const failure of [{ message: '<html>502 Bad Gateway</html>', status: 502 }, { code: '57014', message: 'canceling statement due to statement timeout', status: 500 },
       { code: 'PGRST301', message: 'JWT expired', status: 401 }, { message: 'Too Many Requests', status: 429 }]) {
       server.failNext = failure;
+      await retryNow();                                  // skip the backoff (1.7) so each failure is tried
       expect(await push()).toBe(false);
       expect(await db.outbox.count()).toBe(1);
       expect(await db.logbook_entries.get('l1')).toBeDefined();
     }
+    await retryNow();
     expect(await push()).toBe(true);
     expect(server.t('logbook_entries').get('l1')).toBeDefined();
     expect(await db.failed.count()).toBe(0);
@@ -340,5 +345,113 @@ describe('evidence uploads (1.5.1)', () => {
     server.uploadError = { message: 'Forbidden', statusCode: 403 };
     await push('u');
     expect((await db.outbox.count()) + (await db.failed.count())).toBe(1);
+  });
+});
+
+describe('one stuck item (1.7, audit #8)', () => {
+  const log = (id: string, entry: string) => ({ _new: true, id, activation_id: null, occurred_at: '2026-11-05T00:00:00Z', category: 'general', entry, corrects_id: null, author: 'u' });
+
+  it('backs off with the server\'s reason and lets independent items through', async () => {
+    await save('logbook_entries', log('l1', 'stuck'), 'log 1');
+    await save('logbook_entries', log('l2', 'fine'), 'log 2');
+    server.failFor.set('l1', { message: '<html><body>502 Bad Gateway</body></html>', status: 502 });
+    expect(await push('u')).toBe(false);
+    expect(server.t('logbook_entries').has('l2')).toBe(true);           // not blocked
+    const [stuck] = await db.outbox.toArray();
+    expect(stuck!.pk).toBe('l1');
+    expect(stuck!.lastError).toBe('502 Bad Gateway');                   // readable, not HTML
+    expect(Date.parse(stuck!.nextAttemptAt!)).toBeGreaterThan(Date.now());
+    expect(getPushProblem()).toEqual({ stop: 'server', reason: '502 Bad Gateway' });
+    expect(await db.failed.count()).toBe(0);                            // still queued, never dropped
+  });
+
+  it('waits during the backoff, then sends on retry', async () => {
+    await save('logbook_entries', log('l1', 'stuck'), 'log 1');
+    server.failFor.set('l1', { code: '57014', message: 'canceling statement due to statement timeout', status: 500 });
+    await push('u');
+    const writes = server.writes.length;
+    await push('u');
+    expect(server.writes.length).toBe(writes);                          // not hammered during the backoff
+    server.failFor.clear();
+    await retryNow('u');
+    expect(await push('u')).toBe(true);
+    expect(await db.outbox.count()).toBe(0);
+  });
+
+  it('holds back items that depend on the stuck one, in order', async () => {
+    await save('assessment_cycles', { ...cycle, _new: true }, 'create cycle');
+    await save('responses', { _new: true, id: 'r1', cycle_id: 'c1', indicator_id: 'A1.1', score: null, version: 1 }, 'response in that cycle');
+    await save('logbook_entries', log('l9', 'independent'), 'log');
+    server.failFor.set('c1', { message: 'Bad Gateway', status: 502 });
+    expect(await push('u')).toBe(false);
+    expect(server.t('responses').has('r1')).toBe(false);                // waits for its cycle
+    expect(server.t('logbook_entries').has('l9')).toBe(true);
+    expect((await db.outbox.toArray()).map((o) => o.pk)).toEqual(['c1', 'r1']);
+  });
+
+  it('stops the round when the server itself is in trouble (two problems in a row)', async () => {
+    await save('logbook_entries', log('a', '1'), 'a');
+    await save('logbook_entries', log('b', '2'), 'b');
+    await save('logbook_entries', log('c', '3'), 'c');
+    for (const k of ['a', 'b', 'c']) server.failFor.set(k, { message: 'Service Unavailable', status: 503 });
+    await push('u');
+    expect(server.writes.filter((w) => w.table === 'logbook_entries').length).toBe(2);
+  });
+
+  it('stops at once when there is no connection, without a backoff', async () => {
+    await save('logbook_entries', log('l1', 'x'), 'log');
+    server.offline = true;
+    expect(await push('u')).toBe(false);
+    expect(getPushProblem()?.stop).toBe('connection');
+    expect((await db.outbox.toArray())[0]!.nextAttemptAt).toBeUndefined();
+  });
+
+  it('backs off 15 s, doubling, to at most 30 minutes', () => {
+    expect([1, 2, 3, 4].map(backoffMs)).toEqual([15_000, 30_000, 60_000, 120_000]);
+    expect(backoffMs(20)).toBe(30 * 60_000);
+  });
+
+  it('tells connection problems from server problems', () => {
+    expect(isConnectionProblem({ message: 'Failed to fetch' })).toBe(true);
+    expect(isConnectionProblem({ code: 'PGRST301', message: 'JWT expired' }, 401)).toBe(true);
+    expect(isConnectionProblem({ message: 'Too Many Requests' }, 429)).toBe(true);
+    expect(isConnectionProblem({ message: 'Bad Gateway' }, 502)).toBe(false);
+    expect(isConnectionProblem({ code: '57014', message: 'statement timeout' }, 500)).toBe(false);
+    expect(reasonOf({ message: '<html><h1>504 Gateway Time-out</h1></html>' }, 504)).toBe('504 Gateway Time-out');
+  });
+});
+
+describe('shared devices (1.7, audit #7)', () => {
+  const photo = () => new File([new Uint8Array([1, 2, 3])], 'field-photo.jpg', { type: 'image/jpeg' });
+  it('signing out keeps another account\'s unsent changes, files and conflicts', async () => {
+    // A queues a logbook entry and a photo offline, and has a conflict; then B signs in and out.
+    setActingUser('A');
+    await save('logbook_entries', { _new: true, id: 'la', activation_id: null, occurred_at: '2026-11-05T00:00:00Z', category: 'general', entry: 'A, offline', corrects_id: null, author: 'A' }, 'A log');
+    await queueUpload(photo(), 'c1/e9/a.jpg', 'fa');
+    await db.conflicts.add({ table: 'assessment_cycles', pk: 'cA', local: {}, server: null, at: 'x', label: 'A conflict', userId: 'A' });
+    setActingUser('B');
+    await save('logbook_entries', { _new: true, id: 'lb', activation_id: null, occurred_at: '2026-11-05T00:00:00Z', category: 'general', entry: 'B', corrects_id: null, author: 'B' }, 'B log');
+    expect(await unsentFor('B')).toBe(1);                                // B is warned about B's only
+    expect(await clearDeviceAfterSignOut('B')).toBe('kept_for_others');
+    expect((await db.outbox.toArray()).map((o) => o.label).sort()).toEqual(['A log', 'Upload field-photo.jpg']);
+    expect(await db.files.get('fa')).toBeDefined();                     // A's photo survives
+    expect(await db.logbook_entries.get('la')).toBeDefined();           // the row A's change needs
+    expect(await db.logbook_entries.get('lb')).toBeUndefined();         // B's data is gone
+    expect(await db.conflicts.count()).toBe(1);
+    expect(await unsentFor('A')).toBe(3);
+  });
+
+  it('with nothing held for others, signing out deletes the whole device database', async () => {
+    await save('logbook_entries', { _new: true, id: 'l1', activation_id: null, occurred_at: '2026-11-05T00:00:00Z', category: 'general', entry: 'x', corrects_id: null, author: 'u' }, 'log');
+    expect(await clearDeviceAfterSignOut('u')).toBe('deleted');
+    await db.open();
+    expect(await db.outbox.count()).toBe(0);
+  });
+
+  it('tags refusals and conflicts with the account that made the change', async () => {
+    await save('assessment_cycles', { ...cycle, _new: true }, 'create');
+    server.failNext = { code: '42501', message: 'Only the CDRRMO Head', status: 403 };
+    await push('u');
+    expect((await db.failed.toArray())[0]!.userId).toBe('u');
   });
 });
