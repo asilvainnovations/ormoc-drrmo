@@ -5,6 +5,7 @@ import { CONSENT_PATH, safeNext } from '@/lib/oauth';
 import { Button, Checkbox, Field, Input, Notice } from '@/components/ui';
 import { tip } from '@/components/Tooltip';
 import { AuthLayout, formCard } from './AuthLayout';
+import { PRODUCT } from '@/lib/product';
 
 type Mode = 'signin' | 'signup' | 'forgot';
 
@@ -26,12 +27,12 @@ export function LoginPage() {
   if (ready && userId) return <Navigate to={from} replace />;
 
   return (
-    <AuthLayout title="Ormoc City DRRM and Emergency Operations"
-      intro="For CDRRMO, EOC and partner office staff of the City of Ormoc. Any email address can be used, including a personal one.">
+    <AuthLayout title={PRODUCT.short}
+      intro={<><span className="block font-semibold text-ink">{PRODUCT.full}</span><span className="mt-2 block">For CDRRMO, EOC and partner office staff of the City of Ormoc. Any email address can be used, including a personal one.</span></>}>
       {forApp && (
         <div className="mt-6">
           <Notice tone="info" title="Another app is asking to use your account">
-            Sign in to Ormoc DRRM first. You will then see which app is asking and what it wants, and you can allow or refuse it.
+            Sign in to {PRODUCT.short} first. You will then see which app is asking and what it wants, and you can allow or refuse it.
           </Notice>
         </div>
       )}

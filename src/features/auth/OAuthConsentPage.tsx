@@ -8,6 +8,7 @@ import { consentReturnPath, describeScopes, hostOf, isSafeRedirect } from '@/lib
 import { Button, Loading, Notice } from '@/components/ui';
 import { AuthLayout, formCard } from './AuthLayout';
 import { SignOutBlock } from './AccountGatePages';
+import { PRODUCT } from '@/lib/product';
 
 type View =
   | { kind: 'loading' }
@@ -16,7 +17,7 @@ type View =
   | { kind: 'error'; message: string };
 
 /**
- * "Sign in with Ormoc DRRM" consent screen (OAuth 2.1 server, Authorization Path).
+ * "Sign in with MODE" consent screen (OAuth 2.1 server, Authorization Path).
  * Another City system sends the person to Supabase Auth's /oauth/authorize; Supabase checks
  * the request and sends them here with ?authorization_id=…. The person signs in if needed,
  * sees which app is asking and what it wants, and allows or refuses. Supabase then issues the
@@ -54,7 +55,7 @@ export function OAuthConsentPage() {
 
   if (!ready) return <Loading />;
   if (!authorizationId) {
-    return <Shell title="Nothing to approve"><Notice tone="warn">This page opens when another app asks to use your Ormoc DRRM account. Start again from that app.</Notice></Shell>;
+    return <Shell title="Nothing to approve"><Notice tone="warn">This page opens when another app asks to use your {PRODUCT.short} account. Start again from that app.</Notice></Shell>;
   }
   if (status === 'signed_out') {
     // Sign in first, then come back to this exact request.
@@ -93,7 +94,7 @@ export function OAuthConsentPage() {
     return (
       <Shell title="This request did not work">
         <Notice tone="bad">{view.message}</Notice>
-        <Link to="/" className="inline-flex min-h-tap items-center font-semibold underline">Go to Ormoc DRRM</Link>
+        <Link to="/" className="inline-flex min-h-tap items-center font-semibold underline">Go to {PRODUCT.short}</Link>
       </Shell>
     );
   }
@@ -105,7 +106,7 @@ export function OAuthConsentPage() {
   const scopes = describeScopes(d.scope);
   return (
     <AuthLayout title={`Allow ${appName}?`}
-      intro={<>{appName}{site ? <> (<span className="font-data">{site}</span>)</> : null} wants to use your Ormoc DRRM account, <strong className="text-ink">{d.user?.email ?? email}</strong>.</>}>
+      intro={<>{appName}{site ? <> (<span className="font-data">{site}</span>)</> : null} wants to use your {PRODUCT.short} account, <strong className="text-ink">{d.user?.email ?? email}</strong>.</>}>
       <div className={formCard}>
         <div>
           <h2 className="text-lg font-bold">It will be able to</h2>
@@ -114,7 +115,7 @@ export function OAuthConsentPage() {
           </ul>
         </div>
         <Notice tone="info" title="What it cannot do">
-          Apps you allow can read the City records your role can read. They cannot add, change or delete anything in Ormoc DRRM. You can withdraw access at any time in Settings, then Connected apps.
+          Apps you allow can read the City records your role can read. They cannot add, change or delete anything in {PRODUCT.short}. You can withdraw access at any time in Settings, then Connected apps.
         </Notice>
         {returnHost && <p className="text-sm text-muted">After you choose, you go back to <span className="font-data text-ink">{returnHost}</span>.</p>}
         <div className="grid grid-cols-2 gap-3">

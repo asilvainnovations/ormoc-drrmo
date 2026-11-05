@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 import { BrandLockup } from '@/components/Brand';
 
 /** The City banner beside (desktop) or above (phone) the account forms. */
-export function AuthLayout({ title, intro, children }: { title: string; intro?: ReactNode; children: ReactNode }) {
+export function AuthLayout({ title, intro, children }: { title: ReactNode; intro?: ReactNode; children: ReactNode }) {
   return (
     <div className="min-h-dvh bg-paper lg:grid lg:grid-cols-[minmax(0,1.35fr)_minmax(24rem,1fr)]">
       {/* The City banner. Navy behind it matches the artwork's edges when it is letterboxed. */}
@@ -11,8 +11,8 @@ export function AuthLayout({ title, intro, children }: { title: string; intro?: 
         <picture className="relative block w-full">
           <source type="image/webp" srcSet="/brand/app-banner-800.webp 800w, /brand/app-banner-1600.webp 1600w" sizes="(min-width: 1024px) 58vw, 100vw" />
           <img src="/brand/app-banner-800.jpg" srcSet="/brand/app-banner-800.jpg 800w, /brand/app-banner-1600.jpg 1600w" sizes="(min-width: 1024px) 58vw, 100vw"
-            alt="DRRM and Emergency Operations Platform: prepare before, respond together, recover stronger, build safer communities"
-            width={1600} height={916} className="block h-auto w-full lg:max-h-dvh lg:object-contain" fetchPriority="high" />
+            alt="City DRRMO and EOC Manual of Operations Development Platform, with the seals of the City of Ormoc and the CDRRMO: prepare before, respond together, recover stronger, build safer communities"
+            width={1600} height={893} className="block h-auto w-full lg:max-h-dvh lg:object-contain" fetchPriority="high" />
         </picture>
         <div className="h-1.5 w-full bg-accent-bright lg:absolute lg:inset-y-0 lg:right-0 lg:h-auto lg:w-1.5" aria-hidden />
       </div>
