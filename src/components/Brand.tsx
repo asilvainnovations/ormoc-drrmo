@@ -2,6 +2,7 @@
 // are cut from the official artwork with transparent corners (see scripts/brand_assets.py).
 import clsx from 'clsx';
 import { tip } from './Tooltip';
+import { PRODUCT } from '@/lib/product';
 
 type SealKind = 'city' | 'cdrrmo';
 const SEAL: Record<SealKind, { file: string; alt: string; tip: string }> = {
@@ -31,14 +32,16 @@ export function Seals({ size = 40, className }: { size?: number; className?: str
   );
 }
 
-/** Seals with the office name: rail header, sign-in, About. */
-export function BrandLockup({ size = 40, stacked = false }: { size?: number; stacked?: boolean }) {
+/** Seals with the office name: rail header, sign-in, About. `product` adds the platform's name (the rail). */
+export function BrandLockup({ size = 40, stacked = false, product = false }: { size?: number; stacked?: boolean; product?: boolean }) {
   return (
     <div className={clsx('flex', stacked ? 'flex-col items-start gap-3' : 'items-center gap-3')}>
       <Seals size={size} />
       <div className="min-w-0">
         <p className="font-display text-base font-bold leading-5">City of Ormoc</p>
         <p className="font-data text-sm leading-5 text-muted">CDRRMO and Emergency Operations Center</p>
+        {product && <p className="mt-2 font-display text-lg font-extrabold leading-6" title={PRODUCT.full}>{PRODUCT.short}
+          <span className="block font-data text-xs font-normal leading-4 text-muted">{PRODUCT.expansion}</span></p>}
       </div>
     </div>
   );

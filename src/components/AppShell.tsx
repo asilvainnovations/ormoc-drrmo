@@ -1,4 +1,5 @@
 import { NavLink, Link, Outlet } from 'react-router-dom';
+import { ScreenErrorBoundary } from '@/components/ErrorBoundary';
 import clsx from 'clsx';
 import { BookOpen, ClipboardCheck, FolderLock, House, ListChecks, RadioTower, Settings, CloudOff, RefreshCw, AlertTriangle, Check, Wrench } from 'lucide-react';
 import { LEVEL_INFO } from '@/domain/eoc';
@@ -79,7 +80,7 @@ export function AppShell() {
       {/* Desktop rail */}
       <nav aria-label="Main" className="fixed inset-y-0 left-0 z-40 hidden w-60 flex-col border-r border-line bg-surface lg:flex print:!hidden">
         <div className="border-b border-line px-4 pb-4 pt-5">
-          <BrandLockup size={44} stacked />
+          <BrandLockup size={44} stacked product />
         </div>
         <ul className="flex-1 space-y-1 px-3 pt-3">
           {nav.map(({ to, label, icon: Icon, end, tip: t }) => (
@@ -100,7 +101,7 @@ export function AppShell() {
       </nav>
 
       <StatusBand />
-      <main id="main" tabIndex={-1} className="outline-none"><Outlet /></main>
+      <main id="main" tabIndex={-1} className="outline-none"><ScreenErrorBoundary><Outlet /></ScreenErrorBoundary></main>
 
       {/* Phone tab bar: thumb reach */}
       <nav aria-label="Main" className="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-surface pb-safe-b lg:hidden print:hidden">
