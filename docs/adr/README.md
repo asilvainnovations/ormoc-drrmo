@@ -16,3 +16,5 @@ Each record states a decision, why it was made, and what it costs. Change a deci
 | [010](010-oauth-provider-read-only-clients.md) | "Sign in with Ormoc DRRM" (OAuth 2.1 / OIDC provider); consent screen in the app; other apps read-only; JWKS checks | Accepted |
 | [011](011-readiness-tools.md) | ICS simulator, PSCP workbench and Gawad KALASAG readiness as app screens; hazard services linked, not embedded | Accepted |
 | [012](012-single-manual.md) | One Manual of Operations: five Parts, ten functional areas; old chapter codes kept as aliases | Accepted |
+| [013](013-record-integrity-guards.md) | Approval authority, draft protocols and deletes enforced in the database; guards that test the caller run as the caller | Accepted (amends 004) |
+| [014](014-shared-device-sign-out.md) | Sign-out keeps other accounts' unsent changes; one stuck item backs off alone | Accepted (amends 003 and 009) |
