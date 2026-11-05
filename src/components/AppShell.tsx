@@ -27,7 +27,8 @@ export function StatusBand() {
   const { level, activation } = useEocStatus();
   const decl = useActiveDeclaration();
   const sync = useSyncState();
-  const pending = usePending();
+  const { userId } = useAuth();
+  const pending = usePending(userId);
   const now = useNow();
   const info = LEVEL_INFO[level];
   const tone = level === 'white' ? 'bg-lvl-white text-lvl-white-ink' : level === 'blue' ? 'bg-lvl-blue text-on-level' : 'bg-lvl-red text-on-level';
@@ -35,6 +36,8 @@ export function StatusBand() {
   // Full text on wider screens; a short form on phones so nothing is truncated.
   let syncText: string; let syncShort: string; let SyncIcon = Check;
   if (sync.status === 'offline') { syncText = pending.outbox ? `Offline, ${pending.outbox} waiting` : 'Offline'; syncShort = pending.outbox ? `Offline, ${pending.outbox}` : 'Offline'; SyncIcon = CloudOff; }
+  // Online, but the server could not take some items yet; they retry on their own (1.7).
+  else if (sync.status === 'retrying' && pending.outbox) { syncText = `Server problem, ${pending.outbox} waiting`; syncShort = `Retrying ${pending.outbox}`; SyncIcon = AlertTriangle; }
   else if (sync.status === 'syncing') { syncText = 'Syncing'; syncShort = 'Syncing'; SyncIcon = RefreshCw; }
   else if (pending.failed || pending.conflicts) { syncText = `${pending.failed + pending.conflicts} need attention`; syncShort = `${pending.failed + pending.conflicts} to check`; SyncIcon = AlertTriangle; }
   else if (pending.outbox) { syncText = `${pending.outbox} waiting`; syncShort = `${pending.outbox} waiting`; SyncIcon = RefreshCw; }
