@@ -16,6 +16,7 @@ import { Badge, Button, Checkbox, Field, Input, List, ListRow, Loading, Notice, 
 import { SignOutBlock } from '@/features/auth/AccountGatePages';
 import { useToast } from '@/components/Toast';
 import type { Barangay, Role } from '@/types';
+import { PRODUCT } from '@/lib/product';
 
 export function SettingsPage() {
   const { profile, email, roles, has } = useAuth();
@@ -34,6 +35,7 @@ export function SettingsPage() {
           <ListRow tip="See what is waiting to send and anything the server refused" to="/settings/sync" title="Sync and offline data" meta="What is waiting to send, and anything the server refused" />
           {has('admin') && <ListRow tip="Approve new accounts, grant or remove roles, deactivate people" to="/settings/users" title="Users and roles" meta="Approve new accounts and grant roles" />}
           {has('admin') && <ListRow tip="Load or update the barangay list from the PSA PSGC file" to="/settings/barangays" title="Barangay list" meta="Import the barangays with their PSGC codes" />}
+          {has('admin') && <ListRow tip="See crash and error reports sent by the app (needs a connection)" to="/settings/errors" title="Error reports" meta="Screens that crashed, with the app version and error" />}
           <ListRow tip="Version, data privacy and where the data is held" to="/settings/about" title="About and data privacy" />
         </List>
       </Section>
@@ -332,7 +334,7 @@ export function AboutPage() {
     <div className="page">
       <PageHeader title="About and data privacy" back="/settings" />
       <div className="max-w-prose space-y-4">
-        <p>Ormoc DRRM Operations, version {env.appVersion}. Built for the City Disaster Risk Reduction and Management Office and the Emergency Operations Center of the City of Ormoc as part of the Manual of Operations consultancy.</p>
+        <p><strong>{PRODUCT.short}</strong> ({PRODUCT.expansion}), version {env.appVersion}: the {PRODUCT.full}. Built for the City Disaster Risk Reduction and Management Office and the Emergency Operations Center of the City of Ormoc as part of the Manual of Operations consultancy.</p>
         <p>It carries the Institutional Assessment Tool v1.1, the CDRRMO Manual of Operations and EOC Manual, CDRRMO protocols, EOC operations and the anticipatory action workflow under RA 12287 and its IRR.</p>
         <h2 className="text-lg font-bold">Data privacy</h2>
         <p>The City Government of Ormoc controls the data (RA 10173). The platform stores staff names, positions and offices, operational records and aggregate counts. It does not store the names of affected persons, evacuees, beneficiaries or informants. Evidence files are kept in a private store and opened only through short-lived links.</p>

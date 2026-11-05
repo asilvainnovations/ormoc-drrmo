@@ -7,8 +7,9 @@ import { fmtDateTime } from '@/lib/time';
 import { CONSENT_PATH, describeScopes, hostOf, oauthEndpoints } from '@/lib/oauth';
 import { useToast } from '@/components/Toast';
 import { Button, List, Loading, Notice, PageHeader, Section } from '@/components/ui';
+import { PRODUCT } from '@/lib/product';
 
-/** Apps this account has allowed through "Sign in with Ormoc DRRM", with a way to withdraw each. */
+/** Apps this account has allowed through "Sign in with MODE", with a way to withdraw each. */
 export function ConnectedAppsPage() {
   const { has } = useAuth();
   const online = useOnline();
@@ -36,7 +37,7 @@ export function ConnectedAppsPage() {
 
   return (
     <div className="page">
-      <PageHeader title="Connected apps" back="/settings" subtitle="Other City systems you have allowed to sign you in with your Ormoc DRRM account." />
+      <PageHeader title="Connected apps" back="/settings" subtitle={`Other City systems you have allowed to sign you in with your ${PRODUCT.short} account.`} />
       <Section>
         {!online ? <Notice tone="warn">This needs a connection.</Notice>
           : grants === null ? <Loading />
@@ -62,7 +63,7 @@ export function ConnectedAppsPage() {
   );
 }
 
-/** For the system administrator: what to give a City system that wants "Sign in with Ormoc DRRM". */
+/** For the system administrator: what to give a City system that wants "Sign in with MODE". */
 function OAuthServerDetails() {
   const e = oauthEndpoints();
   const rows: [string, string][] = [
