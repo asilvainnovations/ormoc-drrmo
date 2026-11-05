@@ -6,12 +6,12 @@ import { Send } from 'lucide-react';
 import { db } from '@/lib/db';
 import { useAuth } from '@/lib/auth';
 import { useEocStatus, useOnline } from '@/lib/hooks';
-import { canChangeLevel, canOperate, LEVEL_INFO } from '@/domain/eoc';
+import { canChangeLevel, canOperate, currentReportWindow, evacuationTotals, latestPerBarangay, LEVEL_INFO } from '@/domain/eoc';
 import { fmtDateTime, fmtTime, relative } from '@/lib/time';
 import { Badge, Button, ChoiceGroup, Field, Input, List, ListRow, Notice, PageHeader, Section, Select, Tabs, Textarea, TextLink } from '@/components/ui';
 import { Sheet } from '@/components/Sheet';
 import { useToast } from '@/components/Toast';
-import type { BarangayReport, EocLevel } from '@/types';
+import type { EocLevel } from '@/types';
 import { addLog, setEocLevel } from './actions';
 import { CONDITION, CONDITION_TONE, EOC_TABS, LOG_CATEGORY, PRIORITY, REQUEST_STATUS, SITREP_STATUS } from './labels';
 
@@ -23,15 +23,16 @@ export function BoardPage() {
   const [open, setOpen] = useState(false);
   const [entry, setEntry] = useState('');
   const data = useLiveQuery(async () => {
-    const reports = await db.barangay_reports.orderBy('reported_at').reverse().toArray();
-    const latest = new Map<string, BarangayReport>();
-    for (const r of reports) if (!latest.has(r.barangay_psgc)) latest.set(r.barangay_psgc, r);
+    // Only the current event (or the last 24 hours at White level) counts (#16).
+    const window = currentReportWindow(await db.eoc_activations.toArray());
+    const latest = latestPerBarangay(await db.barangay_reports.toArray(), window);
     const brgy = new Map((await db.barangays.toArray()).map((b) => [b.psgc, b]));
     const open = (await db.resource_requests.where('status').anyOf('requested', 'approved', 'mobilized').toArray())
       .sort((a, b) => (a.priority === 'life_safety' ? -1 : 0) - (b.priority === 'life_safety' ? -1 : 0));
     return {
       log: (await db.logbook_entries.orderBy('occurred_at').reverse().limit(8).toArray()),
-      latest: Array.from(latest.values()).map((r) => ({ ...r, name: brgy.get(r.barangay_psgc)?.name ?? r.barangay_psgc })),
+      latest: latest.map((r) => ({ ...r, name: brgy.get(r.barangay_psgc)?.name ?? r.barangay_psgc })),
+      window,
       barangayCount: brgy.size,
       open,
       sitrep: (await db.sitreps.orderBy('period_end').reverse().first()),
@@ -40,7 +41,7 @@ export function BoardPage() {
   const operator = canOperate(roles);
   const tone = level === 'white' ? 'bg-lvl-white text-lvl-white-ink' : level === 'blue' ? 'bg-lvl-blue text-on-level' : 'bg-lvl-red text-on-level';
   const affected = data?.latest.filter((r) => r.condition !== 'normal') ?? [];
-  const evac = data?.latest.reduce((s, r) => ({ fam: s.fam + r.families_evacuated, per: s.per + r.persons_evacuated }), { fam: 0, per: 0 });
+  const evac = evacuationTotals(data?.latest ?? []);
 
   const log = async () => {
     if (!entry.trim()) return;
@@ -85,7 +86,10 @@ export function BoardPage() {
             <Notice tone="info">No barangay list loaded. An administrator imports Ormoc’s 85 barangays with their PSGC codes in Settings.</Notice>
           ) : (
             <>
-              <p className="mb-2 text-muted">{affected.length} reporting a condition. Evacuated: {evac?.fam ?? 0} families, {evac?.per ?? 0} persons.</p>
+              <p className="mb-2 text-muted">
+                {data?.window.kind === 'event' ? 'This activation' : 'Last 24 hours'}: {affected.length} reporting a condition. Evacuated: {evac.families} families, {evac.persons} persons
+                {evac.notReported > 0 ? ` (counts not reported by ${evac.notReported} barangay${evac.notReported > 1 ? 's' : ''})` : ''}.
+              </p>
               <List>{affected.slice(0, 8).map((r) => (
                 <ListRow key={r.id} title={r.name} meta={`${relative(r.reported_at)}${r.remarks ? `, ${r.remarks}` : ''}`}
                   trailing={<Badge tone={CONDITION_TONE[r.condition]}>{CONDITION[r.condition]}</Badge>} />))}

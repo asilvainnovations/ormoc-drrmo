@@ -6,11 +6,11 @@ import { db } from '@/lib/db';
 import { save } from '@/lib/store';
 import { uuid } from '@/lib/ids';
 import { useAuth } from '@/lib/auth';
-import { canChangeLevel, canOperate, currentLevel } from '@/domain/eoc';
+import { canChangeLevel, canOperate, currentLevel, evacuationTotals, latestPerBarangay, sitrepReportWindow } from '@/domain/eoc';
 import { fmtDateTime, fromLocalInput, toLocalInput } from '@/lib/time';
 import { Badge, Button, EmptyState, Field, Input, List, ListRow, Loading, Notice, PageHeader, Section, Tabs, Textarea } from '@/components/ui';
 import { useToast } from '@/components/Toast';
-import type { BarangayReport, Sitrep } from '@/types';
+import type { Sitrep } from '@/types';
 import { EOC_TABS, SITREP_STATUS } from './labels';
 
 export function SitrepsPage() {
@@ -57,12 +57,13 @@ export function SitrepEditor() {
   const editable = s.status !== 'approved' && canOperate(roles);
 
   const pullEvac = async () => {
-    const reports = await db.barangay_reports.where('reported_at').belowOrEqual(form.period_end).reverse().sortBy('reported_at');
-    const latest = new Map<string, BarangayReport>();
-    for (const r of reports) if (!latest.has(r.barangay_psgc)) latest.set(r.barangay_psgc, r);
-    const v = Array.from(latest.values());
-    setForm({ ...form, evacuated_families: v.reduce((a, r) => a + r.families_evacuated, 0), evacuated_persons: v.reduce((a, r) => a + r.persons_evacuated, 0) });
-    toast('Evacuation totals filled from the latest barangay reports', 'info');
+    // Only this SitRep's event, up to the end of its period (#16).
+    const window = sitrepReportWindow(await db.eoc_activations.toArray(), form);
+    const t = evacuationTotals(latestPerBarangay(await db.barangay_reports.toArray(), window));
+    setForm({ ...form, evacuated_families: t.families, evacuated_persons: t.persons });
+    toast(t.notReported > 0
+      ? `Evacuation totals filled from this event's barangay reports. ${t.notReported} barangay${t.notReported > 1 ? 's have' : ' has'} not reported counts.`
+      : "Evacuation totals filled from this event's barangay reports", 'info');
   };
   const persist = async (status?: Sitrep['status']) => {
     let seq = form.seq;
