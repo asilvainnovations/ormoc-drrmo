@@ -1,5 +1,5 @@
 // Supabase Auth as an OAuth 2.1 / OpenID Connect provider for other City systems
-// ("Sign in with Ormoc DRRM"). Supabase issues the codes and tokens; this app supplies the
+// ("Sign in with MODE"). Supabase issues the codes and tokens; this app supplies the
 // consent screen at CONSENT_PATH and lets people see and revoke the apps they allowed.
 //
 // Endpoints are derived from VITE_SUPABASE_URL, so a training project and the production
@@ -29,7 +29,7 @@ export function oauthEndpoints(supabaseUrl: string = env.supabaseUrl): OAuthEndp
 
 /** Plain-language meaning of each scope Supabase Auth can grant. Unknown scopes are shown as is. */
 const SCOPES: Record<string, string> = {
-  openid: 'Confirm that you are signed in to Ormoc DRRM, and who you are',
+  openid: 'Confirm that you are signed in to MODE, and who you are',
   email: 'See your email address',
   profile: 'See your name',
   phone: 'See your phone number, if your account has one',
