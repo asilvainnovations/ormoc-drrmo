@@ -1,13 +1,18 @@
 import { db } from '@/lib/db';
 import { queueRpc } from '@/lib/store';
 import { uuid, uuidv5 } from '@/lib/ids';
-import type { ProtocolRun, ProtocolRunStep, ProtocolTemplate } from '@/types';
+import type { FormTemplate, ProtocolRun, ProtocolRunStep, ProtocolTemplate } from '@/types';
+
+const formSnapshot = (f: FormTemplate | undefined) =>
+  f ? { form_code: f.code, form_rev: f.rev, form_schema: f.schema, form_data: {} } : { form_code: null, form_rev: null, form_schema: null, form_data: {} };
 
 /** Start a run. Works offline: steps get the same UUIDv5 ids the server will assign. */
 export async function startProtocol(t: ProtocolTemplate, userId: string | null, context?: { type: string; id: string | null }, title: string = t.title): Promise<string> {
   const runId = uuid();
   const now = new Date();
   const steps = await db.protocol_steps.where('template_id').equals(t.id).sortBy('seq');
+  // Same snapshot as start_protocol (migration 20261106001700): the step's form as it stands, unless retired.
+  const forms = new Map((await db.form_templates.toArray()).filter((f) => f.status !== 'retired').map((f) => [f.code, f]));
   const run: ProtocolRun = {
     id: runId, template_id: t.id, template_rev: t.template_rev, title, context_type: context?.type ?? 'none', context_id: context?.id ?? null,
     status: 'running', started_by: userId, started_at: now.toISOString(), completed_at: null, abort_reason: null, version: 1,
@@ -18,6 +23,7 @@ export async function startProtocol(t: ProtocolTemplate, userId: string | null, 
     is_critical: s.is_critical, requires_note: s.requires_note,
     due_at: s.due_offset_minutes !== null ? new Date(now.getTime() + s.due_offset_minutes * 60_000).toISOString() : null,
     status: 'pending' as const, done_by: null, done_at: null, note: null, version: 1, created_at: now.toISOString(), updated_at: now.toISOString(),
+    ...formSnapshot(s.form_code ? forms.get(s.form_code) : undefined),
   })));
   await queueRpc('start_protocol', { p_template: t.id, p_title: title, p_context_type: context?.type ?? 'none', p_context_id: context?.id ?? null, p_run_id: runId },
     `Start protocol: ${title}`,

@@ -13,7 +13,10 @@ import { useNow, useProfiles } from '@/lib/hooks';
 import { Badge, Button, Field, Loading, Notice, PageHeader, Textarea } from '@/components/ui';
 import { Sheet } from '@/components/Sheet';
 import { useToast } from '@/components/Toast';
-import type { ProtocolRunStep, StepStatus } from '@/types';
+import type { FormValues, ProtocolRunStep, StepStatus } from '@/types';
+import { compactForm, formProblems, isQuickRecord } from '@/domain/forms';
+import { StepForm, FormRecord } from './StepForm';
+import { isWorkflow } from './labels';
 
 export function RunPage() {
   const { runId } = useParams();
@@ -23,7 +26,10 @@ export function RunPage() {
   const people = useProfiles();
   const run = useLiveQuery(() => (runId ? db.protocol_runs.get(runId) : undefined), [runId]);
   const steps = useLiveQuery(() => (runId ? db.protocol_run_steps.where('run_id').equals(runId).sortBy('seq') : []), [runId], []);
+  const template = useLiveQuery(() => (run ? db.protocol_templates.get(run.template_id) : undefined), [run?.template_id]);
+  const backTo = template && isWorkflow(template.category) ? '/drrm' : '/drrm/protocols';
   const [notes, setNotes] = useState<Record<string, string>>({});
+  const [forms, setForms] = useState<Record<string, FormValues>>({});
   const [errors, setErrors] = useState<Record<string, string | null>>({});
   const [abortOpen, setAbortOpen] = useState(false);
   const [abortWhy, setAbortWhy] = useState('');
@@ -33,11 +39,16 @@ export function RunPage() {
 
   const setStep = async (s: ProtocolRunStep, status: StepStatus) => {
     const note = notes[s.id] ?? s.note ?? '';
-    const problem = stepProblem(s, status, note);
+    let data: FormValues = compactForm(forms[s.id] ?? s.form_data ?? {});
+    // STEP-RECORD is one tap: Done records "as written", or "with changes" when remarks were entered.
+    if (s.form_schema && isQuickRecord(s.form_code) && status === 'done') {
+      data = { ...data, outcome: data.remarks ? 'Done with changes' : 'Done as written' };
+    }
+    const problem = stepProblem(s, status, note) ?? (status === 'done' ? formProblems(s.form_schema, data) : null);
     setErrors((e) => ({ ...e, [s.id]: problem }));
     if (problem) return;
     const stamp = status === 'pending' ? { done_at: null, done_by: null } : { done_at: new Date().toISOString() };
-    await save('protocol_run_steps', { ...s, status, note: note.trim() || null, ...stamp }, `Step ${s.seq} of ${run.title}`);
+    await save('protocol_run_steps', { ...s, status, note: note.trim() || null, ...(s.form_schema ? { form_data: data } : {}), ...stamp }, `Step ${s.seq} of ${run.title}`);
   };
 
   const complete = async () => {
@@ -53,7 +64,7 @@ export function RunPage() {
 
   return (
     <div className="page">
-      <PageHeader title={run.title} back="/protocols"
+      <PageHeader title={run.title} back={backTo}
         subtitle={`${run.context_type === 'drill' ? 'Drill. ' : ''}Started ${fmtDateTime(run.started_at)}. ${done} of ${steps.length} steps closed.`}
         actions={active && <>
           <Button tip="Stop this run early. You will be asked why" variant="secondary" onClick={() => setAbortOpen(true)}>Stop</Button>
@@ -81,13 +92,21 @@ export function RunPage() {
                     {closed && <Badge tone={s.status === 'done' ? 'ok' : 'neutral'}>{s.status === 'done' ? 'Done' : s.status === 'skipped' ? 'Skipped' : 'Not applicable'} {fmtTime(s.done_at)}{s.done_by && people.get(s.done_by) ? `, ${people.get(s.done_by)!.full_name}` : ''}</Badge>}
                   </p>
                   {s.note && closed && <p className="mt-2 text-sm">{s.note}</p>}
+                  {closed && s.form_schema && <FormRecord schema={s.form_schema} value={s.form_data ?? {}} />}
                   {active && !closed && (
                     <div className="mt-3 space-y-2">
+                      {s.form_schema && (
+                        <div className="rounded-control border border-line bg-paper p-3">
+                          <p className="mb-2 font-data text-sm font-semibold">{isQuickRecord(s.form_code) ? 'Step record' : `Form ${s.form_code}`}{s.form_rev ? `, rev. ${s.form_rev}` : ''}</p>
+                          <StepForm schema={s.form_schema} value={forms[s.id] ?? s.form_data ?? {}} hide={isQuickRecord(s.form_code) ? ['outcome'] : []}
+                            onChange={(v) => setForms((f) => ({ ...f, [s.id]: v }))} />
+                        </div>
+                      )}
                       <Field label="Note" optional={!s.requires_note} error={errors[s.id]}>
                         {(id, d) => <Textarea id={id} aria-describedby={d} rows={2} value={notes[s.id] ?? ''} onChange={(e) => setNotes((n) => ({ ...n, [s.id]: e.target.value }))} />}
                       </Field>
                       <div className="flex flex-wrap gap-2">
-                        <Button tip="Mark this step done" icon={Check} onClick={() => setStep(s, 'done')}>Done</Button>
+                        <Button tip={s.form_schema && !isQuickRecord(s.form_code) ? 'Mark this step done. The form must be complete first' : 'Mark this step done'} icon={Check} onClick={() => setStep(s, 'done')}>Done</Button>
                         <Button tip="Skip this step. A reason is required" variant="secondary" icon={SkipForward} onClick={() => setStep(s, 'skipped')}>Skip</Button>
                         <Button tip="Mark this step as not applicable to this situation" variant="quiet" icon={CircleSlash} onClick={() => setStep(s, 'not_applicable')}>Not applicable</Button>
                       </div>
