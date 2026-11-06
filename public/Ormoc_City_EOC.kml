@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Ormoc City Emergency Operations Center (EOC): location placemark.
+  Source: Google Earth placemark supplied by the consultant, 6 Nov 2026 (placemark id 0A9E71EA9142E2E2B044).
+  Cleaned for the platform: standard KML 2.2 namespaces restored, empty styles and the
+  Google Earth project data removed. The point and the camera view are unchanged.
+  Not a survey. Confirm the position with the CDRRMO before it is cited in the Manual of Operations.
+  Keep in step with src/data/eoc-site.ts (a unit test checks that they match).
+-->
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2">
+  <Document>
+    <name>Ormoc City EOC</name>
+    <Placemark id="0A9E71EA9142E2E2B044">
+      <name>EOC</name>
+      <description>Ormoc City Emergency Operations Center (CDRRMO). Primary EOC.</description>
+      <LookAt>
+        <longitude>124.6042871572453</longitude>
+        <latitude>11.01389600057808</latitude>
+        <altitude>7.471268260529933</altitude>
+        <heading>-88.85680118842762</heading>
+        <tilt>60.0046991508009</tilt>
+        <gx:fovy>35</gx:fovy>
+        <range>1093.013495286286</range>
+        <altitudeMode>absolute</altitudeMode>
+      </LookAt>
+      <Point>
+        <coordinates>124.6042871572453,11.01389600057808,7.471268260529933</coordinates>
+      </Point>
+    </Placemark>
+  </Document>
+</kml>
