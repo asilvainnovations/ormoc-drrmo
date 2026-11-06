@@ -23,7 +23,11 @@ from (values
   ('20261105001300_barangay_report_counts',   exists (select 1 from pg_constraint where conname = 'barangay_reports_evacuating_counts')),
   ('20261105001400_record_integrity_2',       exists (select 1 from information_schema.columns
                                                       where table_schema = 'public' and table_name = 'protocol_runs' and column_name = 'template_status')),
-  ('20261105001500_client_errors',            to_regclass('public.client_errors') is not null)
+  ('20261105001500_client_errors',            to_regclass('public.client_errors') is not null),
+  ('20261106001600_vault_access_and_connected_apps', to_regclass('public.connected_apps') is not null),
+  ('20261106001700_step_forms',               to_regclass('public.form_templates') is not null),
+  ('20261106001800_eoc_structure_and_clusters', to_regclass('public.eoc_designations') is not null),
+  ('20261106001900_geo_cop',                  to_regclass('public.geo_layers') is not null)
 ) as m(migration, present)
 order by m.migration;
 
@@ -32,4 +36,6 @@ select t.tbl,
        case when has_table_privilege('authenticated', t.tbl, 'DELETE') then 'DELETE STILL GRANTED' else 'ok' end as delete_check,
        case when has_table_privilege('authenticated', t.tbl, 'TRUNCATE') then 'TRUNCATE STILL GRANTED' else 'ok' end as truncate_check
 from unnest(array['public.declarations', 'public.aa_disbursements', 'public.pdra_sessions', 'public.aa_fund_years',
-                  'public.logbook_entries', 'public.sitreps', 'public.vault_documents', 'public.audit_log']) as t(tbl);
+                  'public.logbook_entries', 'public.sitreps', 'public.vault_documents', 'public.audit_log',
+                  'public.connected_apps', 'public.form_templates', 'public.eoc_designations', 'public.activation_clusters',
+                  'public.geo_reference_points', 'public.geo_layers']) as t(tbl);
