@@ -41,6 +41,21 @@ export function ButtonLink({ to, variant = 'secondary', icon: Icon, children, cl
   );
 }
 
+/** A button-styled link to a file or an outside page. Outside pages open in a new tab with
+ *  `rel="noopener noreferrer"`, never in a frame (ADR-011). `download` saves a file instead. */
+export function ButtonAnchor({ href, variant = 'secondary', icon: Icon, children, className, tip, download, newTab }: {
+  href: string; variant?: Variant; icon?: LucideIcon; children: ReactNode; className?: string; tip: string;
+  download?: string | true; newTab?: boolean }) {
+  const external = newTab ?? /^https?:\/\//.test(href);
+  return (
+    <a href={href} {...tipAttr(tip)} download={download === true ? '' : download}
+      {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+      className={clsx('inline-flex min-h-tap items-center justify-center gap-2 rounded-control px-4 font-semibold', VARIANT[variant], className)}>
+      {Icon && <Icon className="h-5 w-5" aria-hidden />}{children}
+    </a>
+  );
+}
+
 // ------------------------------------------------------------------ form fields
 interface FieldProps { label: string; hint?: ReactNode; error?: string | null; children: (id: string, describedBy: string | undefined) => ReactNode; optional?: boolean;
   /** Tooltip for the field. Defaults to the hint, or to the label. A control's own tip wins. */
