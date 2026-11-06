@@ -15,6 +15,21 @@ create table tests.results (n serial, name text, ok boolean);
 grant insert, select on tests.results to authenticated;
 grant usage on sequence tests.results_n_seq to authenticated;
 
+-- 1.9.0: a complete, valid answer for a form's fields (the first option, today's date, 1, true ...).
+create or replace function tests.sample_form(p_schema jsonb) returns jsonb language sql immutable as $f$
+  select coalesce(jsonb_object_agg(f ->> 'key',
+    case f ->> 'type'
+      when 'number' then to_jsonb(1) when 'integer' then to_jsonb(1)
+      when 'checkbox' then to_jsonb(true)
+      when 'date' then to_jsonb('2026-11-06'::text) when 'datetime' then to_jsonb('2026-11-06T08:00'::text)
+      when 'time' then to_jsonb('08:00'::text)
+      when 'select' then f -> 'options' -> 0
+      when 'multiselect' then jsonb_build_array(f -> 'options' -> 0)
+      else to_jsonb('sample'::text) end), '{}'::jsonb)
+  from jsonb_array_elements(p_schema -> 'fields') f
+$f$;
+grant execute on function tests.sample_form(jsonb) to authenticated;
+
 create function tests.login(p_user uuid) returns void language plpgsql as $$
 begin
   perform set_config('request.jwt.claim.sub', p_user::text, false);
@@ -323,10 +338,17 @@ select tests.expect_ok('report recorded after lifting',
 select tests.expect_error('a lifted declaration cannot be edited otherwise',
   $$update public.declarations set eo_number = 'changed', version = 6 where id = '80000000-0000-0000-0000-000000000001'$$, '42501');
 
+
 -- ================================================ Protocols ==================
 select tests.login('00000000-0000-0000-0000-000000000010');  -- viewer
 select tests.expect_error('viewer cannot start a protocol',
   $$select public.start_protocol((select id from public.protocol_templates where code = 'PR-WARNING-DISSEM'))$$, '42501');
+select tests.login('00000000-0000-0000-0000-00000000000e');  -- duty officer
+select tests.expect_error('a draft protocol cannot run live',
+  $$select public.start_protocol((select id from public.protocol_templates where code = 'PR-WARNING-DISSEM'), null, 'none', null, '90000000-0000-0000-0000-0000000000a0')$$, '42501');
+select tests.login('00000000-0000-0000-0000-000000000011');  -- CDRRMO Head approves the template
+select tests.expect_ok('CDRRMO Head approves the warning protocol',
+  $$update public.protocol_templates set status = 'approved' where code = 'PR-WARNING-DISSEM'$$);
 select tests.login('00000000-0000-0000-0000-00000000000e');  -- duty officer
 select tests.expect_ok('duty officer starts warning protocol',
   $$select public.start_protocol((select id from public.protocol_templates where code = 'PR-WARNING-DISSEM'), null, 'none', null, '90000000-0000-0000-0000-000000000001')$$);
@@ -346,8 +368,22 @@ select tests.expect_error('skipping needs a reason',
   $$update public.protocol_run_steps set status = 'skipped', version = 1 where run_id = '90000000-0000-0000-0000-000000000001' and seq = 4$$, '23514');
 select tests.expect_error('cannot complete with open steps',
   $$update public.protocol_runs set status = 'completed', version = 1 where id = '90000000-0000-0000-0000-000000000001'$$, '23514');
+-- 1.9.0: every step has a form (ADR-016).
+select tests.expect_eq('every step of the run carries a form',
+  (select count(*) filter (where form_schema is null)::text from public.protocol_run_steps where run_id = '90000000-0000-0000-0000-000000000001'), '0');
+select tests.expect_error('a step with a form cannot close until the form is complete',
+  $$update public.protocol_run_steps set status = 'done', note = 'done', version = version where run_id = '90000000-0000-0000-0000-000000000001' and seq = 1$$, '23514');
+select tests.expect_error('a form cannot carry fields it does not define',
+  $$update public.protocol_run_steps set form_data = tests.sample_form(form_schema) || '{"evacuee_name":"x"}', status = 'done', note = 'done', version = version
+    where run_id = '90000000-0000-0000-0000-000000000001' and seq = 1$$, '23514');
+select tests.expect_error('a form value must have the right type',
+  $$update public.protocol_run_steps set form_data = tests.sample_form(form_schema) || '{"issued_at": 5}', status = 'done', note = 'done', version = version
+    where run_id = '90000000-0000-0000-0000-000000000001' and seq = 1$$, '23514');
+select tests.expect_error('the form snapshot is the server''s',
+  $$update public.protocol_run_steps set form_schema = '{"fields":[{"key":"x","label":"X","type":"text"}]}', form_data = '{"x":"y"}', status = 'done', note = 'done', version = version
+    where run_id = '90000000-0000-0000-0000-000000000001' and seq = 1$$, '23514');
 select tests.expect_ok('complete every step',
-  $$update public.protocol_run_steps set status = 'done', note = 'done', version = version where run_id = '90000000-0000-0000-0000-000000000001'$$);
+  $$update public.protocol_run_steps set form_data = tests.sample_form(form_schema), status = 'done', note = 'done', version = version where run_id = '90000000-0000-0000-0000-000000000001'$$);
 select tests.expect_ok('complete the run',
   $$update public.protocol_runs set status = 'completed', version = 1 where id = '90000000-0000-0000-0000-000000000001'$$);
 select tests.expect_error('step wording cannot be rewritten',
@@ -424,7 +460,7 @@ select tests.expect_error('a file path outside the document folder is refused',
   $$insert into public.vault_documents (id, title, category, storage_path) values ('70000000-0000-0000-0000-000000000002', 'Misfiled', 'record', 'someone-else/file.pdf')$$, '23514');
 
 select tests.login('00000000-0000-0000-0000-00000000000c');  -- validator (evaluator)
-select tests.expect_rows('a validator reads the vault', $$select count(*) from public.vault_documents$$, 1);
+select tests.expect_rows('a validator reads the vault', $$select count(*) from public.vault_documents where id = '70000000-0000-0000-0000-000000000001'$$, 1);
 select tests.expect_rows('a validator cannot change someone else''s document',
   $$with u as (update public.vault_documents set title = 'Changed' where id = '70000000-0000-0000-0000-000000000001' returning 1) select count(*) from u$$, 0);
 select tests.expect_error('nor upload into its folder',
@@ -435,11 +471,11 @@ select tests.expect_ok('the CDRRMO Head marks a document superseded',
   $$update public.vault_documents set status = 'superseded', version = version where id = '70000000-0000-0000-0000-000000000001'$$);
 
 select tests.login('00000000-0000-0000-0000-00000000000e');  -- duty officer (CDRRMO staff)
-select tests.expect_rows('CDRRMO staff read the vault', $$select count(*) from public.vault_documents$$, 1);
+select tests.expect_rows('CDRRMO staff read the vault', $$select count(*) from public.vault_documents where id = '70000000-0000-0000-0000-000000000001'$$, 1);
 select tests.expect_rows('and its files', $$select count(*) from storage.objects where bucket_id = 'vault'$$, 1);
 
 select tests.login('00000000-0000-0000-0000-00000000000a');  -- admin
-select tests.expect_rows('an admin reads the vault', $$select count(*) from public.vault_documents$$, 1);
+select tests.expect_rows('an admin reads the vault', $$select count(*) from public.vault_documents where id = '70000000-0000-0000-0000-000000000001'$$, 1);
 
 select tests.login('00000000-0000-0000-0000-000000000010');  -- viewer
 select tests.expect_rows('a viewer cannot see the vault', $$select count(*) from public.vault_documents$$, 0);
@@ -549,12 +585,12 @@ select tests.expect_eq('SitRep attribution is the server''s',
 -- Declarations: PDRA, lead time, fixed facts, server clocks.
 select tests.login('00000000-0000-0000-0000-000000000011');  -- CDRRMO Head
 insert into public.declarations (id, hazard_code, expected_impact_at) values
-  ('80000000-0000-0000-0000-000000000009', 'tropical_cyclone', now() + interval '6 hours');
+  ('80000000-0000-0000-0000-000000000009', 'tropical_cyclone', now() + interval '71 hours');
 select tests.expect_error('a City request needs a PDRA that decided to request a declaration',
   $$update public.declarations set status = 'requested', version = 1 where id = '80000000-0000-0000-0000-000000000009'$$, '23514');
 insert into public.pdra_sessions (id, hazard_code, forecast_source, forecast_issued_at, expected_impact_at, conducted_at, impact_class, decision, decision_basis)
-values ('70000000-0000-0000-0000-000000000009', 'tropical_cyclone', 'PAGASA TCB #1', now() - interval '5 days', now() + interval '6 hours',
-        now() - interval '4 days', 'severe', 'request_declaration', 'backdated PDRA');
+values ('70000000-0000-0000-0000-000000000009', 'tropical_cyclone', 'PAGASA TCB #1', now() - interval '3 hours', now() + interval '71 hours',
+        now() - interval '2 hours', 'severe', 'request_declaration', 'PDRA held with 73 h left; request sent with 71 h left');
 update public.declarations set pdra_id = '70000000-0000-0000-0000-000000000009', version = 1 where id = '80000000-0000-0000-0000-000000000009';
 select tests.expect_error('lead time is measured when the request is sent, on server time',
   $$update public.declarations set status = 'requested', version = 2 where id = '80000000-0000-0000-0000-000000000009'$$, '23514');
@@ -657,6 +693,128 @@ select tests.expect_rows('traceability leaves merged sections out',
   $$select count(*) from public.v_traceability t, jsonb_array_elements(t.documents) e where e->>'status' = 'superseded'$$, 0);
 select tests.expect_rows('a viewer cannot rename a manual section',
   $$with u as (update public.moo_documents set title = 'x' where code = 'Area 4' returning 1) select count(*) from u$$, 0);
+
+
+-- ================================================ 1.9.0 =====================
+-- Vault access levels (ADR-015)
+select tests.login('00000000-0000-0000-0000-00000000000b');  -- assessor
+select tests.expect_ok('an assessor adds a restricted paper for named roles',
+  $$insert into public.vault_documents (id, title, category, access_class, allowed_roles) values
+    ('70000000-0000-0000-0000-0000000000a1', 'Internal staff paper', 'report', 'restricted', array['assessor','cdrrmo_head']::public.app_role[])$$);
+select tests.expect_error('a restricted document must name its roles',
+  $$insert into public.vault_documents (title, category, access_class) values ('No roles', 'report', 'restricted')$$, '23514');
+select tests.login('00000000-0000-0000-0000-00000000000e');  -- duty officer (uses the Vault, not in the list)
+select tests.expect_rows('a restricted document is hidden from other roles',
+  $$select count(*) from public.vault_documents where id = '70000000-0000-0000-0000-0000000000a1'$$, 0);
+select tests.login('00000000-0000-0000-0000-000000000011');  -- CDRRMO Head
+select tests.expect_rows('the CDRRMO Head always sees restricted documents',
+  $$select count(*) from public.vault_documents where id = '70000000-0000-0000-0000-0000000000a1'$$, 1);
+select tests.login('00000000-0000-0000-0000-00000000000b');  -- assessor
+select tests.expect_error('only the Head changes who may open a document',
+  $$update public.vault_documents set access_class = 'standard', allowed_roles = '{}' where id = '70000000-0000-0000-0000-0000000000a1'$$, '42501');
+
+-- Connected apps (ADR-018)
+select tests.login('00000000-0000-0000-0000-00000000000a');  -- admin
+select tests.expect_ok('an admin registers an app as a request',
+  $$insert into public.connected_apps (id, client_id, name, purpose, redirect_uri, data_scope) values
+    ('c0000000-0000-0000-0000-000000000001', 'client-dashboard-01', 'City dashboard', 'Show EOC level on the City dashboard',
+     'https://dashboard.ormoc.gov.ph/callback', 'EOC level and SitRep totals')$$);
+select tests.expect_error('an app cannot be registered already approved',
+  $$insert into public.connected_apps (client_id, name, purpose, redirect_uri, data_scope, status) values
+    ('client-other-0002', 'Other', 'Some purpose here', 'https://x.ph/cb', 'Everything', 'approved')$$, '42501');
+reset role;
+select set_config('request.jwt.claims', '{"client_id":"client-dashboard-01"}', false);
+select tests.login('00000000-0000-0000-0000-000000000011');
+select tests.expect_rows('an unapproved app reads nothing', $$select count(*) from public.iat_indicators$$, 0);
+select tests.login('00000000-0000-0000-0000-000000000011');
+reset role; select set_config('request.jwt.claims', '', false);
+select tests.login('00000000-0000-0000-0000-000000000011');  -- CDRRMO Head
+select tests.expect_ok('the CDRRMO Head approves the app',
+  $$update public.connected_apps set status = 'approved' where id = 'c0000000-0000-0000-0000-000000000001'$$);
+select tests.expect_eq('review stamps are the server''s',
+  (select (reviewed_by = '00000000-0000-0000-0000-000000000011' and review_due is not null)::text from public.connected_apps where id = 'c0000000-0000-0000-0000-000000000001'), 'true');
+reset role;
+select set_config('request.jwt.claims', '{"client_id":"client-dashboard-01"}', false);
+select tests.login('00000000-0000-0000-0000-000000000011');
+select tests.expect_eq('an approved app reads what the person''s role allows',
+  ((select count(*) from public.iat_indicators) = 140)::text, 'true');
+select tests.expect_error('and still cannot write',
+  $$update public.connected_apps set purpose = 'changed by app' where id = 'c0000000-0000-0000-0000-000000000001'$$, '42501');
+reset role; select set_config('request.jwt.claims', '', false);
+
+-- Forms (ADR-016)
+select tests.login('00000000-0000-0000-0000-000000000012');  -- author
+select tests.expect_error('a form needs valid fields',
+  $$insert into public.form_templates (code, title, schema) values ('TEST-F01', 'Bad form', '{"fields":[{"key":"Bad Key","label":"X","type":"text"}]}')$$, '23514');
+select tests.expect_ok('an author drafts a form',
+  $$insert into public.form_templates (code, title, schema) values ('TEST-F02', 'Good form', '{"fields":[{"key":"count","label":"Count","type":"integer","required":true}]}')$$);
+select tests.expect_error('an author cannot approve a form',
+  $$update public.form_templates set status = 'approved' where code = 'TEST-F02'$$, '42501');
+select tests.login('00000000-0000-0000-0000-000000000011');  -- CDRRMO Head
+select tests.expect_ok('the Head approves it', $$update public.form_templates set status = 'approved' where code = 'TEST-F02'$$);
+select tests.expect_error('an approved form''s fields are fixed',
+  $$update public.form_templates set schema = '{"fields":[{"key":"n","label":"N","type":"text"}]}' where code = 'TEST-F02'$$, '42501');
+select tests.expect_eq('form check: integer', coalesce(app.form_problems('{"fields":[{"key":"n","label":"N","type":"integer"}]}', '{"n":1.5}'), 'ok'), 'Check these entries: N');
+select tests.expect_eq('form check: option', coalesce(app.form_problems('{"fields":[{"key":"s","label":"S","type":"select","options":["a","b"]}]}', '{"s":"c"}'), 'ok'), 'Check these entries: S');
+select tests.expect_eq('form check: complete', coalesce(app.form_problems('{"fields":[{"key":"s","label":"S","type":"select","options":["a","b"],"required":true}]}', '{"s":"a"}'), 'ok'), 'ok');
+select tests.expect_rows('every seeded step names a form', $$select count(*) from public.protocol_steps where form_code is null$$, 0);
+
+-- EOC structure, designations and contingency-plan clustering (ADR-017)
+select tests.login('00000000-0000-0000-0000-000000000013');  -- EOC staff
+select tests.expect_ok('EOC staff propose a designation',
+  $$insert into public.eoc_designations (id, position_id, rank, person_id) values
+    ('d0000000-0000-0000-0000-000000000001', (select id from public.eoc_positions where code = 'EOC-MGR'), 1, '00000000-0000-0000-0000-00000000000d')$$);
+select tests.expect_error('a designation cannot start approved',
+  $$insert into public.eoc_designations (position_id, rank, person_id, status) values
+    ((select id from public.eoc_positions where code = 'EOC-MGR'), 2, '00000000-0000-0000-0000-000000000013', 'approved')$$, '42501');
+select tests.expect_error('only the Head approves a designation',
+  $$update public.eoc_designations set status = 'approved' where id = 'd0000000-0000-0000-0000-000000000001'$$, '42501');
+select tests.login('00000000-0000-0000-0000-000000000011');  -- CDRRMO Head
+select tests.expect_ok('the Head approves it',
+  $$update public.eoc_designations set status = 'approved' where id = 'd0000000-0000-0000-0000-000000000001'$$);
+select tests.expect_error('an approved designation is fixed',
+  $$update public.eoc_designations set person_id = '00000000-0000-0000-0000-000000000013' where id = 'd0000000-0000-0000-0000-000000000001'$$, '42501');
+select tests.expect_eq('depth view counts it', (select approved::text || '/' || two_deep::text from public.v_eoc_depth where code = 'EOC-MGR'), '1/false');
+
+select tests.login('00000000-0000-0000-0000-000000000013');  -- EOC staff
+select tests.expect_error('EOC staff cannot activate a plan',
+  $$select public.activate_contingency_plan((select id from public.contingency_plans where code = 'CP-FLOOD-LUNOP'))$$, '42501');
+select tests.login('00000000-0000-0000-0000-00000000000d');  -- EOC Manager
+select public.set_eoc_level('white', 'reset for 1.9.0 tests') where exists (select 1 from public.eoc_activations where ended_at is null);
+select tests.expect_error('a plan needs an open activation',
+  $$select public.activate_contingency_plan((select id from public.contingency_plans where code = 'CP-FLOOD-LUNOP'))$$, '22023');
+select public.set_eoc_level('blue', 'Typhoon forecast (1.9.0 test)', 'tropical_cyclone');
+select tests.expect_ok('the EOC Manager activates the flood plan at Blue',
+  $$select public.activate_contingency_plan((select id from public.contingency_plans where code = 'CP-FLOOD-LUNOP'))$$);
+select tests.expect_eq('at Blue the Red-level clusters wait on standby',
+  (select state from public.activation_clusters c join public.eoc_activations a on a.id = c.activation_id and a.ended_at is null
+    where c.item_kind = 'cluster' and c.item_code = 'FNFI'), 'standby');
+select public.set_eoc_level('red', 'Signal No. 2 (1.9.0 test)');
+select tests.expect_eq('going to Red carries the plan and switches the clusters on',
+  (select a.plan_id::text || ' ' || c.state from public.activation_clusters c join public.eoc_activations a on a.id = c.activation_id and a.ended_at is null
+    where c.item_kind = 'cluster' and c.item_code = 'FNFI'),
+  (select id::text || ' on' from public.contingency_plans where code = 'CP-FLOOD-LUNOP'));
+select tests.expect_ok('a cluster is stood down',
+  $$update public.activation_clusters set state = 'stood_down' where item_code = 'FNFI'
+      and activation_id = (select id from public.eoc_activations where ended_at is null)$$);
+select public.set_eoc_level('white', 'Stand down (1.9.0 test)');
+
+-- Geo-COP (ADR-015)
+select tests.expect_eq('the EOC point is seeded from the KML and awaits field validation',
+  (select verification_status || ' ' || round(lat::numeric, 4) || ' ' || round(lng::numeric, 4) from public.geo_reference_points where code = 'EOC'),
+  'pending_field_validation 11.0139 124.6043');
+select tests.login('00000000-0000-0000-0000-000000000013');  -- EOC staff
+select tests.expect_error('EOC staff cannot record a field verification',
+  $$update public.geo_reference_points set verification_status = 'field_verified' where code = 'EOC'$$, '42501');
+select tests.login('00000000-0000-0000-0000-00000000000d');  -- EOC Manager
+select tests.expect_ok('the EOC Manager records it',
+  $$update public.geo_reference_points set verification_status = 'field_verified' where code = 'EOC'$$);
+select tests.expect_error('a verified point is fixed',
+  $$update public.geo_reference_points set lat = 11.02 where code = 'EOC'$$, '42501');
+select tests.expect_ok('a layer is registered with its metadata',
+  $$insert into public.geo_layers (code, title, layer_group, source, validation_status) values ('barangay-boundaries', 'Barangay boundaries', 'admin_boundaries', 'PSA / CPDO', 'preliminary')$$);
+select tests.expect_error('only the Head marks a layer official',
+  $$update public.geo_layers set validation_status = 'official' where code = 'barangay-boundaries'$$, '42501');
 
 reset role;
 select tests.expect_eq('audit trail recorded', ((select count(*) from public.audit_log) > 50)::text, 'true');
