@@ -15,6 +15,7 @@ import type { Indicator, VaultCategory } from '@/types';
 import { CATEGORY, KIND_LABEL, STATUS, VAULT_TABS } from './labels';
 import { canUseVault } from './access';
 import { DocumentForm, type Prefill } from './DocumentForm';
+import { AccessPanel } from './AccessPanel';
 
 /** The vault is for assessors, validators, administrators and CDRRMO staff (RLS enforces it too). */
 export function VaultGate({ children }: { children: ReactNode }) {
@@ -88,7 +89,8 @@ export function VaultPage() {
               leading={<FileText className="h-5 w-5 text-sky" aria-hidden />}
               title={d.title}
               meta={[CATEGORY[d.category], d.doc_number, d.doc_date && fmtDate(d.doc_date), d.indicator_ids.length ? `${d.indicator_ids.length} indicator${d.indicator_ids.length > 1 ? 's' : ''}` : null].filter(Boolean).join(', ')}
-              trailing={d.status !== 'current' ? <Badge tone={d.status === 'superseded' ? 'neutral' : 'warn'}>{STATUS[d.status]}</Badge> : d.storage_path ? <Badge tone="info">File</Badge> : d.url ? <Badge>Link</Badge> : undefined} />
+              trailing={<span className="flex gap-1.5">{d.access_class === 'restricted' && <Badge tone="warn">Restricted</Badge>}
+                {d.status !== 'current' ? <Badge tone={d.status === 'superseded' ? 'neutral' : 'warn'}>{STATUS[d.status]}</Badge> : d.storage_path ? <Badge tone="info">File</Badge> : d.url ? <Badge>Link</Badge> : null}</span>} />
           ))}
         </List>
       )}
@@ -171,6 +173,7 @@ export function VaultDocumentPage() {
               ))}</List>
             )}
           </Section>
+          <AccessPanel d={d} />
         </aside>
       </div>
       <DocumentForm open={editing} onClose={() => setEditing(false)} editing={d} />
