@@ -1,0 +1,168 @@
+[
+ {
+  "name": "empty form names every required field",
+  "data": {},
+  "expected": "Complete the form first: Outcome, Count, Accepted"
+ },
+ {
+  "name": "complete form passes",
+  "data": {
+   "outcome": "Done as written",
+   "count": 3,
+   "ack": true
+  },
+  "expected": null
+ },
+ {
+  "name": "unchecked box counts as missing",
+  "data": {
+   "outcome": "Done as written",
+   "count": 3,
+   "ack": false
+  },
+  "expected": "Complete the form first: Accepted"
+ },
+ {
+  "name": "blank text is missing",
+  "data": {
+   "outcome": "  ",
+   "count": 3,
+   "ack": true
+  },
+  "expected": "Complete the form first: Outcome"
+ },
+ {
+  "name": "unknown option",
+  "data": {
+   "outcome": "Maybe",
+   "count": 3,
+   "ack": true
+  },
+  "expected": "Check these entries: Outcome"
+ },
+ {
+  "name": "decimal in an integer field",
+  "data": {
+   "outcome": "Done as written",
+   "count": 2.5,
+   "ack": true
+  },
+  "expected": "Check these entries: Count"
+ },
+ {
+  "name": "below the minimum",
+  "data": {
+   "outcome": "Done as written",
+   "count": -1,
+   "ack": true
+  },
+  "expected": "Check these entries: Count"
+ },
+ {
+  "name": "number given as text",
+  "data": {
+   "outcome": "Done as written",
+   "count": "3",
+   "ack": true
+  },
+  "expected": "Check these entries: Count"
+ },
+ {
+  "name": "multiselect with an unknown choice",
+  "data": {
+   "outcome": "Done as written",
+   "count": 3,
+   "ack": true,
+   "channels": [
+    "SMS",
+    "Fax"
+   ]
+  },
+  "expected": "Check these entries: Channels"
+ },
+ {
+  "name": "empty multiselect is blank",
+  "data": {
+   "outcome": "Done as written",
+   "count": 3,
+   "ack": true,
+   "channels": []
+  },
+  "expected": null
+ },
+ {
+  "name": "bad datetime",
+  "data": {
+   "outcome": "Done as written",
+   "count": 3,
+   "ack": true,
+   "when": "tomorrow"
+  },
+  "expected": "Check these entries: When"
+ },
+ {
+  "name": "good datetime",
+  "data": {
+   "outcome": "Done as written",
+   "count": 3,
+   "ack": true,
+   "when": "2026-11-06T14:05"
+  },
+  "expected": null
+ },
+ {
+  "name": "text too long",
+  "data": {
+   "outcome": "Done as written",
+   "count": 3,
+   "ack": true,
+   "remarks": "abcdef"
+  },
+  "expected": "Check these entries: Remarks"
+ },
+ {
+  "name": "multibyte text counted by characters",
+  "data": {
+   "outcome": "Done as written",
+   "count": 3,
+   "ack": true,
+   "remarks": "ñññññ"
+  },
+  "expected": null
+ },
+ {
+  "name": "extra keys are refused first",
+  "data": {
+   "zz": 1,
+   "b": 2,
+   "outcome": "x"
+  },
+  "expected": "The form has fields it does not define: b, zz"
+ },
+ {
+  "name": "missing beats bad",
+  "data": {
+   "outcome": "Maybe",
+   "ack": true
+  },
+  "expected": "Complete the form first: Count"
+ },
+ {
+  "name": "null value is blank",
+  "data": {
+   "outcome": "Done as written",
+   "count": 3,
+   "ack": true,
+   "when": null
+  },
+  "expected": null
+ },
+ {
+  "name": "data that is not an object",
+  "data": [
+   1,
+   2
+  ],
+  "expected": "The form data is not valid"
+ }
+]
