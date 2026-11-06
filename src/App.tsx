@@ -17,13 +17,20 @@ import { CONSENT_PATH } from '@/lib/oauth';
 
 // Modules load on demand to keep the first paint small on low-end phones.
 const AssessRoutes = lazy(() => import('@/features/iat/routes'));
-const ProtocolRoutes = lazy(() => import('@/features/protocols/routes'));
+const DrrmRoutes = lazy(() => import('@/features/protocols/routes'));
 const EocRoutes = lazy(() => import('@/features/eoc/routes'));
 const LibraryRoutes = lazy(() => import('@/features/library/routes'));
 const SettingsRoutes = lazy(() => import('@/features/settings/routes'));
 const VaultRoutes = lazy(() => import('@/features/vault/routes'));
 const ToolsRoutes = lazy(() => import('@/features/tools/routes'));
 
+
+/** /protocols and /protocols/run/:id (before 1.9) open the same place in the DRRM module. */
+function OldProtocolsLink() {
+  const loc = useLocation();
+  const rest = loc.pathname.replace(/^\/protocols\/?/, '');
+  return <Navigate to={rest.startsWith('run/') ? `/drrm/${rest}` : '/drrm/protocols'} replace />;
+}
 
 /** Signed in AND approved: an account without a role sees only the waiting page, never City data. */
 function RequireAuth({ children }: { children: ReactNode }) {
@@ -67,7 +74,9 @@ export function App() {
               <Route element={<RequireAuth><AppShell /></RequireAuth>}>
                 <Route index element={<TodayPage />} />
                 <Route path="assess/*" element={<Suspense fallback={<Loading />}><AssessRoutes /></Suspense>} />
-                <Route path="protocols/*" element={<Suspense fallback={<Loading />}><ProtocolRoutes /></Suspense>} />
+                <Route path="drrm/*" element={<Suspense fallback={<Loading />}><DrrmRoutes /></Suspense>} />
+                {/* 1.9: Protocols moved into the DRRM module; old links and bookmarks still work. */}
+                <Route path="protocols/*" element={<OldProtocolsLink />} />
                 <Route path="eoc/*" element={<Suspense fallback={<Loading />}><EocRoutes /></Suspense>} />
                 <Route path="library/*" element={<Suspense fallback={<Loading />}><LibraryRoutes /></Suspense>} />
                 <Route path="settings/*" element={<Suspense fallback={<Loading />}><SettingsRoutes /></Suspense>} />

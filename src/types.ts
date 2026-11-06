@@ -63,13 +63,15 @@ export interface MooVersion extends Versioned {
   status: 'draft' | 'in_review' | 'approved' | 'rejected'; author?: string | null; approved_by?: string | null; approved_at?: string | null; review_note?: string | null;
 }
 export interface MooDocumentIndicator { document_id: string; indicator_id: string }
-export type ProtocolCategory = 'daily_operations' | 'warning' | 'eoc' | 'anticipatory_action' | 'council' | 'reporting' | 'recovery';
+export type ProtocolCategory = 'daily_operations' | 'warning' | 'eoc' | 'anticipatory_action' | 'council' | 'reporting' | 'recovery'
+  | 'governance' | 'workforce' | 'budget' | 'response_clusters' | 'geospatial';
 export interface ProtocolTemplate extends Versioned {
   code: string; title: string; purpose: string | null; trigger_text: string | null; document_id: string | null;
   owner_role: Role; category: ProtocolCategory; status: 'draft' | 'approved' | 'retired'; template_rev: number;
 }
 export interface ProtocolStep extends Versioned {
   template_id: string; seq: number; instruction: string; is_critical: boolean; requires_note: boolean; due_offset_minutes: number | null;
+  form_code?: string | null;
 }
 export interface ProtocolRun extends Versioned {
   template_id: string; template_rev: number; title: string; context_type: string | null; context_id: string | null;
@@ -79,13 +81,82 @@ export type StepStatus = 'pending' | 'done' | 'skipped' | 'not_applicable';
 export interface ProtocolRunStep extends Versioned {
   run_id: string; step_id: string; seq: number; instruction: string; is_critical: boolean; requires_note: boolean;
   due_at: string | null; status: StepStatus; done_by: string | null; done_at: string | null; note: string | null;
+  /** Snapshot of the step's form when the run started (1.9, migration 20261106001700). */
+  form_code?: string | null; form_rev?: number | null; form_schema?: FormSchema | null; form_data?: FormValues;
+}
+
+// ------------------------------------------------------------------ forms (1.9)
+export type FormFieldType = 'text' | 'textarea' | 'number' | 'integer' | 'date' | 'datetime' | 'time' | 'select' | 'multiselect' | 'checkbox';
+export interface FormField {
+  key: string; label: string; type: FormFieldType; required?: boolean; options?: string[]; hint?: string; min?: number; max_length?: number;
+}
+export interface FormSchema { fields: FormField[] }
+export type FormValue = string | number | boolean | string[] | null;
+export type FormValues = Record<string, FormValue>;
+export interface FormTemplate extends Versioned {
+  code: string; title: string; purpose: string | null; document_id: string | null; schema: FormSchema;
+  status: 'draft' | 'approved' | 'retired'; rev: number;
 }
 
 // ------------------------------------------------------------------ EOC
 export type EocLevel = 'white' | 'blue' | 'red';
 export interface Activation extends Versioned {
   level: EocLevel; reason: string; hazard_code: string | null; authority_ref: string | null;
-  started_by?: string | null; started_at: string; ended_at: string | null;
+  started_by?: string | null; started_at: string; ended_at: string | null; plan_id?: string | null;
+}
+
+// ------------------------------------------------------------------ EOC structure (1.9, migration 20261106001800)
+export interface ResponseCluster extends Versioned {
+  code: string; name: string; national_lead: string | null; lead_office_id: string | null; mandate: string | null; sort: number; is_active: boolean;
+}
+export type PlanStatus = 'to_prepare' | 'draft' | 'adopted' | 'expired' | 'retired';
+export interface ContingencyPlan extends Versioned {
+  code: string; title: string; hazard_code: string | null; scenario: string | null; warning_time: string | null; activation_triggers: string | null;
+  status: PlanStatus; adopted_ref: string | null; adopted_on: string | null; valid_until: string | null; vault_document_id: string | null;
+}
+export type ItemKind = 'cluster' | 'module';
+export interface CpActivationItem extends Versioned {
+  plan_id: string; item_kind: ItemKind; item_code: string; state: 'on' | 'lead' | 'standby'; min_level: EocLevel; note: string | null;
+}
+export interface ActivationCluster extends Versioned {
+  activation_id: string; item_kind: ItemKind; item_code: string; state: 'on' | 'lead' | 'standby' | 'stood_down';
+  changed_by: string | null; changed_at: string;
+}
+export type EocSection = 'command' | 'command_staff' | 'operations' | 'planning' | 'logistics' | 'finance_admin' | 'cluster_desk' | 'barangay_desk';
+export interface EocPosition extends Versioned {
+  code: string; title: string; section: EocSection; min_level: EocLevel; cluster_code: string | null; required_depth: number; sort: number; is_active: boolean;
+}
+export interface EocDesignation extends Versioned {
+  position_id: string; rank: 1 | 2 | 3; person_id: string | null; office_id: string | null; designee_position: string | null;
+  status: 'proposed' | 'approved' | 'withdrawn'; valid_from: string; valid_until: string | null; note: string | null;
+  proposed_by: string | null; approved_by: string | null; approved_at: string | null;
+}
+export interface BarangayCluster extends Versioned {
+  code: string; name: string; is_pilot: boolean; pilot_from: string | null; pilot_to: string | null; note: string | null;
+}
+
+// ------------------------------------------------------------------ Geo-COP (1.9, migration 20261106001900)
+export type GeoPointKind = 'eoc' | 'alternate_eoc' | 'opcen' | 'icp' | 'staging' | 'evacuation_hub' | 'other';
+export interface GeoReferencePoint extends Versioned {
+  code: string; name: string; kind: GeoPointKind; lat: number; lng: number; altitude_m: number | null; source: string;
+  verification_status: 'pending_field_validation' | 'field_verified' | 'superseded'; verified_by: string | null; verified_at: string | null;
+  superseded_by: string | null; vault_document_id: string | null; note: string | null; created_by: string | null;
+}
+export type GeoLayerGroup = 'eoc_facilities' | 'admin_boundaries' | 'hazard' | 'incident' | 'evacuation' | 'critical_facilities'
+  | 'population_exposure' | 'resources' | 'lifelines';
+export interface GeoLayer extends Versioned {
+  code: string; title: string; layer_group: GeoLayerGroup; source: string; custodian_office_id: string | null; issued_on: string | null;
+  crs: string; scale: string | null; validation_status: 'reported' | 'preliminary' | 'field_verified' | 'official';
+  update_frequency: string | null; access_class: 'internal' | 'restricted'; storage_path: string | null; original_path: string | null;
+  file_name: string | null; feature_count: number | null; bbox: number[] | null; status: 'current' | 'superseded';
+  superseded_by: string | null; note: string | null; uploaded_by: string | null;
+}
+
+// ------------------------------------------------------------------ connected apps (1.9, migration 20261106001600)
+export interface ConnectedApp extends Versioned {
+  client_id: string; name: string; purpose: string; owner_office_id: string | null; contact_position: string | null; redirect_uri: string;
+  data_scope: string; status: 'requested' | 'approved' | 'suspended' | 'retired'; reviewed_by: string | null; reviewed_at: string | null;
+  review_due: string | null; created_by: string | null;
 }
 export type LogCategory = 'general' | 'decision' | 'warning' | 'request' | 'resource' | 'report' | 'level_change' | 'correction';
 export interface LogEntry { id: string; activation_id: string | null; incident_id?: string | null; occurred_at: string; category: LogCategory; entry: string; corrects_id: string | null; author: string | null; created_at: string }
@@ -95,7 +166,10 @@ export interface Sitrep extends Versioned {
   affected_families: number | null; affected_persons: number | null; evacuated_families: number | null; evacuated_persons: number | null;
   dead: number | null; injured: number | null; missing: number | null; submitted_at: string | null; approved_at: string | null;
 }
-export interface Barangay { psgc: string; name: string; classification: string[]; population: number | null; lat: number | null; lng: number | null; version?: number }
+export interface Barangay {
+  psgc: string; name: string; classification: string[]; population: number | null; lat: number | null; lng: number | null; version?: number;
+  cluster_id?: string | null; hazard_tags?: string[]; hazard_tag_source?: string | null;
+}
 export type BarangayCondition = 'normal' | 'monitoring' | 'affected' | 'isolated' | 'evacuating';
 export interface BarangayReport {
   id: string; barangay_psgc: string; activation_id: string | null; reported_at: string; condition: BarangayCondition;
@@ -147,4 +221,6 @@ export interface VaultDocument extends Versioned {
   doc_date: string | null; summary: string | null; indicator_ids: string[]; storage_path: string | null; file_name: string | null;
   mime_type: string | null; size_bytes: number | null; url: string | null; location: string | null;
   status: 'current' | 'superseded' | 'draft'; superseded_by: string | null; uploaded_by: string | null;
+  /** 1.9: restricted documents open only for the listed roles (and the CDRRMO Head). */
+  access_class?: 'standard' | 'restricted'; allowed_roles?: Role[];
 }
