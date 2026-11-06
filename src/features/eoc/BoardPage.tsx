@@ -13,6 +13,7 @@ import { Sheet } from '@/components/Sheet';
 import { useToast } from '@/components/Toast';
 import type { EocLevel } from '@/types';
 import { addLog, setEocLevel } from './actions';
+import { EocLocation } from './EocLocation';
 import { CONDITION, CONDITION_TONE, EOC_TABS, LOG_CATEGORY, PRIORITY, REQUEST_STATUS, SITREP_STATUS } from './labels';
 
 export function BoardPage() {
@@ -111,6 +112,8 @@ export function BoardPage() {
               meta={`Period to ${fmtDateTime(data.sitrep.period_end)}`} trailing={<Badge tone={data.sitrep.status === 'approved' ? 'ok' : data.sitrep.status === 'submitted' ? 'info' : 'neutral'}>{SITREP_STATUS[data.sitrep.status]}</Badge>} /></List>
           ) : <p className="text-muted">No SitRep yet.</p>}
         </Section>
+
+        <EocLocation />
       </div>
       <LevelSheet open={open} onClose={() => setOpen(false)} current={level} onSubmit={async (lv, reason, hazard, auth) => {
         await setEocLevel(lv, reason, hazard, auth); toast(`EOC level is now ${LEVEL_INFO[lv].name}`);
