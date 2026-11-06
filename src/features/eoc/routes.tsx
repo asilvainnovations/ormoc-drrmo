@@ -8,6 +8,14 @@ import { AaHomePage } from './aa/AaHomePage';
 import { PdraNewPage, PdraViewPage } from './aa/PdraPage';
 import { DeclarationPage } from './aa/DeclarationPage';
 import { FundsPage } from './aa/FundsPage';
+import { PlansPage } from './PlansPage';
+import { RosterPage } from './RosterPage';
+import { LiaisonPage } from './LiaisonPage';
+import { lazy, Suspense } from 'react';
+import { Loading } from '@/components/ui';
+
+// The map library is large; it loads only when the Map tab opens.
+const MapPage = lazy(() => import('./MapPage'));
 
 export default function EocRoutes() {
   return (
@@ -18,6 +26,10 @@ export default function EocRoutes() {
       <Route path="sitreps/:id" element={<SitrepEditor />} />
       <Route path="requests" element={<RequestsPage />} />
       <Route path="barangays" element={<BarangaysPage />} />
+      <Route path="liaison" element={<LiaisonPage />} />
+      <Route path="plans" element={<PlansPage />} />
+      <Route path="roster" element={<RosterPage />} />
+      <Route path="map" element={<Suspense fallback={<Loading />}><MapPage /></Suspense>} />
       <Route path="aa" element={<AaHomePage />} />
       <Route path="aa/pdra/new" element={<PdraNewPage />} />
       <Route path="aa/pdra/:id" element={<PdraViewPage />} />
