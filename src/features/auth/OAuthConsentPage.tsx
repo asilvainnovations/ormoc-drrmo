@@ -10,9 +10,10 @@ import { AuthLayout, formCard } from './AuthLayout';
 import { SignOutBlock } from './AccountGatePages';
 import { PRODUCT } from '@/lib/product';
 
+type AppStatus = 'approved' | 'requested' | 'suspended' | 'retired' | 'unregistered' | 'unknown';
 type View =
   | { kind: 'loading' }
-  | { kind: 'consent'; details: OAuthAuthorizationDetails }
+  | { kind: 'consent'; details: OAuthAuthorizationDetails; appStatus: AppStatus }
   | { kind: 'leaving'; to: string }
   | { kind: 'error'; message: string };
 
@@ -49,7 +50,10 @@ export function OAuthConsentPage() {
       if (error || !data) { setView({ kind: 'error', message: requestError(error) }); return; }
       // Already allowed earlier for these scopes: Supabase answers with where to go next.
       if ('redirect_url' in data && !('authorization_id' in data)) { leave(data.redirect_url); return; }
-      setView({ kind: 'consent', details: data as OAuthAuthorizationDetails });
+      const details = data as OAuthAuthorizationDetails;
+      // 1.9 (ADR-018): the City approves each app first. An app it has not approved reads nothing, so say so here.
+      const { data: st, error: stErr } = await supabase.rpc('connected_app_status', { p_client_id: details.client.id });
+      setView({ kind: 'consent', details, appStatus: stErr ? 'unknown' : ((st as AppStatus | null) ?? 'unregistered') });
     })();
   }, [ready, status, authorizationId, online]);
 
@@ -100,6 +104,8 @@ export function OAuthConsentPage() {
   }
 
   const d = view.details;
+  const appStatus = view.appStatus;
+  const cityApproved = appStatus === 'approved' || appStatus === 'unknown';
   const appName = d.client.name || 'An app';
   const site = hostOf(d.client.uri);
   const returnHost = hostOf(d.redirect_uri);
@@ -117,6 +123,9 @@ export function OAuthConsentPage() {
         <Notice tone="info" title="What it cannot do">
           Apps you allow can read the City records your role can read. They cannot add, change or delete anything in {PRODUCT.short}. You can withdraw access at any time in Settings, then Connected apps.
         </Notice>
+        {!cityApproved && <Notice tone="warn" title="The City has not approved this app">
+          {appStatus === 'suspended' ? 'Its access is suspended.' : appStatus === 'retired' ? 'It has been retired.' : 'It is not yet on the City\'s list of approved apps.'} Even if you allow it, it will read nothing until an administrator and the CDRRMO Head approve it in Settings, then Connected apps.
+        </Notice>}
         {returnHost && <p className="text-sm text-muted">After you choose, you go back to <span className="font-data text-ink">{returnHost}</span>.</p>}
         <div className="grid grid-cols-2 gap-3">
           <Button variant="secondary" size="lg" busy={busy === 'deny'} disabled={busy !== null} onClick={() => void decide(false)}

@@ -11,7 +11,7 @@ export function AuthLayout({ title, intro, children }: { title: ReactNode; intro
         <picture className="relative block w-full">
           <source type="image/webp" srcSet="/brand/app-banner-800.webp 800w, /brand/app-banner-1600.webp 1600w" sizes="(min-width: 1024px) 58vw, 100vw" />
           <img src="/brand/app-banner-800.jpg" srcSet="/brand/app-banner-800.jpg 800w, /brand/app-banner-1600.jpg 1600w" sizes="(min-width: 1024px) 58vw, 100vw"
-            alt="MODE: Manual of Operations for the DRRMO and EOC, with the seals of the City of Ormoc and the CDRRMO. Prepare before, respond together, recover stronger, build safer communities."
+            alt="MODE: Manual of Operations for the DRRMO and EOC, with the seals of the City of Ormoc and the CDRRMO: prepare before, respond together, recover stronger, build safer communities"
             width={1600} height={893} className="block h-auto w-full lg:max-h-dvh lg:object-contain" fetchPriority="high" />
         </picture>
         <div className="h-1.5 w-full bg-accent-bright lg:absolute lg:inset-y-0 lg:right-0 lg:h-auto lg:w-1.5" aria-hidden />

@@ -9,7 +9,8 @@ const oauth = {
 };
 let authState: { ready: boolean; status: string; email: string | null } = { ready: true, status: 'active', email: 'duty@ormoc.gov.ph' };
 
-vi.mock('@/lib/supabase', () => ({ supabase: { auth: { oauth } } }));
+const rpc = vi.fn();
+vi.mock('@/lib/supabase', () => ({ supabase: { auth: { oauth }, rpc } }));
 vi.mock('@/lib/auth', () => ({
   useAuth: () => ({ ...authState, signOut: vi.fn(), unsent: vi.fn(async () => 0) }),
   authMessage: (e: { message: string }) => e.message,
@@ -41,6 +42,7 @@ describe('OAuth consent screen', () => {
   beforeEach(() => {
     authState = { ready: true, status: 'active', email: 'duty@ormoc.gov.ph' };
     Object.values(oauth).forEach((f) => f.mockReset());
+    rpc.mockReset(); rpc.mockResolvedValue({ data: 'approved', error: null });
     assign.mockReset();
     Object.defineProperty(window, 'location', { value: { ...window.location, assign }, writable: true });
   });
@@ -83,6 +85,14 @@ describe('OAuth consent screen', () => {
     renderAt('/oauth/consent?authorization_id=az1');
     expect(await screen.findByText(/will not open/i)).toBeTruthy();
     expect(assign).not.toHaveBeenCalled();
+  });
+
+  it('warns when the City has not approved the app (1.9)', async () => {
+    rpc.mockResolvedValue({ data: 'unregistered', error: null });
+    oauth.getAuthorizationDetails.mockResolvedValue({ data: details, error: null });
+    renderAt('/oauth/consent?authorization_id=az1');
+    expect(await screen.findByText('The City has not approved this app')).toBeTruthy();
+    expect(rpc).toHaveBeenCalledWith('connected_app_status', { p_client_id: 'c1' });
   });
 
   it('explains an expired request', async () => {
