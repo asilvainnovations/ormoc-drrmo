@@ -91,8 +91,25 @@ export async function callOnline<T>(fn: string, args: Record<string, unknown>, w
   return data as T;
 }
 
+/**
+ * Authority edits (approve, verify, change access) go straight to the server and are never queued (ADR-006).
+ * Sends only the changed columns with the row's version, so a stale screen gets PT409 instead of overwriting.
+ */
+export async function updateOnline<R extends { id: string; version: number }>(table: string, row: R, patch: Partial<R>, what: string): Promise<R> {
+  if (!navigator.onLine) throw new NeedsConnectionError(what);
+  const { data, error } = await supabase.from(table).update({ ...patch, version: row.version }).eq('id', row.id).select('*').single();
+  if (error) {
+    if (/fetch|network|load failed/i.test(error.message)) throw new NeedsConnectionError(what);
+    if (error.code === 'PT409') throw new Error('Someone changed this record a moment ago. Look again and try once more.');
+    throw new Error(error.hint ? `${error.message} ${error.hint}` : error.message);
+  }
+  await dexieTable(table).put(data as Row);
+  return data as R;
+}
+
 /** Storage buckets accept these types only (migrations …_storage.sql and …_document_vault.sql). */
-export const UPLOAD_TYPES: Record<'evidence' | 'vault', { types: string[]; maxMb: number; label: string }> = {
+export type Bucket = 'evidence' | 'vault' | 'geo';
+export const UPLOAD_TYPES: Record<Bucket, { types: string[]; maxMb: number; label: string }> = {
   evidence: {
     types: ['application/pdf', 'image/jpeg', 'image/png', 'image/webp', 'image/heic',
       'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
@@ -106,6 +123,11 @@ export const UPLOAD_TYPES: Record<'evidence' | 'vault', { types: string[]; maxMb
       'application/vnd.openxmlformats-officedocument.presentationml.presentation', 'text/plain'],
     maxMb: 25, label: 'PDF, image, Word, Excel, PowerPoint or plain text',
   },
+  // Geo-COP layers (migration 20261106001900): the original file and the GeoJSON made from it on the device.
+  geo: {
+    types: ['application/geo+json', 'application/json', 'application/vnd.google-earth.kml+xml', 'application/vnd.google-earth.kmz', 'text/xml'],
+    maxMb: 50, label: 'KML, KMZ or GeoJSON',
+  },
 };
 
 const BY_EXTENSION: Record<string, string> = {
@@ -113,6 +135,7 @@ const BY_EXTENSION: Record<string, string> = {
   doc: 'application/msword', docx: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
   xls: 'application/vnd.ms-excel', xlsx: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
   pptx: 'application/vnd.openxmlformats-officedocument.presentationml.presentation', txt: 'text/plain',
+  kml: 'application/vnd.google-earth.kml+xml', kmz: 'application/vnd.google-earth.kmz', geojson: 'application/geo+json',
 };
 /** The file's type, from its name when the browser does not say (common for HEIC and Office files). */
 export function fileType(file: File): string {
@@ -120,7 +143,7 @@ export function fileType(file: File): string {
 }
 
 /** Why this file cannot be uploaded to the bucket, or null. Checked before anything is saved. */
-export function uploadProblem(file: File, bucket: 'evidence' | 'vault'): string | null {
+export function uploadProblem(file: File, bucket: Bucket): string | null {
   const rule = UPLOAD_TYPES[bucket];
   if (!rule.types.includes(fileType(file))) return `${file.name} is not a file type the City's storage accepts. Use ${rule.label}.`;
   if (file.size > rule.maxMb * 1024 * 1024) return `${file.name} is larger than ${rule.maxMb} MB.`;
@@ -128,7 +151,7 @@ export function uploadProblem(file: File, bucket: 'evidence' | 'vault'): string 
 }
 
 /** Keep a file on the device and queue its upload to the private bucket. */
-export async function queueUpload(file: File, path: string, fileId: string, bucket: 'evidence' | 'vault' = 'evidence'): Promise<void> {
+export async function queueUpload(file: File, path: string, fileId: string, bucket: Bucket = 'evidence'): Promise<void> {
   const problem = uploadProblem(file, bucket);
   if (problem) throw new Error(problem);
   await db.files.put({ id: fileId, blob: file, name: file.name, type: fileType(file), createdAt: now() });
@@ -176,7 +199,7 @@ export async function discardFailed(failedId: number): Promise<void> {
  * Open an evidence file: the copy on this device if there is one (works offline),
  * otherwise a five-minute signed link from the private bucket.
  */
-export async function evidenceFileUrl(evidenceId: string, path: string, bucket: 'evidence' | 'vault' = 'evidence'): Promise<string> {
+export async function evidenceFileUrl(evidenceId: string, path: string, bucket: Bucket = 'evidence'): Promise<string> {
   const local = await db.files.get(evidenceId);
   if (local) return URL.createObjectURL(local.blob);
   if (!navigator.onLine) throw new NeedsConnectionError('Opening this file');

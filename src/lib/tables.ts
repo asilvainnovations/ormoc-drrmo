@@ -28,6 +28,10 @@ export const TABLES: TableConfig[] = [
   { name: 'aa_action_templates', pk: 'id', cursor: null, write: 'none' },
   { name: 'profiles', pk: 'id', cursor: 'updated_at', write: 'none' },
   { name: 'barangays', pk: 'psgc', cursor: 'updated_at', write: 'none' },
+  // 1.9 reference and registers (migrations 20261106001700-1900)
+  { name: 'barangay_clusters', pk: 'id', cursor: 'updated_at', write: 'none' },
+  { name: 'response_clusters', pk: 'id', cursor: 'updated_at', write: 'none' },
+  { name: 'form_templates', pk: 'id', cursor: 'updated_at', write: 'upsert', omit: [...STAMPS, 'rev'] },
   // library & protocols
   { name: 'moo_documents', pk: 'id', cursor: 'updated_at', write: 'upsert', omit: STAMPS },
   { name: 'moo_versions', pk: 'id', cursor: 'updated_at', write: 'upsert', omit: [...STAMPS, 'author', 'approved_by', 'approved_at'] },
@@ -39,7 +43,8 @@ export const TABLES: TableConfig[] = [
   { name: 'protocol_runs', pk: 'id', cursor: 'updated_at', write: 'update',
     omit: [...STAMPS, 'started_by', 'completed_at', 'template_id', 'template_rev', 'started_at', 'context_type', 'context_id'] },
   { name: 'protocol_run_steps', pk: 'id', cursor: 'updated_at', write: 'update',
-    omit: [...STAMPS, 'done_by', 'done_at', 'run_id', 'step_id', 'seq', 'instruction', 'is_critical', 'requires_note', 'due_at'] },
+    omit: [...STAMPS, 'done_by', 'done_at', 'run_id', 'step_id', 'seq', 'instruction', 'is_critical', 'requires_note', 'due_at',
+      'form_code', 'form_rev', 'form_schema'] },
   // assessment
   { name: 'assessment_cycles', pk: 'id', cursor: 'updated_at', write: 'upsert', omit: [...STAMPS, 'created_by'] },
   { name: 'responses', pk: 'id', cursor: 'updated_at', write: 'upsert', omit: [...STAMPS, 'assessed_by', 'validated_by', 'validated_at'] },
@@ -47,6 +52,16 @@ export const TABLES: TableConfig[] = [
   { name: 'actions', pk: 'id', cursor: 'updated_at', write: 'upsert', omit: STAMPS },
   // EOC
   { name: 'eoc_activations', pk: 'id', cursor: 'updated_at', write: 'none' },
+  // EOC structure (1.9): plans and positions are maintained by the Head and EOC Manager; activation of a plan is an RPC.
+  { name: 'contingency_plans', pk: 'id', cursor: 'updated_at', write: 'upsert', omit: STAMPS },
+  { name: 'cp_activation_items', pk: 'id', cursor: 'updated_at', write: 'none' },
+  { name: 'activation_clusters', pk: 'id', cursor: 'updated_at', write: 'update',
+    omit: [...STAMPS, 'activation_id', 'item_kind', 'item_code', 'changed_by', 'changed_at'] },
+  { name: 'eoc_positions', pk: 'id', cursor: 'updated_at', write: 'none' },
+  { name: 'eoc_designations', pk: 'id', cursor: 'updated_at', write: 'upsert', omit: [...STAMPS, 'proposed_by', 'approved_by', 'approved_at'] },
+  // Geo-COP (1.9)
+  { name: 'geo_reference_points', pk: 'id', cursor: 'updated_at', write: 'upsert', omit: [...STAMPS, 'created_by', 'verified_by', 'verified_at'] },
+  { name: 'geo_layers', pk: 'id', cursor: 'updated_at', write: 'upsert', omit: [...STAMPS, 'uploaded_by'] },
   { name: 'logbook_entries', pk: 'id', cursor: 'created_at', write: 'insert', omit: ['created_at', 'author'] },
   { name: 'sitreps', pk: 'id', cursor: 'updated_at', write: 'upsert', omit: [...STAMPS, 'seq', 'prepared_by', 'submitted_at', 'approved_by', 'approved_at'] },
   { name: 'barangay_reports', pk: 'id', cursor: 'created_at', write: 'insert', omit: ['created_at', 'reported_by'] },
@@ -67,4 +82,5 @@ export const TABLES: TableConfig[] = [
 export const TABLE = Object.fromEntries(TABLES.map((t) => [t.name, t])) as Record<string, TableConfig>;
 
 /** Tables pushed to the UI live through Supabase Realtime. */
-export const REALTIME_TABLES = ['eoc_activations', 'logbook_entries', 'sitreps', 'barangay_reports', 'resource_requests', 'declarations', 'aa_actions', 'vault_documents'];
+export const REALTIME_TABLES = ['eoc_activations', 'logbook_entries', 'sitreps', 'barangay_reports', 'resource_requests', 'declarations', 'aa_actions', 'vault_documents',
+  'activation_clusters', 'eoc_designations', 'contingency_plans', 'geo_reference_points', 'geo_layers', 'form_templates'];

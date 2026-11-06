@@ -11,10 +11,18 @@ const key = (import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY ?? import.meta.env.VI
 
 const checked = checkSupabaseConfig(url, key);
 
+/**
+ * The City-hosted basemap (ADR-015): a PMTiles extract of Ormoc in the City's public `basemap` bucket.
+ * VITE_BASEMAP_URL overrides it (for a City web server); it must be allowed by the CSP connect-src.
+ */
+const basemapOverride = (import.meta.env.VITE_BASEMAP_URL as string | undefined)?.replace(/\/$/, '');
+
 export const env = {
   supabaseUrl: checked.url,
   supabaseAnonKey: checked.key,
   /** Why the app cannot connect, or null when the settings look right. */
   configError: checked.error,
-  appVersion: '1.4.0',
+  appVersion: '1.9.0',
+  /** Folder holding ormoc.pmtiles, fonts/ and sprites/ (scripts/build_basemap.sh makes and uploads them). */
+  basemapBase: basemapOverride || (checked.url ? `${checked.url}/storage/v1/object/public/basemap` : ''),
 };

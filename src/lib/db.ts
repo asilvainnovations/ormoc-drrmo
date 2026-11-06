@@ -13,7 +13,7 @@ export interface OutboxItem {
   args?: Record<string, unknown>;
   fileId?: string;
   path?: string;
-  bucket?: 'evidence' | 'vault';     // storage bucket for uploads (evidence when absent)
+  bucket?: 'evidence' | 'vault' | 'geo';     // storage bucket for uploads (evidence when absent)
   label: string;                     // human description for the Sync screen
   createdAt: string;
   attempts: number;
@@ -38,7 +38,7 @@ export interface FailedItem {
    */
   fileId?: string;
   path?: string;
-  bucket?: 'evidence' | 'vault';
+  bucket?: 'evidence' | 'vault' | 'geo';
   fileName?: string;
   /** Account that queued the upload (a retry is sent only under that account). */
   userId?: string | null;
@@ -96,6 +96,17 @@ export class DrrmDB extends Dexie {
   aa_disbursements!: Table<T.AaDisbursement, string>;
   // document vault
   vault_documents!: Table<T.VaultDocument, string>;
+  // 1.9
+  form_templates!: Table<T.FormTemplate, string>;
+  barangay_clusters!: Table<T.BarangayCluster, string>;
+  response_clusters!: Table<T.ResponseCluster, string>;
+  contingency_plans!: Table<T.ContingencyPlan, string>;
+  cp_activation_items!: Table<T.CpActivationItem, string>;
+  activation_clusters!: Table<T.ActivationCluster, string>;
+  eoc_positions!: Table<T.EocPosition, string>;
+  eoc_designations!: Table<T.EocDesignation, string>;
+  geo_reference_points!: Table<T.GeoReferencePoint, string>;
+  geo_layers!: Table<T.GeoLayer, string>;
   // local only
   outbox!: Table<OutboxItem, number>;
   failed!: Table<FailedItem, number>;
@@ -153,6 +164,21 @@ export class DrrmDB extends Dexie {
       manual_parts: 'no, sort',
       manual_areas: 'no, part_no, sort',
       moo_documents: 'id, manual, code, sort, area_no, parent_id, *aliases',
+    });
+    // v4 (1.9): step forms, EOC structure and contingency-plan clustering, Geo-COP.
+    this.version(4).stores({
+      form_templates: 'id, code, status',
+      protocol_templates: 'id, code, category, status',
+      barangays: 'psgc, name, cluster_id',
+      barangay_clusters: 'id, code',
+      response_clusters: 'id, code, sort',
+      contingency_plans: 'id, code, status',
+      cp_activation_items: 'id, plan_id',
+      activation_clusters: 'id, activation_id, [activation_id+item_kind+item_code]',
+      eoc_positions: 'id, code, section, sort',
+      eoc_designations: 'id, position_id, status',
+      geo_reference_points: 'id, code, verification_status',
+      geo_layers: 'id, code, layer_group, status',
     });
   }
 }
