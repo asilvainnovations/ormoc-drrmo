@@ -18,6 +18,20 @@
 -- =============================================================================
 
 -- ---------------------------------------------------------------- 1. Vault access
+-- Re-run safety (1.9.0 fix, 6 Nov 2026): app.track() from the core migration creates its triggers without
+-- "if not exists", so running this file a second time stopped with 42710 "trigger touch_row ... already exists".
+-- This redefinition drops and re-creates them, so app.track() is safe to call again. Same in 1600-1900.
+create or replace function app.track(tbl regclass, audited boolean default true) returns void
+language plpgsql as $$
+begin
+  execute format('drop trigger if exists touch_row on %s', tbl);
+  execute format('create trigger touch_row before insert or update on %s for each row execute function app.touch_row()', tbl);
+  if audited then
+    execute format('drop trigger if exists audit_row on %s', tbl);
+    execute format('create trigger audit_row after insert or update or delete on %s for each row execute function app.audit()', tbl);
+  end if;
+end $$;
+
 alter table public.vault_documents add column if not exists access_class text not null default 'standard';
 alter table public.vault_documents add column if not exists allowed_roles public.app_role[] not null default '{}';
 do $$ begin
