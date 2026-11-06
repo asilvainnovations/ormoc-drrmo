@@ -8,6 +8,7 @@ import { CONSENT_PATH, describeScopes, hostOf, oauthEndpoints } from '@/lib/oaut
 import { useToast } from '@/components/Toast';
 import { Button, List, Loading, Notice, PageHeader, Section } from '@/components/ui';
 import { PRODUCT } from '@/lib/product';
+import { CityAppRegister } from './CityAppRegister';
 
 /** Apps this account has allowed through "Sign in with MODE", with a way to withdraw each. */
 export function ConnectedAppsPage() {
@@ -37,7 +38,7 @@ export function ConnectedAppsPage() {
 
   return (
     <div className="page">
-      <PageHeader title="Connected apps" back="/settings" subtitle={`Other City systems you have allowed to sign you in with your ${PRODUCT.short} account.`} />
+      <PageHeader title="Connected apps" back="/settings" subtitle={`Other City systems you have allowed to sign you in with your ${PRODUCT.short} account. An app reads City records only after the City approves it.`} />
       <Section>
         {!online ? <Notice tone="warn">This needs a connection.</Notice>
           : grants === null ? <Loading />
@@ -58,6 +59,7 @@ export function ConnectedAppsPage() {
             </List>
           )}
       </Section>
+      {(has('admin') || has('cdrrmo_head')) && <CityAppRegister />}
       {has('admin') && <OAuthServerDetails />}
     </div>
   );
