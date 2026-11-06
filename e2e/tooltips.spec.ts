@@ -2,7 +2,7 @@ import { expect, test, type Page } from '@playwright/test';
 
 // Every visible clickable element explains itself with a tooltip (data-tip), on every main screen.
 // Content written by people (manual text in .prose-doc) and the tooltip itself are excluded.
-const PAGES = ['/', '/assess', '/protocols', '/eoc', '/eoc/log', '/eoc/sitreps', '/eoc/requests', '/eoc/barangays', '/eoc/aa', '/eoc/aa/pdra/new', '/eoc/aa/funds',
+const PAGES = ['/', '/assess', '/protocols', '/drrm', '/drrm/protocols', '/drrm/forms', '/eoc/liaison', '/eoc/plans', '/eoc/roster', '/eoc/map', '/eoc', '/eoc/log', '/eoc/sitreps', '/eoc/requests', '/eoc/barangays', '/eoc/aa', '/eoc/aa/pdra/new', '/eoc/aa/funds',
   '/library', '/library/trace', '/library/requirements', '/library/crosswalk', '/settings', '/settings/sync', '/settings/about', '/vault', '/vault/review', '/vault/references'];
 
 async function untipped(page: Page) {

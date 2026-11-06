@@ -103,7 +103,7 @@ test('EOC level, logbook, anticipatory action and funds', async ({ page }) => {
 
 test('library and traceability', async ({ page }) => {
   await page.goto('/library');
-  await expect(page.getByRole('heading', { name: 'Part 2. SOPs by alert level' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'CDRRMO Manual of Operations' })).toBeVisible();
   await shot(page, '11-library');
   // An old code still finds its new home (ADR-012).
   await page.getByLabel('Find a section').fill('EOC Ch.2');
