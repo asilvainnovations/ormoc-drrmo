@@ -1,7 +1,0 @@
-MODE 1.9.0 — delete these files from the repository (they are replaced or no longer used):
-
-reference/Ormoc_CDRRMO-EOC_Institutional_Assessment_Tool_v1-3.xlsx
-    Replaced by reference/Ormoc_CDRRMO-EOC_Institutional_Assessment_Tool_v1-5.xlsx (included).
-
-No seed part needs deleting: the new set is 01_seed.sql to 18_seed.sql and all are included.
-Replace them all, then run all 18 in order (DEPLOY.md, "To 1.9.0").
