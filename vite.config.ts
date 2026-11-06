@@ -47,7 +47,7 @@ export default defineConfig(({ command, mode }) => {
         ],
       },
       workbox: {
-        globPatterns: ['**/*.{js,css,html,svg,png,webp,woff2}'],
+        globPatterns: ['**/*.{js,mjs,css,html,svg,png,webp,woff2}'],
         // The original logo and banner files are kept for print and reuse, but are too large to
         // ship to every phone; the app uses the compressed copies in /brand.
         globIgnores: ['App_Banner.png', 'Ormoc_City_Logo.png', 'Ormoc_CDRRMO_Logo.png', 'brand/*.jpg',

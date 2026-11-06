@@ -6,7 +6,8 @@ A mobile-first, offline-capable web app (PWA) for the City Disaster Risk Reducti
 
 - **Assessment.** Runs the Institutional Assessment Tool v1.1 (140 indicators). Scoring is gated by evidence, results are shown by domain and maturity, and gaps feed a prioritised action plan.
 - **Library.** Holds the Manual of Operations by Part and functional area: area outlines, drafted chapters and their annexes, SOPs and forms, with version control and approval by the CDRRMO Head. Old chapter codes (MOO Ch.4, EOC Ch.2) still find their new home. Each section traces to the indicators and master requirements MR-01 to MR-18, and to the UNDRR Scorecard and RA 12287 IRR crosswalk.
-- **Protocols.** Turns the manuals into checklists the CDRRMO can run, live or as drills, with an audit trail. Ten protocols are drafted for validation, including the State of Calamity and State of Imminent Disaster procedures (SOP GOV-04 and GOV-05).
+- **DRRM workflows and protocols.** Turns the manuals into checklists the CDRRMO can run, live or as drills, with an audit trail. Every step is recorded on a form (the Manual's form, or a one-tap step record). Ten protocols and four workflows (budget cycle, EOC designations, contingency-plan activation, Geo-COP) are drafted for validation, including the State of Calamity and State of Imminent Disaster procedures (SOP GOV-04 and GOV-05).
+- **EOC structure and Geo-COP** (1.9). Contingency plans that open response clusters on activation; the EOC roster three deep; the Barangay Liaison Desk by cluster; a map on the City's own basemap with field-verified reference points and validated layers.
 - **EOC.** Covers the White / Blue / Red alert level, an append-only logbook, SitReps, barangay status (counts only), and resource requests.
 - **Anticipatory action (RA 12287 and IRR).** Records the PDRA and the declaration timeline with its legal deadlines. It holds the 29-item AA checklist and enforces the fund cap (10% of the 70% LDRRMF) and the 30% / 70% tranche limits.
 
@@ -75,6 +76,7 @@ docs/             system design, design system, architecture decision records
 | `python3 scripts/brand_assets.py` | Rebuild the circular seals, banner copies and app icons from the originals in `public/` |
 | `npm run seed:generate` | Regenerate `supabase/seed/seed.sql`, `supabase/seed/parts/` and `src/data/reference.json` from `reference/*.xlsx` and the manual drafts in `reference/moo/` |
 | `python3 scripts/split_manual_docx.py <chapter.docx> --slug chN --prefix MOO_ChN` | Turn a drafted chapter into Library sources in `reference/moo/` and compressed figures in `public/library/chN/` (Chapter 2's figures are in `chp2/`). Then add the chapter to `CHAPTERS` and `LIBRARY_DRAFTS` in `generate_seed.py` |
+| `bash scripts/build_basemap.sh` | Build the City-hosted basemap (an OpenStreetMap PMTiles extract of Ormoc, fonts and icons) and upload it to the `basemap` bucket. Needs the `pmtiles` CLI and the service_role key on the workstation (ADR-015) |
 | `npm run seed:operational` | Regenerate the one-time `supabase/seed/operational/` files (IAT baseline, Document Vault register) from the IAT workbook |
 | `npm run check` | Typecheck, unit tests and build |
 

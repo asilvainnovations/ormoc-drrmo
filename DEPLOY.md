@@ -81,14 +81,16 @@ There are two ways to do this. Both give the same result.
 
 ### Option A: Supabase SQL editor (no tools to install)
 
-The SQL editor rejects long scripts, so the reference data comes in parts in `supabase/seed/parts/` (thirteen at present). Each part is under 400 lines; long manual text is written on a single line.
+The SQL editor rejects long scripts, so the reference data comes in parts in `supabase/seed/parts/` (eighteen at present). Each part is under 400 lines; long manual text is written on a single line.
 
-1. **Migrations.** In SQL Editor → New query, paste and run each file in `supabase/migrations/` in name order, one at a time (`…000100_core.sql` first, `20261102001200_single_manual.sql` last). Wait for "Success" before the next. Run each migration once only.
+1. **Migrations.** In SQL Editor → New query, paste and run each file in `supabase/migrations/` in name order, one at a time (`…000100_core.sql` first, `20261106001900_geo_cop.sql` last). Wait for "Success" before the next. Run each migration once only.
 2. **Reference data.** Paste and run `supabase/seed/parts/01_seed.sql`, then `02_seed.sql`, and so on to the last part. Use the parts, not `supabase/seed/seed.sql`, which is the same data in one file for `psql`.
-3. The last part ends with a check query. It should return **140 | 18 | 935 | 71 | 10 | 66 | 29 | 10 | 140** (the last two: functional areas, and indicators with an area).
-4. **Operational data (once).** Paste and run, in order, the four files in `supabase/seed/operational/`:
-   - `01_iat_baseline_responses.sql`, `02_iat_baseline_evidence.sql`, `03_iat_baseline_scores_actions.sql`: the October 2026 IAT baseline as the cycle **2026 Baseline (IAT v1.1)**, with 140 provisional responses, their evidence notes and the action plan. Part 3 ends with the cycle results.
-   - `04_vault_register.sql`: Document Vault entries for the engagement's source documents. Attach the files in the app afterwards.
+3. The last part ends with a check query. It should return **140 | 18 | 935 | 71 | 14 | 94 | 29 | 10 | 140 | 29** (protocols and workflows, their steps, AA items, functional areas, indicators with an area, forms).
+4. **Operational data (once).** Paste and run, in order, these files in `supabase/seed/operational/`:
+   - `01_iat_baseline_responses.sql`, `02_iat_baseline_evidence.sql`, `02b_iat_baseline_evidence.sql`, `03_iat_baseline_scores_actions.sql`: the October 2026 IAT baseline (workbook v1-5) as the cycle **2026 Baseline (IAT v1.1)**, with 140 provisional responses, their evidence notes and the action plan. Part 3 ends with the cycle results.
+   - `04_vault_register.sql`: Document Vault entries for the engagement's source documents and City issuances. Attach the files in the app afterwards.
+   - `06_eoc_structure.sql`: response clusters, contingency plans, EOC positions, barangay clusters and the EOC reference point.
+   - Skip `05_iat_v1_5_update.sql` on a new database: it updates databases loaded from the older workbook.
 
    These are working records the City then edits in the app. Running them again never overwrites anything, and never changes a score someone has set. 27 baseline scores are loaded below the workbook score, because the evidence on record does not support them (see the note at the top of each response's Gap / Remarks).
 
@@ -124,9 +126,10 @@ Check the result:
 ```sql
 select (select count(*) from iat_indicators)      as indicators,    -- 140
        (select count(*) from master_requirements) as requirements,  -- 18
-       (select count(*) from protocol_templates)  as protocols,     -- 10
+       (select count(*) from protocol_templates)  as protocols,     -- 14 (10 protocols, 4 workflows)
+       (select count(*) from form_templates)      as forms,         -- 29
        (select count(*) from aa_action_templates) as aa_actions,    -- 29
-       (select count(*) from storage.buckets where id in ('evidence', 'vault')) as buckets;  -- 2
+       (select count(*) from storage.buckets where id in ('evidence', 'vault', 'geo', 'basemap')) as buckets;  -- 4
 ```
 
 Then, in the dashboard:
@@ -159,13 +162,30 @@ Then, in the dashboard:
   2. Delete `e2e/demo.spec.ts` (a pre-1.2 copy of the journeys that no longer matches the app and breaks the test order).
   3. **Push with git**, or create the two files `.github/workflows/ci.yml` and `.github/workflows/uptime.yml` in the GitHub website editor (Add file → Create new file). The upload page drops the `.github/` folder.
   4. In GitHub, Settings → Secrets and variables → Actions → **Variables**: add `APP_URL`, `SUPABASE_URL` and `SUPABASE_PUBLISHABLE_KEY` for the uptime check.
-  5. Run `supabase/admin/migration_status.sql` in the SQL editor: every migration should say `applied` and every grant `ok`. Keep the result.
+  5. Run `supabase/migrations/migration_status.sql` in the SQL editor: every migration should say `applied` and every grant `ok`. Keep the result.
   6. Redeploy the app. Then follow section 11 for the first backup.
 - **To 1.8.1** (5 November 2026), the platform's name is **MODE** (*Manual of Operations for the DRRMO and EOC*; formally the Ormoc City DRRMO & EOC Manual of Operations Development Platform). No database change.
   1. Delete `public/brand/App_Banner.png`. It duplicates `public/App_Banner.png` and is too large for the offline cache, which **stopped the production build**. The app uses the resized copies `public/brand/app-banner-{800,1600}.{webp,jpg}`, which this release regenerates from the new banner.
   2. Upload the files and redeploy. Installed phones show the new name after the update prompt; on some phones the home-screen label changes only after reinstalling.
   3. Supabase Dashboard → Authentication → Emails: paste the six templates in `supabase/email/` again (the header and footer now say MODE).
   4. To change the banner later: replace `public/App_Banner.png` only, then run `python3 scripts/brand_assets.py` (or ask the developer) and upload the four `public/brand/app-banner-*` files.
+- **To 1.8.2** (6 November 2026), Document Vault and IAT supplementary desk review. No migration, no reference-seed change, no redeploy needed.
+  1. Run `supabase/seed/operational/04_vault_register.sql` again. It adds 23 Vault entries (LCCAP 2019-2030; CDP 2024-2030 Parts 1 and 2; CDRRMC Res. 01-08 s.2025 and 09-10 s.2024; EO 2024-032A, 2023-0085, 2023-0042, 2023-0041 (marked superseded), 2023-0025, 2023-0026; SP Res. 2023-112, 2023-347, 2024-088 and 2024-102) with their Drive links, and leaves existing entries alone. The check should return at least **40**. Attach the PDFs in the app (Vault → document → Attach file) if the City wants copies held in the `vault` bucket.
+  2. `reference/Ormoc_CDRRMO-EOC_Institutional_Assessment_Tool_v1-3.xlsx` now carries the 6 Nov 2026 review (15 scores changed; evidence, gaps and actions revised on 53 indicators). The baseline files `01`–`03` were regenerated from it, but they never overwrite a response that already exists. On a database that already holds the "2026 Baseline" cycle, enter the changes in the app (Assess → 2026 Baseline), attaching the Vault document as evidence for each changed score; the evidence gate needs it for any score of 3.
+- **To 1.9.0** (6 November 2026), DRRM module, step forms, EOC structure and clustering, Geo-COP, Vault access, connected apps (ADR-015 to ADR-018). For the 1–4 December validation workshop.
+  1. **Migrations**, once each, in this order (each is safe to run again): `20261106001600_vault_access_and_connected_apps.sql`, `20261106001700_step_forms.sql`, `20261106001800_eoc_structure_and_clusters.sql`, `20261106001900_geo_cop.sql`. They add Vault access levels and the City register of connected apps; forms and the form on every step; response clusters, contingency plans, EOC positions and designations, barangay clusters; reference points, map layers and the `geo` and `basemap` buckets.
+  2. **Reference data.** Delete every file in `supabase/seed/parts/`, upload the new ones, and run all **18** parts in order. Parts 12 to 14 carry Chapters 1 and 2 v1.2 in pieces (the chapters are too long for one part); run them in order. The last part's check should return **140 | 18 | 935 | 71 | 14 | 94 | 29 | 10 | 140 | 29** (protocols and workflows, steps, AA items, areas, indicators with an area, forms). Approved text and approval status are never changed; the 14 templates and 29 forms load as drafts for the Head to approve.
+  3. **Operational files**, in this order:
+     - `04_vault_register.sql` again: adds the IAT v1.5 workbook, the EOC placemark (KML), 48 City issuances with their Drive links, and three **restricted** entries (organisational chart and two staff papers: CDRRMO Head, assessors and validators only). It leaves existing entries alone. It needs migration 1600.
+     - `05_iat_v1_5_update.sql`: brings the "2026 Baseline" cycle from workbook v1-3 to v1-5 (71 indicators; 84 evidence notes; 27 score changes). It never changes a validated response, and changes a score only where it still equals the v1-3 import.
+     - `06_eoc_structure.sql`: 10 response clusters, 7 contingency plans with their activation sets, the EOC positions, barangay clusters D1–D6 (pilots D1 and D3) and the EOC reference point (pending field validation).
+     On a **new** database run `01`, `02`, `02b`, `03`, `04`, `06` instead (`02` is now in two files; `05` is not needed because `01`–`03` already carry v1-5).
+  4. Run `supabase/migrations/migration_status.sql`: the four new migrations should say `applied` and every grant `ok`.
+  5. **Hosting.** The CSP in `netlify.toml` and `vercel.json` now names the City project (`jmctsspadywjcbbqwweh.supabase.co`) instead of every Supabase project, and allows the map's worker. If the app talks to another project (a training copy), add its host there. Optional: `VITE_BASEMAP_URL` if the basemap is served from a City web server instead of the `basemap` bucket.
+  6. **Basemap.** On a workstation with internet access: `SUPABASE_URL=… SERVICE_ROLE_KEY=… bash scripts/build_basemap.sh`. It extracts Ormoc from a Protomaps OpenStreetMap build, adds the fonts and icons, and uploads them to the `basemap` bucket. Until then EOC → Map says "Basemap not available" and still shows points and layers.
+  7. Upload the files and redeploy (push with git: `.github/` must survive). Old `/protocols` links open the DRRM module.
+  8. **In the app, before the workshop:** the CDRRMO Head approves the forms (DRRM → Forms) and the workflows and protocols to be exercised; the EOC Manager proposes designations (EOC → Roster) for the Head to approve; after a site check, the Head or EOC Manager records the field verification of the EOC point (EOC → Map). For the clustering exercise: raise the EOC to Blue, then EOC → Plans and clusters → CP-FLOOD-LUNOP → Activate plan.
+  9. **Connected apps.** An app now reads nothing until the City approves it: create the client in Supabase (Authentication → OAuth Apps), then Settings → Connected apps → Register an app, and the administrator or CDRRMO Head approves it.
 - **85 barangays:** if the seed was loaded before the 85-barangay correction, run parts `01_seed.sql` and `06_seed.sql` once more, but only if no manual version has been approved yet. Otherwise ask the developer for a one-off update of the three indicator texts (A3.7, A7.3, B3.2).
 
 ## 4. First administrator and the CDRRMO Head
@@ -277,9 +297,10 @@ location /assets/ { add_header Cache-Control "public, max-age=31536000, immutabl
 - [ ] A new, unapproved account: confirm it sees only the waiting page, on a phone and a computer.
 - [ ] Password reset: request one and set a new password through the emailed link.
 - [ ] Backups: the first database dump and bucket copy are done, and one restore test into the training project has passed (section 11).
-- [ ] `supabase/admin/migration_status.sql` on production: all `applied`, all `ok`.
+- [ ] `supabase/migrations/migration_status.sql` on production: all `applied`, all `ok`.
 - [ ] CI is green on `main`, and the uptime check has run at least once.
-- [ ] If section 2a is on: a test app can sign in through the consent screen, cannot write, and loses access when it is withdrawn.
+- [ ] If section 2a is on: a test app reads nothing until it is approved in Settings → Connected apps; once approved it can sign in through the consent screen, cannot write, and loses access when it is withdrawn or suspended.
+- [ ] EOC → Map shows the City basemap (section 3, "To 1.9.0", step 6), and a restricted Vault document is not visible to a duty officer.
 - [ ] Back up: confirm a daily backup exists (Database → Backups).
 - [ ] Record who holds admin, the database password and the service key, in the City's ICT asset register.
 
@@ -320,6 +341,6 @@ Supabase's daily backups cover the database only. The evidence and Vault **files
 
 - every week: check the daily backup, take a `pg_dump`, copy the `evidence` and `vault` buckets with rclone, delete error reports older than 90 days;
 - every quarter (and before go-live): restore into the **training** project and run the checklist;
-- before and after every update: run `supabase/admin/migration_status.sql` and keep the result;
+- before and after every update: run `supabase/migrations/migration_status.sql` and keep the result;
 - monitoring: the uptime workflow (section 10), Settings → Error reports, and the Supabase usage alerts.
 
