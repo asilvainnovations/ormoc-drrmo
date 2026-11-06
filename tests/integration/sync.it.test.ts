@@ -76,19 +76,30 @@ describe('assessment through PostgREST', () => {
 });
 
 describe('operations through PostgREST', () => {
-  it('starts a protocol offline-style and the server creates identical step ids', async () => {
+  it('starts a protocol offline-style and the server creates identical step ids and form snapshots', async () => {
     await signIn('duty@it.local');
-    await pull(['protocol_templates', 'protocol_steps'], true);
+    await pull(['protocol_templates', 'protocol_steps', 'form_templates'], true);
     const t = (await db.protocol_templates.where('code').equals('PR-DUTY-HANDOVER').first())!;
-    const runId = await startProtocol(t, '00000000-0000-0000-0000-0000000000b3');
+    // The protocols are drafts until the CDRRMO Head approves them, so a duty officer runs this one as a drill.
+    const runId = await startProtocol(t, '00000000-0000-0000-0000-0000000000b3', { type: 'drill', id: null });
     const local = await db.protocol_run_steps.where('run_id').equals(runId).sortBy('seq');
     expect(await push()).toBe(true);
+    expect(await db.failed.count()).toBe(0);
     expect(sql(`select string_agg(id::text, ',' order by seq) from public.protocol_run_steps where run_id = '${runId}'`)).toBe(local.map((s) => s.id).join(','));
-    // Closing a step sends only status and note, so the locked snapshot is never touched.
-    await save('protocol_run_steps', { ...local[0]!, status: 'done', note: 'Logbook read' }, 'step 1');
+    // 1.9: every step carries its form; the device's snapshot matches the server's.
+    expect(sql(`select string_agg(coalesce(form_code, '-'), ',' order by seq) from public.protocol_run_steps where run_id = '${runId}'`))
+      .toBe(local.map((s) => s.form_code ?? '-').join(','));
+    // Closing a step sends only status, note and the form, so the locked snapshot is never touched.
+    await save('protocol_run_steps', { ...local[0]!, status: 'done', note: 'Logbook read', form_data: { outcome: 'Done as written' } }, 'step 1');
     expect(await push()).toBe(true);
     expect(await db.failed.count()).toBe(0);
     expect(sql(`select status || '|' || done_by from public.protocol_run_steps where id = '${local[0]!.id}'`)).toBe('done|00000000-0000-0000-0000-0000000000b3');
+    // A step whose form is not filled in is refused with the server's words, and the entry is kept.
+    const last = local.at(-1)!;
+    expect(last.form_code).toBe('HR-F04');
+    await save('protocol_run_steps', { ...last, status: 'done', note: null, form_data: { shift: '06:00-14:00' } }, 'handover');
+    expect(await push()).toBe(true);
+    expect((await db.failed.toArray()).at(-1)?.error).toMatch(/Complete the form first: Monitoring streams covered/);
   });
 
   it('appends logbook entries and ignores a replayed insert', async () => {
@@ -118,12 +129,33 @@ describe('operations through PostgREST', () => {
     expect(server).toEqual(local);
   });
 
+  it('queues an EOC designation proposal and a reference point offline-style; the server stamps who proposed (1.9)', async () => {
+    await signIn('eocmgr@it.local');
+    await pull(['eoc_positions', 'offices'], true);
+    const pos = (await db.eoc_positions.where('code').equals('EOC-MGR').first())!;
+    const office = (await db.offices.toArray())[0]!;
+    const id = uuid(), pt = uuid();
+    await save('eoc_designations', { _new: true, id, position_id: pos.id, rank: 2, person_id: null, office_id: office.id, designee_position: 'Operations Officer III',
+      status: 'proposed', valid_from: '2026-11-06', valid_until: null, note: null, proposed_by: null, approved_by: null, approved_at: null, version: 1 }, 'propose');
+    await save('geo_reference_points', { _new: true, id: pt, code: 'EOC-ALT-IT', name: 'Alternate EOC (test)', kind: 'alternate_eoc', lat: 11.0, lng: 124.6, altitude_m: null,
+      source: 'IT', verification_status: 'pending_field_validation', verified_by: null, verified_at: null, superseded_by: null, vault_document_id: null, note: null, created_by: null, version: 1 }, 'point');
+    expect(await push()).toBe(true);
+    expect(await db.failed.toArray()).toEqual([]);
+    expect(sql(`select status || '|' || proposed_by from public.eoc_designations where id = '${id}'`)).toBe('proposed|00000000-0000-0000-0000-0000000000b4');
+    // Approving is the CDRRMO Head's: the EOC Manager's attempt is refused.
+    await save('eoc_designations', { ...(await db.eoc_designations.get(id))!, status: 'approved' }, 'approve');
+    expect(await push()).toBe(true);
+    expect((await db.failed.toArray()).at(-1)?.error).toMatch(/Only the CDRRMO Head approves EOC designations/);
+    expect(sql(`select verification_status from public.geo_reference_points where id = '${pt}'`)).toBe('pending_field_validation');
+  });
+
   it('pulls what a viewer may read', async () => {
     await signIn('viewer@it.local');
     await pull(undefined, true);
     expect(await db.iat_indicators.count()).toBe(140);
     expect(await db.master_requirements.count()).toBe(18);
-    expect(await db.protocol_templates.count()).toBe(10);
+    expect(await db.protocol_templates.count()).toBe(14);   // 10 protocols and 4 workflows (1.9)
+    expect(await db.form_templates.count()).toBe(29);
     expect(await db.manual_areas.count()).toBe(10);
     // Since v1.6 drafts under review are readable by every active user (they ship in the app bundle anyway).
     expect(await db.moo_versions.where('status').equals('draft').count()).toBeGreaterThan(0);
