@@ -34,7 +34,9 @@ import json, re, uuid
 from pathlib import Path
 import openpyxl
 
+import sys
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 OUT = ROOT / 'supabase' / 'seed' / 'operational'
 NS = uuid.UUID('6f1c1d1e-0a0b-4c4d-9e8f-0123456789ab')   # same namespace as generate_seed.py
 CYCLE_KEY = '2026-baseline'
@@ -82,11 +84,11 @@ def clean(v):
 
 
 IND_ID = re.compile(r'^[ABC]\d+\.\d+$')
-SEG = re.compile(r'(?:(?<=^)|(?<=[\s.;]))(F|DR)\s*(\([^)]*\))?:\s*')
+SEG = re.compile(r'(?:(?<=^)|(?<=[\s.;]))(F|DR|OBS)\s*(\([^)]*\))?:\s*')
 
 
 def segments(text: str):
-    """Split 'F: ... DR: ...' into [('F', '...'), ('DR', '...')]."""
+    """Split 'F: ... DR: ... OBS: ...' into [('F', '...'), ('DR', '...'), ('OBS', '...')]."""
     marks = list(SEG.finditer(text))
     out = []
     for k, m in enumerate(marks):
@@ -97,8 +99,8 @@ def segments(text: str):
     return out
 
 
-def read_workbook():
-    wb = openpyxl.load_workbook(one('Ormoc_CDRRMO-EOC_Institutional_Assessment_Tool_v*.xlsx'))
+def read_workbook(path=None):
+    wb = openpyxl.load_workbook(path or one('Ormoc_CDRRMO-EOC_Institutional_Assessment_Tool_v*.xlsx'))
     rows, where = {}, {}
     for sheet in ('A_CDRRMO', 'B_EOC', 'C_Interface'):
         ws = wb[sheet]
@@ -122,7 +124,7 @@ def read_workbook():
         plan[ind] = dict(responsible=clean(ws.cell(r, 8).value), target=clean(ws.cell(r, 9).value),
                          budget=clean(ws.cell(r, 10).value), status=clean(ws.cell(r, 12).value))
     profile = {}
-    for a, b in wb['Profile'].iter_rows(min_col=1, max_col=2, values_only=True):
+    for a, b in wb['Profile'].iter_rows(min_col=2, max_col=3, values_only=True):  # labels in B, values in C
         if a and b:
             profile[str(a).strip()] = str(b).strip()
     return rows, plan, profile
@@ -132,15 +134,49 @@ STATUS = {'Not started': 'not_started', 'Ongoing': 'ongoing', 'Complete': 'done'
           'Done': 'done', 'Dropped': 'dropped'}
 
 
+def assess(r):
+    """One indicator row -> evidence rows, the score the evidence gate allows, and the gap text.
+    Shared by the baseline load and the v1-5 update so both apply Methodology 5.2 the same way."""
+    wb_score = None if r['score'] in (None, '') else r['score']
+    is_na = isinstance(wb_score, str) and wb_score.upper() == 'NA'
+    wb_score = None if is_na else (int(round(float(wb_score))) if wb_score is not None else None)
+    segs = segments(r['evidence'])
+    has_doc = any(k in ('DR', 'OBS') for k, _ in segs)
+    cap, evs = 0, []
+    for kind, text in segs:
+        if kind == 'F':
+            strength, k, title, source = 'verbal', 'fgd', 'CDRRMO field self-assessment (FGD), October 2026', 'CDRRMO section FGDs'
+            note = text
+        else:
+            strong = wb_score is not None and wb_score >= 3
+            strength = 'approved_in_use' if strong else 'partial'
+            if kind == 'OBS':   # 1.9.0: site visits, October 2026 (EOC, Operations and Rescue Office, Brgy. Liloan)
+                k, title, source = 'observation', 'Site observation, October 2026', 'Assessment team site visit'
+            else:
+                k, title, source = 'document', 'Desk review, October-November 2026', 'Consultant desk review'
+            note = text + (' [Imported at "approved and in use" from the assessor\'s score. Attach the document '
+                           'and proof of use, or lower the strength, at validation.]' if strong else '')
+        cap = max(cap, {'verbal': 2, 'partial': 2, 'approved_in_use': 3}[strength])
+        evs.append((k, strength, title, source, note))
+    score, gap, held = wb_score, r['gap'], None
+    if wb_score is not None and wb_score > 0 and wb_score > cap:
+        score = cap if cap else None
+        why = ('it rests on FGD self-scoring only (interviews and FGDs cannot support more than 2)' if not has_doc
+               else 'no test, exercise or after-action review is on record (a 4 needs one)')
+        gap = f'[Workbook score {wb_score}; imported as {score} because {why}. Restore it once the evidence is attached.]' + (' ' + gap if gap else '')
+        held = (wb_score, score, 'F-only' if not has_doc else 'no test')
+    return dict(score=score, gap=gap, evidence=evs, is_na=is_na, held=held)
+
+
 def baseline_sql(rows, plan, profile, known_ids):
     missing = sorted(set(known_ids) - set(rows))
     extra = sorted(set(rows) - set(known_ids))
     assert not missing and not extra, (missing, extra)
     cyc = uid('cycle', CYCLE_KEY)
     notes = '\n'.join(f'{k}: {profile[k]}' for k in (
-        'Assessment period (from - to)', 'FGD groups conducted', 'Sites inspected', 'Documents reviewed (count)',
+        'Assessment period (from - to)', 'Key informants interviewed (names/positions)', 'FGD groups conducted', 'Sites inspected', 'Stakeholder position', 'Documents reviewed (count)',
         'Validation workshop date', 'Number of barangays') if k in profile)
-    notes = ('Imported from the IAT v1.1 workbook (file v1-3, desk review completed 30 Oct 2026). '
+    notes = ('Imported from the IAT v1.1 instrument, workbook file v1-5 (6 Nov 2026: October 2026 FGD, KIIs and site visits; desk reviews 30 Oct and 6 Nov 2026). '
              'Scores are provisional until the validation workshop.\n' + notes)
     out = ['-- GENERATED by scripts/generate_operational_seed.py from reference/Ormoc_CDRRMO-EOC_Institutional_Assessment_Tool_v*.xlsx',
            '-- One-time load of the October 2026 IAT baseline. Run after seed.sql. Safe to run again: existing',
@@ -155,39 +191,16 @@ def baseline_sql(rows, plan, profile, known_ids):
     for ind in known_ids:
         r = rows[ind]
         rid = uid('response', CYCLE_KEY, ind)
-        wb_score = None if r['score'] in (None, '') else r['score']
-        is_na = isinstance(wb_score, str) and wb_score.upper() == 'NA'
-        wb_score = None if is_na else (int(round(float(wb_score))) if wb_score is not None else None)
-        segs = segments(r['evidence'])
-        has_dr = any(k == 'DR' for k, _ in segs)
-        cap = 0
-        for n, (kind, text) in enumerate(segs, 1):
-            if kind == 'F':
-                strength, k, title, source = 'verbal', 'fgd', 'CDRRMO field self-assessment (FGD), October 2026', 'CDRRMO section FGDs'
-                note = text
-            else:
-                strong = wb_score is not None and wb_score >= 3
-                strength = 'approved_in_use' if strong else 'partial'
-                k, title, source = 'document', 'Desk review, October 2026', 'Consultant desk review'
-                note = text + (' [Imported at "approved and in use" from the assessor\'s desk score. Attach the document '
-                               'and proof of use, or lower the strength, at validation.]' if strong else '')
-            cap = max(cap, {'verbal': 2, 'partial': 2, 'approved_in_use': 3}[strength])
+        a = assess(r)
+        for n, (k, strength, title, source, note) in enumerate(a['evidence'], 1):
             ev.append(f"({lit(uid('evidence', CYCLE_KEY, ind, str(n)))}::uuid, {lit(rid)}::uuid, {lit(k)}, "
                       f"{lit(strength)}::public.evidence_strength, {lit(title)}, {lit(source)}, {lit(note)})")
-        score = wb_score
-        gap = r['gap']
-        if wb_score is not None and wb_score > 0 and wb_score > cap:
-            score = cap if cap else None
-            why = ('it rests on FGD self-scoring only (interviews and FGDs cannot support more than 2)' if not has_dr
-                   else 'no test, exercise or after-action review is on record (a 4 needs one)')
-            prefix = (f'[Workbook score {wb_score}; imported as {score} because {why}. '
-                      f'Restore it once the evidence is attached.]')
-            gap = prefix + (' ' + gap if gap else '')
-            held.append((ind, wb_score, score, 'F-only' if not has_dr else 'no test'))
-        resp.append(f"({lit(rid)}::uuid, {lit(cyc)}::uuid, {lit(ind)}, {lit(is_na)}, "
-                    f"{lit('Marked NA in the workbook' if is_na else None)}, {lit(gap)}, {lit(r['action'])}, 'provisional')")
-        if score is not None:
-            upd.append(f"({lit(rid)}::uuid, {score})")
+        if a['held']:
+            held.append((ind,) + a['held'])
+        resp.append(f"({lit(rid)}::uuid, {lit(cyc)}::uuid, {lit(ind)}, {lit(a['is_na'])}, "
+                    f"{lit('Marked NA in the workbook' if a['is_na'] else None)}, {lit(a['gap'])}, {lit(r['action'])}, 'provisional')")
+        if a['score'] is not None:
+            upd.append(f"({lit(rid)}::uuid, {a['score']})")
         p = plan.get(ind)
         if r['action'] and p:
             text = r['action'] + (f"\n\nTarget (from the Action Plan): {p['target']}" if p['target'] else '')
@@ -199,7 +212,10 @@ def baseline_sql(rows, plan, profile, known_ids):
             ',\n'.join(resp), 'on conflict (cycle_id, indicator_id) do nothing;', '',
             'commit;', PART, 'begin;',
             'insert into public.evidence (id, response_id, kind, strength, title, source, note) values',
-            ',\n'.join(ev), 'on conflict (id) do nothing;', '',
+            ',\n'.join(ev[:len(ev) // 2]), 'on conflict (id) do nothing;', '',
+            'commit;', PART, 'begin;',   # evidence in two files: each stays under the SQL editor's size limit
+            'insert into public.evidence (id, response_id, kind, strength, title, source, note) values',
+            ',\n'.join(ev[len(ev) // 2:]), 'on conflict (id) do nothing;', '',
             'commit;', PART, 'begin;',
             '-- Scores, only where no one has scored the indicator in the app yet.',
             'update public.responses r set score = v.score::smallint',
@@ -246,6 +262,24 @@ VAULT = [  # key, title, category, ref_key, doc_number, issuer, date, status, in
      None, 'IAT v1.1', 'CDRRMO / MOP consultant', '2026-10-30', 'current', [], None,
      'reference/Ormoc_CDRRMO-EOC_Institutional_Assessment_Tool_v1-3.xlsx',
      '140 indicators with the October 2026 baseline scores, evidence, gaps and action plan. Loaded as the "2026 Baseline" cycle.'),
+    ('iat-workbook-v15', 'Institutional Assessment Tool scoring workbook, IAT v1.1 instrument (file v1-5), 6 Nov 2026', 'report',
+     None, 'IAT v1.1 (v1-5)', 'CDRRMO / MOP consultant', '2026-11-06', 'current', [], None,
+     'reference/Ormoc_CDRRMO-EOC_Institutional_Assessment_Tool_v1-5.xlsx',
+     'Adds the October 2026 FGD, KIIs and site visits (EOC, Operations and Rescue Office, Brgy. Liloan), 48 City issuances '
+     'for 2021-2024 and the lead assessor\'s B_EOC scores. Replaces file v1-3.'),
+    ('eoc-kml', 'EOC location placemark (KML, Google Earth)', 'record', None, 'Placemark 0A9E71EA9142E2E2B044',
+     'CDRRMO', '2026-11-06', 'current', ['B2.1'], None, 'MOP project files (KML supplied 6 Nov 2026)',
+     'Point 11.013896 N, 124.604287 E, used for the hazard-map overlay of the EOC site (B2.1) and as the Geo-COP reference '
+     'point. Entrance and footprint still need a field survey.'),
+    ('cdrrmo-org-chart-2026', 'CDRRMO organizational chart (2026)', 'record', None, None, 'CDRRMO', None, 'current',
+     ['A2.1', 'A2.3', 'A2.5', 'B4.1'], None, 'MOP project files (received October 2026)',
+     'Sections, posts and employment status. Personnel information: restricted.', 'restricted'),
+    ('cdrrmo-staff-paper-budget', 'CDRRMO internal staff paper on DRRM planning and budgeting (2026)', 'report', None, None,
+     'CDRRMO', None, 'draft', ['A4.4', 'A10.4'], None, 'MOP project files (received October 2026)',
+     'Internal reflection used for MOO Ch.1 section 1.4 and the budget-cycle RACI (Ch.2 2.16.2). Restricted.', 'restricted'),
+    ('cdrrmo-staff-paper-clusters', 'CDRRMO internal proposal on cluster-based barangay DRRM coordinators (2026)', 'report', None,
+     None, 'CDRRMO', None, 'draft', ['B5.2', 'A7.3', 'A7.9'], None, 'MOP project files (received November 2026)',
+     'Proposal reviewed in MOO Ch.2 section 10.2 (six clusters, eight conditions, 2027 pilot). Restricted.', 'restricted'),
     ('iat-sheet-v10', 'Institutional Assessment Tool scoring workbook v1.0 (Google Sheet, 108 indicators)', 'report', None,
      'IAT v1.0', 'MOP consultant', None, 'superseded', [],
      'https://docs.google.com/spreadsheets/d/1VLXdaFpgkzIlYwxhcb_-tM9XxgkR7qkr-qbQ7jBVg_U', None,
@@ -286,44 +320,263 @@ VAULT = [  # key, title, category, ref_key, doc_number, issuer, date, status, in
      'report', None, None, 'MOP consultant', '2026-10-31', 'draft', ['A1.1', 'A1.2', 'A1.6', 'A1.8', 'B1.1'], None,
      'reference/moo/Implementation_Package_long_form.md',
      'Full-length version of the seven instruments. The consolidated v0.9 annexes are the shorter controlled set.'),
+    # Added 6 Nov 2026: City plans and DRRM issuances reviewed for the IAT v1.3 supplementary desk review.
+    ('lccap-2019-2030', 'Ormoc City Local Climate Change Action Plan 2019-2030', 'plan', None, None, 'City Government of Ormoc',
+     None, 'current', ['A3.2', 'A4.7', 'A5.1', 'A5.2', 'C1.1', 'C1.3', 'C3.1', 'C3.3', 'C4.3'], 'https://drive.google.com/file/d/17yGyM-JS6oKPHddsv0tpYrcNtKO2WIGp/view', 'Project Drive (CDRRMO folder)',
+     'LCCAP with climate projections (RCP 8.5), a CDRA (HLURB method) with flood, landslide, storm-surge, earthquake, liquefaction and tsunami maps, the first GHG inventory (2017), decision areas and PPAs. Uses the pre-2022 barangay base; predates the 2023 CDRA and the DRRM 10-Year Plan.'),
+    ('cdp-vol1-ecoprofile', 'Comprehensive Development Plan 2024-2030, Part 1: Ecological Profile 2022', 'plan', None, 'Vol. 1', 'City Planning and Development Office',
+     None, 'current', ['A5.1', 'A5.3'], 'https://drive.google.com/file/d/1PPGKRK_faECiOA1DGj1_qYCYZtwfU39o/view', 'Project Drive (CDRRMO folder)',
+     'City profile with hazard maps (flood, landslide, ground shaking, liquefaction, rain-induced landslide, storm surge) and the 2022 merger of the 28 district barangays into South, East and West, with District 29 renamed North (85 barangays).'),
+    ('cdp-vol2-sectoral', 'Comprehensive Development Plan 2024-2030, Part 2: Sectoral Development Plan', 'plan', None, 'Vol. 2', 'City Government of Ormoc',
+     None, 'current', ['A1.1', 'A2.3', 'A2.5', 'A3.2', 'A4.6', 'A6.1', 'B1.1', 'B7.5', 'C2.1', 'C5.1'], 'https://drive.google.com/file/d/10ucd3Bx_FBLPa7FiUqD-M4-m9yYpDvxy/view', 'Project Drive (CDRRMO folder)',
+     'Sector C.1 (Climate Change Adaptation and DRRM): goals, objectives and five programmes, including regular CDRRMO positions, the DRRM Operations Center and its SOP/Manual, integrated multi-hazard EWS, PSCP, contingency plans, EOC and ICS support, risk- and forecast-based financing and recovery planning. Still targets 110 barangays.'),
+    ('cdrrmc-res-01-2025', 'CDRRMC Resolution No. 01, s. 2025: approving the LDRRMIP Trust Fund for CY 2025 (PHP 52,713,712.18)', 'city_issuance', None,
+     'CDRRMC Res. No. 01, s. 2025', 'City DRRM Council', '2025-06-26', 'current', ['A3.5', 'A4.3'], 'https://drive.google.com/file/d/1Ow0RaKQGC67ZL2eykpvy-CpxH6EJP7TY/view', 'Project Drive (CDRRMO folder); scanned copy, text read by OCR',
+     '2nd Quarter meeting. Approves the CY 2025 Trust Fund investment plan and transmits it to the SP for approval.'),
+    ('cdrrmc-res-02-2025', 'CDRRMC Resolution No. 02, s. 2025: support for July as National Disaster Resilience Month', 'city_issuance', None,
+     'CDRRMC Res. No. 02, s. 2025', 'City DRRM Council', '2025-06-26', 'current', ['A1.3', 'A6.6'], 'https://drive.google.com/file/d/1Kj-tQQs0GnuL1eaX-Go_DBqOyBZvv1Ou/view', 'Project Drive (CDRRMO folder); scanned copy, text read by OCR',
+     'Commits the City to the observance under RDRRMC VIII Memo No. 06-007, s. 2025.'),
+    ('cdrrmc-res-03-2025', 'CDRRMC Resolution No. 03, s. 2025: support and adoption of Proclamation No. 920 (State of Calamity, Region VIII)', 'city_issuance', None,
+     'CDRRMC Res. No. 03, s. 2025', 'City DRRM Council', '2025-06-26', 'current', ['A1.6'], 'https://drive.google.com/file/d/1s10x7KB-RfsTSm3gK7hhdnb-N5tgcra9/view', 'Project Drive (CDRRMO folder); scanned copy, text read by OCR',
+     'Adopts the regional State of Calamity declared over the San Juanico Bridge load restriction. Example of how a national proclamation is read locally.'),
+    ('cdrrmc-res-04-2025', 'CDRRMC Resolution No. 04, s. 2025: MOA with all tertiary educational institutions on education resilience and DRRM', 'city_issuance', None,
+     'CDRRMC Res. No. 04, s. 2025', 'City DRRM Council', None, 'current', ['A7.7', 'A10.2', 'C4.2'], 'https://drive.google.com/file/d/1zvFEtuANA_FYmxQn0V_SJg4TAWNyPB_G/view', 'Project Drive (CDRRMO folder); scanned copy, text read by OCR',
+     'Creates an Education Resilience and DRRM Coordination Group. The copy is undated (November 2025) and repeats control no. 2025-07-180; to be corrected by the secretariat.'),
+    ('cdrrmc-res-05-2025', 'CDRRMC Resolution No. 05, s. 2025: 5% LDRRMF CY 2026 Budget Program and Investment Plan (PHP 139,955,741.40)', 'city_issuance', None,
+     'CDRRMC Res. No. 05, s. 2025', 'City DRRM Council', '2025-09-30', 'current', ['A3.5', 'A4.1', 'A4.2', 'A4.6'], 'https://drive.google.com/file/d/11vma574UoT7IzLfLcq8en8SNU_6_iin-/view', 'Project Drive (CDRRMO folder); scanned copy, text read by OCR',
+     'Special meeting. 70% (PHP 97,969,018.98) and 30% QRF (PHP 41,986,722.42). Computed on the NTA; the body cites CY 2025 although the title says CY 2026. No anticipatory action line.'),
+    ('cdrrmc-res-06-2025', 'CDRRMC Resolution No. 06, s. 2025: use of PHP 2,000,000 of the 30% QRF for food and non-food items, Typhoon Tino (Kalmaegi)', 'city_issuance', None,
+     'CDRRMC Res. No. 06, s. 2025', 'City DRRM Council', '2025-11-08', 'current', ['A1.6', 'A4.4', 'A7.5'], 'https://drive.google.com/file/d/1fEQEOZuOchZordgIJsIw1sicMdDKiPqH/view', 'Project Drive (CDRRMO folder); scanned copy, text read by OCR',
+     'Special meeting. Augments CSWD relief operations. Does not cite the State of Calamity declaration relied on for QRF use.'),
+    ('cdrrmc-res-07-2025', 'CDRRMC Resolution No. 07, s. 2025: supplemental appropriation of PHP 493,550.11 to the 2025 LDRRMF', 'city_issuance', None,
+     'CDRRMC Res. No. 07, s. 2025', 'City DRRM Council', '2025-11-20', 'current', ['A4.2'], 'https://drive.google.com/file/d/1mcxM7jRKB0jNfGvBuOuNbCCbPRDxDV6W/view', 'Project Drive (CDRRMO folder); scanned copy, text read by OCR',
+     'Share from unappropriated situs of taxation, split 30% QRF and 70% mitigation and preparedness, as required by the SP Committee on Finance. The copy has no secretariat certification.'),
+    ('cdrrmc-res-08-2025', 'CDRRMC Resolution No. 08, s. 2025: reallocation of PHP 2,000,000 of the 2025 LDRRMIP Trust Fund to drainage works, Malacadios St., Barangay South', 'city_issuance', None,
+     'CDRRMC Res. No. 08, s. 2025', 'City DRRM Council', '2025-11-20', 'current', ['A4.3', 'C3.3'], 'https://drive.google.com/file/d/1NZYIr1s1uCvVPDK3aTONE8NObEJeLWxL/view', 'Project Drive (CDRRMO folder); scanned copy, text read by OCR',
+     'Flood-mitigation project endorsed to the SP after City Accountant advice that reallocation needs CDRRMC approval and SP concurrence. The copy has no secretariat certification.'),
+    ('cdrrmc-res-09-2024', 'CDRRMC Resolution No. 09, s. 2024: adopting the Incident Command System as the standard management system for planned and unplanned events', 'city_issuance', None,
+     'CDRRMC Res. No. 09, s. 2024', 'City DRRM Council', '2024-11-29', 'current', ['A2.6', 'A8.1', 'B6.1', 'B7.2'], 'https://drive.google.com/file/d/1YcmUc6qCCikvloVTApBOfy4on8VcJPVg/view', 'Project Drive (CDRRMO folder); scanned copy, text read by OCR',
+     'Directs the CDRRMO to train city and barangay officials and responders on ICS, build ICS into plans and drills, and evaluate its use. No implementing EO yet.'),
+    ('cdrrmc-res-10-2024', 'CDRRMC Resolution No. 10, s. 2024: recommending the City College of Ormoc as a regular CDRRMC member', 'city_issuance', None,
+     'CDRRMC Res. No. 10, s. 2024', 'City DRRM Council', '2024-11-29', 'current', ['A1.2'], 'https://drive.google.com/file/d/1XVd5yauq78ZLaGjYvZtdcssAMSBTy7f4/view', 'Project Drive (CDRRMO folder); scanned copy, text read by OCR',
+     '4th Quarter meeting. Recommendation to the Mayor; no amending EO found.'),
+    ('eo-2024-032a', 'Executive Order No. 2024-032A: reorganizing the Ormoc City DRRM Council', 'city_issuance', None,
+     'EO No. 2024-032A', 'Office of the City Mayor', None, 'current', ['A1.2', 'A1.3', 'A1.7', 'A7.6', 'A10.2'], 'https://drive.google.com/file/d/1p0EsX_F1krNEuHiG4ZiThLnS3qoQAF6i/view', 'Project Drive (CDRRMO folder); scanned copy, text read by OCR',
+     'July 2024 (City Legal review 1 Jul 2024). Current CDRRMC composition: Mayor as chair, city offices, national agencies, uniformed services, PRC, 5 CSOs and 2 private-sector seats (3rd blank); functions under RA 10121; quarterly meetings. Supersedes EO 2023-0041.'),
+    ('eo-2023-0085', 'Executive Order No. 2023-0085: creating the Barangay DRRM Plan Review Team', 'city_issuance', None,
+     'EO No. 2023-0085', 'Office of the City Mayor', '2023-12-29', 'current', ['A3.7', 'A7.3'], 'https://drive.google.com/file/d/1ju-lZG547JXk-UYhR78aCZ9Dg_gpR3MJ/view', 'Project Drive (CDRRMO folder); scanned copy, text read by OCR',
+     'CDRRMO-led team reviews barangay DRRM plans against the Enhanced QAS for BDRRMP/C (NDRRMC MC 03 s. 2022), issues Certificates of Review and copies DILG within 3 days.'),
+    ('eo-2023-0042', 'Executive Order No. 2023-0042: creating the El Nino Task Force of Ormoc City', 'city_issuance', None,
+     'EO No. 2023-0042', 'Office of the City Mayor', '2023-05-19', 'current', ['A3.3', 'C4.3'], 'https://drive.google.com/file/d/1q4D_kSaQADSXh2jbDi_z3lph65B8VXUh/view', 'Project Drive (CDRRMO folder); scanned copy, text read by OCR',
+     'Slow-onset hazard governance: task force chaired by the Mayor to prepare and monitor an El Nino preparedness and rehabilitation plan and run public information.'),
+    ('eo-2023-0041', 'Executive Order No. 2023-0041: reorganization of the Ormoc City DRRM Council (16 May 2023)', 'city_issuance', None,
+     'EO No. 2023-0041', 'Office of the City Mayor', '2023-05-16', 'superseded', ['A1.2'], 'https://drive.google.com/file/d/1bJrGYLYzvyffEg4hTPXDF5qumJXnqpi2/view', 'Project Drive (CDRRMO folder); scanned copy, text read by OCR',
+     'Superseded by EO No. 2024-032A. Kept for history: it seated EVSU Ormoc (academe) and the City Housing Office, which the 2024 order does not list.'),
+    ('eo-2023-0025', 'Executive Order No. 2023-0025: creating the Climate and Disaster Risk Assessment Technical Working Group', 'city_issuance', None,
+     'EO No. 2023-0025', 'Office of the City Mayor', '2023-03-08', 'current', ['A5.2', 'A5.6', 'A5.9'], 'https://drive.google.com/file/d/1y0F1HUCV8HMV77wUe9zfLlMGC0fKxr3L/view', 'Project Drive (CDRRMO folder); scanned copy, text read by OCR',
+     'Basis of the CDRA Final Report. CPDO-led TWG with the CDRRMO and partner agencies; GIS mapping; CDRA, databases and maps to be updated every 3 to 5 years.'),
+    ('eo-2023-0026', 'Executive Order No. 2023-0026: creating the Project TRANSFORM Technical Working Group (DENR, EDC, NRC Adopt-a-City Program)', 'city_issuance', None,
+     'EO No. 2023-0026', 'Office of the City Mayor', '2023-03-24', 'current', ['A10.2', 'A10.9', 'C3.1'], 'https://drive.google.com/file/d/1gv1sw2ALK-lorRBnYh3HWHw3pZaKVZsH/view', 'Project Drive (CDRRMO folder); scanned copy, text read by OCR',
+     'Five areas incl. GHG accounting for the LCCAP and disaster management (training, knowledge products); monitors the NRC resilience scorecard.'),
+    ('sp-res-2024-088', 'SP Resolution No. 2024-088: adopting CDRRMC Res. No. 3, s. 2024 approving the Trust Fund-LDRRMF 2024 Budget Program and Investment Plan (PHP 79,512,680.20)', 'city_issuance', None,
+     'SP Res. No. 2024-088', 'Sangguniang Panlungsod', '2024-03-19', 'current', ['A1.7', 'A3.5', 'A4.3'], 'https://drive.google.com/file/d/19mukamxJVuLQJbNs-o9uvG25IJEHHPgZ/view', 'Project Drive (CDRRMO folder); scanned copy, text read by OCR',
+     'Plan reviewed by CPDO, Budget and Accounting before adoption; cites RA 10121 Sec. 21 and COA Circular 2012-002 Sec. 4.4.'),
+    ('sp-res-2024-102', 'SP Resolution No. 2024-102: omnibus authority for the City Mayor to accept donations, incl. goods given during or after calamities', 'city_issuance', None,
+     'SP Res. No. 2024-102', 'Sangguniang Panlungsod', '2024-04-02', 'current', ['B6.4'], 'https://drive.google.com/file/d/1w3r1IE-CgSdFAnJov-Umy7B9PrgdBTIN/view', 'Project Drive (CDRRMO folder); scanned copy, text read by OCR',
+     'The Drive file is named "SP RESOLUTION NO. 2024-1027"; the document itself is Resolution No. 2024-102. Legal basis for the donations SOP.'),
+    ('sp-res-2023-112', 'SP Resolution No. 2023-112: adopting the Ormoc City DRRM Ten-Year Plan (2023-2032)', 'city_issuance', None,
+     'SP Res. No. 2023-112', 'Sangguniang Panlungsod', '2023-04-24', 'current', ['A3.1'], 'https://drive.google.com/file/d/1IidKzhvvzrrTV_8ca5n3bQi8lzh2McO8/view', 'Project Drive (CDRRMO folder); scanned copy, text read by OCR',
+     'Adoption on the Mayor\'s endorsement after CDRRMC Res. No. 01, s. 2023 (17 Feb 2023).'),
+    ('sp-res-2023-347', 'SP Resolution No. 2023-347: authority to sign the MOA with CPR-RIMT Rapid Rescue Rider Ormoc Chapter', 'city_issuance', None,
+     'SP Res. No. 2023-347', 'Sangguniang Panlungsod', '2023-12-29', 'current', ['A2.7', 'A2.8', 'A10.2', 'B6.1'], 'https://drive.google.com/file/d/1MGgm_n5Od7S6W7JFy_u9IWf2J37JQbb9/view', 'Project Drive (CDRRMO folder); scanned copy, text read by OCR',
+     'Accredited CSO provides CDRRMO-accredited volunteers to augment HEMS and the CDRRMO; the City trains and supplies them and is accountable for volunteer injury or loss. The annexed MOA copy is unsigned.'),
 ]
+
+
+from vault_issuances import ISS as _ISS   # noqa: E402  City issuances 2021-2024
+VAULT += [(key, title, 'record' if num.startswith('ARO') else 'city_issuance', None, num, issuer, date, 'current', inds,
+           f'https://drive.google.com/file/d/{fid}/view', None, summary) for key, fid, title, num, issuer, date, inds, summary in _ISS]
+
+# Access levels (1.9.0, migration 20261106001600): standard = everyone who may use the Vault;
+# restricted = the roles below only (personnel information and internal staff papers).
+RESTRICTED_ROLES = ['cdrrmo_head', 'assessor', 'validator']
 
 
 def vault_sql(known_ids):
     vals = []
-    for key, title, cat, ref, num, issuer, date, status, inds, url, loc, summary in VAULT:
+    for row in VAULT:
+        key, title, cat, ref, num, issuer, date, status, inds, url, loc, summary = row[:12]
+        access = row[12] if len(row) > 12 else 'standard'
+        roles = RESTRICTED_ROLES if access == 'restricted' else []
         bad = [i for i in inds if i not in known_ids]
         assert not bad, (key, bad)
         vals.append(f"({lit(uid('vault', key))}::uuid, {lit(title)}, {lit(cat)}, {lit(ref)}, {lit(num)}, {lit(issuer)}, "
-                    f"{lit(date)}::date, {lit(summary)}, {lit(inds) if inds else 'array[]::text[]'}, {lit(url)}, {lit(loc)}, {lit(status)})")
+                    f"{lit(date)}::date, {lit(summary)}, {lit(inds) if inds else 'array[]::text[]'}, {lit(url)}, {lit(loc)}, {lit(status)}, "
+                    f"{lit(access)}, {('array[' + ','.join(lit(r) for r in roles) + ']::public.app_role[]') if roles else 'array[]::public.app_role[]'})")
     return '\n'.join([
         '-- GENERATED by scripts/generate_operational_seed.py. One-time Document Vault register of the engagement\'s',
         '-- source documents. Safe to run again: existing entries are left alone. Attach the files in the app.',
+        '-- Needs migration 20261106001600 (access_class, allowed_roles).',
         'begin;',
-        'insert into public.vault_documents (id, title, category, ref_key, doc_number, issuer, doc_date, summary, indicator_ids, url, location, status) values',
+        'insert into public.vault_documents (id, title, category, ref_key, doc_number, issuer, doc_date, summary, indicator_ids, url, location, status, access_class, allowed_roles) values',
         ',\n'.join(vals), 'on conflict (id) do nothing;', 'commit;', '',
         f'select count(*) as vault_documents from public.vault_documents;  -- at least {len(VAULT)}', ''])
+
+
+def update_sql(old_rows, new_rows, profile, known_ids):
+    """05: bring a database that already holds the v1-3 baseline up to v1-5. Responses that are validated are
+    never touched. A score changes only if it still equals what the v1-3 import set (nobody has re-scored it in
+    the app). New evidence is added beside the old; nothing is deleted."""
+    cyc = uid('cycle', CYCLE_KEY)
+    lines, ev, scores, n_changed = [], [], [], 0
+    for ind in known_ids:
+        o, n = old_rows[ind], new_rows[ind]
+        if all(o[k] == n[k] for k in ('score', 'evidence', 'gap', 'action')):
+            continue
+        n_changed += 1
+        rid = uid('response', CYCLE_KEY, ind)
+        ao, an = assess(o), assess(n)
+        lines.append(f"({lit(rid)}::uuid, {lit(an['gap'])}, {lit(n['action'])})")
+        old_notes = {e[4] for e in ao['evidence']}
+        for k, (kind, strength, title, source, note) in enumerate(an['evidence'], 1):
+            if note not in old_notes:
+                ev.append(f"({lit(uid('evidence', CYCLE_KEY + '-v1-5', ind, str(k)))}::uuid, {lit(rid)}::uuid, {lit(kind)}, "
+                          f"{lit(strength)}::public.evidence_strength, {lit(title)}, {lit(source)}, {lit(note)})")
+        if an['score'] != ao['score'] and an['score'] is not None:
+            scores.append(f"({lit(rid)}::uuid, {an['score']}, {lit(ao['score'])}::smallint)")
+    notes = ('Imported from the IAT v1.1 instrument, workbook file v1-5 (6 Nov 2026: October 2026 FGD, KIIs and site visits; '
+             'desk reviews 30 Oct and 6 Nov 2026). Scores are provisional until the validation workshop.\n' +
+             '\n'.join(f'{k}: {profile[k]}' for k in ('Assessment period (from - to)', 'Key informants interviewed (names/positions)',
+                       'FGD groups conducted', 'Sites inspected', 'Stakeholder position') if k in profile))
+    out = ['-- GENERATED by scripts/generate_operational_seed.py: update from IAT workbook v1-3 to v1-5 (1.9.0).',
+           '-- For a database that already ran 01-03. Safe to run again. Validated responses are left alone; a score',
+           '-- changes only where it still equals the v1-3 import. Evidence is added, never removed.',
+           'begin;',
+           f"update public.assessment_cycles set notes = {lit(notes)} where id = {lit(cyc)}::uuid and notes like 'Imported from the IAT v1.1 workbook (file v1-3%';",
+           '', f'-- {n_changed} indicators changed between v1-3 and v1-5.',
+           'update public.responses r set gap_remarks = v.gap, recommended_action = v.action',
+           'from (values', ',\n'.join(lines), ') as v(id, gap, action)',
+           "where r.id = v.id and r.status <> 'validated';", '',
+           'insert into public.evidence (id, response_id, kind, strength, title, source, note) values',
+           ',\n'.join(ev), 'on conflict (id) do nothing;', '',
+           '-- Scores: only where the app still shows the v1-3 import (or nothing).',
+           'update public.responses r set score = v.score::smallint',
+           'from (values', ',\n'.join(scores) if scores else '(null::uuid, 0, null::smallint)', ') as v(id, score, was)',
+           "where r.id = v.id and r.status <> 'validated' and not r.is_na and (r.score is null or r.score = v.was);", '',
+           '-- The v1-3 workbook entry in the Vault is replaced by the v1-5 entry (04_vault_register.sql).',
+           f"update public.vault_documents set status = 'superseded', superseded_by = {lit(uid('vault', 'iat-workbook-v15'))}::uuid",
+           f"  where id = {lit(uid('vault', 'iat-workbook'))}::uuid and status = 'current'",
+           f"  and exists (select 1 from public.vault_documents where id = {lit(uid('vault', 'iat-workbook-v15'))}::uuid);",
+           'commit;', '',
+           f"select count(*) filter (where r.status <> 'validated') as updatable, count(*) as responses from public.responses r where r.cycle_id = {lit(cyc)}::uuid;", '']
+    return '\n'.join(out), n_changed, len(ev), len(scores)
+
+
+def eoc_structure_sql():
+    """06: the City EOC structure (MOO Ch.1 sec. 6.3, Ch.2 sec. 10). Needs migration 20261106001800 and 001900."""
+    import eoc_structure_seed as E
+    oid = lambda c: f"{lit(uid('office', c))}::uuid" if c else 'null'
+    out = ['-- GENERATED by scripts/generate_operational_seed.py from scripts/eoc_structure_seed.py.',
+           '-- City EOC structure for the 1-4 December 2026 validation workshop: response clusters, contingency plans and',
+           '-- their activation sets, EOC positions, barangay clusters and the EOC reference point. Safe to run again:',
+           '-- rows already loaded are left alone (they are edited in the app). Needs migrations 20261106001800 and 001900.',
+           'begin;', '',
+           'insert into public.response_clusters (id, code, name, national_lead, lead_office_id, mandate, sort) values',
+           ',\n'.join(f"({lit(uid('cluster', c))}::uuid, {lit(c)}, {lit(n)}, {lit(nl)}, {oid(lo)}, {lit(m)}, {k})"
+                       for k, (c, n, nl, lo, m) in enumerate(E.CLUSTERS, 1)),
+           'on conflict (code) do nothing;', '',
+           'insert into public.contingency_plans (id, code, title, hazard_code, scenario, warning_time, activation_triggers, status, '
+           'adopted_ref, adopted_on, valid_until, vault_document_id) values']
+    rows, items = [], []
+    for (code, title, hz, scen, warn, trig, st, ref, on, until, vkey, mods, cls, lvl) in E.PLANS:
+        pid = uid('cplan', code)
+        vdoc = f"{lit(uid('vault', vkey))}::uuid" if vkey else 'null'
+        rows.append(f"({lit(pid)}::uuid, {lit(code)}, {lit(title)}, {lit(hz)}, {lit(scen)}, {lit(warn)}, {lit(trig)}, {lit(st)}, "
+                    f"{lit(ref)}, {lit(on)}::date, {lit(until)}::date, (select id from public.vault_documents where id = {vdoc}))")
+        for m, state in mods.items():
+            ml = 'blue' if (lvl == 'blue' or m in E.BLUE_MODULES) else 'red'
+            items.append(f"({lit(uid('cpitem', code, 'module', m))}::uuid, {lit(pid)}::uuid, 'module', {lit(m)}, {lit(state)}, '{ml}')")
+        for c, state in cls.items():
+            items.append(f"({lit(uid('cpitem', code, 'cluster', c))}::uuid, {lit(pid)}::uuid, 'cluster', {lit(c)}, {lit(state)}, '{lvl}')")
+    out += [',\n'.join(rows), 'on conflict (code) do nothing;', '',
+            'insert into public.cp_activation_items (id, plan_id, item_kind, item_code, state, min_level) values',
+            ',\n'.join(items), 'on conflict (plan_id, item_kind, item_code) do nothing;', '',
+            'insert into public.eoc_positions (id, code, title, section, min_level, cluster_code, sort) values',
+            ',\n'.join(f"({lit(uid('eocpos', c))}::uuid, {lit(c)}, {lit(t)}, {lit(sec)}, '{lv}', {lit(cl)}, {k})"
+                        for k, (c, t, sec, lv, cl) in enumerate(E.POSITIONS, 1)),
+            'on conflict (code) do nothing;', '',
+            'insert into public.barangay_clusters (id, code, name, is_pilot, pilot_from, pilot_to, note) values',
+            ',\n'.join(f"({lit(uid('bcluster', c))}::uuid, {lit(c)}, {lit(n)}, {lit(p)}, "
+                        f"{lit('2027-06-01' if p else None)}::date, {lit('2027-11-30' if p else None)}::date, "
+                        f"{lit('Pilot cluster, June-November 2027 (MOO Ch.2 sec. 10.2)' if p else None)})"
+                        for c, n, p in E.BRGY_CLUSTERS),
+            'on conflict (code) do nothing;', '']
+    tagrows = []
+    for d, tags in E.BRGY_TAGS.items():
+        per = {}
+        for tag, names in tags.items():
+            for nm in names:
+                per.setdefault(nm, []).append(tag)
+        for nm, tg in per.items():
+            key = re.sub(r'[^a-z0-9]', '', nm.lower())
+            tagrows.append(f"({lit(key)}, {lit(uid('bcluster', d))}::uuid, {lit(sorted(set(tg)))})")
+    out += ['-- Barangays named in the proposal, matched by name once the PSGC list is loaded (Settings -> Barangay list).',
+            '-- A cluster or tags already set in the app are kept.',
+            'update public.barangays b set cluster_id = coalesce(b.cluster_id, v.cluster),',
+            '  hazard_tags = case when b.hazard_tags = \'{}\' then v.tags else b.hazard_tags end,',
+            f'  hazard_tag_source = coalesce(b.hazard_tag_source, {lit(E.TAG_SOURCE)})',
+            'from (values', ',\n'.join(tagrows), ') as v(nm, cluster, tags)',
+            "where regexp_replace(lower(regexp_replace(b.name, '\\s*\\(.*\\)', '')), '[^a-z0-9]', '', 'g') = v.nm;", '']
+    p = E.EOC_POINT
+    out += ['insert into public.geo_reference_points (id, code, name, kind, lat, lng, altitude_m, source, note, vault_document_id)',
+            f"select {lit(uid('geopoint', p['code']))}::uuid, {lit(p['code'])}, {lit(p['name'])}, {lit(p['kind'])}, {p['lat']}, {p['lng']}, "
+            f"{p['altitude_m']}, {lit(p['source'])}, {lit(p['note'])}, "
+            f"(select id from public.vault_documents where id = {lit(uid('vault', p['vault']))}::uuid)",
+            f"where not exists (select 1 from public.geo_reference_points where code = {lit(p['code'])});", '',
+            'commit;', '',
+            'select (select count(*) from public.response_clusters) as clusters, (select count(*) from public.contingency_plans) as plans,',
+            '       (select count(*) from public.cp_activation_items) as plan_items, (select count(*) from public.eoc_positions) as positions,',
+            '       (select count(*) from public.barangay_clusters) as barangay_clusters,',
+            '       (select count(*) from public.barangays where cluster_id is not null) as barangays_in_clusters,',
+            "       (select count(*) from public.geo_reference_points) as reference_points;", '']
+    return '\n'.join(out)
 
 
 def main():
     ref = json.loads((ROOT / 'src' / 'data' / 'reference.json').read_text())
     known = [i['id'] for i in ref['indicators']]
     rows, plan, profile = read_workbook()
+    # 05 update: IAT_BASE=<the v1-3 workbook as loaded by 01-03>, e.g.
+    #   git show 61e5a1e:reference/Ormoc_CDRRMO-EOC_Institutional_Assessment_Tool_v1-3.xlsx > /tmp/iat_v1-3.xlsx
+    import os
+    base = os.environ.get('IAT_BASE')
+    old_rows = read_workbook(base)[0] if base else None
     OUT.mkdir(parents=True, exist_ok=True)
     sql, held, n_act, n_ev = baseline_sql(rows, plan, profile, known)
     for old in OUT.glob('*.sql'):
         old.unlink()
-    names = ['01_iat_baseline_responses.sql', '02_iat_baseline_evidence.sql', '03_iat_baseline_scores_actions.sql']
+    names = ['01_iat_baseline_responses.sql', '02_iat_baseline_evidence.sql', '02b_iat_baseline_evidence.sql',
+             '03_iat_baseline_scores_actions.sql']
     pieces = sql.split(PART)
-    assert len(pieces) == 3
+    assert len(pieces) == 4
     head = '\n'.join(sql.split('\n')[:4]) + '\n'
     for k, (name, body) in enumerate(zip(names, pieces), 1):
-        text = (body if k == 1 else head + f'-- Part {k} of 3. Run the parts in order.\n' + body.lstrip('\n'))
+        text = (body if k == 1 else head + f'-- Part {k} of 4. Run the parts in order.\n' + body.lstrip('\n'))
         if k == 1:
-            text = text.replace('begin;', '-- Part 1 of 3. Run the parts in order.\nbegin;', 1)
+            text = text.replace('begin;', '-- Part 1 of 4. Run the parts in order.\nbegin;', 1)
         assert len(text.encode()) < 100_000, (name, len(text.encode()))
         (OUT / name).write_text(text)
-    (OUT / '04_vault_register.sql').write_text(vault_sql(set(known)))
+    v = vault_sql(set(known))
+    assert len(v.encode()) < 100_000, ('04_vault_register.sql', len(v.encode()))
+    (OUT / '04_vault_register.sql').write_text(v)
+    e = eoc_structure_sql()
+    assert len(e.encode()) < 100_000
+    (OUT / '06_eoc_structure.sql').write_text(e)
+    if old_rows:
+        u, n_ch, n_ev5, n_sc = update_sql(old_rows, rows, profile, known)
+        assert len(u.encode()) < 100_000, ('05', len(u.encode()))
+        (OUT / '05_iat_v1_5_update.sql').write_text(u)
+        print(f'update v1-3 -> v1-5: {n_ch} indicators, {n_ev5} new evidence notes, {n_sc} score changes')
     print(f'baseline: {len(known)} responses, {n_ev} evidence notes, {n_act} actions; '
           f'{len(held)} held below the workbook score')
     for h in held:

@@ -15,7 +15,7 @@ offices) is defined below. Drafted manual text (reference/moo/*.md) is loaded as
 Usage: python3 scripts/generate_seed.py
 """
 from __future__ import annotations
-import json, re, uuid
+import json, re, sys, uuid
 from pathlib import Path
 import openpyxl
 
@@ -30,6 +30,7 @@ def _one(pattern: str) -> Path:
 # The IAT workbook is renamed as it is revised (v1.1 -> v1-3), so match any version suffix.
 IAT = _one('Ormoc_CDRRMO-EOC_Institutional_Assessment_Tool_v*.xlsx')
 MRT = ROOT / 'reference' / 'Ormoc_CDRRMO_EOC_Master_Requirements_Traceability_and_140_Indicator_Data_Dictionary_v1.1.xlsx'
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 NS = uuid.UUID('6f1c1d1e-0a0b-4c4d-9e8f-0123456789ab')   # namespace for deterministic ids
 
 
@@ -158,6 +159,15 @@ LIBRARY_DRAFTS += [
     ]
 ]
 
+
+# 1.9.0: Chapters 1 and 2, Draft 1.2 (6 Nov 2026): updated to IAT v1.5, October 2026 fieldwork (FGD, KIIs, site
+# visits incl. Brgy. Liloan), 2021-2024 City issuances, the structure assessment, staff perspectives, the scenario-based
+# EOC and the cluster-coordinator proposal. Made with split_manual_docx.py --slug ch1v12 / ch2v12 --version v1.2;
+# figures in public/library/ch1v12 and ch2v12. New labels, so they load as new draft versions of the same chapters.
+LIBRARY_DRAFTS += [
+    ('MOO Ch.1', 'MOO', 'chapter', None, 'MOO_Ch1_v1.2.md', 'v1.2 working draft (IAT v1.5)', None),
+    ('MOO Ch.2', 'MOO', 'chapter', None, 'MOO_Ch2_v1.2.md', 'v1.2 working draft (IAT v1.5)', None),
+]
 
 # Chapter 3: Risk Intelligence, DRRM and Contingency Planning, and Institutional Preparedness (v0.9, 31 Oct 2026,
 # Drive). Made with: split_manual_docx.py Chapter3.docx --slug ch3 --prefix MOO_Ch3. One figure, in public/library/ch3/.
@@ -304,6 +314,11 @@ OFFICES = [  # code, name, kind
     ('PORT', 'Port and terminal operators', 'private'),
     ('UTILITIES', 'Utility providers (power, water, telecommunications)', 'utility'),
     ('CHAMBER', 'Ormoc chamber of commerce', 'private'),
+    # 1.9.0: response cluster leads and partners (MOO Ch.1 sec. 6.3; Ch.2 sec. 10)
+    ('PNP', 'Ormoc City Police Office (PNP)', 'national_agency'),
+    ('BFP', 'Bureau of Fire Protection, Ormoc City', 'national_agency'),
+    ('PRC', 'Philippine Red Cross, Ormoc Chapter', 'cso'),
+    ('LIGA', 'Liga ng mga Barangay, Ormoc Chapter', 'barangay'),
 ]
 LEAD_MAP = {  # Part C lead-office text fragment -> office code
     'CDRRMO': 'CDRRMO', 'Chamber of Commerce': 'CHAMBER', 'utility providers': 'UTILITIES', 'CENRO': 'CENRO',
@@ -657,15 +672,23 @@ def main():
 
     def doc_home(code):  # merged shells hand their protocols to the area outline
         return uid('doc', f'Area {MERGED[code]}') if code in MERGED else uid('doc', code)
+    # 1.9.0: every step has a form (ADR-016): the Manual's form where one exists, otherwise STEP-RECORD.
+    import json as _json
+    from forms_seed import FORMS, STEP_FORMS, WORKFLOWS
+    out['form_templates'] = [dict(id=uid('form', c), code=c, title=t, purpose=pu, document_id=doc_home(d),
+                                  schema=_json.dumps({'fields': flds}, ensure_ascii=False), status='draft', rev=1)
+                             for c, t, pu, d, flds in FORMS]
     tpls, steps = [], []
-    for p in PROTOCOLS:
+    for p in PROTOCOLS + WORKFLOWS:
         tid = uid('protocol', p['code'])
         tpls.append(dict(id=tid, code=p['code'], title=p['title'], purpose=p['purpose'], trigger_text=p['trigger'],
                          document_id=doc_home(p['doc']), owner_role=p['owner_role'], category=p['category'],
                          status='draft', template_rev=1))
-        for seq, (instr, crit, note, due) in enumerate(p['steps'], 1):
+        for seq, st in enumerate(p['steps'], 1):
+            instr, crit, note, due = st[:4]
+            form = (st[4] if len(st) > 4 else None) or STEP_FORMS.get((p['code'], seq)) or 'STEP-RECORD'
             steps.append(dict(id=uid('pstep', p['code'], str(seq)), template_id=tid, seq=seq, instruction=instr,
-                              is_critical=crit, requires_note=note, due_offset_minutes=due))
+                              is_critical=crit, requires_note=note, due_offset_minutes=due, form_code=form))
     out['protocol_templates'], out['protocol_steps'] = tpls, steps
 
     out['aa_action_templates'] = [dict(id=uid('aa', str(i)), hazard_code=h, sector=s, title=t, irr_ref=r, lead_office=lo,
@@ -760,6 +783,33 @@ def replace_links_by_indicator(links):
     return out
 
 
+def version_statements(rows):
+    """moo_versions, with any body too long for one SQL-editor part sent in pieces (1.9.0: Chapter 1 v1.2 is
+    about 128 KB). The row is inserted with the first piece; each further piece is appended only while the
+    body is exactly as long as the pieces before it, so a re-run (row already complete) changes nothing and
+    an approved text is never touched."""
+    cast = {'id': '::uuid', 'document_id': '::uuid'}
+    piece_bytes = PART_MAX_BYTES - 12_000
+    small, out = [], []
+    for r in rows:
+        if len(row_sql(r, list(r.keys()), cast).encode()) < piece_bytes:
+            small.append(r); continue
+        body, pieces, cur = r['body_md'], [], ''
+        for line in body.splitlines(keepends=True):
+            if cur and len((cur + line).encode()) > piece_bytes - 4_000:
+                pieces.append(cur); cur = ''
+            cur += line
+        pieces.append(cur)
+        (_, first), = upsert_chunks('moo_versions', [{**r, 'body_md': pieces[0]}], 'id', cast=cast, keep='*')
+        out.append(('moo_versions', first))
+        done = len(pieces[0])
+        for piece in pieces[1:]:
+            out.append(('moo_versions', f"update public.moo_versions set body_md = body_md || {lit(piece)}\n"
+                        f"where id = {lit(r['id'])}::uuid and status = 'draft' and length(body_md) = {done};\n\n"))
+            done += len(piece)
+    return upsert_chunks('moo_versions', small, 'id', cast=cast, keep='*') + out
+
+
 def statements(o):
     st = []
     st += upsert_chunks('manual_parts', o['manual_parts'], 'no')
@@ -790,8 +840,12 @@ def statements(o):
     st.append(('moo_documents', f"update public.moo_documents set status = 'superseded' where id in ({ids}) and status in ('draft','in_review');\n"
                                 f"delete from public.moo_document_indicators where document_id in ({ids});\n\n"))
     # Versions belong to the Library workflow once loaded (drafts get edited, reviewed, approved).
-    st += upsert_chunks('moo_versions', o['moo_versions'], 'id', cast={'id': '::uuid', 'document_id': '::uuid'}, keep='*')
+    st += version_statements(o['moo_versions'])
     st += upsert_chunks('moo_document_indicators', o['moo_document_indicators'], ['document_id', 'indicator_id'], cast={'document_id': '::uuid'})
+    # Forms before the steps that name them. Fields are written on first load only: afterwards the Library
+    # workflow (draft, approve) owns them, as for manual versions.
+    st += upsert_chunks('form_templates', o['form_templates'], 'id',
+                        cast={'id': '::uuid', 'document_id': '::uuid', 'schema': '::jsonb'}, keep=('status', 'rev', 'schema'))
     st += upsert_chunks('protocol_templates', o['protocol_templates'], 'id',
                         cast={'id': '::uuid', 'document_id': '::uuid', 'owner_role': '::public.app_role'},
                         keep=('status', 'template_rev'))  # template_rev is bumped by the step trigger
@@ -800,7 +854,7 @@ def statements(o):
     return st
 
 
-CHECK_SQL = """-- Expected: 140 | 18 | 935 | 71 | 10 | 66 | 29 | 10 | 140
+CHECK_SQL = """-- Expected: 140 | 18 | 935 | 71 | 14 | 94 | 29 | 10 | 140 | 29
 select (select count(*) from public.iat_indicators)         as indicators,
        (select count(*) from public.master_requirements)    as requirements,
        (select count(*) from public.indicator_requirements) as indicator_links,
@@ -809,7 +863,8 @@ select (select count(*) from public.iat_indicators)         as indicators,
        (select count(*) from public.protocol_steps)         as protocol_steps,
        (select count(*) from public.aa_action_templates)    as aa_actions,
        (select count(*) from public.manual_areas)           as manual_areas,
-       (select count(*) from public.iat_indicators where functional_area is not null) as indicators_with_area;
+       (select count(*) from public.iat_indicators where functional_area is not null) as indicators_with_area,
+       (select count(*) from public.form_templates)         as forms;
 """
 
 HEADER = ('-- GENERATED by scripts/generate_seed.py from reference/*.xlsx — do not edit by hand.\n'

@@ -63,8 +63,10 @@ def main():
     body, annexes = parts[0], parts[1:]
     moo = ROOT / 'reference' / 'moo'
     moo.mkdir(parents=True, exist_ok=True)
-    for old in moo.glob(f'{a.prefix}_*.md'):
-        old.unlink()
+    # Replace only this version's body and the annexes; earlier chapter versions stay, because the
+    # Library keeps every version as history (1.9.0: the old loop deleted them).
+    for old in [moo / f'{a.prefix}_{a.version}.md', *moo.glob(f'{a.prefix}_Annex_*.md')]:
+        old.unlink(missing_ok=True)
     (moo / f'{a.prefix}_{a.version}.md').write_text(body.rstrip() + '\n', encoding='utf-8')
     ids = []
     for part in annexes:

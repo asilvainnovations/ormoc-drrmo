@@ -9,3 +9,5 @@ run() { psql -q -v ON_ERROR_STOP=1 -d "$DB" -f "$1" >/dev/null && echo "  ok  $1
 run supabase/tests/00_supabase_stub.sql
 for f in supabase/migrations/*.sql; do run "$f"; done
 run supabase/seed/seed.sql
+# 1.9.0: the one-time operational files must apply cleanly too (baseline, Vault, v1-5 update, EOC structure).
+for f in supabase/seed/operational/*.sql; do run "$f"; done
