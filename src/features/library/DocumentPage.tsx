@@ -97,7 +97,7 @@ export function DocumentPage() {
           </Section>
           {data.protocols.length > 0 && (
             <Section title="Protocols from this section">
-              <ul className="space-y-1">{data.protocols.map((p) => <li key={p.id}><TextLink tip={`Open ${p.title} in Protocols`} to="/protocols">{p.title}</TextLink></li>)}</ul>
+              <ul className="space-y-1">{data.protocols.map((p) => <li key={p.id}><TextLink tip={`Open ${p.title} in the DRRM module`} to="/drrm/protocols">{p.title}</TextLink></li>)}</ul>
             </Section>
           )}
         </aside>
