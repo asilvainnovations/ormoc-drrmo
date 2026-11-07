@@ -175,6 +175,7 @@ LIBRARY_DRAFTS += [
 # links to the indicators of the process it records (Annex 3-A, column 'Chapter process').
 _CH3 = 'v0.9 working draft'
 _CH3_INDS = ['A3.1', 'A3.2', 'A3.3', 'A3.4', 'A3.7', 'A5.1', 'A5.2', 'A5.3', 'A5.8', 'A7.6', 'C1.1', 'C1.2', 'C1.3', 'C1.4', 'C3.1']
+_CH3V1 = 'v1.0 working draft (IAT v1.6)'
 LIBRARY_DRAFTS += [('MOO Ch.3', 'MOO', 'chapter', None, 'MOO_Ch3_v0.9.md', _CH3, None)] + [
     (f'Annex {aid}', 'MOO', kind, title, f'MOO_Ch3_Annex_{aid}.md', _CH3, inds)
     for aid, kind, title, inds in [
@@ -192,6 +193,30 @@ LIBRARY_DRAFTS += [('MOO Ch.3', 'MOO', 'chapter', None, 'MOO_Ch3_v0.9.md', _CH3,
         ('3-L', 'form', 'Form 3-11: Corrective action and document revision register', []),
         ('3-M', 'annex', 'Source and methodology register', []),
     ]
+]
+
+# Chapter 3 v1.0 (8 Nov 2026, ADR-019): house style of Chapters 1-2 v1.2, verified CDRA/CLUP/LDRRMP findings, an SOP
+# control block per SOP, Annex 3-N glossary. Made with: split_manual_docx.py Chapter3_..._v1.0.docx --slug ch3v10
+# --prefix MOO_Ch3v1 --version v1.0 (separate files so the v0.9 sources stay intact). Figures in public/library/ch3v10/.
+_CH3V1_ANNEX = {aid: (kind, title, inds) for aid, kind, title, inds in [
+    ('3-A', 'annex', 'Indicator-to-process traceability matrix', _CH3_INDS),
+    ('3-B', 'form', 'Form 3-01: Risk information and map request', ['A5.1', 'C1.4']),
+    ('3-C', 'form', 'Form 3-02: Dataset metadata and quality checklist', ['A5.1', 'A5.7']),
+    ('3-D', 'form', 'Form 3-03: CDRA hazard-impact scoping matrix', ['A5.2', 'C1.3']),
+    ('3-E', 'form', 'Form 3-04: CDRA Major Decision Area register', ['A5.2', 'C1.1']),
+    ('3-F', 'form', 'Form 3-05: Critical facilities and dependency register', ['A5.8']),
+    ('3-G', 'form', 'Form 3-06: Contingency plan quality and exercise record', ['A3.3']),
+    ('3-H', 'form', 'Form 3-07: Essential functions inventory and BIA', ['A3.4']),
+    ('3-I', 'form', 'Form 3-08: Barangay DRRM plan review status', ['A3.7']),
+    ('3-J', 'form', 'Form 3-09: DRR/CCA project screening', ['A3.2', 'C1.2']),
+    ('3-K', 'form', 'Form 3-10: Consultation and inclusion validation record', ['A5.3', 'A7.6', 'C3.1']),
+    ('3-L', 'form', 'Form 3-11: Corrective action and document revision register', []),
+    ('3-M', 'annex', 'Source and methodology register', []),
+    ('3-N', 'annex', 'Glossary of terms', []),
+]}
+LIBRARY_DRAFTS += [('MOO Ch.3', 'MOO', 'chapter', None, 'MOO_Ch3v1_v1.0.md', _CH3V1, None)] + [
+    (f'Annex {aid}', 'MOO', kind, title, f'MOO_Ch3v1_Annex_{aid}.md', _CH3V1, inds)
+    for aid, (kind, title, inds) in _CH3V1_ANNEX.items()
 ]
 
 
@@ -675,15 +700,24 @@ def main():
     # 1.9.0: every step has a form (ADR-016): the Manual's form where one exists, otherwise STEP-RECORD.
     import json as _json
     from forms_seed import FORMS, STEP_FORMS, WORKFLOWS
+    from sop_registry import META, CH3_FORMS, CH3_WORKFLOWS, PROTOCOL_CATEGORIES  # 1.10.0 (ADR-019)
+    FORMS = FORMS + CH3_FORMS
+    WORKFLOWS = WORKFLOWS + CH3_WORKFLOWS
+    known_inds = {i['id'] for i in out['indicators']}
     out['form_templates'] = [dict(id=uid('form', c), code=c, title=t, purpose=pu, document_id=doc_home(d),
                                   schema=_json.dumps({'fields': flds}, ensure_ascii=False), status='draft', rev=1)
                              for c, t, pu, d, flds in FORMS]
     tpls, steps = [], []
     for p in PROTOCOLS + WORKFLOWS:
         tid = uid('protocol', p['code'])
+        sop_ref, owner, refs, inds = META[p['code']]
+        bad = [i for i in inds if i not in known_inds]
+        assert not bad, (p['code'], 'unknown IAT indicators', bad)
         tpls.append(dict(id=tid, code=p['code'], title=p['title'], purpose=p['purpose'], trigger_text=p['trigger'],
                          document_id=doc_home(p['doc']), owner_role=p['owner_role'], category=p['category'],
-                         status='draft', template_rev=1))
+                         status='draft', template_rev=1,
+                         kind='protocol' if p['category'] in PROTOCOL_CATEGORIES else 'workflow',
+                         sop_ref=sop_ref, process_owner=owner, policy_refs=refs, indicator_ids=inds))
         for seq, st in enumerate(p['steps'], 1):
             instr, crit, note, due = st[:4]
             form = (st[4] if len(st) > 4 else None) or STEP_FORMS.get((p['code'], seq)) or 'STEP-RECORD'
@@ -854,7 +888,7 @@ def statements(o):
     return st
 
 
-CHECK_SQL = """-- Expected: 140 | 18 | 935 | 71 | 14 | 94 | 29 | 10 | 140 | 29
+CHECK_SQL = """-- Expected: 140 | 18 | 935 | 71 | 23 | 161 | 29 | 10 | 140 | 40
 select (select count(*) from public.iat_indicators)         as indicators,
        (select count(*) from public.master_requirements)    as requirements,
        (select count(*) from public.indicator_requirements) as indicator_links,

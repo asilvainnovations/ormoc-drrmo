@@ -54,14 +54,30 @@ def icon(base: Image.Image, px: int, pad: float, bg, path: Path) -> None:
     canvas.quantize(colors=256, method=Image.Quantize.FASTOCTREE, dither=Image.Dither.FLOYDSTEINBERG).save(path, optimize=True)
 
 
+def usable(name: str) -> bool:
+    """1.10: a missing or cut-off original (the GitHub upload page stops at 2 MiB) is reported, not a crash;
+    the files already made from it are left as they are."""
+    try:
+        Image.open(SRC / name).load()
+        return True
+    except FileNotFoundError:
+        print(f'  skipped: public/{name} is not in the repository; its derived files are unchanged')
+    except OSError as e:
+        print(f'  skipped: public/{name} is damaged ({e}); re-add the original with git, then run again')
+    return False
+
+
 if __name__ == '__main__':
     OUT.mkdir(exist_ok=True)
-    seal('Ormoc_City_Logo.png', 'ormoc-city-seal')
-    cd = seal('Ormoc_CDRRMO_Logo.png', 'cdrrmo-seal')
-    banner()
-    icon(cd, 192, 0.02, (0, 0, 0, 0), ICONS / 'icon-192.png')
-    icon(cd, 512, 0.02, (0, 0, 0, 0), ICONS / 'icon-512.png')
-    icon(cd, 512, 0.12, (232, 243, 251, 255), ICONS / 'icon-maskable-512.png')   # Android safe zone
-    icon(cd, 180, 0.06, (255, 255, 255, 255), ICONS / 'apple-touch-icon.png')    # iOS ignores transparency
-    icon(cd, 64, 0.0, (0, 0, 0, 0), SRC / 'favicon.png')
-    print('brand assets written to', OUT)
+    if usable('Ormoc_City_Logo.png'):
+        seal('Ormoc_City_Logo.png', 'ormoc-city-seal')
+    if usable('Ormoc_CDRRMO_Logo.png'):
+        cd = seal('Ormoc_CDRRMO_Logo.png', 'cdrrmo-seal')
+        icon(cd, 192, 0.02, (0, 0, 0, 0), ICONS / 'icon-192.png')
+        icon(cd, 512, 0.02, (0, 0, 0, 0), ICONS / 'icon-512.png')
+        icon(cd, 512, 0.12, (232, 243, 251, 255), ICONS / 'icon-maskable-512.png')   # Android safe zone
+        icon(cd, 180, 0.06, (255, 255, 255, 255), ICONS / 'apple-touch-icon.png')    # iOS ignores transparency
+        icon(cd, 64, 0.0, (0, 0, 0, 0), SRC / 'favicon.png')
+    if usable('App_Banner.png'):
+        banner()
+    print('brand assets checked in', OUT)
