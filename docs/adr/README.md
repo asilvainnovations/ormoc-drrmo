@@ -18,7 +18,10 @@ Each record states a decision, why it was made, and what it costs. Change a deci
 | [012](012-single-manual.md) | One Manual of Operations: five Parts, ten functional areas; old chapter codes kept as aliases | Accepted |
 | [013](013-record-integrity-guards.md) | Approval authority, draft protocols and deletes enforced in the database; guards that test the caller run as the caller | Accepted (amends 004) |
 | [014](014-shared-device-sign-out.md) | Sign-out keeps other accounts' unsent changes; one stuck item backs off alone | Accepted (amends 003 and 009) |
+| [015 (location)](015-eoc-location.md) | The EOC's location ships with the app; maps open outside it. Two records share number 015; both are cited as ADR-015 in code | Accepted |
 | [015](015-geo-cop-city-basemap-and-vault-access.md) | Geo-COP on a City-hosted PMTiles basemap; reference points and layers with validation status; Vault access by role | Accepted (narrows the CSP of 011; extends 004) |
 | [016](016-step-forms-and-drrm-module.md) | Every workflow and protocol step is recorded on a form, snapshotted per run; the DRRM module | Accepted (extends 013) |
 | [017](017-eoc-structure-and-cp-clustering.md) | EOC positions and three-deep designations; contingency plans activate response clusters; barangay clusters | Accepted |
 | [018](018-connected-app-approval.md) | Other apps read City data only after the City approves them | Accepted (amends 010) |
+| [019](019-sop-registry-and-chapter3.md) | One SOP registry (kind, SOP, process owner, policy basis, indicators) on every protocol and workflow; Chapter 3 as forms and workflows | Accepted (extends 016) |
+| [020](020-public-site-and-today-route.md) | Public pages at /, workspace at /today; policies from typed data and env; only public content indexed | Accepted |
