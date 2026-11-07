@@ -13,7 +13,7 @@ import { tip } from './Tooltip';
 import { BrandLockup } from './Brand';
 
 const NAV = [
-  { to: '/', label: 'Today', icon: House, end: true, tip: 'Your day: alerts, quick actions, running protocols and latest log' },
+  { to: '/today', label: 'Today', icon: House, end: true, tip: 'Your day: alerts, quick actions, running protocols and latest log' },
   { to: '/assess', label: 'Assess', icon: ClipboardCheck, tip: 'Institutional Assessment Tool: score indicators with evidence and plan improvements' },
   { to: '/protocols', label: 'Protocols', icon: ListChecks, tip: 'Step-by-step CDRRMO procedures you can run live or as drills' },
   { to: '/eoc', label: 'EOC', icon: RadioTower, tip: 'Emergency Operations Center: level, logbook, SitReps, requests and anticipatory action' },

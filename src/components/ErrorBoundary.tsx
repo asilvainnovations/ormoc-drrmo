@@ -49,7 +49,7 @@ class Boundary extends Component<Props, State> {
         {!update && <p className="mb-4 max-w-prose text-sm text-muted">A short report (screen, app version and the error, never what you typed) was sent to the City's administrator.</p>}
         <div className="flex flex-wrap gap-3">
           <Button tip="Reload the app. Saved work stays on this device" icon={RefreshCw} onClick={() => window.location.reload()}>Reload</Button>
-          {!this.props.whole && <Button tip="Go back to the Today screen" variant="secondary" onClick={() => { window.location.assign('/'); }}>Go to Today</Button>}
+          {!this.props.whole && <Button tip="Go back to the Today screen" variant="secondary" onClick={() => { window.location.assign('/today'); }}>Go to Today</Button>}
           {!update && <Button tip="Copy the error details to send to the administrator" variant="quiet" onClick={copy}>{copied ? 'Copied' : 'Copy details'}</Button>}
         </div>
       </div>
