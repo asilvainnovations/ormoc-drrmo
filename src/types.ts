@@ -64,10 +64,13 @@ export interface MooVersion extends Versioned {
 }
 export interface MooDocumentIndicator { document_id: string; indicator_id: string }
 export type ProtocolCategory = 'daily_operations' | 'warning' | 'eoc' | 'anticipatory_action' | 'council' | 'reporting' | 'recovery'
-  | 'governance' | 'workforce' | 'budget' | 'response_clusters' | 'geospatial';
+  | 'governance' | 'workforce' | 'budget' | 'response_clusters' | 'geospatial'
+  | 'risk_information' | 'risk_planning' | 'contingency_planning' | 'continuity';
 export interface ProtocolTemplate extends Versioned {
   code: string; title: string; purpose: string | null; trigger_text: string | null; document_id: string | null;
   owner_role: Role; category: ProtocolCategory; status: 'draft' | 'approved' | 'retired'; template_rev: number;
+  /** SOP registry (1.10, ADR-019): the same control block for every protocol and workflow. */
+  kind?: 'protocol' | 'workflow'; sop_ref?: string | null; process_owner?: string | null; policy_refs?: string[]; indicator_ids?: string[];
 }
 export interface ProtocolStep extends Versioned {
   template_id: string; seq: number; instruction: string; is_critical: boolean; requires_note: boolean; due_offset_minutes: number | null;
