@@ -1,5 +1,4 @@
-# System design: MODE (Ormoc City DRRMO & EOC Manual of Operations Development Platform)
-
+# System design: Manual of Operations for the DRRMO and EOC (MODE) Platform
 Version 1.0 · 15 October 2026 · Prepared for the City Government of Ormoc (CDRRMO) by Alvin M. Silva
 
 ## 1. Purpose
