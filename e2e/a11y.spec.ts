@@ -2,7 +2,8 @@ import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
 
 // WCAG 2.1 AA automated checks on the main screens (serious and critical issues fail the run).
-const PAGES = ['/', '/assess', '/protocols', '/drrm', '/drrm/protocols', '/drrm/forms', '/eoc/liaison', '/eoc/plans', '/eoc/roster', '/eoc/map', '/eoc', '/eoc/log', '/eoc/aa', '/eoc/aa/pdra/new', '/eoc/aa/funds', '/library', '/library/trace', '/library/requirements', '/library/crosswalk', '/settings', '/settings/sync', '/vault', '/vault/review', '/vault/references'];
+// Public pages (1.10) first, then the workspace.
+const PAGES = ['/', '/about', '/faq', '/support', '/policies/privacy', '/policies/terms', '/policies/accessibility', '/policies/cookies', '/today', '/assess', '/protocols', '/drrm', '/drrm/protocols', '/drrm/forms', '/eoc/liaison', '/eoc/plans', '/eoc/roster', '/eoc/map', '/eoc', '/eoc/log', '/eoc/aa', '/eoc/aa/pdra/new', '/eoc/aa/funds', '/library', '/library/trace', '/library/requirements', '/library/crosswalk', '/settings', '/settings/sync', '/vault', '/vault/review', '/vault/references'];
 
 for (const path of PAGES) {
   test(`axe ${path}`, async ({ page }) => {

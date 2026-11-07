@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
 
 test('opens and works with no connection after the first visit', async ({ page, context }) => {
-  await page.goto('/');
+  await page.goto('/today');
   await page.evaluate(async () => { await navigator.serviceWorker.ready; });
   await page.reload();                                   // let the service worker take control
   await expect(page.getByText(/EOC White level/).first()).toBeVisible();

@@ -2,7 +2,7 @@ import { expect, test, type Page } from '@playwright/test';
 
 // Every visible clickable element explains itself with a tooltip (data-tip), on every main screen.
 // Content written by people (manual text in .prose-doc) and the tooltip itself are excluded.
-const PAGES = ['/', '/assess', '/protocols', '/drrm', '/drrm/protocols', '/drrm/forms', '/eoc/liaison', '/eoc/plans', '/eoc/roster', '/eoc/map', '/eoc', '/eoc/log', '/eoc/sitreps', '/eoc/requests', '/eoc/barangays', '/eoc/aa', '/eoc/aa/pdra/new', '/eoc/aa/funds',
+const PAGES = ['/', '/about', '/faq', '/support', '/policies/privacy', '/policies/terms', '/policies/accessibility', '/policies/cookies', '/today', '/assess', '/protocols', '/drrm', '/drrm/protocols', '/drrm/forms', '/eoc/liaison', '/eoc/plans', '/eoc/roster', '/eoc/map', '/eoc', '/eoc/log', '/eoc/sitreps', '/eoc/requests', '/eoc/barangays', '/eoc/aa', '/eoc/aa/pdra/new', '/eoc/aa/funds',
   '/library', '/library/trace', '/library/requirements', '/library/crosswalk', '/settings', '/settings/sync', '/settings/about', '/vault', '/vault/review', '/vault/references'];
 
 async function untipped(page: Page) {
@@ -28,7 +28,7 @@ for (const path of PAGES) {
 
 test('tooltip shows on hover and on keyboard focus, and Escape dismisses it', async ({ page, isMobile }) => {
   test.skip(!!isMobile, 'hover and keyboard are desktop interactions; long press is covered below');
-  await page.goto('/');
+  await page.goto('/today');
   await page.getByRole('link', { name: 'Run a protocol' }).hover();
   await expect(page.getByRole('tooltip')).toHaveText('Pick a CDRRMO procedure and follow it step by step');
   await page.mouse.move(0, 0);
@@ -44,7 +44,7 @@ test('tooltip shows on hover and on keyboard focus, and Escape dismisses it', as
 
 test('long press shows the tooltip on a phone without opening the link', async ({ page, isMobile }) => {
   test.skip(!isMobile, 'touch only');
-  await page.goto('/');
+  await page.goto('/today');
   const link = page.getByRole('link', { name: 'Run a protocol' });
   const box = (await link.boundingBox())!;
   const cdp = await page.context().newCDPSession(page);
@@ -54,5 +54,5 @@ test('long press shows the tooltip on a phone without opening the link', async (
   await expect(page.getByRole('tooltip')).toHaveText('Pick a CDRRMO procedure and follow it step by step');
   await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
   await page.waitForTimeout(300);
-  await expect(page).toHaveURL(/\/$/);                     // the press did not navigate
+  await expect(page).toHaveURL(/\/today$/);                // the press did not navigate
 });

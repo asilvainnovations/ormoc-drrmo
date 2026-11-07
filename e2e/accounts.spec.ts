@@ -10,7 +10,7 @@ test.describe('a new account', () => {
 
   test('signs up, confirms the email, waits for approval, and is approved by an administrator', async ({ page, browser }, info) => {
     const email = `new-${info.project.name}@e2e.local`;
-    await page.goto('/');
+    await page.goto('/today');                            // the workspace (1.10: was /) needs an account
     await expect(page).toHaveURL(/\/login/);
     await page.getByRole('button', { name: 'New account' }).click();
     await page.getByLabel('Full name').fill('Ana Reyes');
@@ -98,7 +98,10 @@ test.describe('signing out', () => {
     await page.goto('/settings');
     await page.getByRole('button', { name: 'Sign out and clear this device' }).click();
     await expect(page).toHaveURL(/\/login/);
-    await page.goto('/eoc');
-    await expect(page).toHaveURL(/\/login/);
+    // Sign-out ends with a full reload to /login; a navigation started before it is interrupted, so retry.
+    await expect(async () => {
+      await page.goto('/eoc');
+      await expect(page).toHaveURL(/\/login/);
+    }).toPass({ timeout: 15_000 });
   });
 });

@@ -9,7 +9,7 @@ test.beforeEach(async ({ page }) => {
 });
 
 test('assessment: evidence gate, scoring, dashboard', async ({ page }) => {
-  await page.goto('/');
+  await page.goto('/today');
   await expect(page.getByText('EOC White')).toBeVisible();
   await shot(page, '01-today');
   await page.goto('/assess');
@@ -107,13 +107,13 @@ test('library and traceability', async ({ page }) => {
   await shot(page, '11-library');
   // An old code still finds its new home (ADR-012).
   await page.getByLabel('Find a section').fill('EOC Ch.2');
-  await page.getByRole('link', { name: /Area 4: EOC Activation/ }).click();
+  await page.getByRole('link', { name: /Area 4:? EOC Activation/ }).click();
   await expect(page.getByRole('heading', { name: /Requirements this area must meet/ })).toBeVisible();
   await shot(page, '12-document');
-  // Chapter 2's figures are wired to public/library/chp2/.
+  // Chapter 2 v1.2's figures are wired to public/library/ch2v12/ (1.10: the folder was uploaded as chp2v12).
   await page.goto('/library');
-  await page.getByRole('link', { name: /Chapter 2: CDRRMO Organizational Structure/ }).first().click();
-  await expect(page.locator('article img[src^="/library/chp2/"]').first()).toBeVisible();
+  await page.getByRole('link', { name: /Chapter 2:? CDRRMO Organizational Structure/ }).first().click();
+  await expect(page.locator('article img[src^="/library/ch2v12/"]').first()).toBeVisible();
   await page.goto('/library/trace');
   await page.getByLabel('Theme').selectOption('RA 12287 / anticipatory action');
   await expect(page.getByText(/22 indicator\(s\)/)).toBeVisible();
