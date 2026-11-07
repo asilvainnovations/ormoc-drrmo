@@ -186,6 +186,22 @@ Then, in the dashboard:
   7. Upload the files and redeploy (push with git: `.github/` must survive). Old `/protocols` links open the DRRM module.
   8. **In the app, before the workshop:** the CDRRMO Head approves the forms (DRRM → Forms) and the workflows and protocols to be exercised; the EOC Manager proposes designations (EOC → Roster) for the Head to approve; after a site check, the Head or EOC Manager records the field verification of the EOC point (EOC → Map). For the clustering exercise: raise the EOC to Blue, then EOC → Plans and clusters → CP-FLOOD-LUNOP → Activate plan.
   9. **Connected apps.** An app now reads nothing until the City approves it: create the client in Supabase (Authentication → OAuth Apps), then Settings → Connected apps → Register an app, and the administrator or CDRRMO Head approves it.
+- **To 1.10.0** (8 November 2026), public pages and SEO, SOP registry, Chapter 3 in the platform, IAT v1.6 workbook, CI (ADR-019, ADR-020).
+  1. **Migration**, once (safe to run again): `20261108002000_sop_registry.sql`. It adds kind, controlling SOP, process owner, policy references and IAT indicators to every protocol and workflow, plus four Chapter 3 categories and the view `v_indicator_sops`.
+  2. **Reference data.** Delete every file in `supabase/seed/parts/`, upload the new ones, and run all **19** parts in order. The last part's check should return **140 | 18 | 935 | 71 | 23 | 161 | 29 | 10 | 140 | 40**: 23 protocols and workflows (8 protocols and 15 workflows, including the nine Chapter 3 workflows WF-SOP3-01 to 09), 161 steps and 40 forms (Forms 3-01 to 3-11 added). Chapter 3 v1.0 and Annexes 3-A to 3-N load in the Library as drafts. Approved text is never changed.
+  3. **No operational file to run.** `reference/…_v1-6.xlsx` replaces `…_v1-5.xlsx`. It adds an "Evidence Validation Status" column (all *Pending validation*), the Dashboard summary tiles and a "Technical person" row in Profile. Scores, evidence and gaps are unchanged, so the baseline cycle needs no update.
+  4. **Environment variables** (Netlify or Vercel, Production). All are optional and appear on public pages; none is secret:
+     - `VITE_SITE_URL`: canonical address, for example `https://drrm.ormoc.gov.ph`. It enables `sitemap.xml` and absolute canonical links.
+     - `VITE_SUPPORT_EMAIL` (default `mode-support@asilvainnovations.com`), `VITE_DPO_EMAIL` (default `cdrrmo.ormoccity@gmail.com`) and `VITE_BUSINESS_ADDRESS`.
+     - `VITE_NPC_REGISTRATION`: only if the City's NPC registration covers this system.
+     - `VITE_POLICY_EFFECTIVE` and `VITE_POLICY_OWNER`: set both **after** the City Legal Office and the DPO approve the policies. Until then the policies say "Draft, not yet approved".
+  5. **Push with git.** This release adds `.github/workflows/ci.yml` (typecheck, unit tests, build and the SQL suite on every push). The GitHub upload page drops it.
+  6. Upload the files and redeploy. Then check:
+     - `/` shows the public home page and `/today` the workspace.
+     - `/robots.txt` lists the public pages, and `/sitemap.xml` exists when `VITE_SITE_URL` is set.
+     - A workspace address answers with the `x-robots-tag: noindex, nofollow` header.
+     - An installed phone opens at Today (reinstall if it still opens the home page).
+  7. Old bookmarks to `/` now open the public home page. Signed-in people get "Open workspace" there. Tell staff the new Today address.
 - **85 barangays:** if the seed was loaded before the 85-barangay correction, run parts `01_seed.sql` and `06_seed.sql` once more, but only if no manual version has been approved yet. Otherwise ask the developer for a one-off update of the three indicator texts (A3.7, A7.3, B3.2).
 
 ## 4. First administrator and the CDRRMO Head
@@ -270,7 +286,8 @@ Check after the first deploy:
 2. Add environment variables for Production and Preview:
    - `VITE_SUPABASE_URL` = Project URL
    - `VITE_SUPABASE_PUBLISHABLE_KEY` = publishable key (or `VITE_SUPABASE_ANON_KEY` on older projects)
-3. Deploy. `vercel.json` sets the single-page fallback, caching and security headers, including a Content-Security-Policy that allows only this site and `*.supabase.co`.
+   - optional public-page values: `VITE_SITE_URL`, `VITE_SUPPORT_EMAIL`, `VITE_DPO_EMAIL`, `VITE_BUSINESS_ADDRESS`, `VITE_NPC_REGISTRATION`, `VITE_POLICY_EFFECTIVE`, `VITE_POLICY_OWNER` (section 3, "To 1.10.0")
+3. Deploy. `vercel.json` sets the single-page fallback, caching and security headers, including a Content-Security-Policy that allows only this site and the City's own Supabase project (edit the project host there if it changes).
 4. Add the City domain (for example, `drrm.ormoc.gov.ph`) and update the Site URL in step 2.
 
 ### Option C: a City web server

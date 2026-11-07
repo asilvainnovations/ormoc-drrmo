@@ -1,9 +1,33 @@
-import { defineConfig, loadEnv } from 'vite';
+import { defineConfig, loadEnv, type Plugin } from 'vite';
 import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
 import { fileURLToPath, URL } from 'node:url';
 import { readFileSync } from 'node:fs';
 import { checkSupabaseConfig } from './src/lib/envCheck';
+
+// Public, indexable paths; keep in step with PUBLIC_PATHS in src/lib/site.ts (a unit test checks).
+export const SEO_PATHS = ['/', '/about', '/faq', '/support',
+  '/policies/privacy', '/policies/terms', '/policies/accessibility', '/policies/cookies'];
+// Workspace paths: never indexed (also sent as X-Robots-Tag in vercel.json and netlify.toml).
+export const NOINDEX_PREFIXES = ['/today', '/assess', '/drrm', '/protocols', '/eoc', '/library', '/settings', '/vault', '/tools', '/login', '/auth', '/oauth'];
+
+/** robots.txt and sitemap.xml from VITE_SITE_URL (1.10.0). Without a site URL the sitemap is left out. */
+function seoFiles(siteUrl: string): Plugin {
+  return {
+    name: 'mode-seo-files',
+    apply: 'build',
+    generateBundle() {
+      const base = siteUrl.replace(/\/$/, '');
+      const robots = ['User-agent: *', 'Allow: /$', ...SEO_PATHS.filter((p) => p !== '/').map((p) => `Allow: ${p}`),
+        ...NOINDEX_PREFIXES.map((p) => `Disallow: ${p}`), ...(base ? ['', `Sitemap: ${base}/sitemap.xml`] : [])].join('\n') + '\n';
+      this.emitFile({ type: 'asset', fileName: 'robots.txt', source: robots });
+      if (!base) return;
+      const urls = SEO_PATHS.map((p) => `  <url><loc>${base}${p === '/' ? '/' : p}</loc></url>`).join('\n');
+      this.emitFile({ type: 'asset', fileName: 'sitemap.xml',
+        source: `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>\n` });
+    },
+  };
+}
 
 const APP_VERSION = (JSON.parse(readFileSync(new URL('./package.json', import.meta.url), 'utf8')) as { version: string }).version;
 
@@ -15,11 +39,13 @@ export default defineConfig(({ command, mode }) => {
     const c = checkSupabaseConfig(e.VITE_SUPABASE_URL, e.VITE_SUPABASE_PUBLISHABLE_KEY ?? e.VITE_SUPABASE_ANON_KEY);
     if (c.error) throw new Error(`Build stopped: ${c.error} Set it in the hosting environment variables (DEPLOY.md, section 6).`);
   }
+  const siteUrl = loadEnv(mode, process.cwd(), 'VITE_').VITE_SITE_URL ?? '';
   return {
   define: { __APP_VERSION__: JSON.stringify(APP_VERSION) },
   resolve: { alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) } },
   plugins: [
     react(),
+    seoFiles(siteUrl),
     VitePWA({
       registerType: 'prompt',            // staff choose when to reload; never mid-entry
       injectRegister: false,
@@ -30,7 +56,8 @@ export default defineConfig(({ command, mode }) => {
         short_name: 'MODE',
         description: 'Ormoc City DRRMO & EOC Manual of Operations Development Platform: assessment, manuals, protocols and EOC operations',
         lang: 'en-PH',
-        start_url: '/',
+        // 1.10: the installed app opens the workspace; the public home page is for browsers and search.
+        start_url: '/today',
         scope: '/',
         display: 'standalone',
         orientation: 'any',
@@ -43,7 +70,7 @@ export default defineConfig(({ command, mode }) => {
         ],
         shortcuts: [
           { name: 'Logbook entry', url: '/eoc/log', icons: [{ src: '/icons/icon-192.png', sizes: '192x192' }] },
-          { name: 'Run a protocol', url: '/protocols', icons: [{ src: '/icons/icon-192.png', sizes: '192x192' }] },
+          { name: 'Run a protocol', url: '/drrm/protocols', icons: [{ src: '/icons/icon-192.png', sizes: '192x192' }] },
         ],
       },
       workbox: {
