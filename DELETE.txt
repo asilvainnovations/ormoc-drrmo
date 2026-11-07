@@ -1,8 +1,0 @@
-MODE 1.9.0 fix 2 — delete these from the repository after uploading this zip:
-
-public/Ormoc_City_EOC.kml
-    The upload put it in public/ instead of public/eoc-site/. The app links to /eoc-site/Ormoc_City_EOC.kml,
-    and src/lib/geo.test.ts reads it there. The correct copy is in this zip at public/eoc-site/.
-
-public/library/chp2v12/   (the whole folder)
-    Chapter 2 v1.2 points to /library/ch2v12/. The same 25 figures are in this zip under public/library/ch2v12/.
