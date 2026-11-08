@@ -5,6 +5,7 @@
 @import '@fontsource/poppins/latin-600.css';
 @import '@fontsource-variable/roboto-condensed/wght.css';
 @import './tokens.css';
+@import './public-accessibility.css';
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
