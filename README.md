@@ -196,14 +196,16 @@ Never copy scores, priorities, owners, target dates or action-plan statuses into
 
 ## Repository status (8 November 2026)
 
-`package.json` says 1.10.0 and the unit tests pass (203 of 203). Four parts of the 1.10.0 release are not yet on `main`:
+`package.json` says 1.10.0 and the unit tests pass (203 of 203). IAT workbook v1-6 is in `reference/`, and `npm run seed:generate` reproduces the committed seed parts exactly. Still to do on `main`:
 
-- [ ] **Apply `DELETE.txt`.** The unused shadcn kit (`src/components/ui/`, `src/components/theme-provider.tsx`) is still present, so `npm run typecheck` reports 140 errors and `npm run build` stops. `public/library/chp2v12/` must also be renamed to `public/library/ch2v12/`: Chapter 2 v1.2 links to the second name, so its 25 figures do not load until then.
-- [ ] **Add IAT workbook v1-6** to `reference/`. No IAT workbook is there, so `npm run seed:generate` stops.
-- [ ] **Add `.github/workflows/ci.yml` and `uptime.yml`** with `git push`. The GitHub upload page drops the `.github/` folder.
-- [ ] **Add `docs/runbook-backup-restore.md`**, which DEPLOY.md section 11 cites.
+- [ ] **Component kit.** `src/components/ui/` and `src/components/theme-provider.tsx` import about 27 packages that `package.json` does not list, so `npm run typecheck` reports 140 errors and `npm run build` stops. Release 1.11.0 keeps the kit and adds its packages (ADR-023); until it is on `main`, the build fails.
+- [ ] **Chapter 2 v1.2 figures.** They are in `public/library/chp2v12/`, but the chapter links to `public/library/ch2v12/`, so its 25 figures do not load. Rename the folder.
+- [ ] **CI.** Add `.github/workflows/ci.yml` and `uptime.yml` with `git push`. The GitHub upload page drops the `.github/` folder.
+- [ ] **Backup runbook.** Add `docs/runbook-backup-restore.md`, which DEPLOY.md section 11 cites.
 
-The City actions from the release notes still stand: approve the policies, confirm the support and DPO mailboxes, settle the HR-05 and HR-06 owners, name the continuity executive, re-add `Ormoc_CDRRMO_Logo.png` (truncated at 2 MiB) and run `build_basemap.sh`.
+Upload files to the folder they belong in. The `reference/` folder holds only source workbooks, legal PDFs and manual drafts, and only one IAT workbook at a time.
+
+The City actions from the release notes still stand: approve the policies, confirm the DPO mailbox, settle the HR-05 and HR-06 owners, name the continuity executive, re-add `Ormoc_CDRRMO_Logo.png` (truncated at 2 MiB) and run `build_basemap.sh`.
 
 ## Documents
 
