@@ -1,3 +1,4 @@
+import type React from 'react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
@@ -10,20 +11,21 @@ import { Badge, Button, Checkbox, EmptyState, List, ListRow, Notice, Section, Te
 import { Sheet } from '@/components/Sheet';
 import { useToast } from '@/components/Toast';
 import type { ProtocolCategory, ProtocolTemplate } from '@/types';
-import { CATEGORY, isWorkflow } from './labels';
+import { CATEGORY, KIND_LABEL, templateIsWorkflow } from './labels';
+import { RefText } from '@/components/RefText';
 import { DrrmHeader } from './DrrmHeader';
 import { startProtocol } from './actions';
 
 export function ProtocolsPage({ kind }: { kind: 'workflows' | 'protocols' }) {
-  const wanted = (c: ProtocolCategory) => (kind === 'workflows') === isWorkflow(c);
+  const wanted = (t: ProtocolTemplate) => (kind === 'workflows') === templateIsWorkflow(t);
   const { roles, userId } = useAuth();
   const nav = useNavigate();
   const toast = useToast();
   const [open, setOpen] = useState<ProtocolTemplate | null>(null);
   const data = useLiveQuery(async () => {
     const all = await db.protocol_templates.toArray();
-    const templates = all.filter((t) => t.status !== 'retired' && wanted(t.category));
-    const mine = new Set(all.filter((t) => wanted(t.category)).map((t) => t.id));
+    const templates = all.filter((t) => t.status !== 'retired' && wanted(t));
+    const mine = new Set(all.filter((t) => wanted(t)).map((t) => t.id));
     const running = (await db.protocol_runs.where('status').equals('running').reverse().sortBy('started_at')).filter((r) => mine.has(r.template_id));
     const recent = (await db.protocol_runs.where('status').anyOf('completed', 'aborted').reverse().sortBy('started_at')).filter((r) => mine.has(r.template_id)).slice(0, 10);
     const forms = new Map((await db.form_templates.toArray()).map((f) => [f.code, f]));
@@ -67,7 +69,8 @@ export function ProtocolsPage({ kind }: { kind: 'workflows' | 'protocols' }) {
       {Array.from(groups.entries()).map(([cat, ts]) => (
         <Section key={cat} title={CATEGORY[cat]}>
           <List>
-            {ts.map((t) => <ListRow tip="See the steps and start this protocol" key={t.id} onClick={() => setOpen(t)} title={t.title} meta={t.trigger_text}
+            {ts.map((t) => <ListRow tip="See the steps, the process owner and the forms, then start it" key={t.id} onClick={() => setOpen(t)} title={t.title}
+              meta={[t.process_owner && `Owner: ${t.process_owner}`, t.trigger_text].filter(Boolean).join('. ') || undefined}
               trailing={t.status === 'draft' ? <Badge tone="warn">Draft</Badge> : <Badge tone="ok">Approved</Badge>} />)}
           </List>
         </Section>
@@ -89,6 +92,7 @@ export function ProtocolsPage({ kind }: { kind: 'workflows' | 'protocols' }) {
           <p>{open.purpose}</p>
           <p className="text-sm text-muted"><span className="font-semibold text-ink">When: </span>{open.trigger_text}</p>
           <p className="text-sm text-muted"><span className="font-semibold text-ink">Usually run by: </span>{ROLE_LABEL[open.owner_role]}</p>
+          <SopControl t={open} />
           {doc && <p className="text-sm">Procedure source: <TextLink tip="Open the manual section this protocol comes from" to={`/library/doc/${doc.id}`}>{doc.code} {doc.title}</TextLink></p>}
           <ol className="space-y-2">
             {steps.map((s) => (
@@ -103,5 +107,21 @@ export function ProtocolsPage({ kind }: { kind: 'workflows' | 'protocols' }) {
         </>}
       </Sheet>
     </div>
+  );
+}
+
+/** The SOP control block (ADR-019): the same five elements for every protocol and workflow. */
+function SopControl({ t }: { t: ProtocolTemplate }) {
+  const rows: [string, React.ReactNode][] = [
+    ['Type', KIND_LABEL[t.kind ?? (templateIsWorkflow(t) ? 'workflow' : 'protocol')]],
+    ['Controlling SOP', t.sop_ref ?? '—'],
+    ['Process owner', t.process_owner ?? 'To be assigned'],
+    ['Policy basis', t.policy_refs?.length ? <RefText text={t.policy_refs.join('; ')} /> : '—'],
+    ['IAT indicators', t.indicator_ids?.length ? t.indicator_ids.join(', ') : '—'],
+  ];
+  return (
+    <dl className="grid gap-x-4 gap-y-1 rounded-control border border-line bg-sunken px-3 py-2 text-sm sm:grid-cols-[minmax(0,10rem)_1fr]" aria-label="SOP control block">
+      {rows.map(([k, v]) => <div key={k} className="contents"><dt className="font-semibold">{k}</dt><dd>{v}</dd></div>)}
+    </dl>
   );
 }
