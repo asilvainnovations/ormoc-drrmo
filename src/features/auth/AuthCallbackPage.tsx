@@ -97,7 +97,7 @@ export function SetPasswordPage() {
   const submit = async (e: FormEvent) => {
     e.preventDefault(); if (problem) { setError(problem); return; }
     setBusy(true); setError(null);
-    try { await updatePassword(pw); nav('/', { replace: true }); } catch (err) { setError((err as Error).message); } finally { setBusy(false); }
+    try { await updatePassword(pw); nav('/today', { replace: true }); } catch (err) { setError((err as Error).message); } finally { setBusy(false); }
   };
   return (
     <AuthLayout title="Set a new password" intro={email ? `For ${email}.` : undefined}>

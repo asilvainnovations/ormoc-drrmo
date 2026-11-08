@@ -8,6 +8,7 @@ import { consentReturnPath, describeScopes, hostOf, isSafeRedirect } from '@/lib
 import { Button, Loading, Notice } from '@/components/ui';
 import { AuthLayout, formCard } from './AuthLayout';
 import { SignOutBlock } from './AccountGatePages';
+import { tip } from '@/components/Tooltip';
 import { PRODUCT } from '@/lib/product';
 
 type AppStatus = 'approved' | 'requested' | 'suspended' | 'retired' | 'unregistered' | 'unknown';
@@ -98,7 +99,7 @@ export function OAuthConsentPage() {
     return (
       <Shell title="This request did not work">
         <Notice tone="bad">{view.message}</Notice>
-        <Link to="/" className="inline-flex min-h-tap items-center font-semibold underline">Go to {PRODUCT.short}</Link>
+        <Link to="/today" {...tip('Open your MODE workspace')} className="inline-flex min-h-tap items-center font-semibold underline">Go to {PRODUCT.short}</Link>
       </Shell>
     );
   }

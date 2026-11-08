@@ -21,7 +21,7 @@ export function LoginPage() {
   const mode = (['signin', 'signup', 'forgot'].includes(params.get('mode') ?? '') ? params.get('mode') : 'signin') as Mode;
   const setMode = (m: Mode) => setParams(m === 'signin' ? {} : { mode: m }, { replace: true });
   // Where to go after signing in: a page of this app only (state from RequireAuth or the consent screen).
-  const from = safeNext(loc.state?.from ?? params.get('next'), '/');
+  const from = safeNext(loc.state?.from ?? params.get('next'), '/today');
   const forApp = from.startsWith(CONSENT_PATH);
 
   if (ready && userId) return <Navigate to={from} replace />;
@@ -64,7 +64,7 @@ function SignInForm({ onForgot, from }: { onForgot: () => void; from?: string })
   const submit = async (e: FormEvent) => {
     e.preventDefault(); setBusy(true); setError(null); setSent(null);
     try {
-      if (password) { await signInWithPassword(email.trim(), password); nav(from ?? '/', { replace: true }); }
+      if (password) { await signInWithPassword(email.trim(), password); nav(from ?? '/today', { replace: true }); }
       else { await sendMagicLink(email.trim(), from); setSent(`If ${email.trim()} has an account, a sign-in link is on its way. Open it on this device.`); }
     } catch (err) { setError((err as Error).message); } finally { setBusy(false); }
   };
