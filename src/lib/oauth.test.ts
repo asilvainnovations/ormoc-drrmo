@@ -21,7 +21,7 @@ describe('safeNext', () => {
   });
   it('refuses anything that could leave the site', () => {
     for (const bad of ['//evil.example', 'https://evil.example/x', '/\\evil.example', 'javascript:alert(1)', '', null, undefined, 'eoc']) {
-      expect(safeNext(bad as string)).toBe('/');
+      expect(safeNext(bad as string)).toBe('/today');
     }
   });
 });

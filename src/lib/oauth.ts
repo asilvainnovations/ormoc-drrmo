@@ -39,10 +39,10 @@ export const describeScopes = (scope: string | string[]) =>
     .map((s) => ({ scope: s, text: SCOPES[s] ?? `Access named "${s}"` }));
 
 /**
- * A same-site path to return to after sign-in, or '/'. Refuses absolute URLs,
+ * A same-site path to return to after sign-in, or '/today'. Refuses absolute URLs,
  * protocol-relative '//host' and backslash tricks, so a link cannot send someone elsewhere.
  */
-export function safeNext(next: string | null | undefined, fallback = '/'): string {
+export function safeNext(next: string | null | undefined, fallback = '/today'): string {
   if (!next || typeof next !== 'string') return fallback;
   if (!next.startsWith('/') || next.startsWith('//') || next.startsWith('/\\') || /[\u0000-\u001f]/.test(next)) return fallback;
   try {
