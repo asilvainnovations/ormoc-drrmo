@@ -154,8 +154,8 @@ describe('operations through PostgREST', () => {
     await pull(undefined, true);
     expect(await db.iat_indicators.count()).toBe(140);
     expect(await db.master_requirements.count()).toBe(18);
-    expect(await db.protocol_templates.count()).toBe(14);   // 10 protocols and 4 workflows (1.9)
-    expect(await db.form_templates.count()).toBe(29);
+    expect(await db.protocol_templates.count()).toBe(23);   // 8 protocols and 15 workflows (1.10: + 9 Chapter 3 workflows)
+    expect(await db.form_templates.count()).toBe(40);       // 1.10: + Forms 3-01 to 3-11
     expect(await db.manual_areas.count()).toBe(10);
     // Since v1.6 drafts under review are readable by every active user (they ship in the app bundle anyway).
     expect(await db.moo_versions.where('status').equals('draft').count()).toBeGreaterThan(0);
