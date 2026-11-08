@@ -816,6 +816,32 @@ select tests.expect_ok('a layer is registered with its metadata',
 select tests.expect_error('only the Head marks a layer official',
   $$update public.geo_layers set validation_status = 'official' where code = 'barangay-boundaries'$$, '42501');
 
+-- SOP registry (1.10.0, ADR-019)
+reset role;
+select tests.expect_eq('every protocol and workflow carries its SOP registry entry',
+  (select count(*)::text from public.protocol_templates where sop_ref is not null and process_owner is not null and cardinality(indicator_ids) > 0),
+  (select count(*)::text from public.protocol_templates));
+select tests.expect_eq('the nine Chapter 3 workflows are loaded with their forms',
+  (select count(distinct t.code)::text || ' ' || count(*) filter (where s.form_code like 'F3-%')::text
+     from public.protocol_templates t join public.protocol_steps s on s.template_id = t.id where t.code like 'WF-SOP3-%'),
+  '9 19');
+select tests.expect_eq('kinds split incident protocols from management workflows',
+  (select string_agg(kind || ':' || n, ' ' order by kind) from (select kind, count(*) n from public.protocol_templates group by kind) k),
+  'protocol:8 workflow:15');
+select tests.login('00000000-0000-0000-0000-000000000012');  -- author
+select tests.expect_error('an unknown indicator is refused',
+  $$update public.protocol_templates set indicator_ids = array['Z9.9'] where code = 'WF-SOP3-01'$$, '23503');
+select tests.expect_ok('an author edits a draft workflow''s process owner',
+  $$update public.protocol_templates set process_owner = 'CDRRMO Research and Planning' where code = 'WF-SOP3-01'$$);
+select tests.login('00000000-0000-0000-0000-000000000011');  -- CDRRMO Head
+select tests.expect_ok('the Head approves it',
+  $$update public.protocol_templates set status = 'approved' where code = 'WF-SOP3-01'$$);
+select tests.login('00000000-0000-0000-0000-000000000012');  -- author
+select tests.expect_error('an approved workflow''s registry entry is fixed',
+  $$update public.protocol_templates set policy_refs = array['RA 10121'] where code = 'WF-SOP3-01'$$, '42501');
+select tests.expect_rows('indicator traceability lists the SOPs serving A5.1',
+  $$select 1 from public.v_indicator_sops where indicator_id = 'A5.1'$$, 1);
+
 reset role;
 select tests.expect_eq('audit trail recorded', ((select count(*) from public.audit_log) > 50)::text, 'true');
 \o
