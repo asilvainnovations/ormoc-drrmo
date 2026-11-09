@@ -13,9 +13,9 @@ export const SITE = {
   name: PRODUCT.short,
   fullName: PRODUCT.full,
   tagline: `${PRODUCT.expansion}, Ormoc City`,
-  /** Canonical origin for SEO (https://…, no trailing slash). Empty: the page's own origin. */
-  url: (val('VITE_SITE_URL', '') ?? '').replace(/\/$/, ''),
-  /** Platform support (the developer's monitored channel). */
+  /** Canonical origin for SEO (https://…, no trailing slash). The City's domain since 8 Nov 2026. */
+  url: (val('VITE_SITE_URL', 'https://www.mode-cddrmo-ormoc.online') ?? '').replace(/\/$/, ''),
+  /** Platform support: the developer's mailbox, confirmed monitored on 8 Nov 2026. */
   supportEmail: val('VITE_SUPPORT_EMAIL', 'mode-support@asilvainnovations.com')!,
   /** Data protection contact for the City's records (CDRRMO). */
   dpoEmail: val('VITE_DPO_EMAIL', 'cdrrmo.ormoccity@gmail.com')!,

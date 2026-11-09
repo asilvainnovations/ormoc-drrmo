@@ -1,17 +1,19 @@
 // First launch: load the bundled reference catalogue (generated from the City's
 // IAT v1.1 and traceability workbooks) so the app works before its first sync.
-import reference from '@/data/reference.json';
+// 1.11: the catalogue (about 1.8 MB with the chapter texts) is loaded on demand, only when this device's copy
+// is older than REFERENCE_VERSION, so public pages and later launches do not parse it.
+import type reference from '@/data/reference.json';
 import { db, getMeta, setMeta } from './db';
 import { DEFAULT_AA_PARAMS } from '@/domain/aa';
 
-export const REFERENCE_VERSION = 'iat-1.1/2026-11-08-ch3-v1.0-sop-registry';
+export const REFERENCE_VERSION = 'iat-1.1/2026-11-08-ch4-v1.1-ch3-v1.1';
 
 type Ref = typeof reference;
-const R = reference as Ref;
 
 export async function bootstrapReference(): Promise<void> {
   const loaded = await getMeta<string | null>('referenceVersion', null);
   if (loaded === REFERENCE_VERSION && (await db.iat_indicators.count()) > 0) return;
+  const R = (await import('@/data/reference.json')).default as Ref;
   await db.transaction('rw', [db.manual_parts, db.manual_areas, db.iat_parts, db.iat_domains, db.iat_indicators, db.master_requirements, db.indicator_requirements,
     db.offices, db.indicator_lead_offices, db.framework_crosswalk, db.hazards, db.aa_rules, db.aa_action_templates,
     db.moo_documents, db.moo_versions, db.moo_document_indicators, db.protocol_templates, db.protocol_steps, db.meta], async () => {
@@ -44,7 +46,7 @@ export async function bootstrapReference(): Promise<void> {
       await db.moo_documents.bulkPut(R.moo_documents.map((d) => ({ ...d, version: 1 })) as never[]);
       await db.moo_versions.bulkPut(R.moo_versions.map((v) => ({ ...v, version: 1 })) as never[]);
     } else {
-      await restructureLibrary();
+      await restructureLibrary(R);
     }
     // Links are reference data: replace them whole so links of merged sections do not linger.
     await db.moo_document_indicators.clear();
@@ -63,7 +65,7 @@ export async function bootstrapReference(): Promise<void> {
  * aliases, parent) of the others. Text and approval stay as synced: the next pull brings the
  * server's copy anyway. Merged sections become superseded unless already approved.
  */
-async function restructureLibrary(): Promise<void> {
+async function restructureLibrary(R: Ref): Promise<void> {
   const superseded = new Set<string>(R.superseded_documents);
   for (const d of R.moo_documents) {
     const local = await db.moo_documents.get(d.id);
