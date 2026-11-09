@@ -39,7 +39,8 @@ export default defineConfig(({ command, mode }) => {
     const c = checkSupabaseConfig(e.VITE_SUPABASE_URL, e.VITE_SUPABASE_PUBLISHABLE_KEY ?? e.VITE_SUPABASE_ANON_KEY);
     if (c.error) throw new Error(`Build stopped: ${c.error} Set it in the hosting environment variables (DEPLOY.md, section 6).`);
   }
-  const siteUrl = loadEnv(mode, process.cwd(), 'VITE_').VITE_SITE_URL ?? '';
+  // Keep the default in step with SITE.url in src/lib/site.ts.
+  const siteUrl = loadEnv(mode, process.cwd(), 'VITE_').VITE_SITE_URL || 'https://www.mode-cddrmo-ormoc.online';
   return {
   define: { __APP_VERSION__: JSON.stringify(APP_VERSION) },
   resolve: { alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) } },

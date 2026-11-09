@@ -1,4 +1,5 @@
 import type { Config } from 'tailwindcss';
+import animate from 'tailwindcss-animate';
 
 // Colours come from CSS custom properties (src/styles/tokens.css) so light and
 // dark themes share one set of names. Alert colours are reserved for the EOC
@@ -7,7 +8,9 @@ const v = (name: string) => `rgb(var(--${name}) / <alpha-value>)`;
 
 export default {
   content: ['./index.html', './src/**/*.{ts,tsx}'],
-  darkMode: 'media',
+  // 1.11: the theme follows the device unless the person picks Light or Dark (ThemeProvider sets .light or .dark
+  // on <html>). Both the CSS tokens and `dark:` utilities read the same rule.
+  darkMode: ['variant', ['@media (prefers-color-scheme: dark) { &:not(.light *) }', '&:is(.dark *)']],
   theme: {
     extend: {
       colors: {
@@ -39,11 +42,17 @@ export default {
         '2xl': ['1.75rem', { lineHeight: '2.125rem' }],
         '3xl': ['2.0625rem', { lineHeight: '2.375rem' }],
       },
+      borderColor: { DEFAULT: v('line') },
       borderRadius: { control: '0.5rem', sheet: '1rem' },
+      keyframes: {
+        'accordion-down': { from: { height: '0' }, to: { height: 'var(--radix-accordion-content-height)' } },
+        'accordion-up': { from: { height: 'var(--radix-accordion-content-height)' }, to: { height: '0' } },
+      },
+      animation: { 'accordion-down': 'accordion-down 0.2s ease-out', 'accordion-up': 'accordion-up 0.2s ease-out' },
       spacing: { tap: '2.75rem', 'safe-b': 'env(safe-area-inset-bottom)' },
       maxWidth: { prose: '68ch', page: '72rem' },
       boxShadow: { sheet: '0 -8px 24px rgb(0 0 0 / 0.18)', raised: '0 1px 2px rgb(0 0 0 / 0.08), 0 2px 8px rgb(0 0 0 / 0.06)' },
     },
   },
-  plugins: [],
+  plugins: [animate],
 } satisfies Config;

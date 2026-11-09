@@ -8,7 +8,7 @@ Time needed: about half a day, plus the time to invite staff.
 
 - [ ] A City email account to **own** the Supabase, Netlify and GitHub accounts (for example, `drrm-platform@ormoc.gov.ph`). This is about who owns and pays for the service. It does not limit who can sign in to the app: any email address can, including personal and consultant addresses (sections 2 and 4).
 - [ ] A password manager or vault for the database password and keys.
-- [ ] The DPO has reviewed the privacy notice text (Settings → About) and the cross-border transfer to Singapore ([ADR-002](docs/adr/002-hosting-and-privacy.md)).
+- [ ] The DPO has reviewed the privacy notice text (Settings → About) and the cross-border transfer to Japan ([ADR-002](docs/adr/002-hosting-and-privacy.md), [ADR-021](docs/adr/021-production-region-tokyo.md)).
 - [ ] A workstation with Node 22+, Git and `psql` (PostgreSQL 15+ client).
 
 ## 1. Create the Supabase project (City-owned)
@@ -16,7 +16,7 @@ Time needed: about half a day, plus the time to invite staff.
 1. Sign up at supabase.com with the City email. Create an **organisation** named "City Government of Ormoc".
 2. Create a project:
    - **Name:** `ormoc-drrm`
-   - **Region:** Southeast Asia (Singapore), `ap-southeast-1`
+   - **Region:** the City's project `jmctsspadywjcbbqwweh` is in Northeast Asia (Tokyo), `ap-northeast-1` (ADR-021). A training or replacement project should use the same region
    - **Database password:** generate a long one and store it in the vault
 3. Choose a **paid plan** for production:
    - Free projects pause after a period of inactivity, which is unacceptable for an EOC.
@@ -38,7 +38,7 @@ Authentication → Sign In / Providers → Email:
 
 Authentication → URL Configuration:
 
-- **Site URL:** the app address (for example, `https://drrm.ormoc.gov.ph`).
+- **Site URL:** the app address (`https://www.mode-cddrmo-ormoc.online`; add `https://www.mode-cddrmo-ormoc.online/**` to Redirect URLs).
 - **Redirect URLs:** add `https://<each app address>/**`: the custom domain AND the `netlify.app` address, plus `https://deploy-preview-*--<name>.netlify.app/**` if previews use this project. The app sends people back to the exact address they used; one that is not listed falls back to the Site URL and the link fails.
 
 Authentication → Emails → Templates. Change the link in these four templates so that every link works on any device, including an iPhone home-screen app (which does not share storage with Safari):
@@ -62,7 +62,7 @@ Turn this on when another City system should sign people in with their MODE acco
 
 1. **Signing keys first.** Project Settings → JWT Keys: create an asymmetric key (ECC P-256 or RSA), and make it the current key once it has been on standby for a while. This is needed for OpenID Connect ID tokens, and lets the app check sessions on the device. Legacy shared-secret keys still work, but nothing is checked on the device.
 2. Authentication → OAuth Server: **enable** the OAuth 2.1 server. Set **Authorization Path** to `/oauth/consent`. Leave **dynamic client registration off**.
-3. The Site URL (section 2) plus the path must be the app's address, for example `https://drrm.ormoc.gov.ph/oauth/consent`.
+3. The Site URL (section 2) plus the path must be the app's address, for example `https://www.mode-cddrmo-ormoc.online/oauth/consent`.
 4. Authentication → OAuth Apps: register each app with its name, website and **exact** redirect URI (https only). Give its developer the client ID, and the client secret only for server-side apps. Public apps (mobile, single-page) use PKCE without a secret.
 5. Give the developer the endpoints. They are also listed in the app under Settings → Connected apps (administrators only):
 
@@ -101,7 +101,7 @@ Each part runs as a single transaction, so a part that fails changes nothing. Du
 Use the **Session pooler** connection string from Project Settings → Database (it works over IPv4). Run, in order:
 
 ```bash
-export DB_URL='postgresql://postgres.<project-ref>:<password>@aws-0-ap-southeast-1.pooler.supabase.com:5432/postgres'
+export DB_URL='postgresql://postgres.<project-ref>:<password>@<pooler host from Connect, e.g. aws-0-ap-northeast-1.pooler.supabase.com>:5432/postgres'
 
 for f in supabase/migrations/*.sql; do
   echo "== $f"; psql "$DB_URL" -v ON_ERROR_STOP=1 -q -f "$f" || break
@@ -191,7 +191,7 @@ Then, in the dashboard:
   2. **Reference data.** Delete every file in `supabase/seed/parts/`, upload the new ones, and run all **19** parts in order. The last part's check should return **140 | 18 | 935 | 71 | 23 | 161 | 29 | 10 | 140 | 40**: 23 protocols and workflows (8 protocols and 15 workflows, including the nine Chapter 3 workflows WF-SOP3-01 to 09), 161 steps and 40 forms (Forms 3-01 to 3-11 added). Chapter 3 v1.0 and Annexes 3-A to 3-N load in the Library as drafts. Approved text is never changed.
   3. **No operational file to run.** `reference/…_v1-6.xlsx` replaces `…_v1-5.xlsx`. It adds an "Evidence Validation Status" column (all *Pending validation*), the Dashboard summary tiles and a "Technical person" row in Profile. Scores, evidence and gaps are unchanged, so the baseline cycle needs no update.
   4. **Environment variables** (Netlify or Vercel, Production). All are optional and appear on public pages; none is secret:
-     - `VITE_SITE_URL`: canonical address, for example `https://drrm.ormoc.gov.ph`. It enables `sitemap.xml` and absolute canonical links.
+     - `VITE_SITE_URL`: canonical address. It defaults to `https://www.mode-cddrmo-ormoc.online` (the City domain since 8 Nov 2026); set it only for another host, such as a training copy.
      - `VITE_SUPPORT_EMAIL` (default `mode-support@asilvainnovations.com`), `VITE_DPO_EMAIL` (default `cdrrmo.ormoccity@gmail.com`) and `VITE_BUSINESS_ADDRESS`.
      - `VITE_NPC_REGISTRATION`: only if the City's NPC registration covers this system.
      - `VITE_POLICY_EFFECTIVE` and `VITE_POLICY_OWNER`: set both **after** the City Legal Office and the DPO approve the policies. Until then the policies say "Draft, not yet approved".
@@ -202,6 +202,23 @@ Then, in the dashboard:
      - A workspace address answers with the `x-robots-tag: noindex, nofollow` header.
      - An installed phone opens at Today (reinstall if it still opens the home page).
   7. Old bookmarks to `/` now open the public home page. Signed-in people get "Open workspace" there. Tell staff the new Today address.
+- **To 1.11.0** (8 November 2026), Chapter 4 in the platform, owners aligned with Chapter 2, Chapter 3 v1.1, the component kit and appearance, search, Error reports, Tokyo region, City domain (ADR-021, ADR-022, ADR-023). If 1.10.0 was never applied, do its steps 1, 3, 4 and 5 first, then use this release's seed parts instead of its 19.
+  1. **No new migration** beyond `20261108002000_sop_registry.sql` (1.10.0).
+  2. **Reference data.** Delete every file in `supabase/seed/parts/`, upload the new ones, and run all **25** parts in order. The last part's check should return **140 | 18 | 935 | 71 | 28 | 197 | 29 | 10 | 140 | 50**:
+     - 28 protocols and workflows: 13 protocols and 15 workflows. The five new protocols are PR-WARNING-RECEIPT, PR-ICS-INTERFACE, PR-EVACUATION, PR-RESOURCE-REQUEST and PR-EOC-DEACTIVATE, carrying SOPs 4-01, 4-05, 4-06, 4-07 and 4-09.
+     - 197 steps and 50 forms (ten Chapter 4 forms).
+     - The Library adds Chapter 4 v1.1 with Annexes 4-A to 4-D, Chapter 3 v1.1, and the proposed SOP 6-GIS-01 under Area 6.
+     - HR-05 and HR-06 now name the owners Chapter 2 names.
+     - Approved text is never changed.
+  3. **Supabase Auth** (Authentication → URL Configuration): Site URL `https://www.mode-cddrmo-ormoc.online`; add `https://www.mode-cddrmo-ormoc.online/**` to the Redirect URLs. Keep the old address there until the domain is live.
+  4. **Hosting:** add the domain `www.mode-cddrmo-ormoc.online` (section 6). `VITE_SITE_URL` now defaults to it.
+  5. **Push with git**, because the GitHub upload page truncates large files. This release restores two originals: `public/Ormoc_CDRRMO_Logo.png`, which was cut off at exactly 2 MiB on `main`, and `public/App_Banner.png`, which was missing. It also adds `.github/workflows/basemap.yml`. A unit test now fails if a brand original is incomplete.
+  6. **Basemap.** Add the repository secrets `SUPABASE_URL` and `SERVICE_ROLE_KEY` (Settings → Secrets and variables → Actions). Then go to Actions → *Build City basemap* → Run workflow. It builds on GitHub's servers and uploads to the `basemap` bucket. If the file is over 50 MB, raise the project's global file size limit (Storage → Settings) or run the workflow with zoom 14.
+  7. **Upload the files and redeploy.** Then check:
+     - the appearance switch (rail, Today, Settings and public pages) changes light and dark;
+     - Ctrl+K opens search;
+     - Settings → Error reports lists reports for an administrator;
+     - Settings → Interface components shows every component.
 - **85 barangays:** if the seed was loaded before the 85-barangay correction, run parts `01_seed.sql` and `06_seed.sql` once more, but only if no manual version has been approved yet. Otherwise ask the developer for a one-off update of the three indicator texts (A3.7, A7.3, B3.2).
 
 ## 4. First administrator and the CDRRMO Head
@@ -270,7 +287,7 @@ Classification takes one or more of `urban`, `coastal`, `riverine` and `upland`,
 
    The app also accepts the older name `VITE_SUPABASE_ANON_KEY`, for projects that still use an anon key. If both are set, the publishable key is used. Never add the service_role key: the build stops if it sees a secret key. These values are built into the app, so a change needs a new deploy (Deploys → Trigger deploy → Deploy site). A deploy with a missing or mistyped value fails with a message saying which one.
 4. Deploy. The site opens at `https://<name>.netlify.app`. Rename it under Site configuration → Change site name (for example, `ormoc-drrm`).
-5. **Domain:** Domain management → Add a domain (for example, `drrm.ormoc.gov.ph`). Add the CNAME record Netlify shows at the City's DNS host. HTTPS is issued automatically.
+5. **Domain:** Domain management → Add a domain (`www.mode-cddrmo-ormoc.online`). Add the CNAME record Netlify shows at the City's DNS host. HTTPS is issued automatically.
 6. **Supabase:** put the final address in Authentication → URL Configuration (Site URL and Redirect URLs, step 2). Sign-in links and invites fail until this matches.
 7. **Previews (optional):** pull requests get deploy previews. Add their address pattern (`https://deploy-preview-*--<name>.netlify.app`) to the Supabase Redirect URLs, or point previews at a separate test Supabase project by setting different values for the "Deploy Previews" context.
 
@@ -288,7 +305,7 @@ Check after the first deploy:
    - `VITE_SUPABASE_PUBLISHABLE_KEY` = publishable key (or `VITE_SUPABASE_ANON_KEY` on older projects)
    - optional public-page values: `VITE_SITE_URL`, `VITE_SUPPORT_EMAIL`, `VITE_DPO_EMAIL`, `VITE_BUSINESS_ADDRESS`, `VITE_NPC_REGISTRATION`, `VITE_POLICY_EFFECTIVE`, `VITE_POLICY_OWNER` (section 3, "To 1.10.0")
 3. Deploy. `vercel.json` sets the single-page fallback, caching and security headers, including a Content-Security-Policy that allows only this site and the City's own Supabase project (edit the project host there if it changes).
-4. Add the City domain (for example, `drrm.ormoc.gov.ph`) and update the Site URL in step 2.
+4. Add the City domain (`www.mode-cddrmo-ormoc.online`) and update the Site URL in step 2.
 
 ### Option C: a City web server
 

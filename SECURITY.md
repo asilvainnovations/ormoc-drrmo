@@ -8,7 +8,7 @@ MODE (Manual of Operations for the DRRMO and EOC) belongs to the **City Governme
 - **Include:** the page or address, the steps to reproduce, what you expected, what happened, and the version shown in Settings → About.
 - **Do not include:** passwords, one-time codes, API keys, or personal data of any person. A screenshot with the sensitive parts covered is enough.
 - **Do not** test against the City's production project, read or change other people's records, or try to deny service. Use a local copy (`npm run test:db`, `scripts/e2e_test.sh`) or ask for access to the training project.
-- **Response:** support acknowledges a report within 2 working days and sends an assessment within 10 working days. These are the developer's targets. **City to confirm** that the support channel is monitored on these terms, and who covers it when the developer's engagement ends.
+- **Response:** the support mailbox is monitored (confirmed 8 November 2026). Support acknowledges a report within 2 working days and sends an assessment within 10 working days. **City to confirm** who covers the mailbox when the developer's engagement ends.
 - Please do not publish the problem until a fix is deployed or 90 days have passed, whichever comes first.
 
 Report emergencies to the City emergency hotline, not to this address. The support channel is not monitored around the clock.
@@ -21,9 +21,9 @@ Only the version deployed from `main` is supported. Fixes are made on `main` and
 
 ### Where data lives
 
-- **One City-owned Supabase project** in the Singapore region (`ap-southeast-1`) holds the database, sign-in and file storage (ADR-002). There is no other application server and no edge function. **City to confirm** the live project's region, backup plan and support-access settings, and record the Supabase subprocessor list in the City's processing records.
+- **One City-owned Supabase project**, `jmctsspadywjcbbqwweh`, in Northeast Asia (Tokyo, `ap-northeast-1`), holds the database, sign-in and file storage (ADR-002, ADR-021). There is no other application server and no edge function. **City to confirm** the backup plan and support-access settings, and record the Supabase subprocessor list and the transfer to Japan in the City's processing records.
 - **The web app** is static files on Netlify or Vercel under a City-owned team. **City to confirm** which host is live and its region.
-- **The browser talks only to the City's own Supabase project.** The Content Security Policy in `vercel.json` sets `connect-src` to that one project, with no `*.supabase.co` wildcard. Fonts are self-hosted. There are no analytics, advertising or tracking scripts, and no cookies. Links to hazard services (PAGASA, PHIVOLCS and others) open in a new tab with `rel="noopener noreferrer"`. They are never embedded.
+- **The browser talks only to the City's own Supabase project.** The Content Security Policy in `vercel.json` sets `connect-src` to that one project, with no `*.supabase.co` wildcard. Fonts are self-hosted. There are no analytics, advertising or tracking scripts. Device storage is first-party and listed item by item in the Cookies and Device Storage policy (`/policies/cookies`). Links to hazard services (PAGASA, PHIVOLCS and others) open in a new tab with `rel="noopener noreferrer"`. They are never embedded.
 - **Other headers:** `X-Frame-Options: DENY`, `frame-ancestors 'none'`, HSTS for two years, `nosniff`, a strict referrer policy, and a permissions policy that allows only the camera (to photograph evidence). Workspace addresses send `X-Robots-Tag: noindex`.
 
 ### Who can see and change what
@@ -48,7 +48,7 @@ Only the version deployed from `main` is supported. Fixes are made on `main` and
   - the sign-in session (local storage);
   - the records the role can read, entries waiting to send, and files waiting to upload (IndexedDB `ormoc-drrm-ops`);
   - the app files (service-worker precache). API responses are never cached by the service worker (`runtimeCaching: []`). Manual figures and map tiles are not precached;
-  - accessibility preferences, the install-reminder dismissal, and each account's ICS, PSCP and Gawad KALASAG workspaces (local storage).
+  - the appearance choice (light, dark or device), accessibility preferences, the install-reminder dismissal, and each account's ICS, PSCP and Gawad KALASAG workspaces (local storage).
 - **Signing out** erases the account's records from the device. Unsent entries that belong to other accounts on a shared phone are kept (ADR-014).
 - **A lost device:** deactivate the account in Settings → Users and roles, then reset its password. The device cannot read anything after its session ends.
 
