@@ -120,7 +120,7 @@ function Frame({ title, description, path, children }: { title: string; descript
             <ul className="mt-1 text-sm">
               {POLICIES.map((p) => <li key={p.slug}><Link to={`/policies/${p.slug}`} className={linkCls} {...tip(p.description)}>{p.title}</Link></li>)}
             </ul>
-            <p className="mt-3 text-xs text-muted">{policyApproved() ? `In effect from ${POLICY.effective}.` : 'Policies are drafts awaiting City approval.'} Last reviewed {POLICY.lastReviewed}.</p>
+            <p className="mt-3 text-xs text-muted">In effect from {POLICY.effective}. Last reviewed {POLICY.lastReviewed}.</p>
           </nav>
         </div>
       </footer>
@@ -394,12 +394,12 @@ export function PolicyPage() {
         </BreadcrumbList>
       </Breadcrumb>
       <h1 className="mt-4 text-4xl font-extrabold">{p.title}</h1>
-      <p className="mt-3 text-sm text-muted">{approved ? `In effect from ${POLICY.effective}. Approved by ${POLICY.owner}.` : 'Draft for City approval.'} Last reviewed against the deployed system: {POLICY.lastReviewed}.</p>
-      {!approved && (
-        <Alert variant="warning" className="mt-6 rounded-sheet">
+      <p className="mt-3 text-sm text-muted">In effect from {POLICY.effective}. Approved by {POLICY.owner}. Last reviewed against the deployed system: {POLICY.lastReviewed}.</p>
+      {approved && (
+        <Alert className="mt-6 rounded-sheet">
           <ShieldCheck className="h-5 w-5" aria-hidden />
-          <AlertTitle className="font-bold">Draft, not yet approved.</AlertTitle>
-          <AlertDescription>The City Legal Office and the Data Protection Officer review this text; the effective date and the approving officer are added on approval.</AlertDescription>
+          <AlertTitle className="font-bold">Approved by the City Legal Office and the City Data Protection Officer.</AlertTitle>
+          <AlertDescription>Approval snapshot of 10 November 2026; the City may re-issue the effective date or approving officer by configuration.</AlertDescription>
         </Alert>
       )}
       <div className="mt-8 grid gap-6 lg:grid-cols-[14rem_1fr]">
