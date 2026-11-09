@@ -5,7 +5,7 @@ Each record states a decision, why it was made, and what it costs. Change a deci
 | No. | Decision | Status |
 |---|---|---|
 | [001](001-stack.md) | Vite + React + TypeScript PWA on Supabase | Accepted |
-| [002](002-hosting-and-privacy.md) | City-owned Supabase project in Singapore; portable to self-hosting | Accepted |
+| [002](002-hosting-and-privacy.md) | City-owned Supabase project; portable to self-hosting (planned region Singapore) | Accepted (region amended by 021) |
 | [003](003-local-first-sync.md) | Local-first: IndexedDB, outbox, versioned rows, deterministic ids | Accepted |
 | [004](004-rbac-and-rls.md) | Ten City roles enforced by Postgres row-level security and triggers | Accepted |
 | [005](005-single-source-scoring.md) | IAT scoring rules live in SQL; the client mirrors them under a parity test | Accepted |
@@ -25,3 +25,6 @@ Each record states a decision, why it was made, and what it costs. Change a deci
 | [018](018-connected-app-approval.md) | Other apps read City data only after the City approves them | Accepted (amends 010) |
 | [019](019-sop-registry-and-chapter3.md) | One SOP registry (kind, SOP, process owner, policy basis, indicators) on every protocol and workflow; Chapter 3 as forms and workflows | Accepted (extends 016) |
 | [020](020-public-site-and-today-route.md) | Public pages at /, workspace at /today; policies from typed data and env; only public content indexed | Accepted |
+| [021](021-production-region-tokyo.md) | The production project runs in `ap-northeast-1` (Tokyo), as the live dashboard shows; transfer to Japan in the privacy notice | Accepted (amends 002) |
+| [022](022-chapter4-and-owner-alignment.md) | Chapter 4 SOPs 4-01 to 4-09 run as protocols; every template cites written text; HR-05/HR-06 owners follow Chapter 2 | Accepted (extends 019) |
+| [023](023-component-kit-and-appearance.md) | Radix/shadcn component kit kept and mapped to City tokens; Light/Dark/device appearance; search palette; component gallery | Accepted (amends 007, 008) |

@@ -1,10 +1,10 @@
 # ADR-020: Public pages at "/", the workspace at "/today"; only public content is indexed (v1.10.0)
 
-Status: Accepted, 8 Nov 2026.
+Status: Accepted, 8 Nov 2026. Region facts corrected by ADR-021 (the live project is in Tokyo).
 
 ## Context
 The City supplied draft public pages: a landing page, About, FAQ, Support and four policies. It asked that "/" become the public landing page for search engines, that the signed-in workspace move to "/today", and that the policies use real contact details. The draft text had problems:
-- it named the wrong hosting region ("Northeast Asia");
+- it gave the hosting region without checking it against the project (the region it named, Northeast Asia, turned out to be right: ADR-021);
 - it described AI features that MODE does not have;
 - it made claims about cookies that the app does not set;
 - it hard-coded contact details and showed today's date as the policy date.
@@ -17,7 +17,7 @@ The City supplied draft public pages: a landing page, About, FAQ, Support and fo
    - The sign-in fallback (`safeNext`), the auth callback, the Today tab, the crash screen and the OAuth consent page now point to `/today`.
 2. **Content is typed data** in `src/features/public/PublicPages.tsx`. The policies describe the deployed code, checked on 8 Nov 2026:
    - the City is the controller, and the developer is the processor;
-   - the data is hosted in Singapore;
+   - the data is hosted in Tokyo, Japan (`ap-northeast-1`, ADR-021);
    - the app sets no cookies;
    - the policies list the device storage MODE actually uses;
    - the policies say where the City must still confirm something.

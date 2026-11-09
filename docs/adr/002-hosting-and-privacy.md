@@ -1,6 +1,6 @@
 # ADR-002: City-owned Supabase project in Singapore; portable to self-hosting
 
-Status: Accepted, 15 Oct 2026
+Status: Accepted, 15 Oct 2026. Region amended by ADR-021: the live project is in `ap-northeast-1` (Tokyo).
 
 ## Context
 The City is the personal information controller under RA 10173 (Data Privacy Act). The IAT methodology commits that assessment records stay under City control and that the platform holds no personal data of affected persons or informants. The consultant must not own or hold the production account.
