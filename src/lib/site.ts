@@ -29,12 +29,15 @@ export const SITE = {
 
 /**
  * Policy status. "Last reviewed" is the date the text was last checked against the deployed system: a fixed
- * fact, deliberately not today's date. Effective date and approving officer stay unset until the City approves.
+ * fact, deliberately not today's date.
+ * Approved snapshot 10 Nov 2026: the City Legal Office and the Data Protection Officer approved the public
+ * policies; the effective date and approving offices below are the dated snapshot of that approval. Env vars
+ * can still override (VITE_POLICY_EFFECTIVE / VITE_POLICY_OWNER) if the City re-issues them.
  */
 export const POLICY = {
-  lastReviewed: '8 November 2026',
-  effective: val('VITE_POLICY_EFFECTIVE', null),
-  owner: val('VITE_POLICY_OWNER', null),
+  lastReviewed: '10 November 2026',
+  effective: val('VITE_POLICY_EFFECTIVE', null) ?? '9 November 2026',
+  owner: val('VITE_POLICY_OWNER', null) ?? 'City Legal Office and City Data Protection Officer',
 } as const;
 export const policyApproved = () => Boolean(POLICY.effective && POLICY.owner);
 

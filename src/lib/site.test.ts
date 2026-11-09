@@ -3,12 +3,14 @@ import { describe, expect, it } from 'vitest';
 import { POLICY, PUBLIC_PATHS, SITE, policyApproved, setPageMeta } from './site';
 
 describe('public site settings', () => {
-  it('has contact details and no unconfirmed policy approval by default', () => {
+  it('has contact details and the dated policy-approval snapshot (City Legal Office + DPO, 10 Nov 2026)', () => {
     expect(SITE.supportEmail).toBe('mode-support@asilvainnovations.com');
     expect(SITE.dpoEmail).toMatch(/@/);
     expect(SITE.npcRegistration).toBeNull();
-    expect(POLICY.lastReviewed).toBe('8 November 2026');
-    expect(policyApproved()).toBe(false);
+    expect(POLICY.lastReviewed).toBe('10 November 2026');
+    expect(policyApproved()).toBe(true);
+    expect(POLICY.effective).toBe('9 November 2026');
+    expect(POLICY.owner).toContain('City Legal Office');
   });
   it('keeps the sitemap paths in step with vite.config.ts', () => {
     const cfg = readFileSync('vite.config.ts', 'utf8');
