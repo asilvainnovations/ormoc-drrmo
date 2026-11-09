@@ -8,7 +8,13 @@ import { cycleResults } from '@/domain/scoring';
 import { nextDeadline } from '@/domain/aa';
 import { canOperate } from '@/domain/eoc';
 import { duration, fmtDateTime, fmtLongDate, fmtTime, manilaHour, relative } from '@/lib/time';
-import { Badge, List, ListRow, Meter, Notice, Section, TextLink } from '@/components/ui';
+import { Badge, List, ListRow, Notice, TextLink } from '@/components/ui';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Progress } from '@/components/ui/progress';
+import { Skeleton } from '@/components/ui/skeleton';
+import GlassCard from '@/components/ui/GlassCard';
+import { ThemeToggle } from '@/components/ThemeToggle';
+import { templateIsWorkflow } from '@/features/protocols/labels';
 import { DECL_STATUS } from '@/features/eoc/aa/labels';
 import { tip } from '@/components/Tooltip';
 import { Seals } from '@/components/Brand';
@@ -30,6 +36,10 @@ export function TodayPage() {
       log: await db.logbook_entries.orderBy('occurred_at').reverse().limit(5).toArray(),
       hazard: decl ? await db.hazards.get(decl.hazard_code) : undefined,
       overdueReport: (await db.declarations.where('status').equals('lifted').toArray()).find((d) => !d.report_submitted_at),
+      // 1.11: Manual readiness at a glance (SOP registry, ADR-019 and ADR-022).
+      templates: (await db.protocol_templates.toArray()).filter((t) => t.status !== 'retired'),
+      forms: (await db.form_templates.toArray()).filter((f) => f.status !== 'retired'),
+      docs: await db.moo_documents.where('manual').equals('MOO').toArray(),
     };
   }, [decl?.id]);
   const hour = manilaHour(now);
@@ -46,14 +56,20 @@ export function TodayPage() {
 
   return (
     <div className="page">
-      <header className="mb-6 flex items-start justify-between gap-3">
-        <div>
-          <Seals size={44} className="mb-3 lg:hidden" />
-          <h1 className="text-2xl font-extrabold lg:text-3xl">{greeting(hour)}{profile?.full_name ? `, ${profile.full_name.split(' ')[0]}` : ''}</h1>
-          <p className="mt-1 text-muted">{fmtLongDate(now)}</p>
-        </div>
-        <Link to="/settings" {...tip('Settings: sync, users and roles, about, sign out')} className="inline-flex h-tap w-tap items-center justify-center rounded-control hover:bg-sunken lg:hidden" aria-label="Settings"><Settings className="h-5 w-5" aria-hidden /></Link>
-      </header>
+      <GlassCard hover={false} className="mb-6">
+        <header className="flex items-start justify-between gap-3 p-5">
+          <div>
+            <Seals size={44} className="mb-3 lg:hidden" />
+            <p className="font-data text-sm font-semibold uppercase tracking-widest text-accent-ink">{fmtLongDate(now)}</p>
+            <h1 className="mt-1 text-2xl font-extrabold lg:text-3xl">{greeting(hour)}{profile?.full_name ? `, ${profile.full_name.split(' ')[0]}` : ''}</h1>
+            <p className="mt-1 max-w-prose text-muted">Your alerts, quick actions, running procedures and the state of the Manual, in one place.</p>
+          </div>
+          <div className="flex shrink-0 items-center gap-1 lg:hidden">
+            <ThemeToggle />
+            <Link to="/settings" {...tip('Settings: sync, users and roles, about, sign out')} className="inline-flex h-tap w-tap items-center justify-center rounded-control hover:bg-sunken" aria-label="Settings"><Settings className="h-5 w-5" aria-hidden /></Link>
+          </div>
+        </header>
+      </GlassCard>
 
       {offlineIdentity && <Notice tone="info" title="Working offline">You are using the last sign-in on this device. Your entries are kept here and sent when the connection returns.</Notice>}
 
@@ -74,31 +90,80 @@ export function TodayPage() {
       {quick.length > 0 && (
         <nav aria-label="Quick actions" className="mb-8 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-7">
           {quick.map(({ to, label, icon: Icon, tip: t }) => (
-            <Link key={label} to={to} {...tip(t)} className="flex min-h-[4.5rem] flex-col justify-between rounded-control border border-line bg-surface p-3 font-semibold hover:bg-sunken">
-              <Icon className="h-5 w-5 text-accent" aria-hidden />{label}
+            <Link key={label} to={to} {...tip(t)} className="group flex min-h-[5.5rem] flex-col justify-between rounded-sheet border border-line bg-surface p-3 font-semibold shadow-raised transition hover:-translate-y-0.5 hover:border-sky hover:shadow-sheet motion-reduce:hover:translate-y-0">
+              <span className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-sky-soft text-action group-hover:bg-action group-hover:text-on-action"><Icon className="h-5 w-5" aria-hidden /></span>{label}
             </Link>
           ))}
         </nav>
       )}
 
-      <div className="grid gap-8 lg:grid-cols-2 lg:gap-10">
-        <Section title="Protocols running">
-          {data?.runs.length ? <List>{data.runs.map((r) => <ListRow tip="Continue this protocol run" key={r.id} to={`/drrm/run/${r.id}`} title={r.title} meta={`Started ${relative(r.started_at, now.getTime())}`} />)}</List>
-            : <p className="text-muted">None running.</p>}
-        </Section>
-        <Section title="Latest logbook entries" action={<TextLink tip="Open the EOC logbook" size="sm" to="/eoc/log">Logbook</TextLink>}>
-          {data?.log.length ? <List>{data.log.map((l) => <ListRow key={l.id} title={l.entry} meta={fmtTime(l.occurred_at)} />)}</List> : <p className="text-muted">No entries yet.</p>}
-        </Section>
-        <Section title="Institutional assessment" action={<TextLink tip="See all assessment cycles" size="sm" to="/assess">All cycles</TextLink>}>
-          {data?.cycle && data.res ? (
-            <Link to={`/assess/${data.cycle.id}`} {...tip('Open this assessment cycle')} className="block rounded-control hover:bg-sky-soft/60">
-              <p className="font-semibold">{data.cycle.name} <Badge className="ml-1">{CYCLE_STATUS[data.cycle.status]}</Badge></p>
-              <p className="mb-2 text-sm text-muted">{data.res.answered} of {data.res.total} answered{data.res.imi.maturityIndex !== null && `. Maturity ${data.res.imi.maturityIndex.toFixed(2)}, ${data.res.imi.band}`}</p>
-              <Meter value={data.res.answered} max={data.res.total} label="Indicators answered" />
-            </Link>
-          ) : <p className="text-muted">No assessment cycle yet.</p>}
-        </Section>
+      <div className="grid gap-4 lg:grid-cols-2">
+        <Card>
+          <CardHeader className="pb-2"><CardTitle className="text-lg">Protocols running</CardTitle><CardDescription>Runs in progress on any device.</CardDescription></CardHeader>
+          <CardContent>
+            {!data ? <TodaySkeleton /> : data.runs.length ? <List>{data.runs.map((r) => <ListRow tip="Continue this protocol run" key={r.id} to={`/drrm/run/${r.id}`} title={r.title} meta={`Started ${relative(r.started_at, now.getTime())}`} />)}</List>
+              : <p className="text-muted">None running.</p>}
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex-row items-start justify-between space-y-0 pb-2">
+            <div><CardTitle className="text-lg">Latest logbook entries</CardTitle><CardDescription>The five most recent entries.</CardDescription></div>
+            <TextLink tip="Open the EOC logbook" size="sm" to="/eoc/log">Logbook</TextLink>
+          </CardHeader>
+          <CardContent>
+            {!data ? <TodaySkeleton /> : data.log.length ? <List>{data.log.map((l) => <ListRow key={l.id} title={l.entry} meta={fmtTime(l.occurred_at)} />)}</List> : <p className="text-muted">No entries yet.</p>}
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex-row items-start justify-between space-y-0 pb-2">
+            <div><CardTitle className="text-lg">Institutional assessment</CardTitle><CardDescription>Scoring progress of the current cycle.</CardDescription></div>
+            <TextLink tip="See all assessment cycles" size="sm" to="/assess">All cycles</TextLink>
+          </CardHeader>
+          <CardContent>
+            {!data ? <TodaySkeleton /> : data.cycle && data.res ? (
+              <Link to={`/assess/${data.cycle.id}`} {...tip('Open this assessment cycle')} className="block rounded-control p-1 hover:bg-sky-soft/60">
+                <p className="font-semibold">{data.cycle.name} <Badge className="ml-1">{CYCLE_STATUS[data.cycle.status]}</Badge></p>
+                <p className="mb-3 text-sm text-muted">{data.res.answered} of {data.res.total} answered{data.res.imi.maturityIndex !== null && `. Maturity ${data.res.imi.maturityIndex.toFixed(2)}, ${data.res.imi.band}`}</p>
+                <Progress value={data.res.total ? (100 * data.res.answered) / data.res.total : 0} aria-label="Indicators answered" />
+              </Link>
+            ) : <p className="text-muted">No assessment cycle yet.</p>}
+          </CardContent>
+        </Card>
+        <ManualReadiness data={data} />
       </div>
     </div>
+  );
+}
+
+function TodaySkeleton() {
+  return <div className="space-y-2" aria-hidden><Skeleton className="h-5 w-3/4" /><Skeleton className="h-5 w-1/2" /><Skeleton className="h-5 w-2/3" /></div>;
+}
+
+/** How much of the Manual is ready to use: approved templates and forms, drafted chapters (1.11.0). */
+function ManualReadiness({ data }: { data?: { templates: { status: string; kind?: string; category: string }[]; forms: { status: string }[]; docs: { kind: string; chapter_no?: number | null }[] } }) {
+  if (!data) return <Card><CardContent className="pt-6"><TodaySkeleton /></CardContent></Card>;
+  const protocols = data.templates.filter((t) => !templateIsWorkflow(t as never));
+  const workflows = data.templates.filter((t) => templateIsWorkflow(t as never));
+  const rows = [
+    { label: 'Protocols', to: '/drrm/protocols', total: protocols.length, approved: protocols.filter((t) => t.status === 'approved').length, tip: 'Point-of-action checklists: approved out of all' },
+    { label: 'Workflows', to: '/drrm', total: workflows.length, approved: workflows.filter((t) => t.status === 'approved').length, tip: 'Management cycles across offices: approved out of all' },
+    { label: 'Forms', to: '/drrm/forms', total: data.forms.length, approved: data.forms.filter((f) => f.status === 'approved').length, tip: 'Records that close each step: approved out of all' },
+  ];
+  const chapters = new Set(data.docs.filter((d) => d.kind === 'chapter' && d.chapter_no).map((d) => d.chapter_no)).size;
+  return (
+    <Card>
+      <CardHeader className="flex-row items-start justify-between space-y-0 pb-2">
+        <div><CardTitle className="text-lg">Manual readiness</CardTitle><CardDescription>{chapters} chapter{chapters === 1 ? '' : 's'} drafted. Approval is by the CDRRMO Head after validation.</CardDescription></div>
+        <TextLink tip="Open the Manual of Operations" size="sm" to="/library">Library</TextLink>
+      </CardHeader>
+      <CardContent className="space-y-3">
+        {rows.map((r) => (
+          <Link key={r.label} to={r.to} {...tip(r.tip)} className="block rounded-control p-1 hover:bg-sky-soft/60">
+            <div className="mb-1 flex items-baseline justify-between gap-2 text-sm"><span className="font-semibold">{r.label}</span><span className="font-data text-muted">{r.total ? `${r.approved} of ${r.total} approved` : 'Arrives with the next sync'}</span></div>
+            <Progress value={r.total ? (100 * r.approved) / r.total : 0} variant={r.approved === r.total && r.total ? 'success' : 'default'} aria-label={`${r.label} approved`} />
+          </Link>
+        ))}
+      </CardContent>
+    </Card>
   );
 }
