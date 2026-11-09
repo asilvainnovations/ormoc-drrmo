@@ -827,7 +827,7 @@ select tests.expect_eq('the nine Chapter 3 workflows are loaded with their forms
   '9 19');
 select tests.expect_eq('kinds split incident protocols from management workflows',
   (select string_agg(kind || ':' || n, ' ' order by kind) from (select kind, count(*) n from public.protocol_templates group by kind) k),
-  'protocol:8 workflow:15');
+  'protocol:13 workflow:15');
 select tests.login('00000000-0000-0000-0000-000000000012');  -- author
 select tests.expect_error('an unknown indicator is refused',
   $$update public.protocol_templates set indicator_ids = array['Z9.9'] where code = 'WF-SOP3-01'$$, '23503');
