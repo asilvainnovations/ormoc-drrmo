@@ -1,3 +1,4 @@
+import { ThemeToggle } from '@/components/ThemeToggle';
 import { tip } from '@/components/Tooltip';
 import { checkBarangayList, ORMOC_BARANGAY_COUNT } from '@/domain/barangays';
 import { useEffect, useState } from 'react';
@@ -31,12 +32,14 @@ export function SettingsPage() {
         <p className="mt-1"><TextLink to="/settings/apps" tip="See and withdraw the other City systems you allowed to sign you in with this account; administrators and the CDRRMO Head also approve apps here">Connected apps</TextLink></p>
       </Section>
       <Section title="This device">
+        <div className="mb-3 flex items-center justify-between gap-3 rounded-control border border-line bg-surface px-3"><span className="font-semibold">Appearance</span><ThemeToggle withLabel /></div>
         <List>
           <ListRow tip="See what is waiting to send and anything the server refused" to="/settings/sync" title="Sync and offline data" meta="What is waiting to send, and anything the server refused" />
           {has('admin') && <ListRow tip="Approve new accounts, grant or remove roles, deactivate people" to="/settings/users" title="Users and roles" meta="Approve new accounts and grant roles" />}
           {has('admin') && <ListRow tip="Load or update the barangay list from the PSA PSGC file" to="/settings/barangays" title="Barangay list" meta="Import the barangays with their PSGC codes" />}
           {has('admin') && <ListRow tip="See crash and error reports sent by the app (needs a connection)" to="/settings/errors" title="Error reports" meta="Screens that crashed, with the app version and error" />}
           <ListRow tip="Version, data privacy and where the data is held" to="/settings/about" title="About and data privacy" />
+          <ListRow tip="Every interface component working live, with what it does and where MODE uses it" to="/settings/components" title="Interface components" meta="Buttons, menus, charts, dialogs and more, in City colours" />
         </List>
       </Section>
       <SignOutBlock />
@@ -315,7 +318,7 @@ export function BarangaysAdminPage() {
           <Upload className="h-4 w-4" aria-hidden />Or choose a CSV file
           <input type="file" accept=".csv,text/csv" className="sr-only" onChange={async (e) => { const f = e.target.files?.[0]; if (f) { setText(await f.text()); setWarnings([]); setConfirmed(false); } }} />
         </label>
-        <Notice tone="info" title="Use the current list">Ormoc has {ORMOC_BARANGAY_COUNT} barangays since the PSA 4th quarter 2022 update. The former numbered Poblacion barangays are now Barangays South, East and West (City Ordinance No. 052, s. 2021, ratified on 8 October 2022), and Barangay 29 is Barangay North. Lists showing 110 barangays are out of date.</Notice>
+        <Notice tone="info" title="Use the current list">The PSA PSGC lists {ORMOC_BARANGAY_COUNT} barangays for Ormoc since its 4th quarter 2022 update. The former numbered Poblacion barangays are now Barangays South, East and West (City Ordinance No. 052, s. 2021, ratified on 8 October 2022), and Barangay 29 is Barangay North. Lists showing 110 barangays are out of date. Import the City master list once CPDO, the City Secretary and the DILG City LGOO have reconciled it with the PSGC.</Notice>
         {warnings.length > 0 && (
           <Notice tone="warn" title="This does not look like the current PSA list">
             <ul className="list-disc pl-5">{warnings.map((x) => <li key={x}>{x}</li>)}</ul>
