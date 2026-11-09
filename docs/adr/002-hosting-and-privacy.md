@@ -1,4 +1,4 @@
-# ADR-002: City-owned Supabase project in Singapore; portable to self-hosting
+# ADR-002: City-owned Supabase project in Japan, portable to self-hosting
 
 Status: Accepted, 15 Oct 2026. Region amended by ADR-021: the live project is in `ap-northeast-1` (Tokyo).
 
