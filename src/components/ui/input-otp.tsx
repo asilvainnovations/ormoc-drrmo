@@ -33,14 +33,14 @@ const InputOTPSlot = React.forwardRef<
   React.ComponentPropsWithoutRef<"div"> & { index: number }
 >(({ index, className, ...props }, ref) => {
   const inputOTPContext = React.useContext(OTPInputContext)
-  const { char, hasFakeCaret, isActive } = inputOTPContext.slots[index] ?? { char: null, hasFakeCaret: false, isActive: false }
+  const { char, hasFakeCaret, isActive } = inputOTPContext.slots[index]
 
   return (
     <div
       ref={ref}
       className={cn(
-        "relative flex h-10 w-10 items-center justify-center border-y border-r border-line bg-surface/50 text-sm transition-all first:rounded-l-md first:border-l last:rounded-r-md",
-        isActive && "z-10 ring-1 ring-action ring-offset-surface border-action/50",
+        "relative flex h-10 w-10 items-center justify-center border-y border-r border-input bg-background/50 text-sm transition-all first:rounded-l-md first:border-l last:rounded-r-md",
+        isActive && "z-10 ring-1 ring-primary ring-offset-background border-primary/50",
         className
       )}
       {...props}
@@ -48,7 +48,7 @@ const InputOTPSlot = React.forwardRef<
       {char}
       {hasFakeCaret && (
         <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-          <div className="h-4 w-px animate-caret-blink bg-action duration-700" />
+          <div className="h-4 w-px animate-caret-blink bg-primary duration-700" />
         </div>
       )}
     </div>
@@ -60,7 +60,7 @@ const InputOTPSeparator = React.forwardRef<
   React.ElementRef<"div">,
   React.ComponentPropsWithoutRef<"div">
 >(({ ...props }, ref) => (
-  <div ref={ref} role="separator" {...props} className="text-muted">
+  <div ref={ref} role="separator" {...props} className="text-muted-foreground">
     <Dot className="h-4 w-4" />
   </div>
 ))

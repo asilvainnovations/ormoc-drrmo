@@ -24,7 +24,7 @@ const ToggleGroup = React.forwardRef<
     className={cn(
       "flex items-center gap-1",
       orientation === "vertical" ? "flex-col" : "flex-row",
-      variant === "outline" && "bg-surface rounded-md border border-line p-1",
+      variant === "outline" && "bg-background rounded-md border border-input p-1",
       className
     )}
     {...props}
@@ -52,7 +52,7 @@ const ToggleGroupItem = React.forwardRef<
           variant: context.variant || variant,
           size: context.size || size,
         }),
-        context.variant === "outline" && "data-[state=on]:bg-surface data-[state=on]:text-ink",
+        context.variant === "outline" && "data-[state=on]:bg-background data-[state=on]:text-foreground",
         className
       )}
       {...props}
