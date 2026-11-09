@@ -6,6 +6,9 @@ import { Badge, Button, ButtonLink, Loading, Meter, Notice, PageHeader, Section 
 import { useToast } from '@/components/Toast';
 import { complianceStatus, gapPriorityScore, priorityBand, type ResultRow } from '@/domain/scoring';
 import { MaturityChart } from './MaturityChart';
+import { MaturityRadar } from './MaturityRadar';
+import { Tabs as KitTabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { tip } from '@/components/Tooltip';
 import { useCycleData } from './data';
 import { CYCLE_NEXT, CYCLE_NEXT_LABEL, CYCLE_STATUS } from './labels';
 
@@ -89,8 +92,17 @@ export function CycleOverview() {
       </Section>
 
       <Section title="Parts A and B by domain">
-        <MaturityChart domains={ab} results={results.domains} hrefFor={(d) => `/assess/${cycle.id}/d/${d}`}
-          caption="Domain Maturity Index, 0 to 4. Lines mark the band edges at 0.5, 1.5, 2.5 and 3.5." />
+        <KitTabs defaultValue="bars">
+          <TabsList className="mb-3 h-auto">
+            <TabsTrigger value="bars" className="min-h-tap" {...tip('Exact values by domain, with bands and gaps')}>Bars</TabsTrigger>
+            <TabsTrigger value="profile" className="min-h-tap" {...tip('The shape of the profile: which functions lag behind the others')}>Profile</TabsTrigger>
+          </TabsList>
+          <TabsContent value="bars">
+            <MaturityChart domains={ab} results={results.domains} hrefFor={(d) => `/assess/${cycle.id}/d/${d}`}
+              caption="Domain Maturity Index, 0 to 4. Lines mark the band edges at 0.5, 1.5, 2.5 and 3.5." />
+          </TabsContent>
+          <TabsContent value="profile"><MaturityRadar domains={ab} results={results.domains} /></TabsContent>
+        </KitTabs>
       </Section>
       <Section title="Part C interface, by domain">
         <p className="mb-3 text-sm text-muted">These are owned by other offices. They form the separate Interface Index and do not change the CDRRMO's maturity index.</p>
