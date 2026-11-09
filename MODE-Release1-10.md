@@ -21,4 +21,4 @@
   - name the continuity executive;
   - re-add `Ormoc_CDRRMO_Logo.png` (truncated at 2 MiB on main);
   - run `build_basemap.sh` on a City workstation.
-- **Assessment document:** https://claude.ai/artifact/VmrC3QU5ssrVhPKkuAfUih
+- **Assessment document:** Please see separate attachment (MODE 1.10-Assessment-SOPs-Protocols-Digital-Manual.md]
