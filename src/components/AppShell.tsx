@@ -10,6 +10,8 @@ import { hoursBetween } from '@/domain/aa';
 import { useAuth } from '@/lib/auth';
 import { canUseVault } from '@/features/vault/access';
 import { tip } from './Tooltip';
+import { CommandPalette } from './CommandPalette';
+import { ThemeToggle } from './ThemeToggle';
 import { BrandLockup } from './Brand';
 
 const NAV = [
@@ -60,6 +62,7 @@ export function StatusBand() {
             </p>
           )}
         </Link>
+        <CommandPalette className="shrink-0 self-start text-ink sm:self-center lg:w-56" compact={false} />
         <Link to="/settings/sync" aria-label={`Sync: ${syncText}`} {...tip('Sync status. Open to see what is waiting to send or needs your attention')} className="inline-flex min-h-tap shrink-0 items-center gap-1.5 self-start rounded-control px-2 font-data text-sm font-semibold sm:self-center">
           <SyncIcon className={clsx('h-4 w-4', sync.status === 'syncing' && 'animate-spin')} aria-hidden />
           <span className="sm:hidden">{syncShort}</span><span className="hidden sm:inline">{syncText}</span>
@@ -92,7 +95,8 @@ export function AppShell() {
             </li>
           ))}
         </ul>
-        <div className="px-3 pb-4">
+        <div className="space-y-1 px-3 pb-4">
+          <ThemeToggle withLabel className="w-full justify-start px-3" />
           <NavLink to="/settings" {...tip('Sync, users and roles, barangay list, about and privacy, sign out')} className={({ isActive }) => clsx('flex min-h-tap items-center gap-3 rounded-control border-l-4 px-3 font-semibold',
             isActive ? 'border-accent bg-sky-soft text-ink' : 'border-transparent text-ink hover:bg-sky-soft/60')}>
             <Settings className="h-5 w-5" aria-hidden />Settings
