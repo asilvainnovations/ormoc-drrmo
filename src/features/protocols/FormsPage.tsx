@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '@/lib/db';
 import { updateOnline } from '@/lib/store';
@@ -22,6 +23,8 @@ export function FormsPage() {
   const isHead = has('cdrrmo_head');
   const [openId, setOpenId] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [params, setParams] = useSearchParams();
+  const wantedCode = params.get('open');
   const data = useLiveQuery(async () => {
     const forms = (await db.form_templates.toArray()).sort((a, b) => a.code.localeCompare(b.code));
     const steps = await db.protocol_steps.toArray();
@@ -31,6 +34,12 @@ export function FormsPage() {
     const docs = new Map((await db.moo_documents.toArray()).map((d) => [d.id, d]));
     return { forms, uses, docs };
   }, []);
+  useEffect(() => {   // 1.11: ?open=CODE from the search palette
+    if (!wantedCode || !data) return;
+    const f = data.forms.find((x) => x.code === wantedCode);
+    if (f) setOpenId(f.id);
+    setParams((p) => { p.delete('open'); return p; }, { replace: true });
+  }, [wantedCode, data, setParams]);
   const open = data?.forms.find((f) => f.id === openId) ?? null;
 
   const setStatus = async (f: FormTemplate, status: FormTemplate['status'], verb: string) => {
