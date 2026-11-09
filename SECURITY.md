@@ -8,7 +8,7 @@ MODE (Manual of Operations for the DRRMO and EOC) belongs to the **City Governme
 - **Include:** the page or address, the steps to reproduce, what you expected, what happened, and the version shown in Settings → About.
 - **Do not include:** passwords, one-time codes, API keys, or personal data of any person. A screenshot with the sensitive parts covered is enough.
 - **Do not** test against the City's production project, read or change other people's records, or try to deny service. Use a local copy (`npm run test:db`, `scripts/e2e_test.sh`) or ask for access to the training project.
-- **Response:** the support mailbox is monitored (confirmed 8 November 2026). Support acknowledges a report within 2 working days and sends an assessment within 10 working days. **City to confirm** who covers the mailbox when the developer's engagement ends.
+- **Response:** the support mailbox is monitored (confirmed 8 November 2026). Support acknowledges a report within 2 working days and sends an assessment within 10 working days. The mailbox owner after turnover and the developer access end-date are recorded in `docs/ict-asset-register.md` (**City to name the owner and the end-date at turnover**).
 - Please do not publish the problem until a fix is deployed or 90 days have passed, whichever comes first.
 
 Report emergencies to the City emergency hotline, not to this address. The support channel is not monitored around the clock.

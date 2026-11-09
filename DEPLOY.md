@@ -202,6 +202,17 @@ Then, in the dashboard:
      - A workspace address answers with the `x-robots-tag: noindex, nofollow` header.
      - An installed phone opens at Today (reinstall if it still opens the home page).
   7. Old bookmarks to `/` now open the public home page. Signed-in people get "Open workspace" there. Tell staff the new Today address.
+- **To 1.11.1** (10 November 2026), build and governance fixes on 1.11.0: restores the missing `src/lib` modules and
+  fixes the restored component kit so `main` builds clean; rebuilds `supabase/seed/seed.sql` from the 25 parts (the 1.11.0
+  parts were never assembled); updates the stale SQL-suite expectation (13 protocols, 15 workflows); removes the stale
+  `src/lib/DocumentPage.tsx`/`LibraryPage.tsx` duplicates; restores `.env.example`; removes the duplicate IAT workbook,
+  the duplicated `reference/` root files and `DELETE.txt`; approves the public policies (City Legal Office and DPO,
+  snapshot 10 Nov 2026); adds `docs/runbook-backup-restore.md`, `docs/ict-asset-register.md`,
+  `docs/security-assessments.md`; adds CI (`.github/workflows/ci.yml`), the basemap build workflow and the uptime check;
+  extends the Vault register with the 9 Nov 2026 issuance bundle (CDRRMC 2016-2025, EOs 2016-2024) and explicit
+  NOT OBTAINED records (CDRRMC 2017-2018; EOs 2018, 2020, 2021, 2025, 2026; SP 2025). No migration. Re-run
+  `supabase/seed/operational/04_vault_register.sql` (idempotent) to load the new Vault entries.
+
 - **To 1.11.0** (8 November 2026), Chapter 4 in the platform, owners aligned with Chapter 2, Chapter 3 v1.1, the component kit and appearance, search, Error reports, Tokyo region, City domain (ADR-021, ADR-022, ADR-023). If 1.10.0 was never applied, do its steps 1, 3, 4 and 5 first, then use this release's seed parts instead of its 19.
   1. **No new migration** beyond `20261108002000_sop_registry.sql` (1.10.0).
   2. **Reference data.** Delete every file in `supabase/seed/parts/`, upload the new ones, and run all **25** parts in order. The last part's check should return **140 | 18 | 935 | 71 | 28 | 197 | 29 | 10 | 140 | 50**:
