@@ -39,18 +39,18 @@ FORMS = [
         f('equipment', 'Generator, UPS and backup internet', 'select', True, ['All working', 'Issue noted']),
         f('equipment_issue', 'Equipment issue', 'textarea'),
         f('incoming_ack', 'Incoming duty officer has read and accepted the handover', 'checkbox', True)]),
-    ('EOC-WARN-01', 'Bulletin and advisory log', 'Each hazard bulletin received, as the first step of warning dissemination.', 'EOC Ch.2', [
+    ('EOC-WARN-01', 'Official warning receipt and verification log (Ch.4 EWR-F01)', 'Each official product received: SOP 4-01 and the first step of SOP 4-02.', 'MOO Ch.4', [
         f('issuer', 'Issuer', 'select', True, ['PAGASA', 'PHIVOLCS', 'MGB', 'NDRRMC / OCD', 'Other']),
         f('bulletin_no', 'Bulletin or advisory number', 'text', True),
         f('issued_at', 'Time issued', 'datetime', True),
         f('hazard', 'Hazard', 'select', True, HAZARD_OPTS),
         f('areas', 'Areas affected', 'textarea', True)]),
-    ('EOC-WARN-02', 'Warning receipt confirmation', 'Barangays notified and confirmed, by channel.', 'EOC Ch.2', [
+    ('EOC-WARN-02', 'Warning dissemination and acknowledgement log (Ch.4 EWR-F03)', 'Barangays notified and confirmed, by channel (SOP 4-02, 4-06).', 'MOO Ch.4', [
         f('barangays_notified', 'Barangays notified', 'integer', True, min=0),
         f('barangays_confirmed', 'Barangays that confirmed receipt', 'integer', True, min=0),
         f('channels', 'Channels used', 'multiselect', True, ['Cell broadcast / SMS', 'Radio', 'Social media', 'Barangay officials', 'Public address']),
         f('unconfirmed', 'Barangays still to confirm', 'textarea')]),
-    ('EOC-ACT-01', 'EOC activation record', 'Level, authority and contingency plan for an activation.', 'EOC Ch.2', [
+    ('EOC-ACT-01', 'EOC activation, scale-up and deactivation record (Ch.4 EOC-F01)', 'Level, authority and contingency plan for an activation or deactivation (SOP 4-04, 4-09).', 'MOO Ch.4', [
         f('level', 'Level', 'select', True, ['Blue', 'Red']),
         f('authority_ref', 'Authority (memo or instruction)', 'text', True),
         f('plan_code', 'Contingency plan activated', 'text', hint='For example CP-FLOOD-LUNOP'),
@@ -61,13 +61,13 @@ FORMS = [
         f('occupancy_persons', 'Current occupancy (persons)', 'integer', min=0),
         f('route_issues', 'Access routes blocked or limited', 'textarea'),
         f('location_status', 'Reliability of this information', 'select', True, LOC_STATUS)]),
-    ('EOC-SITREP-01', 'SitRep submission record', 'DILG VIII cut-offs: which SitRep went where and when.', 'EOC Ch.6', [
+    ('EOC-SITREP-01', 'SitRep quality and submission register (Ch.4 EOC-F05)', 'DILG VIII cut-offs: which SitRep went where and when (SOP 4-08).', 'MOO Ch.4', [
         f('sitrep_no', 'SitRep number', 'text', True),
         f('period_end', 'End of reporting period', 'datetime', True),
         f('barangays_reporting', 'Barangays reporting', 'integer', True, min=0),
         f('sent_at', 'Time sent to OCD VIII and the Province', 'datetime', True),
         f('cut_off_met', 'Sent before the cut-off', 'checkbox')]),
-    ('GOV-F09', 'PDRA summary', 'Annex 1-G GOV-F09: the PDRA decision and its basis.', 'MOO Ch.1', [
+    ('GOV-F09', 'PDRA summary (Ch.4 EWR-F04)', 'Annex 1-G GOV-F09, also Chapter 4 EWR-F04: the PDRA decision and its basis.', 'MOO Ch.1', [
         f('hazard', 'Hazard', 'select', True, HAZARD_OPTS),
         f('forecast_source', 'Forecast source and number', 'text', True),
         f('expected_impact_at', 'Expected impact', 'datetime', True),
@@ -193,6 +193,7 @@ STEP_FORMS = {
     ('PR-DUTY-HANDOVER', 6): 'HR-F04',
     ('PR-WARNING-DISSEM', 1): 'EOC-WARN-01', ('PR-WARNING-DISSEM', 6): 'EOC-WARN-02',
     ('PR-EOC-ACTIVATE', 1): 'EOC-ACT-01', ('PR-EOC-ACTIVATE', 3): 'HR-F05',
+    ('PR-EOC-ACTIVATE', 4): 'EOC-F02', ('PR-EOC-ACTIVATE', 6): 'EOC-F04',  # 1.11: Chapter 4 forms
     ('PR-PDRA', 5): 'GOV-F09',
     ('PR-SOID-REQUEST', 2): 'GOV-F09', ('PR-SOID-REQUEST', 5): 'GOV-F10', ('PR-SOID-REQUEST', 8): 'GOV-F11',
     ('PR-SOC-DECLARE', 3): 'GOV-F07', ('PR-SOC-DECLARE', 6): 'GOV-F08',
@@ -233,7 +234,7 @@ WORKFLOWS = [
                 ('CDRRMO Head approves the designations (needs a connection)', True, False, None, None),
                 ('Brief the new designees and record the orientation', False, False, None, 'HR-F06')]),
     dict(code='WF-GEO-COP', title='Geospatial common operating picture (SOP 6-GIS-01)', category='geospatial', owner_role='eoc_staff',
-         doc='EOC Ch.6', purpose='Keep a consistent, validated map of incidents, affected areas, facilities and resources for the EOC.',
+         doc='SOP 6-GIS-01', purpose='Keep a consistent, validated map of incidents, affected areas, facilities and resources for the EOC.',
          trigger='Maintained in normal operations; run in full whenever the EOC is activated.',
          steps=[('Establish the reference: register the EOC point and verify it on the ground', True, False, None, 'EOC-GIS-REF'),
                 ('Acquire base maps, hazard layers, boundaries and critical facilities from their custodians', False, False, None, 'EOC-GIS-01'),

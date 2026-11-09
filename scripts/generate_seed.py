@@ -218,6 +218,34 @@ LIBRARY_DRAFTS += [('MOO Ch.3', 'MOO', 'chapter', None, 'MOO_Ch3v1_v1.0.md', _CH
     (f'Annex {aid}', 'MOO', kind, title, f'MOO_Ch3v1_Annex_{aid}.md', _CH3V1, inds)
     for aid, (kind, title, inds) in _CH3V1_ANNEX.items()
 ]
+# Chapter 3 v1.1 (8 Nov 2026): the NDRRMC-OCD Contingency Planning Guidebook (Feb 2020) applied to SOP 3-6; the barangay
+# denominator kept at 85 (PSA PSGC) as a working figure until the City master list is reconciled. Same figures (ch3v10).
+_CH3V11 = 'v1.1 working draft (CP Guidebook 2020)'
+LIBRARY_DRAFTS += [('MOO Ch.3', 'MOO', 'chapter', None, 'MOO_Ch3v11_v1.1.md', _CH3V11, None)] + [
+    (f'Annex {aid}', 'MOO', kind, title, f'MOO_Ch3v11_Annex_{aid}.md', _CH3V11, inds)
+    for aid, (kind, title, inds) in _CH3V1_ANNEX.items()
+]
+
+# Chapter 4 v1.1 (8 Nov 2026, ADR-022): Early Warning, Activation, Incident Management and Emergency Response.
+# Made with: split_manual_docx.py Chapter4_..._v1.1.docx --slug ch4v11 --prefix MOO_Ch4v1 --version v1.1.
+# Figures in public/library/ch4v11/. Its SOPs 4-01 to 4-09 run as protocols (sop_registry.py).
+_CH4V1 = 'v1.1 working draft (IAT v1.6)'
+_CH4_INDS = ['A6.1', 'A6.2', 'A6.3', 'A6.4', 'A6.5', 'A6.6', 'A6.7', 'A7.1', 'A7.2', 'A7.3', 'A7.4', 'A7.5', 'A7.6', 'A7.7', 'A7.8', 'A7.9', 'A8.1', 'A8.2', 'A8.3', 'A8.4', 'A8.5', 'A8.6', 'A8.7', 'A8.8', 'A8.9', 'B1.2', 'B1.3', 'B1.4', 'B1.5']
+LIBRARY_DRAFTS += [('MOO Ch.4', 'MOO', 'chapter', None, 'MOO_Ch4v1_v1.1.md', _CH4V1, None)] + [
+    (f'Annex {aid}', 'MOO', kind, title, f'MOO_Ch4v1_Annex_{aid}.md', _CH4V1, inds)
+    for aid, kind, title, inds in [
+        ('4-A', 'annex', 'IAT and master requirements traceability register', _CH4_INDS),
+        ('4-B', 'annex', 'EOC and incident coordination RACI with legal decision authority', ['B1.2', 'B1.3', 'B1.4']),
+        ('4-C', 'annex', 'Hazard-specific warning and activation matrix register', ['A6.1', 'A6.2', 'B1.2', 'B1.3']),
+        ('4-D', 'annex', 'Gawad KALASAG CY 2026 evidence crosswalk', []),
+    ]
+]
+
+AREA_ONLY_DRAFTS = {'SOP 6-GIS-01': 6}  # code -> functional area (Area 6: situational awareness, IM and GIS)
+# 1.11: the proposed SOP 6-GIS-01 (EOC Module note, 6 Nov 2026) as a Library draft, so WF-GEO-COP points to a text that
+# exists. Chapter 6 (EOC operations and information management) adopts it when drafted.
+LIBRARY_DRAFTS += [('SOP 6-GIS-01', 'EOC', 'sop', 'Establishment, updating and operational use of the EOC Geospatial Common Operating Picture',
+                    'SOP_6-GIS-01_proposed.md', 'v0.1 proposed (EOC Module note, 6 Nov 2026)', ['A5.6', 'A5.7', 'B5.3'])]
 
 
 def chapters_of(tag: str) -> list[str]:
@@ -288,9 +316,11 @@ CHAPTERS = {  # legacy code -> (new code, chapter no, primary area, also areas, 
     'MOO Ch.1': ('Chapter 1', 1, 1, [], 'Legal Mandate, DRRM Governance and Institutional Accountability'),
     'MOO Ch.2': ('Chapter 2', 2, 1, [3, 8], 'CDRRMO Organizational Structure, Staffing and Human Resource Management'),
     'MOO Ch.3': ('Chapter 3', 3, 2, [3], 'Risk Intelligence, DRRM and Contingency Planning, and Institutional Preparedness'),
+    # 1.11: Chapter 4 drafted (v1.1, 8 Nov 2026). Primary area 4; also area 5 (early warning, public information).
+    'MOO Ch.4': ('Chapter 4', 4, 4, [5], 'Early Warning, Activation, Incident Management and Emergency Response'),
 }
 MERGED = {  # legacy shell -> functional area
-    'MOO Ch.4': 4, 'MOO Ch.5': 1, 'MOO Ch.6': 3, 'MOO Ch.7': 10, 'MOO Ch.8': 10, 'MOO Ch.9': 1,
+    'MOO Ch.5': 1, 'MOO Ch.6': 3, 'MOO Ch.7': 10, 'MOO Ch.8': 10, 'MOO Ch.9': 1,
     'EOC Ch.1': 1, 'EOC Ch.2': 4, 'EOC Ch.3': 9, 'EOC Ch.4': 5, 'EOC Ch.5': 4, 'EOC Ch.6': 6,
     'EOC Ch.7': 7, 'EOC Ch.8': 3, 'EOC Ch.9': 10,
 }
@@ -429,7 +459,7 @@ PROTOCOLS = [
                 ('Check generator fuel, UPS and backup internet status', False, True, 25),
                 ('Record handover notes and sign off with the incoming duty officer', True, True, 30)]),
     dict(code='PR-WARNING-DISSEM', title='Warning dissemination', category='warning', owner_role='duty_officer',
-         doc='EOC Ch.2', purpose='Move a hazard bulletin to every at-risk purok, in a form people understand.',
+         doc='MOO Ch.4', purpose='Move a hazard bulletin to every at-risk purok, in a form people understand.',
          trigger='On receipt of a PAGASA, PHIVOLCS or MGB bulletin or advisory that affects Ormoc.',
          steps=[('Log the bulletin: issuer, number, time issued, hazard and areas', True, True, 0),
                 ('Check it against the City warning-to-action matrix and note the matching alert and actions', True, True, 10),
@@ -439,7 +469,7 @@ PROTOCOLS = [
                 ('Confirm receipt from riverine, coastal and upland barangays first, then the rest', True, True, 60),
                 ('Log barangays that did not confirm and assign follow-up', False, True, 75)]),
     dict(code='PR-EOC-ACTIVATE', title='EOC activation (Blue or Red)', category='eoc', owner_role='eoc_manager',
-         doc='EOC Ch.2', purpose='Stand up the EOC quickly with the right people and records.',
+         doc='MOO Ch.4', purpose='Stand up the EOC quickly with the right people and records.',
          trigger='When the EOC is raised to Blue or Red as directed by the City Mayor (Responsible Official), or by the EOC Manager under the approved activation protocol.',
          steps=[('Record the level change and reason in the platform (logs it automatically). If no device can connect, write it in the paper logbook with the time and enter it once connected', True, False, 0),
                 ('Notify CDRRMC members, cluster leads and liaison desks of the activation', True, True, 15),
@@ -448,7 +478,7 @@ PROTOCOLS = [
                 ('Set the operational period and the SitRep schedule', True, True, 45),
                 ('Brief the Mayor on the situation and decisions needed', True, True, 60)]),
     dict(code='PR-PDRA', title='Pre-disaster risk assessment (PDRA)', category='anticipatory_action', owner_role='eoc_manager',
-         doc='EOC Ch.2', purpose='Decide, from the forecast and local exposure, whether to monitor, act early or request a declaration.',
+         doc='MOO Ch.4', purpose='Decide, from the forecast and local exposure, whether to monitor, act early or request a declaration.',
          trigger='When a forecast hazard may affect Ormoc.',
          steps=[('Convene the PDRA core group and record attendance by office', True, False, 0),
                 ('Review the forecast: hazard, expected impact time, areas, impact level', True, True, 15),
@@ -482,7 +512,7 @@ PROTOCOLS = [
                 ('Recommend lifting when warranted and record the Sanggunian\'s lifting resolution', True, True, None),
                 ('Archive the decision trail and schedule the after-action review', False, True, None)]),
     dict(code='PR-FLASHFLOOD-EARLY', title='Flash flood and landslide early action', category='anticipatory_action', owner_role='duty_officer',
-         doc='EOC Ch.2', purpose='Act on short-lead hazards that cannot wait for a declaration.',
+         doc='MOO Ch.4', purpose='Act on short-lead hazards that cannot wait for a declaration.',
          trigger='When rainfall or river readings reach the City\'s early-action thresholds for the Anilao–Malbasag system or upland barangays.',
          steps=[('Record the reading, gauge or source, and the threshold reached', True, True, 0),
                 ('Alert riverine and upland BDRRMCs by radio and SMS', True, True, 5),
@@ -491,7 +521,7 @@ PROTOCOLS = [
                 ('Position rescue teams at the agreed staging points', True, True, 30),
                 ('Confirm evacuation counts from each barangay and log them', True, True, 60)]),
     dict(code='PR-SITREP-CYCLE', title='SitRep cycle', category='reporting', owner_role='eoc_staff',
-         doc='EOC Ch.6', purpose='Produce a verified SitRep on schedule every operational period.',
+         doc='MOO Ch.4', purpose='Produce a verified SitRep on schedule every operational period.',
          trigger='At each scheduled SitRep time during an activation.',
          steps=[('Collect barangay reports and cluster updates since the last SitRep', True, False, 0),
                 ('Reconcile evacuation figures with evacuation-centre counts', True, True, 20),
@@ -507,7 +537,7 @@ PROTOCOLS = [
                 ('Circulate the minutes for approval', False, False, None),
                 ('File approved minutes and resolutions; post as required', True, False, None)]),
     dict(code='PR-LIFT-REPORT', title='Lifting and 45-day report', category='anticipatory_action', owner_role='eoc_manager',
-         doc='MOO Ch.7', purpose='Lift a State of Imminent Disaster correctly and report to OCD on time.',
+         doc='SOP GOV-05', purpose='Lift a State of Imminent Disaster correctly and report to OCD on time.',
          trigger='When the hazard occurs or the PDRA shows the projected impacts will not be met.',
          steps=[('Record the lifting ground and its basis (advisory, incident or situation report, or latest PDRA)', True, True, 0),
                 ('Shift to response and early recovery if the hazard occurred', True, False, None),
@@ -666,16 +696,22 @@ def main():
         if did not in known:
             sort += 1
             nc = new_code(code)
-            docs.append(dict(id=did, manual='MOO', kind=kind, code=nc, title=title, parent_id=uid('doc', chap_legacy),
-                             summary=f'Chapter {ch} draft ({label}). {len(inds)} IAT indicator(s) linked.',
-                             status='draft', sort=sort, current_version_id=None, area_no=CHAPTERS[chap_legacy][2],
-                             chapter_no=ch, aliases=[code] if nc != code else [], also_areas=[]))
+            if code in AREA_ONLY_DRAFTS:  # a text whose chapter is not drafted yet: it sits under its area outline
+                area = AREA_ONLY_DRAFTS[code]
+                parent, where, chapter_no = uid('doc', f'Area {area}'), f'Area {area}', None
+            else:
+                area, parent, where, chapter_no = CHAPTERS[chap_legacy][2], uid('doc', chap_legacy), f'Chapter {ch}', ch
+            docs.append(dict(id=did, manual='MOO', kind=kind, code=nc, title=title, parent_id=parent,
+                             summary=f'{where} draft ({label}). {len(inds)} IAT indicator(s) linked.',
+                             status='draft', sort=sort, current_version_id=None, area_no=area,
+                             chapter_no=chapter_no, aliases=[code] if nc != code else [], also_areas=[]))
             known[did] = docs[-1]
             bad = [i for i in inds if i not in ind_ids]
             assert not bad, (code, bad)
             doc_links += [dict(document_id=did, indicator_id=i) for i in inds]
         versions.append(dict(id=uid('docver', code, label), document_id=did, label=label, body_md=body,
-                             change_note=f'Loaded from reference/moo/{fname} (Chapter {ch}, {label})', status='draft'))
+                             change_note=f'Loaded from reference/moo/{fname} ({"Chapter " + str(ch) if ch else "area outline"}, {label})',
+                             status='draft'))
     for d in docs:
         if d['kind'] == 'chapter' and d['status'] != 'superseded':
             n = sum(1 for x in docs if x['parent_id'] == d['id'] and x['status'] != 'superseded')
@@ -701,8 +737,9 @@ def main():
     import json as _json
     from forms_seed import FORMS, STEP_FORMS, WORKFLOWS
     from sop_registry import META, CH3_FORMS, CH3_WORKFLOWS, PROTOCOL_CATEGORIES  # 1.10.0 (ADR-019)
-    FORMS = FORMS + CH3_FORMS
-    WORKFLOWS = WORKFLOWS + CH3_WORKFLOWS
+    from sop_registry import CH4_FORMS, CH4_PROTOCOLS  # 1.11.0: Chapter 4 v1.1
+    FORMS = FORMS + CH3_FORMS + CH4_FORMS
+    WORKFLOWS = WORKFLOWS + CH3_WORKFLOWS + CH4_PROTOCOLS
     known_inds = {i['id'] for i in out['indicators']}
     out['form_templates'] = [dict(id=uid('form', c), code=c, title=t, purpose=pu, document_id=doc_home(d),
                                   schema=_json.dumps({'fields': flds}, ensure_ascii=False), status='draft', rev=1)
@@ -888,7 +925,7 @@ def statements(o):
     return st
 
 
-CHECK_SQL = """-- Expected: 140 | 18 | 935 | 71 | 23 | 161 | 29 | 10 | 140 | 40
+CHECK_SQL = """-- Expected: 140 | 18 | 935 | 71 | 28 | 197 | 29 | 10 | 140 | 50
 select (select count(*) from public.iat_indicators)         as indicators,
        (select count(*) from public.master_requirements)    as requirements,
        (select count(*) from public.indicator_requirements) as indicator_links,

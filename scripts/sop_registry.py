@@ -17,31 +17,41 @@ PROTOCOL_CATEGORIES = {'daily_operations', 'warning', 'eoc', 'anticipatory_actio
 # Everything else is a workflow (normal-operations management cycle).
 
 META = {  # code -> (sop_ref, process_owner, policy_refs, indicator_ids)
-    'PR-DUTY-HANDOVER': ('MOO Ch.2 Annex 2-E (HR-F04)', 'CDRRMO Operations and Warning Division (duty officer on shift)',
+    # 1.11: owner as in MOO Ch.2 v1.2 (SOP register, HR-05); the handover itself is done by the duty officer on shift
+    # (Operations Center staff, Warning and Monitoring Section in the 2026 structure chart).
+    'PR-DUTY-HANDOVER': ('SOP HR-05 (MOO Ch.2, Annex 2-K; checklist Annex 2-E, form HR-F04)',
+                         'CDRRMO Head / division leads (SOP HR-05); handover done by the duty officer on shift',
                          ['RA 10121 Sec. 12(c)', 'NDRRMC Memo 131 s. 2018'], ['A2.5', 'B4.3']),
-    'PR-WARNING-DISSEM': ('EOC Manual Ch.2 (warning)', 'CDRRMO Operations and Warning Division',
+    'PR-WARNING-DISSEM': ('SOP 4-02 (MOO Ch.4 v1.1)',
+                          'CDRRMO Head / warning and public information focal person; decisions stay with the competent official',
                           ['RA 10121 Sec. 12(c)', 'DILG VIII Disaster Response Reporting SOP (RDRRMC8 Res. 12-006)'],
                           ['A6.1', 'A6.2', 'A6.3', 'A6.4', 'B5.6']),
-    'PR-EOC-ACTIVATE': ('EOC Manual Ch.2 (activation)', 'EOC Manager',
+    'PR-EOC-ACTIVATE': ('SOP 4-04 (MOO Ch.4 v1.1)', 'Official designated in the EOC EO authorises; EOC Manager implements',
                         ['NDRRMC Memo 131 s. 2018', 'DILG VIII Disaster Response Reporting SOP (RDRRMC8 Res. 12-006)'],
                         ['B1.2', 'B1.3', 'B4.1', 'B4.2']),
-    'PR-PDRA': ('EOC Manual Ch.2 (PDRA)', 'EOC Manager with the PDRA core group', ['RA 12287 and its IRR (2026)'], ['A8.6', 'A8.8']),
-    'PR-SOID-REQUEST': ('SOP GOV-05 (Annex 1-F)', 'CDRRMO Head as CDRRMC secretariat', ['RA 12287 and its IRR (2026), Rules III and IV'],
+    'PR-PDRA': ('SOP 4-03 (MOO Ch.4 v1.1); SOP GOV-05 when a State of Imminent Disaster is considered',
+                'CDRRMO Head; Research and Planning with Operations and Warning coordinate',
+                ['RA 12287 and its IRR (2026)', 'NDRRMC-OCD Contingency Planning Guidebook (2020)'], ['A8.6', 'A8.8', 'B1.2']),
+    'PR-SOID-REQUEST': ('SOP GOV-05 (MOO Ch.1, Annex 1-E)', 'CDRRMO Head as CDRRMC secretariat', ['RA 12287 and its IRR (2026), Rules III and IV'],
                         ['A1.8', 'A4.6', 'A6.7']),
-    'PR-SOC-DECLARE': ('SOP GOV-04 (Annex 1-E)', 'CDRRMO Head as CDRRMC secretariat', ['RA 10121 Sec. 16'], ['A1.6']),
-    'PR-FLASHFLOOD-EARLY': ('EOC Manual Ch.2 (short-lead hazards)', 'CDRRMO Operations and Warning Division',
+    'PR-SOC-DECLARE': ('SOP GOV-04 (MOO Ch.1, Annex 1-D)', 'CDRRMO Head as CDRRMC secretariat', ['RA 10121 Sec. 16'], ['A1.6']),
+    'PR-FLASHFLOOD-EARLY': ('SOP 4-02 (MOO Ch.4 v1.1, short-lead hazards, sec. 6.3)', 'CDRRMO Operations and Warning (OpCen duty officer)',
                             ['RA 10121 Sec. 12(c)', 'RA 12287 IRR (2026) Rule IV'], ['A6.1', 'A6.2', 'A8.8']),
-    'PR-SITREP-CYCLE': ('EOC Manual Ch.6 (reporting)', 'EOC Planning Section',
+    'PR-SITREP-CYCLE': ('SOP 4-08 (MOO Ch.4 v1.1)', 'EOC Planning / situation unit; approval by the official in the reporting route',
                         ['DILG VIII Harmonized Disaster Response Reporting Template and SOP', 'NDRRMC Memo 131 s. 2018'],
-                        ['B5.1', 'B5.2', 'A10.3']),
+                        ['B5.1', 'B5.2', 'B1.5', 'A10.3']),
     'PR-CDRRMC-MEETING': ('MOO Ch.1 (CDRRMC secretariat)', 'CDRRMO as CDRRMC secretariat', ['RA 10121 Sec. 11'], ['A1.3', 'A1.4']),
-    'PR-LIFT-REPORT': ('MOO Ch.7 (lifting and reporting)', 'CDRRMO Head', ['RA 12287 and its IRR (2026)'], ['A10.8']),
+    'PR-LIFT-REPORT': ('SOP GOV-05 (MOO Ch.1, Annex 1-E): lifting and the 45-day report', 'CDRRMO Head as CDRRMC secretariat',
+                       ['RA 12287 and its IRR (2026)'], ['A10.8']),
     'WF-BUDGET-CYCLE': ('MOO Ch.2 sec. 2.16.2', 'CDRRMO Research and Planning (formulation); Administration and Training (execution)',
                         ['RA 10121 Sec. 21', 'NDRRMC-DBM-DILG JMC 2013-1'], ['A3.5', 'A4.1', 'A4.2', 'A4.4']),
     'WF-CP-ACTIVATION': ('MOO Ch.1 sec. 6.3', 'EOC Manager', ['NDRRMC Memo 131 s. 2018'], ['A8.5', 'B1.4', 'B4.4']),
-    'WF-EOC-DESIGNATION': ('MOO Ch.2 Annex 2-D', 'CDRRMO Head', ['NDRRMC Memo 131 s. 2018', 'EOC Capability Assessment Checklist'],
+    # 1.11: owner as in MOO Ch.2 v1.2 (HR-06): the EOC Manager proposes and keeps the designations; the Head approves.
+    'WF-EOC-DESIGNATION': ('SOP HR-06 (MOO Ch.2, Annex 2-L; register Annex 2-D)',
+                           'CDRRMO Head / EOC Manager (SOP HR-06): EOC Manager proposes and maintains; CDRRMO Head approves',
+                           ['NDRRMC Memo 131 s. 2018', 'EOC Capability Assessment Checklist'],
                            ['B4.1', 'B4.2']),
-    'WF-GEO-COP': ('SOP 6-GIS-01 (EOC Manual Ch.6)', 'EOC Planning Section (GIS custodian)', ['NDRRMC Memo 131 s. 2018', 'RA 10173'],
+    'WF-GEO-COP': ('SOP 6-GIS-01 (proposed EOC Module SOP; Library draft)', 'EOC Planning Section (GIS custodian)', ['NDRRMC Memo 131 s. 2018', 'RA 10173'],
                    ['A5.6', 'A5.7', 'B5.3']),
 }
 
@@ -182,14 +192,17 @@ CH3_WORKFLOWS = [
         'Prepare and maintain tested plans for priority hazard scenarios.',
         'A priority hazard without a current plan; a plan past its validity; after an exercise or event; yearly review.',
         'CDRRMO (coordinating process owner); hazard and sector leads (technical owners)',
-        ['RA 10121 Sec. 12(c)', 'OCD/NDRRMC contingency-planning manual (current edition to be obtained)'], ['A3.3', 'A3.6'],
-        [('Select the priority scenario from the CDRA, agency products and history', True, False, None, None),
-         ('Confirm the planning team and the controlling guidance', True, False, None, None),
-         ('Build the scenario and assumptions from authoritative evidence', True, False, None, None),
-         ('Set objectives and the concept of operations (EOC/ICS interface)', True, False, None, None),
-         ('Assign tasks, triggers and resources; validate contacts', True, False, None, None),
+        ['RA 10121 Sec. 12(c)', 'NDRRMC-OCD Contingency Planning Guidebook (2020)'], ['A3.3', 'A3.6'],
+        [('Rank the hazards and select the one to plan for (CP Form 1, hazard analysis), using CDRA evidence', True, False, None, None),
+         ('Confirm the CP working group and the controlling guidance (CP Guidebook, 2020)', True, False, None, None),
+         ('Describe the hazard and build the worst-case scenario (CP Forms 2, 3A or 3B)', True, False, None, None),
+         ('Project the affected and displaced population, aggregated and disaggregated (CP Forms 4A, 4B; RA 10173)', True, False, None, None),
+         ('Organise the response clusters and their activities (CP Forms 5, 6)', True, False, None, None),
+         ('Inventory resources, project needs and summarise gaps (CP Forms 7, 8, 9)', True, False, None, None),
+         ('Set the EOC and ICS arrangements and their interoperability with the clusters (CP Forms 10, 11)', True, False, None, None),
+         ('Draw the activation and deactivation flow with its triggers (PDRA, RDANA, reports); the IC recommends termination', True, False, None, None),
          ('Complete protection and inclusion arrangements', True, False, None, 'F3-10'),
-         ('Validate and approve through the City route', True, False, None, None),
+         ('Validate, endorse and approve through the City route', True, False, None, None),
          ('Exercise and correct; update the plan version', True, False, None, 'F3-06'),
          ('Review and maintain; update the contingency-plan register in MODE', False, False, None, 'F3-11')]),
     _wf(7, 'Public service continuity planning', 'continuity',
@@ -232,3 +245,133 @@ CH3_WORKFLOWS = [
 ]
 for w in CH3_WORKFLOWS:
     META[w['code']] = w.pop('meta')
+
+# ---------------------------------------------------------------- Chapter 4 (v1.1, 8 Nov 2026)
+# Chapter 4 "Early Warning, Activation, Incident Management and Emergency Response" holds SOPs 4-01 to 4-09.
+# Four existing protocols now carry SOPs 4-02, 4-03, 4-04 and 4-08 (META above); five new protocols carry the rest.
+# Chapter 4 form codes that already had a platform form keep the platform code (records exist under it):
+#   EWR-F01 = EOC-WARN-01, EWR-F03 = EOC-WARN-02, EWR-F04 = GOV-F09, EOC-F01 = EOC-ACT-01, EOC-F05 = EOC-SITREP-01.
+# EWR-F02 (the warning-to-action matrix) is a controlled register (Annex 4-C), not a step form.
+CH4_FORM_ALIASES = {'EWR-F01': 'EOC-WARN-01', 'EWR-F03': 'EOC-WARN-02', 'EWR-F04': 'GOV-F09',
+                    'EOC-F01': 'EOC-ACT-01', 'EOC-F05': 'EOC-SITREP-01'}
+LEVELS = ['White', 'Blue', 'Red']
+CH4_FORMS = [
+    ('EOC-F02', 'EOC opening and operational readiness checklist', 'Chapter 4 EOC-F02 (SOP 4-04 step 5).', 'MOO Ch.4', [
+        f('level', 'Alert status in force', 'select', True, LEVELS),
+        f('checked', 'Checked and ready', 'multiselect', True, ['Facility and safety', 'Power and backup', 'Communications (primary and backup)',
+          'Roster and alternates', 'Equipment and supplies', 'Maps and data', 'Records and logbook', 'Shift plan', 'Briefing held']),
+        f('gaps', 'Gaps and the office fixing each', 'textarea'), f('operational_period', 'First operational period', 'text', True)]),
+    ('EOC-F03', 'Initial incident coordination and ICS interface record', 'Chapter 4 EOC-F03 (SOP 4-05).', 'MOO Ch.4', [
+        f('incident', 'Incident and location', 'text', True),
+        f('ic_position', 'Incident Commander / IMT (position and agency)', 'text', True, hint='Position and agency, not a personal name'),
+        f('command_post', 'Command post and contact channel', 'text', True),
+        f('objectives', 'Incident objectives received and operational period', 'textarea', True),
+        f('eoc_support', 'EOC support objectives and decisions needed', 'textarea', True),
+        f('liaison', 'Liaison arrangement and escalation route', 'textarea')]),
+    ('EOC-F04', 'Incident briefing and shift handover', 'Chapter 4 EOC-F04 (SOP 4-05 steps 6-7; SOP 4-04 step 6).', 'MOO Ch.4', [
+        f('situation', 'Situation, source and time', 'textarea', True), f('objectives', 'Objectives', 'textarea', True),
+        f('open_tasks', 'Open tasks, requests and decisions', 'textarea', True), f('risks', 'Risks and constraints', 'textarea'),
+        f('next_review', 'Next briefing or handover time', 'text', True)]),
+    ('ER-F01', 'Evacuation coordination and monitoring sheet', 'Chapter 4 ER-F01 (SOP 4-06). Counts only; no names.', 'MOO Ch.4', [
+        f('decision_ref', 'Authorised decision or order (reference)', 'text', True, hint='Who decided under which issuance'),
+        f('areas', 'Barangays or puroks covered', 'textarea', True),
+        f('families_moved', 'Families moved (aggregate)', 'integer'), f('persons_moved', 'Persons moved (aggregate)', 'integer'),
+        f('centres_open', 'Evacuation centres open', 'integer'), f('transport_access', 'Transport and access issues', 'textarea'),
+        f('unmet_needs', 'Unmet needs and the office handling each', 'textarea')]),
+    ('ER-F02', 'Response deployment and safety coordination record', 'Chapter 4 ER-F02.', 'MOO Ch.4', [
+        f('requesting_authority', 'Requesting authority', 'text', True), f('task', 'Task and location', 'textarea', True),
+        f('lead_agency', 'Lead agency', 'text', True), f('check_in', 'Check-in time', 'time'),
+        f('safety', 'Safety briefing and hazards noted', 'textarea', True), f('status', 'Status', 'select', True, ['Deployed', 'On task', 'Completed', 'Withdrawn'])]),
+    ('ER-F03', 'Shelter and CCCM service coordination summary', 'Chapter 4 ER-F03; JMC No. 2 s. 2021 (CCCM). Aggregates only; DAFAC stays with the CSWDO.', 'MOO Ch.4', [
+        f('facility', 'Evacuation centre or site', 'text', True),
+        f('families', 'Families in the centre (aggregate)', 'integer'), f('persons', 'Persons in the centre (aggregate)', 'integer'),
+        f('services', 'Services in place', 'multiselect', False, ['Camp manager assigned', 'Registration (DAFAC) by CSWDO', 'Food and NFI', 'WASH',
+          'Health', 'Protection and child-friendly space', 'Women-friendly space', 'Accessibility for PWD and older persons', 'Security']),
+        f('issues', 'Issues and referrals (no names)', 'textarea'), f('closure', 'Closure or decampment status', 'text')]),
+    ('ER-F04', 'Public information verification and correction log', 'Chapter 4 ER-F04 (sec. 10.5).', 'MOO Ch.4', [
+        f('claim', 'Claim or rumour', 'textarea', True), f('source', 'Where it was seen', 'text', True),
+        f('verification', 'Verification status', 'select', True, ['Unverified', 'Verified true', 'Verified false', 'Partly true']),
+        f('approved_message', 'Approved message issued', 'textarea'), f('feedback', 'Feedback received', 'textarea')]),
+    ('EOC-F06', 'Resource request referral and status sheet', 'Chapter 4 EOC-F06 (SOP 4-07). Expenditure follows Chapter 5.', 'MOO Ch.4', [
+        f('request_ref', 'Resource request reference', 'text', True), f('priority', 'Priority', 'select', True, ['Life-safety', 'Urgent', 'Routine']),
+        f('owner', 'Asset owner or office', 'text', True), f('approval_route', 'Approval route and decision', 'textarea', True),
+        f('dispatch', 'Dispatch, receipt and custody', 'textarea'), f('closeout', 'Closeout: used, returned, outstanding', 'textarea')]),
+    ('ER-F05', 'Demobilisation and transition handover register entry', 'Chapter 4 ER-F05 (SOP 4-09 step 4).', 'MOO Ch.4', [
+        f('item', 'Outstanding task, resource or information', 'textarea', True), f('receiving_office', 'Receiving office', 'text', True),
+        f('due', 'Due date', 'date', True), f('acknowledged', 'Receipt acknowledged by the receiving office', 'checkbox', True)]),
+    ('ER-F06', 'After-action and corrective action record', 'Chapter 4 ER-F06 (SOP 4-09 step 6); feeds Chapter 7.', 'MOO Ch.4', [
+        f('finding', 'Finding and evidence', 'textarea', True), f('cause', 'Root or contributing cause', 'textarea', True),
+        f('action', 'Corrective action', 'textarea', True), f('owner', 'Accountable office', 'text', True), f('due', 'Due date', 'date', True),
+        f('verification', 'Verification evidence', 'text'), f('closure', 'Closure', 'select', False, ['Open', 'Closed', 'Escalated'])]),
+]
+
+
+def _pr(code, sop, title, category, role, purpose, trigger, owner, refs, inds, steps):
+    """A Chapter 4 protocol. Steps: (instruction, critical, needs note, minutes, form)."""
+    return dict(code=code, title=f'SOP {sop} {title}', category=category, owner_role=role, doc='MOO Ch.4', purpose=purpose,
+                trigger=trigger, steps=steps, meta=(f'SOP {sop} (MOO Ch.4 v1.1)', owner, refs, inds))
+
+
+CH4_PROTOCOLS = [
+    _pr('PR-WARNING-RECEIPT', '4-01', 'Official warning receipt, verification and escalation', 'warning', 'duty_officer',
+        'Authenticate, time-stamp and interpret each official product within its source limits, and escalate it to the right decision-maker.',
+        'On receipt of an official warning product or a significant local report.',
+        'CDRRMO Operations and Warning (OpCen duty officer); escalation to the CDRRMO Head',
+        ['RA 10121 Sec. 12(c)', 'DILG VIII Disaster Response Reporting SOP (RDRRMC8 Res. 12-006)'], ['A6.1', 'B4.3'],
+        [('Receive through the approved channel; keep the original file or link; note issue time and receipt time', True, False, 0, 'EOC-WARN-01'),
+         ('Authenticate: issuing agency, product number and title, issue time, validity, coverage, update or cancellation', True, False, 5, None),
+         ('Classify: official warning, verified observation, partner report or unverified report; label uncertainty', True, True, 10, None),
+         ('Assess local relevance: places, exposed people and assets, dependencies, the relevant contingency plan', True, True, 15, None),
+         ('Escalate to the CDRRMO Head or duty supervisor under the escalation matrix; for life-safety, use urgent channels first', True, True, 20, None),
+         ('Record superseding or cancelled products and tell recipients of material changes', False, True, None, None)]),
+    _pr('PR-ICS-INTERFACE', '4-05', 'Initial incident coordination and EOC–ICS interface', 'eoc', 'eoc_manager',
+        'Build a shared operational picture and support the Incident Commander without duplicating field command.',
+        'On notification of an incident that needs EOC coordination.',
+        'EOC Manager; the Incident Commander / IMT keeps field command',
+        ['NDRRMC Memo 131 s. 2018', 'NDRRMC MC No. 4 s. 2012 (ICS)'], ['A8.1', 'B6.1', 'B1.4', 'B1.5'],
+        [('Confirm the incident, location, Incident Commander / IMT, command post and contact method', True, False, 0, 'EOC-F03'),
+         ('Collect time-stamped reports with source and validation status; map the affected area; list gaps', True, True, 15, None),
+         ('Receive the incident objectives and operational period; set EOC support objectives and decisions needed', True, True, 30, 'EOC-F03'),
+         ('Seat only the EOC sections and cluster or liaison desks the incident needs; confirm leads', True, False, 30, None),
+         ('Route resource and service requests to their owners; track decision and fulfilment', True, True, None, 'ER-F02'),
+         ('Brief the Mayor / CDRRMC and the Incident Commander as the arrangement requires', True, True, None, 'EOC-F04'),
+         ('Hand over status, requests, decisions, risks and tasks to the next period or shift', True, True, None, 'EOC-F04')]),
+    _pr('PR-EVACUATION', '4-06', 'Evacuation coordination and monitoring', 'eoc', 'eoc_manager',
+        'Coordinate an authorised evacuation and monitor it safely, accessibly and accountably. The MOO creates no power to order evacuation.',
+        'When an official warning, PDRA or incident report indicates people may need to move.',
+        'Decision: official or body named by law and City issuance; CDRRMO coordinates; CSWDO leads camp management (JMC No. 2 s. 2021)',
+        ['RA 10121 Sec. 12(c)', 'RA 12076', 'RA 10821', 'DSWD-DILG-DOH-DepEd JMC No. 2 s. 2021 (CCCM)'], ['A6.2', 'A7.4', 'A7.6', 'A7.9'],
+        [('Assess need: official warning, impact, lead time, exposure, vulnerable groups, routes and facility suitability', True, True, 0, None),
+         ('Prepare options and route them to the competent authority; record scope, timing, sites and instruction', True, True, None, 'ER-F01'),
+         ('Issue the approved message through approved channels and barangay relays, in accessible formats', True, False, None, 'EOC-WARN-02'),
+         ('Coordinate transport, traffic, receiving sites, health, protection, WASH, security and camp management with lead offices', True, True, None, 'ER-F03'),
+         ('Monitor aggregate barangay and centre status, access issues, unmet needs and safety incidents (counts only)', True, False, None, 'ER-F01'),
+         ('Route continuation, change or return to the competent authority; record the safety check and support', True, True, None, None)]),
+    _pr('PR-RESOURCE-REQUEST', '4-07', 'Resource request coordination and mutual-aid escalation', 'eoc', 'eoc_manager',
+        'Move each operational request from receipt to fulfilment or referral, with financial and property controls.',
+        'On receipt of a resource or service request during an activation.',
+        'EOC Manager / Logistics; approval and expenditure stay with the competent offices (Chapter 5)',
+        ['RA 10121 Sec. 21', 'RA 12009 and its IRR'], ['B6.2', 'A8.3', 'A7.5'],
+        [('Log the request: requester, incident, item or service, quantity, location, purpose, priority, time needed', True, False, 0, 'EOC-F06'),
+         ('Check completeness: purpose, specification, delivery point and requesting authority', True, True, 10, None),
+         ('Check availability with the asset owner or Logistics: stock, condition, location, commitments', True, False, 20, None),
+         ('Refer expenditure, procurement, transfer or release to the authorised office under Chapter 5', True, True, None, None),
+         ('Record dispatch, carrier, expected arrival, receipt, partial fulfilment and custody', True, False, None, None),
+         ('Request mutual aid or higher-level support through the approved route when local resources fall short', False, True, None, None),
+         ('Close and reconcile: use, return, demobilisation, balance, damage and replenishment', True, True, None, 'EOC-F06')]),
+    _pr('PR-EOC-DEACTIVATE', '4-09', 'EOC deactivation, transition and after-action review', 'eoc', 'eoc_manager',
+        'Close the activation in a controlled way and hand unresolved work to permanent, recovery and continuity arrangements.',
+        'When the incident has stabilised and the Incident Commander recommends termination.',
+        'Deactivation: official designated in the EOC EO; EOC Manager coordinates handover and closeout',
+        ['NDRRMC Memo 131 s. 2018', 'NDRRMC-OCD Contingency Planning Guidebook (2020)', 'NEDA Disaster Rehabilitation and Recovery Planning Guide'],
+        ['B1.3', 'B7.4', 'A10.6'],
+        [('Review stabilisation: threat, activities, outstanding needs, service status, commitments and reporting duties', True, True, 0, None),
+         ('Prepare the recommendation and obtain the authorised deactivation decision', True, True, None, 'EOC-ACT-01'),
+         ('Notify EOC staff, clusters, barangays, partners and reporting recipients', True, False, None, None),
+         ('Transfer outstanding tasks, requests, monitoring, public information, continuity and recovery tasks to named offices', True, True, None, 'ER-F05'),
+         ('Close the records: logbook index, SitReps, decisions, resources, maps and evidence', True, False, None, None),
+         ('Hold the hotwash or AAR; identify system causes; agree corrective actions', True, True, None, 'ER-F06'),
+         ('Send revisions of plans, contacts, training and procedures through document control', False, True, None, None)]),
+]
+for p_ in CH4_PROTOCOLS:
+    META[p_['code']] = p_.pop('meta')
