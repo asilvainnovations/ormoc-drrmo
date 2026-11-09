@@ -3,7 +3,6 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '@/lib/db';
 import { Badge, Field, Input, List, ListRow, Notice, PageHeader, Section, Tabs } from '@/components/ui';
 import type { MooDocument } from '@/types';
-import { DOC_STATUS, LIB_TABS } from './labels';
 
 /** 1.10: find a section by code, title, old code (alias, ADR-012) or area number, e.g. "EOC Ch.2", "3-6", "area 4". */
 export function matchesSection(d: MooDocument, q: string): boolean {
