@@ -37,8 +37,9 @@
   --backdrop-opacity: 0.09;
   color-scheme: light;
 }
+/* Dark: by device setting unless the person chose Light, or always when they chose Dark (ThemeProvider). */
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not(.light) {
     --paper: 10 22 34; --surface: 17 34 58; --sunken: 24 45 72;
     --ink: 230 238 246; --muted: 162 179 196; --line: 37 64 95;
     --action: 140 200 242; --on-action: 10 22 34;
@@ -57,3 +58,21 @@
     color-scheme: dark;
   }
 }
+:root.dark {
+    --paper: 10 22 34; --surface: 17 34 58; --sunken: 24 45 72;
+    --ink: 230 238 246; --muted: 162 179 196; --line: 37 64 95;
+    --action: 140 200 242; --on-action: 10 22 34;
+    --sky: 120 186 238; --sky-soft: 22 52 84;
+    --accent: 255 148 70; --accent-bright: 255 148 70; --accent-ink: 255 168 104;
+    --focus: 255 148 70; --scrim: 0 0 0;
+    --on-strong: 10 22 34;   /* status fills are light in dark mode, so their text is dark */
+    --ok: 95 207 151;  --ok-soft: 18 58 42;
+    --warn: 242 192 96; --warn-soft: 61 48 16;
+    --bad: 255 138 126; --bad-soft: 69 32 29;
+    --info: 141 190 245; --info-soft: 22 48 79;
+    --lvl-white: 17 34 58; --lvl-white-ink: 230 238 246;
+    --lvl-blue: 46 85 224; --lvl-red: 196 42 32;
+    --mat-0: 37 64 95; --mat-1: 33 82 128; --mat-2: 47 120 180; --mat-3: 92 164 225; --mat-4: 160 210 246;
+    --backdrop-opacity: 0.14;
+    color-scheme: dark;
+  }
