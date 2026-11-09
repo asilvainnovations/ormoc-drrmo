@@ -15,6 +15,8 @@ import { TodayPage } from '@/features/home/TodayPage';
 import { OAuthConsentPage } from '@/features/auth/OAuthConsentPage';
 import { CONSENT_PATH } from '@/lib/oauth';
 import { AccessibilityTools } from '@/components/AccessibilityTools';
+import { ThemeProvider } from '@/components/theme-provider';
+import { Toaster as Sonner } from '@/components/ui/sonner';
 import { PUBLIC_PATHS, setPageMeta } from '@/lib/site';
 import { AboutPage, FAQPage, PolicyPage, PublicHome, PublicNotFound, SupportPage } from '@/features/public/PublicPages';
 
@@ -72,6 +74,7 @@ function Boot({ children }: { children: ReactNode }) {
 
 export function App() {
   return (
+    <ThemeProvider defaultTheme="system">
     <BrowserRouter>
       <UpdatePrompt />
       <ToastProvider>
@@ -109,6 +112,8 @@ export function App() {
         </AuthProvider>
       </ToastProvider>
       <TooltipLayer />
+      <Sonner position="top-center" richColors closeButton />
     </BrowserRouter>
+    </ThemeProvider>
   );
 }
