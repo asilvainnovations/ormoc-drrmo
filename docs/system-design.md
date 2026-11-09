@@ -44,7 +44,7 @@ The rules for each role are enforced in the database (ADR-004).
  └────────┼────────────────────────────────┼──────────────────┘
           │ HTTPS                          │
  ┌────────┴────────────────────────────────┴──────────────────┐
- │ Supabase (City-owned project, ap-southeast-1 Singapore)    │
+ │ Supabase (City-owned project, ap-northeast-1 Tokyo)        │
  │  Auth (email + password / magic link)                      │
  │  PostgREST ── Postgres 15+                                  │
  │                ├ RLS policies + role helpers               │
@@ -66,15 +66,15 @@ There is no custom application server. The rules live in SQL so they hold for ev
 | Module | Route | Main records | Notes |
 |---|---|---|---|
 | Public pages (1.10) | `/`, `/about`, `/faq`, `/support`, `/policies/*` | — | Indexable; open without an account and without the workspace. Policies from typed data and env (`src/lib/site.ts`), marked draft until approved (ADR-020) |
-| Today | `/today` | — | Greeting, active declaration with next deadline, quick actions by role, running protocols, latest log, assessment progress |
+| Today | `/today` | — | Greeting, active declaration with next deadline, quick actions by role, running protocols, latest log, assessment progress, Manual readiness (approved protocols, workflows and forms). Ctrl+K search palette on every workspace screen (ADR-023) |
 | Assessment | `/assess` | `assessment_cycles`, `responses`, `evidence`, `actions` | Evidence first, then score; caps by evidence strength; validator workflow; domain and maturity readouts; CSV export; action plan by priority |
 | Library | `/library` | `manual_parts`, `manual_areas`, `moo_documents`, `moo_versions`, `moo_document_indicators` | One manual: 5 Parts, 10 functional areas (area outlines carry each indicator's gap by its primary area), drafted Chapters 1–3 with their annexes, SOPs and forms, as Markdown; old codes kept as aliases; draft → for review → approved (Head only), approved versions immutable; traceability, master requirements, framework crosswalk |
 | Tools | `/tools` | — (kept in the browser; exported or printed) | ICS exercise simulator, PSCP workbench, Gawad KALASAG Seal readiness; links (new tab, never framed) to official PAGASA and PHIVOLCS bulletins, Philippine hazard and risk maps, international and satellite services, and DDRiVE-M |
-| DRRM: workflows, protocols, forms | `/drrm` (old `/protocols` links redirect) | `protocol_templates`, `protocol_steps`, `protocol_runs`, `protocol_run_steps`, `form_templates`, `v_indicator_sops` | 23 drafts: 8 protocols and 15 workflows (161 steps, 40 forms), including the nine Chapter 3 workflows. Every template names its kind, controlling SOP, process owner, policy basis and IAT indicators (ADR-019). Runs work offline; every step closes on its form (ADR-016) |
+| DRRM: workflows, protocols, forms | `/drrm` (old `/protocols` links redirect) | `protocol_templates`, `protocol_steps`, `protocol_runs`, `protocol_run_steps`, `form_templates`, `v_indicator_sops` | 28 drafts: 13 protocols and 15 workflows (197 steps, 50 forms), including the nine Chapter 3 workflows and the Chapter 4 SOPs 4-01 to 4-09 (ADR-022). Every template names its kind, controlling SOP, process owner, policy basis and IAT indicators (ADR-019). Runs work offline; every step closes on its form (ADR-016) |
 | EOC | `/eoc` | `eoc_activations`, `logbook_entries`, `sitreps`, `barangay_reports`, `resource_requests` | Level board (White / Blue / Red), append-only logbook with corrections, SitRep numbering on submit, barangay counts only (a blank count is "not reported", not 0), forward-only request flow. EOC location card (coordinates, map links that open outside the app, KML download; ADR-015). Board, barangay list and SitRep totals count only the current event: back-to-back activations (Blue → Red) are one event; at White level, the last 24 hours |
 | Anticipatory action | `/eoc/aa` | `pdra_sessions`, `declarations`, `aa_actions`, `aa_fund_years`, `aa_disbursements`, `aa_rules` | PDRA decision; declaration timeline per IRR; 29 AA checklist templates from IRR Rule IV; fund cap and tranche guard |
 | Document Vault | `/vault` | `vault_documents` (+ private `vault` bucket) | Register of laws, guidelines, City issuances, plans and records; each linked to indicators; Document Review checklist with request list download; reference catalogue. Assessors, validators, admin and CDRRMO staff only. Documents are superseded, never deleted |
-| Settings | `/settings` | `profiles`, `user_roles`, `barangays` | Sync status and conflict review; users and roles (admin, online); barangay list import (PSGC CSV); about and privacy |
+| Settings | `/settings` | `profiles`, `user_roles`, `barangays`, `client_errors` | Sync status and conflict review; appearance; users and roles (admin, online); barangay list import (PSGC CSV); error reports (admin, online); interface components gallery; about and privacy |
 
 ## 5. Data model (summary)
 
@@ -181,9 +181,9 @@ The integration suite found two defects that the fake client could not show, and
 - **Reference notes.** The plain-language notes in `src/data/references.ts` are for orientation. They need validation by the CDRRMO with the City Legal Office. Citations inside manual section text (the "Basis" lines) are not yet tappable.
 
 - **Barangay list.** Ormoc’s 85 barangays (PSA PSGC, 4th quarter 2022 update) need importing from the PSA masterlist (Settings → Barangays → Import CSV) before operations use.
-- **Protocol and workflow validation.** The 23 templates and 40 forms are drafts. Each needs validation by the CDRRMO and its process owner (ADR-019), then approval by the Head (DRRM module).
+- **Protocol and workflow validation.** The 28 templates and 50 forms are drafts. Each needs validation by the CDRRMO and its process owner (ADR-019), then approval by the Head (DRRM module).
 - **Pending national guidance.** NDRRMC guidelines on anticipatory action triggers and DBM–COA rules on AA fund use and liquidation are expected under the IRR. Update `aa_rules` and the AA checklist when they are issued.
-- **Manual content.** Chapters 1 and 2 (v1.2) and Chapter 3 (v1.0 working draft, 8 Nov 2026) are drafted and await validation (1–4 Dec workshop). Chapter 3 still needs the CDRA's adopted Chapter 5–6 tables (the PDF holds an unadopted reconstruction) and the OCD contingency-planning manual. The ten area outlines list the requirements still to be written up; chapters for Areas 4–10 follow the drafting plan.
+- **Manual content.** Chapters 1 and 2 (v1.2) Chapter 3 (v1.1) and Chapter 4 (v1.1, Early Warning, Activation, Incident Management and Emergency Response) are drafted and await validation (1–4 Dec workshop). Chapter 3 still needs the CDRA's adopted Chapter 5–6 tables (the PDF holds an unadopted reconstruction); the NDRRMC–OCD Contingency Planning Guidebook (2020) was supplied and applied. Chapters 5 to 9 are not yet drafted; SOP 6-GIS-01 sits under Area 6 as a proposal until Chapter 6. The ten area outlines list the requirements still to be written up; chapters for Areas 4–10 follow the drafting plan.
 - **Area 8 has no indicators.** No indicator in the Traceability Dictionary v1.1 names Area 8 (Responder Safety, Welfare and Inclusive Emergency Operations) as its primary area. A2.7, B4.6 and A7.6 are candidates. A dictionary revision decides; the platform follows it on the next seed.
 - **Annex 1-C alert levels.** The draft EO uses Levels 0–3; Memo 131, SOP GOV-05 and the EOC board use White, Blue and Red. Settle one scheme or a crosswalk before the workshop.
 - **EOC location.** The primary EOC position comes from a Google Earth placemark (6 Nov 2026) and shows as "To be confirmed" until the CDRRMO checks it. The alternate EOC is not yet recorded (EOC Capability Checklist; MR-10). Both are edits to `src/data/eoc-site.ts` plus a KML in `public/eoc-site/` (ADR-015).
