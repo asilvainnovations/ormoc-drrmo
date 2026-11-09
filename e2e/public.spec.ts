@@ -20,7 +20,7 @@ test.describe('public pages, signed out', () => {
     await page.goto('/policies/privacy');
     await expect(page.getByText('Draft, not yet approved.')).toBeVisible();
     await expect(page.getByText(/City Government of Ormoc, through the City Disaster Risk Reduction/).first()).toBeVisible();
-    await expect(page.getByText(/Singapore region/)).toBeVisible();
+    await expect(page.getByText(/Tokyo, Japan \(ap-northeast-1\)/)).toBeVisible();
   });
 
   test('the workspace is not indexed and still asks for an account', async ({ page }) => {
