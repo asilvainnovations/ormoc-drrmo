@@ -1,0 +1,27 @@
+name: Build City basemap
+
+# City-hosted OSM basemap for the Geo-COP map (ADR-015). Re-runs monthly and on demand.
+# Needs repository secrets: SUPABASE_URL, SERVICE_ROLE_KEY (the key stays in GitHub
+# secrets — never in the repo, never in the app bundle).
+
+on:
+  workflow_dispatch:
+    inputs:
+      build:
+        description: 'Protomaps daily build date (YYYYMMDD); blank = latest'
+        required: false
+        default: ''
+  schedule:
+    - cron: '0 18 1 * *' # 18:00 UTC on the 1st of each month (02:00 Manila, 2nd)
+
+jobs:
+  basemap:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build and upload the basemap
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SERVICE_ROLE_KEY: ${{ secrets.SERVICE_ROLE_KEY }}
+          BUILD: ${{ github.event.inputs.build }}
+        run: bash scripts/build_basemap.sh
