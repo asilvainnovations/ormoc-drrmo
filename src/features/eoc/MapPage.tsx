@@ -32,7 +32,13 @@ const token = (name: string) => {
   const v = getComputedStyle(document.documentElement).getPropertyValue(`--${name}`).trim();
   return v ? `rgb(${v.split(/\s+/).join(',')})` : '#888';
 };
-const dark = () => window.matchMedia?.('(prefers-color-scheme: dark)').matches ?? false;
+// 1.11: follow the theme the person chose (Light, Dark or System; see components/theme-provider.tsx).
+const dark = () => {
+  const c = document.documentElement.classList;
+  if (c.contains('dark')) return true;
+  if (c.contains('light')) return false;
+  return window.matchMedia?.('(prefers-color-scheme: dark)').matches ?? false;
+};
 
 function baseStyle(): StyleSpecification {
   const base = env.basemapBase;
