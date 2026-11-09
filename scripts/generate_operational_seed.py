@@ -396,6 +396,14 @@ VAULT = [  # key, title, category, ref_key, doc_number, issuer, date, status, in
 from vault_issuances import ISS as _ISS   # noqa: E402  City issuances 2021-2024
 VAULT += [(key, title, 'record' if num.startswith('ARO') else 'city_issuance', None, num, issuer, date, 'current', inds,
            f'https://drive.google.com/file/d/{fid}/view', None, summary) for key, fid, title, num, issuer, date, inds, summary in _ISS]
+# Issuance bundle received 9 Nov 2026 (CDRRMC 2016-2025, EOs 2016-2024) and explicit absence records.
+from vault_issuances import ISS_UPLOADS as _UP, ISS_NOT_OBTAINED as _NO  # noqa: E402
+VAULT += [(key, title, 'city_issuance', None, num, issuer, date, 'current', inds, None, location, summary)
+          for key, title, num, issuer, date, inds, location, summary in _UP]
+VAULT += [(key, title, 'city_issuance', None, num, issuer, date, 'draft', inds, None, location, summary)
+          for key, title, num, issuer, date, inds, location, summary in
+          [(k, t, n, i, d, ind, 'NOT OBTAINED as of 10 November 2026 — absence recorded in the Vault per the production-readiness audit; file to be attached when obtained.', s)
+           for k, t, n, i, d, ind, s in _NO]]
 
 # Access levels (1.9.0, migration 20261106001600): standard = everyone who may use the Vault;
 # restricted = the roles below only (personnel information and internal staff papers).
