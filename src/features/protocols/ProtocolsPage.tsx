@@ -1,8 +1,9 @@
 import type React from 'react';
 import { useEffect, useState } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { Play } from 'lucide-react';
+import { FileText, MousePointerClick, Play } from 'lucide-react';
+import clsx from 'clsx';
 import { db } from '@/lib/db';
 import { useAuth, ROLE_LABEL } from '@/lib/auth';
 import { canOperate } from '@/domain/eoc';
@@ -10,7 +11,7 @@ import { relative } from '@/lib/time';
 import { Badge, Button, Checkbox, EmptyState, List, ListRow, Notice, Section, TextLink } from '@/components/ui';
 import { Sheet } from '@/components/Sheet';
 import { useToast } from '@/components/Toast';
-import type { ProtocolCategory, ProtocolTemplate } from '@/types';
+import type { FormTemplate, ProtocolCategory, ProtocolStep, ProtocolTemplate } from '@/types';
 import { CATEGORY, KIND_LABEL, templateIsWorkflow } from './labels';
 import { RefText } from '@/components/RefText';
 import { DrrmHeader } from './DrrmHeader';
@@ -19,7 +20,6 @@ import { Tabs as KitTabs, TabsContent, TabsList, TabsTrigger } from '@/component
 import { Card, CardContent } from '@/components/ui/card';
 import { Input as KitInput } from '@/components/ui/input';
 import { Badge as KitBadge } from '@/components/ui/badge';
-import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
 import { tip } from '@/components/Tooltip';
 
 export function ProtocolsPage({ kind }: { kind: 'workflows' | 'protocols' }) {
@@ -133,23 +133,7 @@ export function ProtocolsPage({ kind }: { kind: 'workflows' | 'protocols' }) {
               <TabsTrigger value="when" className="min-h-tap" {...tip('When to use it and who usually runs it')}>When and who</TabsTrigger>
             </TabsList>
             <TabsContent value="steps">
-              <ol className="space-y-2">
-                {steps.map((s) => (
-                  <li key={s.id} className="flex gap-3 rounded-control border border-line bg-surface p-2">
-                    <span className="mt-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-action font-data text-xs font-bold text-on-action">{s.seq}</span>
-                    <span>{s.instruction}{s.is_critical && <Badge tone="bad" className="ml-2">Critical</Badge>}
-                      {s.due_offset_minutes !== null && <span className="block text-xs text-muted">Target: {s.due_offset_minutes} min after start</span>}
-                      {s.form_code && (s.form_code === 'STEP-RECORD'
-                        ? <span className="block text-xs text-muted">Form: one-tap step record</span>
-                        : <HoverCard openDelay={150}>
-                            <HoverCardTrigger asChild>
-                              <span className="block w-fit"><TextLink tip="Open this form: its fields and the steps that use it" size="sm" to={`/drrm/forms?open=${encodeURIComponent(s.form_code)}`}>Form {s.form_code}</TextLink></span>
-                            </HoverCardTrigger>
-                            <HoverCardContent className="w-72 text-sm"><p className="font-semibold">{s.form_code}</p><p className="text-muted">{data?.forms.get(s.form_code)?.title ?? 'Form'}</p><p className="mt-1 text-xs text-muted">{data?.forms.get(s.form_code)?.schema.fields.length ?? 0} fields</p></HoverCardContent>
-                          </HoverCard>)}</span>
-                  </li>
-                ))}
-              </ol>
+              <FlowDiagram steps={steps} forms={data?.forms ?? new Map()} />
             </TabsContent>
             <TabsContent value="control">
               <SopControl t={open} />
@@ -163,6 +147,66 @@ export function ProtocolsPage({ kind }: { kind: 'workflows' | 'protocols' }) {
           </KitTabs>
         </>}
       </Sheet>
+    </div>
+  );
+}
+
+/** 1.12: the workflow as a flow — a vertical spine of numbered nodes, top to bottom, with the
+ *  form each step records on drawn as a connector chip. Form chips link to the Forms page,
+ *  which links back, so workflow ↔ form navigation works both ways. */
+export function FlowDiagram({ steps, forms }: { steps: ProtocolStep[]; forms: Map<string, FormTemplate> }) {
+  const critical = steps.filter((s) => s.is_critical).length;
+  const onForm = steps.filter((s) => s.form_code && s.form_code !== 'STEP-RECORD').length;
+  if (steps.length === 0) return <EmptyState title="No steps yet" body="Steps arrive with the reference data. Open Settings, then Sync, if this stays empty." />;
+  return (
+    <div>
+      <p className="mb-4 text-sm text-muted" {...tip('Steps run top to bottom. A blue chip opens the Manual form the step is recorded on; a dashed chip closes with a one-tap record. Red numbers are critical steps.')}>
+        {steps.length} step{steps.length === 1 ? '' : 's'} · {critical} critical · {onForm} recorded on a Manual form
+      </p>
+      <ol className="flow-spine">
+        {steps.map((s, i) => {
+          const form = s.form_code ? forms.get(s.form_code) : undefined;
+          return (
+            <li key={s.id} className="relative flex gap-3">
+              <div className="flex w-9 flex-col items-center">
+                <span className={clsx('z-10 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full font-data text-sm font-bold',
+                  s.is_critical ? 'bg-bad text-on-strong' : 'bg-action text-on-action')}
+                  {...tip(s.is_critical ? `Critical step ${s.seq}: missing it breaks the sequence` : `Step ${s.seq} of ${steps.length}`)}>
+                  {s.seq}
+                </span>
+                {i < steps.length - 1 && <span aria-hidden="true" className="spine-line w-0.5 flex-1" />}
+              </div>
+              <div className={clsx('min-w-0 flex-1', i < steps.length - 1 && 'pb-4')}>
+                <div className="rounded-sheet border border-line bg-surface p-3">
+                  <p className="leading-6">{s.instruction}</p>
+                  <div className="mt-2 flex flex-wrap items-center gap-2">
+                    {s.is_critical && <Badge tone="bad">Critical</Badge>}
+                    {s.requires_note && <Badge tone="neutral">Note required</Badge>}
+                    {s.due_offset_minutes !== null && <Badge tone="info">Target: +{s.due_offset_minutes} min</Badge>}
+                  </div>
+                  {s.form_code === 'STEP-RECORD' ? (
+                    <div className="mt-3 flex items-center gap-2 rounded-control border border-dashed border-line bg-sunken px-3 py-2"
+                      {...tip('This step closes with a one-tap record: who closed it and when. No separate form.')}>
+                      <MousePointerClick className="h-4 w-4 shrink-0 text-muted" aria-hidden="true" />
+                      <span className="text-sm text-muted">One-tap step record — no separate form.</span>
+                    </div>
+                  ) : s.form_code && (
+                    <Link to={`/drrm/forms?open=${encodeURIComponent(s.form_code)}`}
+                      {...tip(`Open form ${s.form_code}: its fields, options and every step that uses it`)}
+                      className="mt-3 flex items-center gap-2 rounded-control border border-line bg-sky-soft px-3 py-2 no-underline hover:border-sky">
+                      <FileText className="h-4 w-4 shrink-0 text-info" aria-hidden="true" />
+                      <span className="min-w-0">
+                        <span className="block text-sm font-semibold">{s.form_code} {form?.title}</span>
+                        <span className="block truncate text-xs text-muted">{form ? `${form.schema.fields.length} field${form.schema.fields.length === 1 ? '' : 's'} · opens in Forms` : 'Form opens in Forms'}</span>
+                      </span>
+                    </Link>
+                  )}
+                </div>
+              </div>
+            </li>
+          );
+        })}
+      </ol>
     </div>
   );
 }
