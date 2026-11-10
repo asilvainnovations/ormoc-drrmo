@@ -173,6 +173,58 @@ export interface Barangay {
   psgc: string; name: string; classification: string[]; population: number | null; lat: number | null; lng: number | null; version?: number;
   cluster_id?: string | null; hazard_tags?: string[]; hazard_tag_source?: string | null;
 }
+
+// ------------------------------------------------------------------ DDRiVE (1.12.1, ADR-024)
+/** Data-Driven Risk and Vulnerability Estimation — the City's desk-assessment workbook,
+ *  ingested read-only (migration 20261110002100). Missing values stay null; never 0. */
+export interface DdriveBarangayProfile {
+  psgc: string; name: string; former_name: string | null; urban_rural: string | null;
+  population_2024: number | null; population_2020: number | null; growth_rate_2020_2024: number | null;
+  households: number | null; density_per_ha: number | null; data_quality_flag: string | null;
+  lat: number; lng: number; coord_source: string | null; coord_validation: string | null;
+  cluster_no: number | null; cluster_label: string | null; district_zone: string | null;
+  assigned_coordinator: string | null; cluster_validation: string | null; workbook_rev: string;
+}
+export interface DdriveFlood {
+  psgc: string; susceptibility_class: string | null; hazard_source: string | null;
+  prone_area_ha: number | null; land_area_ha: number | null; prone_pct: number | null;
+  exposed_population: number | null; exposure_base_population: number | null; exposure_base_year: string | null;
+  exposure_pct: number | null; depth_scenario: string | null; confidence: string | null; validation_status: string | null;
+}
+export interface DdriveHazards {
+  psgc: string; rain_landslide: string | null; eq_landslide: string | null; ground_shaking: string | null;
+  ground_rupture: string | null; liquefaction: string | null; tsunami: string | null; storm_surge: string | null;
+  facilities_exposure: string | null; lifeline_exposure: string | null; vulnerable_population: string | null;
+  evacuation_access: string | null; source_vintage: string | null; validation_status: string | null;
+}
+export interface DdriveExposure {
+  psgc: string; population_2024: number | null; pop_0_4: number | null; pop_5_17: number | null;
+  pop_18_59: number | null; pop_60_plus: number | null; schools: number | null; health_facilities: number | null;
+  infrastructure: string | null; source: string | null; status: string | null;
+}
+export interface DdriveVulnerability {
+  psgc: string; social_sensitivity: string | null; access_constraints: string | null;
+  coping_capacity: string | null; adaptive_capacity: string | null; method_source: string | null; validation_status: string | null;
+}
+export interface DdrivePriority {
+  psgc: string; priority_rank: number | null; basis: string | null; population_2024: number | null;
+  confidence: string | null; validation_status: string | null;
+}
+export interface DdriveCityScore {
+  hazard_event: string; hazard_family: string; exposure_infrastructure: string | null; exposure_productive: string | null;
+  exposure_essential: string | null; exposure_human: string | null; vulnerability_rating: number | null;
+  response_measures: string | null; likelihood: number; severity: number; evidence_anchor: string | null; validation_status: string | null;
+}
+export interface DdriveRiskMatrixRow {
+  ranking: number; severity_min: number; severity_max: number; likelihood_min: number; likelihood_max: number;
+  band: string; label: string;
+}
+/** A desk score with its band, mirroring view v_ddrive_city_risk (computed, never stored). */
+export interface DdriveCityRisk extends DdriveCityScore { ranking: number; band: string; label: string }
+export interface DdriveSource {
+  source_id: string; name: string; owner: string | null; url: string | null; vintage: string | null;
+  coverage: string | null; accessed_on: string | null; limitations: string | null;
+}
 export type BarangayCondition = 'normal' | 'monitoring' | 'affected' | 'isolated' | 'evacuating';
 export interface BarangayReport {
   id: string; barangay_psgc: string; activation_id: string | null; reported_at: string; condition: BarangayCondition;
