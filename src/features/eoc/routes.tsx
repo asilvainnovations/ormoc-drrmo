@@ -11,6 +11,7 @@ import { FundsPage } from './aa/FundsPage';
 import { PlansPage } from './PlansPage';
 import { RosterPage } from './RosterPage';
 import { LiaisonPage } from './LiaisonPage';
+import { RiskPage } from './RiskPage';
 import { lazy, Suspense } from 'react';
 import { Loading } from '@/components/ui';
 
@@ -27,6 +28,7 @@ export default function EocRoutes() {
       <Route path="requests" element={<RequestsPage />} />
       <Route path="barangays" element={<BarangaysPage />} />
       <Route path="liaison" element={<LiaisonPage />} />
+      <Route path="risk" element={<RiskPage />} />
       <Route path="plans" element={<PlansPage />} />
       <Route path="roster" element={<RosterPage />} />
       <Route path="map" element={<Suspense fallback={<Loading />}><MapPage /></Suspense>} />

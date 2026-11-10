@@ -20,6 +20,7 @@ export const EOC_TABS = [
   { to: '/eoc/requests', label: 'Requests', tip: 'Track resource requests from request to demobilization' },
   { to: '/eoc/barangays', label: 'Barangays', tip: 'Latest status reported by each barangay (counts only, no names)' },
   { to: '/eoc/liaison', label: 'Liaison desk', tip: 'Barangay Liaison Desk: reporting and silent barangays by cluster in this activation' },
+  { to: '/eoc/risk', label: 'Risk', tip: 'Risk intelligence: the DDRiVE desk-assessment picture — city scores and per-barangay hazard profiles' },
   { to: '/eoc/plans', label: 'Plans and clusters', tip: 'Contingency plans, activating a plan, and which response clusters and modules are on' },
   { to: '/eoc/roster', label: 'Roster', tip: 'EOC positions and designations, primary and two alternates (B4.2)' },
   { to: '/eoc/map', label: 'Map', tip: 'Geo-COP: the City basemap, verified reference points and validated layers' },
@@ -69,4 +70,16 @@ export const LAYER_VALIDATION: Record<'reported' | 'preliminary' | 'field_verifi
 export const HAZARD_TAG: Record<string, string> = {
   flood: 'Flood', flash_flood: 'Flash flood', storm_surge: 'Storm surge', landslide: 'Landslide', earthquake: 'Earthquake',
   liquefaction: 'Liquefaction', tsunami: 'Tsunami', drought: 'Drought',
+};
+
+// ------------------------------------------------------------------ 1.12.1 DDRiVE (ADR-024)
+/** Band label -> badge tone for the city risk picture. */
+export const BAND_TONE: Record<string, 'neutral' | 'info' | 'warn' | 'bad'> = {
+  'Very Low': 'neutral', Low: 'info', Moderate: 'warn', High: 'bad', 'Very High': 'bad',
+};
+/** The barangay filter options on the Risk page. */
+export const HAZARD_FILTER: Record<string, string> = {
+  all: 'All barangays', flood: 'Flood-classified', rain_landslide: 'Rain-induced landslide',
+  eq_landslide: 'Earthquake-induced landslide', liquefaction: 'Liquefaction', tsunami: 'Tsunami',
+  storm_surge: 'Storm surge', priority: 'Priority-ranked', cluster: 'In a proposed cluster',
 };
