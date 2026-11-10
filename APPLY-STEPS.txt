@@ -1,33 +1,13 @@
-MODE 1.12.1 — DDRiVE risk-intelligence base layer — apply steps (10 Nov 2026)
-==============================================================================
-The QRE desk assessment is renamed DDRiVE (Data-Driven Risk and Vulnerability
-Estimation). This release ingests it read-only; QRE remains only in historical
-file names. Changed files (19), no deletions:
-
- 1. Apply the migration FIRST:
-      supabase/migrations/20261110002100_ddrive_base.sql
-    (safe to run again; creates nine ddrive_* tables, v_ddrive_city_risk, RLS)
- 2. Run the new seed part AFTER parts 1-25:
-      supabase/seed/parts/26_ddrive.sql
-    Its check must return: 85 | 85 | 85 | 85 | 85 | 85 | 10 | 25 | 31
- 3. Push all files with git (never the web upload).
- 4. Deploy. Devices upgrade their local database to Dexie v5 on first launch
-    and pull the ddrive_* tables on the next sync.
-
-Verify locally:
-  npm ci && npm run check        (typecheck + 215 unit tests + build)
-  npm run test:db                (SQL suite; needs a Supabase project — not
-                                  runnable in the authoring sandbox)
-
-Verify live:
-  - EOC -> Risk: the city picture lists ten hazards; Riverine & flash flood
-    shows "H · High"; hover the badge for its evidence anchor.
-  - Barangay filter by hazard (e.g. Liquefaction) narrows the list; a profile
-    sheet shows flood, CDRA hazards, vulnerability and priority, with "—" for
-    fields not yet assessed.
-  - Ctrl+K finds "Risk intelligence".
-
-Workbook revisions: place the new xlsx in reference/ and re-run
-  python3 scripts/ddrive_seed.py
-then re-apply part 26. The generator resolves the two 9-digit PSGC typos in
-sheet 04 by barangay name and reports what it fixed.
+MODE 1.12.1 - seed part 26 fix (10 November 2026)
+Replaces supabase/seed/parts/26_ddrive.sql from the 1.12.1 handover. Two generator bugs:
+1. The last VALUES row ended with ";", orphaning the ON CONFLICT clause
+   (42601 syntax error at "on", line 93).
+2. Workbook display headers (Flood Susceptibility Class, Source ID, ...)
+   were emitted as column names for ddrive_flood/hazards/exposure/vulnerability/
+   priority/sources. The SQL now uses the real table columns from migration
+   20261110002100; the headers still read the workbook cells.
+Re-run after parts 1-25 (idempotent; ON CONFLICT DO UPDATE). The final check must
+return 85 | 85 | 85 | 85 | 85 | 85 | 10 | 25 | 31.
+scripts/ddrive_seed.py is the corrected generator (same fixes).
+Verified: 9 insert statements, row counts as above, all column lists are valid
+identifiers matching the migration. npm run test:db not run here (needs the live project).
