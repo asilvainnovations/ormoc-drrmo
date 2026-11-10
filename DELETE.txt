@@ -1,13 +1,2 @@
-reference/DELETE.txt
-reference/DEPLOY.md
-reference/Ormoc_CDRRMO-EOC_Institutional_Assessment_Tool_v1.5.xlsx
-reference/README.md
-reference/SECURITY.md
-reference/netlify.toml
-reference/package-lock.json
-reference/package.json
-reference/vercel.json
-reference/vite.config.ts
-src/lib/DocumentPage.tsx
-src/lib/LibraryPage.test.ts
-src/lib/LibraryPage.tsx
+.github/uptime.yml
+(move: the file content is delivered at .github/workflows/uptime.yml — delete the misplaced one after copying)

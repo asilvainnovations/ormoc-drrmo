@@ -1,26 +1,19 @@
-MODE 1.11.1 handover — apply steps (apply on top of main @ 3e5547a, push with git, never the web upload)
-==========================================================================================================
+MODE 1.11.2 — apply steps (two small fixes; ~2 minutes)
 
-1. Copy every file in this zip over the repo, repo-relative paths (preserves .github/ and .env.example;
-   the web upload would drop them).
-2. Delete the files listed in DELETE.txt (all under reference/ except the IAT v1-6 workbook, and the
-   three stale src/lib duplicates).
-3. npm ci && npm run check (typecheck, unit, build) — expect 206 unit tests, build clean.
-4. npm run test:db — expect 260 checks passed.
-5. Commit, push to main, tag:
-      git tag -a v1.11.1 -m "MODE 1.11.1"
-      git push origin main --tags
-   Then create the GitHub Release (notes in DEPLOY.md 'To 1.11.1').
-6. Apply to production (no migration):
-   a. Run supabase/seed/operational/04_vault_register.sql once in the SQL editor (idempotent; adds the
-      9 Nov 2026 issuance bundle and the NOT OBTAINED records).
-   b. Vercel redeploys automatically; confirm the public policies show 'In effect from 9 November 2026.
-      Approved by City Legal Office and City Data Protection Officer.'
-7. GitHub repo settings (browser):
-   a. Add Actions secrets SUPABASE_URL and SERVICE_ROLE_KEY (basemap.yml).
-   b. Protect main (require the CI checks).
-   c. Close or complete stale PR #1.
-   d. Actions → 'Build City basemap' → Run workflow (uploads the basemap to the public bucket).
-8. Verify green: the CI workflow (4 jobs) and the basemap workflow run; uptime check runs every 6 hours.
+1. Copy the files from this zip into the repo root, keeping paths:
+     vitest.config.ts
+     .github/workflows/uptime.yml
+2. Delete the file listed in DELETE.txt (.github/uptime.yml) — it was one level too
+   high, so GitHub Actions never picked it up.
+3. Sanity-check locally, then push with git (never the web upload):
+     npm test          # expect the full suite again (206 tests), not the 162-test node-env run
+4. Confirm on GitHub: Actions tab shows three workflows (CI, Build City basemap, Uptime check).
+5. Add a DEPLOY.md entry under section 3:
+     To 1.11.2 — restored vitest.config.ts (overwritten with vite.config.ts content in the
+     1.11.0 push, which ran unit tests in node environment); uptime.yml moved into
+     .github/workflows/.
+6. git tag -a v1.11.2 -m "1.11.2" && git push origin v1.11.2, then publish the GitHub Release.
 
-Local gates already verified on this tree: tsc 0 errors; 206/206 unit; build clean; 260/260 SQL checks.
+Why: vitest.config.ts on main currently holds a copy of vite.config.ts (the 1.11.0 push
+overwrote it), so `npm test` ran in node environment — 18 DOM/Dexie test failures that
+disappear once the jsdom config is back. CI's unit job will stay red until this lands.
