@@ -1,2 +1,0 @@
-.github/uptime.yml
-(move: the file content is delivered at .github/workflows/uptime.yml — delete the misplaced one after copying)
