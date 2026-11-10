@@ -81,7 +81,7 @@ def rows(ws):
 def upserts(table: str, cols: list[str], data: list[list], key: str) -> str:
     lines = [f'insert into public.{table} ({", ".join(cols)}) values']
     for i, row in enumerate(data):
-        tail = ';' if i == len(data) - 1 else ','
+        tail = ',' if i < len(data) - 1 else ''   # never ';': ON CONFLICT belongs to this statement
         lines.append('  (' + ', '.join(lit(v) for v in row) + ')' + tail)
     lines.append(f'on conflict ({key}) do update set ' +
                  ', '.join(f'{c} = excluded.{c}' for c in cols if c != key) + ';')
@@ -147,43 +147,72 @@ def main() -> None:
     sql.append(upserts('ddrive_barangay_profiles', prof_cols, data, 'psgc'))
 
     def per_barangay(sheet, mapping, table):
+        # mapping: (workbook header, SQL column, reader). The workbook headers carry spaces,
+        # '&', '%' and '/' - they read the cell, but the SQL statement uses the column name.
         d = []
         resolved = [(resolve_psgc(r, sheet), r) for r in rows(wb[sheet])]
         for psgc, r in sorted(resolved, key=lambda x: x[0]):
-            d.append([psgc] + [fn(r.get(col)) for col, fn in mapping])
-        sql.append(upserts(table, ['psgc'] + [m[0] for m in mapping], d, 'psgc'))
+            d.append([psgc] + [fn(r.get(head)) for head, _col, fn in mapping])
+        sql.append(upserts(table, ['psgc'] + [m[1] for m in mapping], d, 'psgc'))
 
     # 04 -> ddrive_flood
     per_barangay('04_Flood_Assessment', [
-        ('Flood Susceptibility Class', text), ('Flood Hazard Source & Vintage', text),
-        ('Flood-prone Area (ha)', num), ('Total Barangay Land Area (ha)', num), ('Flood-prone Land (%)', num),
-        ('Population Potentially Exposed', integer), ('Exposure Base Population', integer),
-        ('Exposure Base Year', text), ('Population Exposure (%)', num),
-        ('Flood Depth / Inundation Scenario', text), ('Data Confidence', text), ('Validation Status', text),
+        ('Flood Susceptibility Class', 'susceptibility_class', text),
+        ('Flood Hazard Source & Vintage', 'hazard_source', text),
+        ('Flood-prone Area (ha)', 'prone_area_ha', num),
+        ('Total Barangay Land Area (ha)', 'land_area_ha', num),
+        ('Flood-prone Land (%)', 'prone_pct', num),
+        ('Population Potentially Exposed', 'exposed_population', integer),
+        ('Exposure Base Population', 'exposure_base_population', integer),
+        ('Exposure Base Year', 'exposure_base_year', text),
+        ('Population Exposure (%)', 'exposure_pct', num),
+        ('Flood Depth / Inundation Scenario', 'depth_scenario', text),
+        ('Data Confidence', 'confidence', text),
+        ('Validation Status', 'validation_status', text),
     ], 'ddrive_flood')
 
     # 05-08
     per_barangay('05_Multi_Hazard_Profile', [
-        ('Rain-Induced Landslide Susceptibility', text), ('Earthquake-Induced Landslide Susceptibility', text),
-        ('Ground Shaking', text), ('Ground Rupture', text), ('Liquefaction', text), ('Tsunami', text),
-        ('Critical Facilities Exposed', text), ('Lifeline & Road Exposure', text),
-        ('Vulnerable Population Indicators', text), ('Evacuation Access & Shelter Considerations', text),
-        ('Hazard Source & Vintage', text), ('Validation Status', text), ('Storm Surge Susceptibility', text),
+        ('Rain-Induced Landslide Susceptibility', 'rain_landslide', text),
+        ('Earthquake-Induced Landslide Susceptibility', 'eq_landslide', text),
+        ('Ground Shaking', 'ground_shaking', text),
+        ('Ground Rupture', 'ground_rupture', text),
+        ('Liquefaction', 'liquefaction', text),
+        ('Tsunami', 'tsunami', text),
+        ('Critical Facilities Exposed', 'facilities_exposure', text),
+        ('Lifeline & Road Exposure', 'lifeline_exposure', text),
+        ('Vulnerable Population Indicators', 'vulnerable_population', text),
+        ('Evacuation Access & Shelter Considerations', 'evacuation_access', text),
+        ('Hazard Source & Vintage', 'source_vintage', text),
+        ('Validation Status', 'validation_status', text),
+        ('Storm Surge Susceptibility', 'storm_surge', text),
     ], 'ddrive_hazards')
     per_barangay('06_Exposure_Indicators', [
-        ('Population 2024 POPCEN (baseline)', integer), ('Population 0–4', integer),
-        ('Population 5–17', integer), ('Population 18–59', integer), ('Population 60+', integer),
-        ('Schools (n)', integer), ('Health Facilities (n)', integer),
-        ('Infrastructure & Lifelines', text), ('Source', text), ('Status', text),
+        ('Population 2024 POPCEN (baseline)', 'population_2024', integer),
+        ('Population 0–4', 'pop_0_4', integer),
+        ('Population 5–17', 'pop_5_17', integer),
+        ('Population 18–59', 'pop_18_59', integer),
+        ('Population 60+', 'pop_60_plus', integer),
+        ('Schools (n)', 'schools', integer),
+        ('Health Facilities (n)', 'health_facilities', integer),
+        ('Infrastructure & Lifelines', 'infrastructure', text),
+        ('Source', 'source', text),
+        ('Status', 'status', text),
     ], 'ddrive_exposure')
     per_barangay('07_Vulnerability_Capacity', [
-        ('Social Sensitivity Indicators', text), ('Access Constraints (roads, bridges, terrain)', text),
-        ('Coping Capacity', text), ('Adaptive Capacity', text), ('Method / Source', text),
-        ('Validation Status', text),
+        ('Social Sensitivity Indicators', 'social_sensitivity', text),
+        ('Access Constraints (roads, bridges, terrain)', 'access_constraints', text),
+        ('Coping Capacity', 'coping_capacity', text),
+        ('Adaptive Capacity', 'adaptive_capacity', text),
+        ('Method / Source', 'method_source', text),
+        ('Validation Status', 'validation_status', text),
     ], 'ddrive_vulnerability')
     per_barangay('08_Risk_Prioritisation', [
-        ('Proposed Priority Rank (1–85)', integer), ('Priority Basis (evidence)', text),
-        ('Population 2024 POPCEN', integer), ('Assessment Confidence', text), ('Validation Status', text),
+        ('Proposed Priority Rank (1–85)', 'priority_rank', integer),
+        ('Priority Basis (evidence)', 'basis', text),
+        ('Population 2024 POPCEN', 'population_2024', integer),
+        ('Assessment Confidence', 'confidence', text),
+        ('Validation Status', 'validation_status', text),
     ], 'ddrive_priority')
 
     # 14 -> ddrive_city_scores
@@ -224,11 +253,12 @@ def main() -> None:
                        matrix, 'ranking'))
 
     # 09 -> ddrive_sources
-    src_map = [('Source ID', text), ('Source Name', text), ('Owner / Publisher', text), ('URL', text),
-               ('Vintage / Reference Date', text), ('Scale / Coverage', text), ('Date Accessed', text),
-               ('Known Limitations', text)]
-    data = [[fn(r.get(col)) for col, fn in src_map] for r in rows(wb['09_Source_Register'])]
-    sql.append(upserts('ddrive_sources', [m[0] for m in src_map], data, 'source_id'))
+    src_map = [('Source ID', 'source_id', text), ('Source Name', 'name', text),
+               ('Owner / Publisher', 'owner', text), ('URL', 'url', text),
+               ('Vintage / Reference Date', 'vintage', text), ('Scale / Coverage', 'coverage', text),
+               ('Date Accessed', 'accessed_on', text), ('Known Limitations', 'limitations', text)]
+    data = [[fn(r.get(head)) for head, _col, fn in src_map] for r in rows(wb['09_Source_Register'])]
+    sql.append(upserts('ddrive_sources', [m[1] for m in src_map], data, 'source_id'))
 
     sql.append('-- Expected: 85 | 85 | 85 | 85 | 85 | 85 | 10 | 25 | 31\n'
                'select (select count(*) from public.ddrive_barangay_profiles) as profiles,\n'
