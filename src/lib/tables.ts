@@ -28,6 +28,17 @@ export const TABLES: TableConfig[] = [
   { name: 'aa_action_templates', pk: 'id', cursor: null, write: 'none' },
   { name: 'profiles', pk: 'id', cursor: 'updated_at', write: 'none' },
   { name: 'barangays', pk: 'psgc', cursor: 'updated_at', write: 'none' },
+  // DDRiVE risk-intelligence base layer (1.12.1, ADR-024): the desk-assessment workbook,
+  // read-only reference. The band of a city score is computed by v_ddrive_city_risk, not stored.
+  { name: 'ddrive_barangay_profiles', pk: 'psgc', cursor: null, write: 'none' },
+  { name: 'ddrive_flood', pk: 'psgc', cursor: null, write: 'none' },
+  { name: 'ddrive_hazards', pk: 'psgc', cursor: null, write: 'none' },
+  { name: 'ddrive_exposure', pk: 'psgc', cursor: null, write: 'none' },
+  { name: 'ddrive_vulnerability', pk: 'psgc', cursor: null, write: 'none' },
+  { name: 'ddrive_priority', pk: 'psgc', cursor: null, write: 'none' },
+  { name: 'ddrive_city_scores', pk: 'hazard_event', cursor: null, write: 'none' },
+  { name: 'ddrive_risk_matrix', pk: 'ranking', cursor: null, write: 'none' },
+  { name: 'ddrive_sources', pk: 'source_id', cursor: null, write: 'none' },
   // 1.9 reference and registers (migrations 20261106001700-1900)
   { name: 'barangay_clusters', pk: 'id', cursor: 'updated_at', write: 'none' },
   { name: 'response_clusters', pk: 'id', cursor: 'updated_at', write: 'none' },

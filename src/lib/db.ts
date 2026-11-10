@@ -86,6 +86,16 @@ export class DrrmDB extends Dexie {
   logbook_entries!: Table<T.LogEntry, string>;
   sitreps!: Table<T.Sitrep, string>;
   barangays!: Table<T.Barangay, string>;
+  // DDRiVE (1.12.1, ADR-024)
+  ddrive_barangay_profiles!: Table<T.DdriveBarangayProfile, string>;
+  ddrive_flood!: Table<T.DdriveFlood, string>;
+  ddrive_hazards!: Table<T.DdriveHazards, string>;
+  ddrive_exposure!: Table<T.DdriveExposure, string>;
+  ddrive_vulnerability!: Table<T.DdriveVulnerability, string>;
+  ddrive_priority!: Table<T.DdrivePriority, string>;
+  ddrive_city_scores!: Table<T.DdriveCityScore, string>;
+  ddrive_risk_matrix!: Table<T.DdriveRiskMatrixRow, number>;
+  ddrive_sources!: Table<T.DdriveSource, string>;
   barangay_reports!: Table<T.BarangayReport, string>;
   resource_requests!: Table<T.ResourceRequest, string>;
   // anticipatory action
@@ -179,6 +189,18 @@ export class DrrmDB extends Dexie {
       eoc_designations: 'id, position_id, status',
       geo_reference_points: 'id, code, verification_status',
       geo_layers: 'id, code, layer_group, status',
+    });
+    // v5 (1.12.1): DDRiVE risk-intelligence base layer (ADR-024). Read-only reference.
+    this.version(5).stores({
+      ddrive_barangay_profiles: 'psgc, name, cluster_no',
+      ddrive_flood: 'psgc',
+      ddrive_hazards: 'psgc',
+      ddrive_exposure: 'psgc',
+      ddrive_vulnerability: 'psgc',
+      ddrive_priority: 'psgc, priority_rank',
+      ddrive_city_scores: 'hazard_event, hazard_family',
+      ddrive_risk_matrix: 'ranking, band',
+      ddrive_sources: 'source_id',
     });
   }
 }
