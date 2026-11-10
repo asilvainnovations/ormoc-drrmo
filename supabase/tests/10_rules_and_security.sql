@@ -842,6 +842,24 @@ select tests.expect_error('an approved workflow''s registry entry is fixed',
 select tests.expect_rows('indicator traceability lists the SOPs serving A5.1',
   $$select 1 from public.v_indicator_sops where indicator_id = 'A5.1'$$, 1);
 
+-- DDRiVE base layer (1.12.1, ADR-024)
+reset role;
+select tests.expect_eq('the DDRiVE baseline covers all 85 barangays with 10-digit PSGCs',
+  (select count(*)::text from public.ddrive_barangay_profiles where psgc ~ '^[0-9]{10}$'), '85');
+select tests.expect_eq('a missing value is never zero: no barangay has a zero 2024 population',
+  (select count(*)::text from public.ddrive_barangay_profiles where population_2024 = 0), '0');
+select tests.expect_eq('the risk matrix has 25 bands',
+  (select count(*)::text from public.ddrive_risk_matrix), '25');
+select tests.expect_rows('the computed band matches the workbook for the top desk score',
+  $$select 1 from public.v_ddrive_city_risk where hazard_event = 'Riverine & flash flood' and band = 'H7'$$, 1);
+select tests.expect_rows('liquefaction desk score computes to M5 as published',
+  $$select 1 from public.v_ddrive_city_risk where hazard_event = 'Liquefaction' and band = 'M5'$$, 1);
+select tests.login('00000000-0000-0000-0000-000000000010');  -- viewer
+select tests.expect_rows('a viewer reads the DDRiVE profiles',
+  $$select count(*) from public.ddrive_barangay_profiles$$, 85);
+select tests.expect_error('a viewer cannot edit DDRiVE reference data',
+  $$update public.ddrive_barangay_profiles set population_2024 = 0 where psgc = '0803738001'$$, '42501');
+
 reset role;
 select tests.expect_eq('audit trail recorded', ((select count(*) from public.audit_log) > 50)::text, 'true');
 \o
