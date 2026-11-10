@@ -202,6 +202,21 @@ Then, in the dashboard:
      - A workspace address answers with the `x-robots-tag: noindex, nofollow` header.
      - An installed phone opens at Today (reinstall if it still opens the home page).
   7. Old bookmarks to `/` now open the public home page. Signed-in people get "Open workspace" there. Tell staff the new Today address.
+- **To 1.12.0** (10 November 2026), operational clarity. No migration, no seed change.
+  1. **Workflow flow diagrams** (DRRM → Workflows, open any workflow): the Steps tab now draws the sequence
+     as a vertical flow — numbered nodes on a spine, critical steps in red, due targets and note requirements
+     as badges, and each step's form as a connector chip that opens the form in DRRM → Forms.
+  2. **Workflow ↔ Form linking both ways.** The Forms page "Used by" list now links each entry back to the
+     owning workflow or protocol at the right step in its flow diagram; field options (select/multiselect
+     dropdowns) show as option chips with counts, and field detail states ranges and length limits.
+  3. **Library reorganization.** The Manuals tab now follows the Manual's own structure: five Parts with
+     their summaries, ten functional areas as sub-groups (each linking to the Manual's area introduction),
+     chapters/SOPs/forms/annex kind chips, and the legacy EOC Manual in its own section (ADR-012).
+  4. Upload the files and redeploy. Then check: open WF-SOP3-06 (or any workflow) and confirm the flow
+     diagram renders and the form chip opens the form; open a form used by several steps and confirm each
+     "Used by" row opens its workflow; open Library → Manuals and confirm Part/Area grouping and search
+     still find "EOC Ch.2" and "area 4".
+
 - **To 1.11.1** (10 November 2026), build and governance fixes on 1.11.0: restores the missing `src/lib` modules and
   fixes the restored component kit so `main` builds clean; rebuilds `supabase/seed/seed.sql` from the 25 parts (the 1.11.0
   parts were never assembled); updates the stale SQL-suite expectation (13 protocols, 15 workflows); removes the stale

@@ -1,0 +1,35 @@
+MODE 1.12.0 — "Operational clarity" — apply steps (10 November 2026)
+======================================================================
+
+Copy each file in this zip over the same repo-relative path in your working
+tree, then push with git (never the GitHub web upload). No files are deleted
+in this release, so no separate DELETE list. No migration, no seed change.
+
+Changed files (9):
+  package.json                                  version bump to 1.12.0
+  DEPLOY.md                                     new "To 1.12.0" entry
+  src/features/protocols/ProtocolsPage.tsx      Steps tab is now a flow diagram; form chips
+  src/features/protocols/FormsPage.tsx          Used-by links back to workflows; option chips
+  src/features/protocols/FlowDiagram.test.tsx   NEW — unit tests for the flow diagram
+  src/features/library/LibraryPage.tsx          Library grouped by Part and functional area
+  src/features/library/LibraryPage.render.test.tsx NEW — render test for the grouping
+  src/features/library/labels.ts                DOC_KIND labels
+  src/styles/index.css                          spine connector print rule
+
+Verify locally before pushing:
+  npm ci
+  npm run check        (typecheck + 211 unit tests + production build)
+
+After deploy, check live (full list also in DEPLOY.md "To 1.12.0"):
+  1. DRRM -> Workflows: open any workflow — steps draw as a numbered flow on a
+     spine; red numbers are critical steps; each step's form is a chip that
+     opens DRRM -> Forms.
+  2. DRRM -> Forms: open a form used by several steps — every "Used by" row
+     opens its workflow/protocol at the right step; select/multiselect fields
+     show their options as chips.
+  3. Library -> Manuals: the Manual groups under Part 1-5 with area sub-groups
+     (Area 1-10); search still finds "EOC Ch.2" and "area 4"; the legacy EOC
+     Manual sits in its own section.
+
+Note: FlowDiagram is now exported from ProtocolsPage.tsx purely so the unit
+test can render it — no behaviour change.
