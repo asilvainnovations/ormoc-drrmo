@@ -153,3 +153,10 @@ svg[id*="badge"] {
   visibility: hidden !important;
   opacity: 0 !important;
 }
+
+/* 1.12: workflow flow diagram. The connector prints as a rule even when background
+   graphics are off, so the flow still reads on paper. */
+.spine-line { background: rgb(var(--line)); }
+@media print {
+  .spine-line { background: none; border-left: 2px solid #666; }
+}
