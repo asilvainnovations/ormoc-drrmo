@@ -25,6 +25,7 @@ const SCREENS = [
   { to: '/eoc/sitreps', label: 'SitReps', icon: RadioTower, keys: 'situation report DILG' },
   { to: '/eoc/aa', label: 'Anticipatory action', icon: Siren, keys: 'PDRA state of imminent disaster RA 12287' },
   { to: '/eoc/map', label: 'Geo-COP map', icon: RadioTower, keys: 'GIS map layers' },
+  { to: '/eoc/risk', label: 'Risk intelligence', icon: RadioTower, keys: 'DDRiVE hazard barangay vulnerability exposure risk' },
   { to: '/library', label: 'Library', icon: BookOpen, keys: 'manual chapters annexes' },
   { to: '/library/trace', label: 'Traceability', icon: BookOpen, keys: 'indicators master requirements' },
   { to: '/vault', label: 'Document Vault', icon: FolderLock, keys: 'laws issuances documents', vault: true },
