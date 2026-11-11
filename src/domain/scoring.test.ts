@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { complianceStatus, evidenceCap, gapPriorityScore, maturityBand, priorityBand, scoreBlockReason } from './scoring';
+import { complianceStatus, cycleResults, evidenceCap, gapPriorityScore, maturityBand, priorityBand, scoreBlockReason } from './scoring';
+import type { Domain, Indicator, Response } from '@/types';
 
 describe('evidence rule (IAT §5.2)', () => {
   it('caps verbal evidence at 2 and requires approved documents for 3', () => {
@@ -30,6 +31,15 @@ describe('gap priority (IAT §5.4)', () => {
   it('bands maturity at 0.5, 1.5, 2.5, 3.5', () => {
     expect([0.49, 0.5, 1.49, 1.5, 2.49, 2.5, 3.49, 3.5].map(maturityBand)).toEqual(
       ['Absent', 'Initial', 'Initial', 'Developing', 'Developing', 'Compliant', 'Compliant', 'Advanced']);
+  });
+  it('bands the unrounded index: 2.495 is Developing although it shows as 2.50 (1.13.0)', () => {
+    // 200 equal-weight items: 101 at 2 and 99 at 3 give exactly 499 / 200 = 2.495.
+    const domains = [{ code: 'A1', part: 'A', name: 'A1', scope: '', functional_area: '', platform_module: '', sort: 1 }] as Domain[];
+    const indicators = Array.from({ length: 200 }, (_, n) => ({ id: `A1.${n + 1}`, domain: 'A1', type: 'GP', weight: 1 })) as Indicator[];
+    const responses = indicators.map((i, n) => ({ id: String(n), cycle_id: 'c', indicator_id: i.id, score: n < 101 ? 2 : 3, is_na: false })) as Response[];
+    const r = cycleResults(indicators, domains, responses).domains.A1!;
+    expect(r.maturityIndex).toBe(2.5);
+    expect(r.band).toBe('Developing');
   });
   it('reports compliance status', () => {
     expect(complianceStatus({ score: 3, is_na: false }, 'M', 'A')).toBe('Compliant');

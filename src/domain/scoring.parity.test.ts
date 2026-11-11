@@ -15,6 +15,7 @@ describe('scoring parity with SQL', () => {
     const r = res.domains[d.domain]!;
     expect(r.scored).toBe(d.scored);
     expect(r.maturityIndex).toBe(d.maturity_index === null ? null : Number(d.maturity_index));
+    expect(r.band).toBe(d.maturity_band ?? null);
     expect(r.mandatoryCompliance).toBe(d.mandatory_compliance === null ? null : Number(d.mandatory_compliance));
     expect(r.highGaps).toBe(d.high_gaps);
   });
@@ -22,6 +23,7 @@ describe('scoring parity with SQL', () => {
     const r = { A: res.partA, B: res.partB, C: res.interface, IMI: res.imi }[g.grp as 'A' | 'B' | 'C' | 'IMI'];
     expect(r.scored).toBe(g.scored);
     expect(r.maturityIndex).toBe(Number(g.maturity_index));
+    expect(r.band).toBe(g.maturity_band ?? null);
     expect(r.mandatoryCompliance).toBe(g.mandatory_compliance === null ? null : Number(g.mandatory_compliance));
     expect(r.highGaps).toBe(g.high_gaps);
   });

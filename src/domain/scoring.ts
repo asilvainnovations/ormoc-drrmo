@@ -79,11 +79,14 @@ interface Scored { score: number; weight: number; type: 'M' | 'GP'; part: string
 function summarise(items: Scored[], indicators: number): ResultRow {
   const w = items.reduce((s, i) => s + i.weight, 0);
   const sw = items.reduce((s, i) => s + i.score * i.weight, 0);
-  const idx = w === 0 ? null : round(sw / w, 2);
+  const raw = w === 0 ? null : sw / w;
+  const idx = raw === null ? null : round(raw, 2);
   const m = items.filter((i) => i.type === 'M' && i.part !== 'C');
   const mc = m.length === 0 ? null : round(m.filter((i) => i.score >= 3).length / m.length, 4);
   const high = items.filter((i) => priorityBand(gapPriorityScore(i.score, i.weight, i.type, i.part)) === 'High').length;
-  return { scored: items.length, indicators, maturityIndex: idx, band: maturityBand(idx), mandatoryCompliance: mc, highGaps: high };
+  // Band the unrounded index, as the workbook does: 2.495 is Developing although it displays as 2.50
+  // (supabase/migrations/20261111002300_band_unrounded.sql).
+  return { scored: items.length, indicators, maturityIndex: idx, band: maturityBand(raw), mandatoryCompliance: mc, highGaps: high };
 }
 
 export interface CycleResults {
