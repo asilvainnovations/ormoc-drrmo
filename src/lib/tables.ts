@@ -58,7 +58,7 @@ export const TABLES: TableConfig[] = [
       'form_code', 'form_rev', 'form_schema'] },
   // assessment
   { name: 'assessment_cycles', pk: 'id', cursor: 'updated_at', write: 'upsert', omit: [...STAMPS, 'created_by'] },
-  { name: 'responses', pk: 'id', cursor: 'updated_at', write: 'upsert', omit: [...STAMPS, 'assessed_by', 'validated_by', 'validated_at'] },
+  { name: 'responses', pk: 'id', cursor: 'updated_at', write: 'upsert', omit: [...STAMPS, 'assessed_by', 'validated_by', 'validated_at', 'evidence_checked_by', 'evidence_checked_at'] },
   { name: 'evidence', pk: 'id', cursor: 'updated_at', write: 'upsert', omit: [...STAMPS, 'captured_by'] },
   { name: 'actions', pk: 'id', cursor: 'updated_at', write: 'upsert', omit: STAMPS },
   // EOC
