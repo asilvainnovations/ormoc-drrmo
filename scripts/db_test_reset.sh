@@ -11,5 +11,10 @@ for f in supabase/migrations/*.sql; do run "$f"; done
 # Migrations must be safe to run again (the SQL editor gets re-runs): apply the newest ones a second time.
 for f in $(ls supabase/migrations/2026*.sql | tail -4); do run "$f"; done
 run supabase/seed/seed.sql
+# Parts made by other generators (for example 26_ddrive.sql from scripts/ddrive_seed.py) are not in
+# seed.sql. Run them after it, in order, as the Supabase SQL editor does (audit 11 Nov 2026, R1).
+for f in supabase/seed/parts/*.sql; do
+  case "$f" in *_seed.sql) ;; *) run "$f" ;; esac
+done
 # 1.9.0: the one-time operational files must apply cleanly too (baseline, Vault, v1-5 update, EOC structure).
 for f in supabase/seed/operational/*.sql; do run "$f"; done

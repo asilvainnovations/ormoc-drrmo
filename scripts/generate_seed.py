@@ -958,7 +958,9 @@ def write_sql(o):
     parts.append(cur)
     part_dir = seed_dir / 'parts'
     part_dir.mkdir(exist_ok=True)
-    for old in part_dir.glob('*.sql'):
+    # Remove only the parts this script writes (NN_seed.sql). Parts made by other generators,
+    # such as 26_ddrive.sql from scripts/ddrive_seed.py, are kept (audit 11 Nov 2026, R3).
+    for old in part_dir.glob('[0-9][0-9]_seed.sql'):
         old.unlink()
     total = len(parts)
     for i, part in enumerate(parts, 1):
