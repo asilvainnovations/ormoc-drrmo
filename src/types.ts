@@ -31,11 +31,15 @@ export interface Hazard { code: string; name: string; forecastable: boolean; typ
 export type CycleStatus = 'draft' | 'fieldwork' | 'validation' | 'final' | 'archived';
 export interface Cycle extends Versioned { name: string; cycle_year: number; iat_version: string; status: CycleStatus; period_from: string | null; period_to: string | null; notes: string | null }
 export type EvidenceStrength = 'verbal' | 'partial' | 'approved_in_use' | 'tested_improved';
+/** IAT v1-6 Evidence Validation Status (migration 20261111002400_evidence_check.sql). */
+export type EvidenceCheck = 'pending' | 'verified' | 'partially_verified' | 'unverified' | 'missing';
 export type EvidenceKind = 'document' | 'observation' | 'interview' | 'fgd' | 'test' | 'photo';
 export interface Response extends Versioned {
   cycle_id: string; indicator_id: string; score: number | null; is_na: boolean; na_justification: string | null;
   gap_remarks: string | null; recommended_action: string | null; status: 'draft' | 'provisional' | 'validated';
   assessed_by?: string | null; validated_by?: string | null; validated_at?: string | null;
+  /** Server-stamped who and when; optional because rows synced before 1.13.0 lack them. */
+  evidence_check?: EvidenceCheck; evidence_checked_by?: string | null; evidence_checked_at?: string | null;
 }
 export interface Evidence extends Versioned {
   response_id: string; kind: EvidenceKind; strength: EvidenceStrength; title: string; doc_date: string | null;
