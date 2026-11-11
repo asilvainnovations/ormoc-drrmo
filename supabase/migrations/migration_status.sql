@@ -32,7 +32,11 @@ from (values
   ('20261110002100_ddrive_base',              to_regclass('public.v_ddrive_city_risk') is not null),
   ('20261111002200_ddrive_grants',            coalesce((select reloptions from pg_class
                                                         where oid = to_regclass('public.v_ddrive_city_risk')), '{}')
-                                              @> array['security_invoker=true'])
+                                              @> array['security_invoker=true']),
+  ('20261111002300_band_unrounded',           coalesce(pg_get_viewdef(to_regclass('public.v_cycle_results')), '')
+                                              not like '%maturity_band(round(%'),
+  ('20261111002400_evidence_check',           exists (select 1 from information_schema.columns
+                                                      where table_schema = 'public' and table_name = 'responses' and column_name = 'evidence_check'))
 ) as m(migration, present)
 order by m.migration;
 
