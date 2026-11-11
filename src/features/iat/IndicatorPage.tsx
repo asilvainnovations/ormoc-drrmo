@@ -16,7 +16,7 @@ import { useCycleData, isEditable } from './data';
 import { tip } from '@/components/Tooltip';
 import { RefText } from '@/components/RefText';
 import { VaultForIndicator } from '@/features/vault/VaultPages';
-import { EVIDENCE_CHECK, EVIDENCE_CHECK_HELP, EVIDENCE_CHECK_TONE, EVIDENCE_KIND, RESPONSE_STATUS } from './labels';
+import { EVIDENCE_CHECK, EVIDENCE_CHECK_HELP, EVIDENCE_CHECK_TONE, EVIDENCE_KIND, RESPONSE_STATUS, RESPONSE_TONE } from './labels';
 
 const VERBAL_KINDS: EvidenceKind[] = ['interview', 'fgd'];
 
@@ -29,7 +29,7 @@ export function IndicatorPage() {
   const { cycleId, indicatorId: rawId } = useParams();
   const indicatorId = decodeURIComponent(rawId ?? '');
   const data = useCycleData(cycleId);
-  const { has, profile } = useAuth();
+  const { has, profile, userId } = useAuth();
   const toast = useToast();
   // Open the tab inside the click so pop-up blockers allow it, then point it at the file.
   const openFile = async (e: Evidence) => {
@@ -55,6 +55,7 @@ export function IndicatorPage() {
   const [action, setAction] = useState('');
   const [evCheck, setEvCheck] = useState<EvidenceCheck>('pending');
   const [evOpen, setEvOpen] = useState(false);
+  const [note, setNote] = useState('');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -62,6 +63,7 @@ export function IndicatorPage() {
     setScore(resp ? (resp.is_na ? 'NA' : resp.score) : null);
     setNaWhy(resp?.na_justification ?? ''); setGap(resp?.gap_remarks ?? ''); setAction(resp?.recommended_action ?? '');
     setEvCheck(resp?.evidence_check ?? 'pending');
+    setNote('');
   }, [resp?.id, resp?.version]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (!data || !ind || !domain) return <Loading />;
@@ -75,17 +77,23 @@ export function IndicatorPage() {
   const canCheck = editable && has('assessor', 'validator', 'cdrrmo_head');
   const blocked = typeof score === 'number' ? scoreBlockReason(score, cap) : null;
   const gps = typeof score === 'number' ? gapPriorityScore(score, ind.weight, ind.type, domain.part) : null;
+  // 1.15 validation workshop (migration 20261112002700): the scorer cannot validate; a revision needs a reason.
+  const canValidate = has('validator', 'cdrrmo_head');
+  const iScored = Boolean(resp?.scored_by && resp.scored_by === userId);
+  const revising = Boolean(resp) && ((score === 'NA') !== Boolean(resp?.is_na) || (typeof score === 'number' ? score : null) !== (resp?.is_na ? null : resp?.score ?? null));
 
   const persist = async (status?: Response['status']) => {
     setError(null);
     if (blocked) { setError(blocked); return; }
     if (score === 'NA' && !naWhy.trim()) { setError('Write why this indicator does not apply to Ormoc.'); return; }
     if (status === 'validated' && score === null) { setError('Score the indicator or mark it not applicable before validating.'); return; }
+    if (status === 'validated' && revising && !note.trim()) { setError('Give the reason for changing the score when you validate it.'); return; }
     setBusy(true);
     const base = resp ?? newResponse(data.cycle.id, ind.id);
     const next: Response = { ...base, score: typeof score === 'number' ? score : null, is_na: score === 'NA', na_justification: score === 'NA' ? naWhy.trim() : null,
       gap_remarks: gap.trim() || null, recommended_action: action.trim() || null, status: status ?? (base.status === 'validated' ? 'provisional' : base.status),
-      evidence_check: canCheck ? evCheck : (base.evidence_check ?? 'pending') };
+      evidence_check: canCheck ? evCheck : (base.evidence_check ?? 'pending'),
+      validation_note: status === 'validated' ? note.trim() || null : base.validation_note ?? null };
     await save('responses', next, `${status === 'validated' ? 'Validate' : 'Score'} ${ind.id}`);
     setBusy(false);
     toast(status === 'validated' ? `${ind.id} validated` : status === 'provisional' ? `${ind.id} submitted for validation` : `${ind.id} saved`);
@@ -104,7 +112,7 @@ export function IndicatorPage() {
       <PageHeader title={ind.id} back={`/assess/${data.cycle.id}/d/${domain.code}`}
         subtitle={<span className="flex flex-wrap gap-1.5">
           <Badge>{isC ? 'Interface' : ind.type === 'M' ? 'Mandatory' : 'Good practice'}</Badge><Badge>Weight {ind.weight}</Badge>
-          {resp && <Badge tone={resp.status === 'validated' ? 'ok' : 'neutral'}>{RESPONSE_STATUS[resp.status]}</Badge>}
+          {resp && <Badge tone={RESPONSE_TONE[resp.status]}>{RESPONSE_STATUS[resp.status]}</Badge>}
           <Badge tone={EVIDENCE_CHECK_TONE[resp?.evidence_check ?? 'pending']}>Evidence: {EVIDENCE_CHECK[resp?.evidence_check ?? 'pending']}</Badge>
           {ind.tags.map((t) => <Badge key={t} tone="info">{t}</Badge>)}
         </span>} />
@@ -146,6 +154,11 @@ export function IndicatorPage() {
           <Section title="Score">
             {!canAnswer && <Notice tone="info">{isC ? `Scored by the lead office (${ind.lead_office}) or the assessment team.` : 'Only the assessment team scores this indicator.'}</Notice>}
             {locked && <Notice tone="info" title="Validated">Ask a validator to reopen this score if it needs to change.</Notice>}
+            {resp?.status === 'validated' && resp.validation_decision && (
+              <Notice tone={resp.validation_decision === 'revised' ? 'warn' : 'ok'} title={resp.validation_decision === 'revised' ? `Revised at validation (submitted as ${resp.score_before_validation ?? 'NA'})` : 'Confirmed at validation'}>
+                {resp.validated_at ? `Validated ${fmtDateTime(resp.validated_at)}.` : null}{resp.validation_note ? ` Reason: ${resp.validation_note}` : null}
+              </Notice>
+            )}
             {!isEditable(data.cycle.status) && <Notice tone="info">This cycle is {data.cycle.status}. Scores are read-only.</Notice>}
             <ChoiceGroup legend="Maturity level" value={score} onChange={setScore} options={scoreOptions}
               hint={`Evidence so far supports up to ${cap}.`} />
@@ -161,8 +174,25 @@ export function IndicatorPage() {
               <div className="mt-5 flex flex-wrap gap-2">
                 <Button tip="Save your score and notes as a draft" busy={busy} onClick={() => persist()}>Save</Button>
                 {has('assessor', 'lead_office_focal') && resp?.status !== 'validated' && <Button tip="Send this score to a validator to check against the evidence" variant="secondary" onClick={() => persist('provisional')}>Submit for validation</Button>}
-                {has('validator', 'cdrrmo_head') && <Button tip="Confirm this score. Validated scores are locked" variant="secondary" icon={ShieldCheck} onClick={() => persist('validated')}>Validate</Button>}
+                {canValidate && !iScored && resp?.status !== 'validated' && (
+                  <Button tip={revising ? 'Validate with the changed score; the reason is recorded' : 'Confirm this score as submitted. Validated scores are locked'} variant="secondary" icon={ShieldCheck} busy={busy}
+                    onClick={() => persist('validated')}>{revising ? 'Validate with this change' : 'Validate as scored'}</Button>
+                )}
               </div>
+            )}
+            {editable && canValidate && resp && resp.status !== 'validated' && (
+              iScored
+                ? <p className="mt-3 max-w-prose text-sm text-muted">You set this score, so another validator validates it (assessor and validator are different people).</p>
+                : <>
+                    {revising && (
+                      <div className="mt-4 max-w-prose">
+                        <Field label="Reason for the change" tip="Required when you change the score while validating. It is kept with the validation">
+                          {(id) => <Textarea id={id} value={note} onChange={(e) => setNote(e.target.value)} placeholder="What the evidence shows that the submitted score did not reflect" />}
+                        </Field>
+                      </div>
+                    )}
+                    <p className="mt-2 max-w-prose text-sm text-muted">To change the score, pick the new level and validate with the reason in one step. Saving a change first makes you the scorer, and another validator would then validate it.</p>
+                  </>
             )}
           </Section>
         </div>

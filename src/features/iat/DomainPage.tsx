@@ -2,7 +2,7 @@ import { useParams } from 'react-router-dom';
 import { Badge, List, ListRow, Loading, PageHeader } from '@/components/ui';
 import { gapPriorityScore, priorityBand } from '@/domain/scoring';
 import { useCycleData } from './data';
-import { RESPONSE_STATUS } from './labels';
+import { RESPONSE_STATUS, RESPONSE_TONE } from './labels';
 
 export function DomainPage() {
   const { cycleId, domain } = useParams();
@@ -29,7 +29,7 @@ export function DomainPage() {
               meta={<span className="flex flex-wrap gap-1.5 pt-1">
                 <Badge>{d.part === 'C' ? 'Interface' : i.type === 'M' ? 'Mandatory' : 'Good practice'}</Badge>
                 <Badge>Weight {i.weight}</Badge>
-                {resp && <Badge tone={resp.status === 'validated' ? 'ok' : 'neutral'}>{RESPONSE_STATUS[resp.status]}</Badge>}
+                {resp && <Badge tone={RESPONSE_TONE[resp.status]}>{RESPONSE_STATUS[resp.status]}</Badge>}
                 {pr && pr !== 'Low' && <Badge tone={pr === 'High' ? 'bad' : 'warn'}>{pr} priority</Badge>}
                 {i.lead_office && <Badge tone="info">{i.lead_office}</Badge>}
               </span>} />

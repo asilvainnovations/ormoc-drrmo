@@ -241,6 +241,20 @@ LIBRARY_DRAFTS += [('MOO Ch.4', 'MOO', 'chapter', None, 'MOO_Ch4v1_v1.1.md', _CH
     ]
 ]
 
+# Chapter 5 v1.0 (12 Nov 2026): DRRM Financing, Procurement and Resource Accountability. Written in markdown
+# (reference/moo/MOO_Ch5v1_*.md). Its SOPs 5-01 to 5-10 run as workflows and protocols (sop_registry.py, CH5_*).
+_CH5V1 = 'v1.0 working draft (IAT v1.7)'
+_CH5_INDS = ['A3.5', 'A4.1', 'A4.2', 'A4.3', 'A4.4', 'A4.5', 'A4.6', 'A4.7', 'A4.8', 'A4.9', 'A10.5',
+             'A1.7', 'A2.7', 'A10.8', 'B6.4', 'B6.6', 'B7.5', 'C1.2']
+LIBRARY_DRAFTS += [('MOO Ch.5', 'MOO', 'chapter', None, 'MOO_Ch5v1_v1.0.md', _CH5V1, None)] + [
+    (f'Annex {aid}', 'MOO', kind, title, f'MOO_Ch5v1_Annex_{aid}.md', _CH5V1, inds)
+    for aid, kind, title, inds in [
+        ('5-A', 'annex', 'IAT and master requirements traceability for DRRM financing', _CH5_INDS),
+        ('5-B', 'form', 'Pre-audit checklist for DRRM transactions', ['A4.8', 'A4.4', 'A10.5']),
+        ('5-C', 'annex', 'Anticipatory action funding pathway and tranche worksheet', ['A4.6', 'A10.8']),
+    ]
+]
+
 AREA_ONLY_DRAFTS = {'SOP 6-GIS-01': 6}  # code -> functional area (Area 6: situational awareness, IM and GIS)
 # 1.11: the proposed SOP 6-GIS-01 (EOC Module note, 6 Nov 2026) as a Library draft, so WF-GEO-COP points to a text that
 # exists. Chapter 6 (EOC operations and information management) adopts it when drafted.
@@ -318,9 +332,11 @@ CHAPTERS = {  # legacy code -> (new code, chapter no, primary area, also areas, 
     'MOO Ch.3': ('Chapter 3', 3, 2, [3], 'Risk Intelligence, DRRM and Contingency Planning, and Institutional Preparedness'),
     # 1.11: Chapter 4 drafted (v1.1, 8 Nov 2026). Primary area 4; also area 5 (early warning, public information).
     'MOO Ch.4': ('Chapter 4', 4, 4, [5], 'Early Warning, Activation, Incident Management and Emergency Response'),
+    # 1.15: Chapter 5 drafted (v1.0, 12 Nov 2026). Primary area 1 (A4 indicators sit there); also area 7 (procurement).
+    'MOO Ch.5': ('Chapter 5', 5, 1, [7], 'DRRM Financing, Procurement and Resource Accountability'),
 }
 MERGED = {  # legacy shell -> functional area
-    'MOO Ch.5': 1, 'MOO Ch.6': 3, 'MOO Ch.7': 10, 'MOO Ch.8': 10, 'MOO Ch.9': 1,
+    'MOO Ch.6': 3, 'MOO Ch.7': 10, 'MOO Ch.8': 10, 'MOO Ch.9': 1,
     'EOC Ch.1': 1, 'EOC Ch.2': 4, 'EOC Ch.3': 9, 'EOC Ch.4': 5, 'EOC Ch.5': 4, 'EOC Ch.6': 6,
     'EOC Ch.7': 7, 'EOC Ch.8': 3, 'EOC Ch.9': 10,
 }
@@ -663,7 +679,7 @@ def main():
                              summary=None, status='draft', sort=sort, current_version_id=None, area_no=fa,
                              chapter_no=no, aliases=[code] + [k for k, v in RETIRED.items() if v == code and k == ANNEX_JD],
                              also_areas=also))
-            extra = _CH3_INDS if code == 'MOO Ch.3' else []
+            extra = {'MOO Ch.3': _CH3_INDS, 'MOO Ch.5': _CH5_INDS}.get(code, [])
             doc_links += [dict(document_id=did, indicator_id=i) for i in dict.fromkeys([i['id'] for i in inds] + extra)]
         else:
             parent = uid('doc', RETIRED[code]) if code in RETIRED else area_id[MERGED[code]]
@@ -738,8 +754,9 @@ def main():
     from forms_seed import FORMS, STEP_FORMS, WORKFLOWS
     from sop_registry import META, CH3_FORMS, CH3_WORKFLOWS, PROTOCOL_CATEGORIES  # 1.10.0 (ADR-019)
     from sop_registry import CH4_FORMS, CH4_PROTOCOLS  # 1.11.0: Chapter 4 v1.1
-    FORMS = FORMS + CH3_FORMS + CH4_FORMS
-    WORKFLOWS = WORKFLOWS + CH3_WORKFLOWS + CH4_PROTOCOLS
+    from sop_registry import CH5_FORMS, CH5_PROCEDURES  # 1.15.0: Chapter 5 v1.0
+    FORMS = FORMS + CH3_FORMS + CH4_FORMS + CH5_FORMS
+    WORKFLOWS = WORKFLOWS + CH3_WORKFLOWS + CH4_PROTOCOLS + CH5_PROCEDURES
     known_inds = {i['id'] for i in out['indicators']}
     out['form_templates'] = [dict(id=uid('form', c), code=c, title=t, purpose=pu, document_id=doc_home(d),
                                   schema=_json.dumps({'fields': flds}, ensure_ascii=False), status='draft', rev=1)
@@ -910,6 +927,10 @@ def statements(o):
     ids = ','.join(lit(i) + '::uuid' for i in o['superseded_documents'])
     st.append(('moo_documents', f"update public.moo_documents set status = 'superseded' where id in ({ids}) and status in ('draft','in_review');\n"
                                 f"delete from public.moo_document_indicators where document_id in ({ids});\n\n"))
+    # 1.15: a legacy shell that has since been drafted as a chapter (Chapters 4 and 5) must not stay superseded from an
+    # earlier load. Only a superseded shell changes; draft, review and approval states are left alone.
+    chap_ids = ','.join(lit(uid('doc', c)) + '::uuid' for c in CHAPTERS)
+    st.append(('moo_documents', f"update public.moo_documents set status = 'draft', parent_id = null where id in ({chap_ids}) and status = 'superseded';\n\n"))
     # Versions belong to the Library workflow once loaded (drafts get edited, reviewed, approved).
     st += version_statements(o['moo_versions'])
     st += upsert_chunks('moo_document_indicators', o['moo_document_indicators'], ['document_id', 'indicator_id'], cast={'document_id': '::uuid'})
@@ -925,7 +946,7 @@ def statements(o):
     return st
 
 
-CHECK_SQL = """-- Expected: 140 | 18 | 935 | 71 | 28 | 197 | 29 | 10 | 140 | 50
+CHECK_SQL = """-- Expected: 140 | 18 | 935 | 71 | 36 | 250 | 29 | 10 | 140 | 59
 select (select count(*) from public.iat_indicators)         as indicators,
        (select count(*) from public.master_requirements)    as requirements,
        (select count(*) from public.indicator_requirements) as indicator_links,

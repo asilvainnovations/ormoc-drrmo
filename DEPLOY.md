@@ -237,6 +237,29 @@ Then, in the dashboard:
        vulnerability and priority with "—" for fields not yet assessed;
      - the SQL suite (`npm run test:db`) passes its new DDRiVE checks.
 
+- **To 1.15.0** (12 November 2026), validation workshop kit and Chapter 5 (ADR-029). One migration (0027). Apply 1.14.0 first.
+  1. **Migration.** Run `supabase/migrations/20261112002700_validation_workshop.sql`. It adds four columns to IAT responses
+     (who last scored, the validation decision, the reason, the submitted score) and the view `v_validation_progress`.
+     From now on the server refuses a validation by the person who last scored the indicator, refuses a changed score
+     without a reason, and refuses entering a score straight as validated. The 140 baseline responses keep their scores
+     and stay "For validation". Then run `supabase/migrations/migration_status.sql`: expect 27 rows, all applied.
+  2. **Reference data.** Delete every file in `supabase/seed/parts/`, upload the new ones, and run all parts in order
+     (`01` to `27`, with `26a` to `26d` after `26_seed.sql`). The last part's check should return
+     **140 | 18 | 935 | 71 | 36 | 250 | 29 | 10 | 140 | 59**:
+     - Chapter 5 v1.0 (DRRM Financing, Procurement and Resource Accountability) with Annexes 5-A to 5-C in the Library.
+       An earlier load had marked the old "MOO Ch.5" shell superseded; the seed now returns a superseded shell to draft
+       when it has become a written chapter (Chapters 4 and 5). Draft, review and approval states are not touched.
+     - 36 workflows and protocols (8 new: WF-SOP5-03, PR-QRF-USE, PR-AA-FUNDS, WF-SOP5-06, PR-EMERGENCY-PROCURE,
+       WF-SOP5-08, WF-SOP5-09, WF-SOP5-10). WF-BUDGET-CYCLE now carries SOPs 5-01 and 5-02 (10 steps).
+     - 59 forms (nine new: FIN-F01 and FIN-F04 to FIN-F11; FIN-F02 and FIN-F03 are BUD-F01 and BUD-F02).
+  3. **Validators.** Give the validator role (Settings → Users and roles) to each CDRRMO position the Head designates
+     for the workshop. The lead assessor does not validate baseline items (Methodology v1.1 §6.1 rule 7).
+  4. **App.** Assess → cycle → **Validation workshop**: progress by part and domain, agreement rate, a queue; **Validation
+     sheets** prints one domain per page; **Results board** for the room screen. On an indicator, a validator sees
+     "Validate as scored" or, after changing the score, "Validate with this change" with a reason field.
+  5. Push with git, redeploy, then check: Library → Chapter 5 opens to its 9 workflows and protocols (SOPs 5-01 to 5-10); Assess → Validation workshop shows
+     0 of 140 validated; a scorer trying to validate their own score sees the refusal message.
+
 - **To 1.14.0** (12 November 2026), one baseline figure, Hazard maps, Library by chapter and DRRM thematic areas.
   One migration (0026) and one update script. Apply 1.13.0 first (migration 0025).
   1. **Baseline: one figure everywhere.** IAT workbook v1-7 (11 Nov 2026) is the only baseline: the

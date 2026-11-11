@@ -6,7 +6,9 @@ export const CYCLE_STATUS: Record<CycleStatus, string> = {
 export const CYCLE_NEXT: Partial<Record<CycleStatus, CycleStatus>> = { draft: 'fieldwork', fieldwork: 'validation', validation: 'final' };
 export const CYCLE_NEXT_LABEL: Partial<Record<CycleStatus, string>> = { draft: 'Start fieldwork', fieldwork: 'Open validation', validation: 'Finalize results' };
 
-export const RESPONSE_STATUS: Record<Response['status'], string> = { draft: 'Draft', provisional: 'Provisional', validated: 'Validated' };
+export const RESPONSE_STATUS: Record<Response['status'], string> = { draft: 'Draft', provisional: 'For validation', validated: 'Validated' };
+/** Same colour code as the Library and Workflows (components/StatusBadge.tsx): draft ochre, for validation blue, validated green. */
+export const RESPONSE_TONE: Record<Response['status'], 'warn' | 'info' | 'ok'> = { draft: 'warn', provisional: 'info', validated: 'ok' };
 
 export const EVIDENCE_KIND: Record<EvidenceKind, string> = {
   document: 'Document', observation: 'Site observation', interview: 'Key informant interview', fgd: 'Focus group discussion',

@@ -2,31 +2,31 @@
  "manual_parts": [
   {
    "no": 1,
-   "title": "Legal Mandate and Governance",
+   "title": "Legal mandate and governance",
    "summary": "Mandate, structure, authorities and accountability of the CDRRMO, the CDRRMC and the EOC.",
    "sort": 1
   },
   {
    "no": 2,
-   "title": "SOPs by Alert Level",
+   "title": "SOPs by alert level",
    "summary": "Preparedness, EOC activation, logistics and responder safety. The core of EOC operations and the largest Part.",
    "sort": 2
   },
   {
    "no": 3,
-   "title": "Information Management and Public Communication",
+   "title": "Information management and public communication",
    "summary": "Risk intelligence, early warning and public information, situational awareness and GIS.",
    "sort": 3
   },
   {
    "no": 4,
-   "title": "Continuity and Infrastructure Safeguards",
+   "title": "Continuity and infrastructure safeguards",
    "summary": "Digital continuity, cybersecurity and systems resilience.",
    "sort": 4
   },
   {
    "no": 5,
-   "title": "Recovery and Continuous Improvement",
+   "title": "Recovery and continuous improvement",
    "summary": "Recovery, learning, performance and manual revision.",
    "sort": 5
   }
@@ -138,7 +138,7 @@
   },
   {
    "code": "C",
-   "name": "Part C – Interface Indicators",
+   "name": "Part C – Interface indicators",
    "in_imi": false,
    "sort": 3
   }
@@ -347,7 +347,7 @@
   {
    "id": "A1.1",
    "domain": "A1",
-   "statement": "City Ordinance/EO Creating the CDRRMO as a Regular Office (not ad hoc), with Defined Functions mirroring RA 10121 Sec. 12(c)",
+   "statement": "City ordinance/EO creating the CDRRMO as a regular office (not ad hoc), with defined functions mirroring RA 10121 Sec. 12(c)",
    "reference": "RA 10121 Sec. 12; IRR Rule 6; JMC 2014-1",
    "type": "M",
    "weight": 3,
@@ -7738,7 +7738,6 @@
   }
  ],
  "superseded_documents": [
-  "d7190e43-31f8-55d7-b646-04574073dedf",
   "d61fc0e9-7136-5375-ab68-40132bc8dd3c",
   "aec20d50-301b-57ce-87d4-64154502a0ef",
   "cb5fb5fd-5044-57b7-84fe-dff921b0c759",
@@ -7770,7 +7769,6 @@
    "area_no": 1,
    "chapter_no": null,
    "aliases": [
-    "MOO Ch.5",
     "MOO Ch.9",
     "EOC Ch.1"
    ],
@@ -8022,17 +8020,21 @@
    "id": "d7190e43-31f8-55d7-b646-04574073dedf",
    "manual": "MOO",
    "kind": "chapter",
-   "code": "MOO Ch.5",
-   "title": "DRRM Financing",
-   "parent_id": "b807a5ed-12bb-508f-8a18-0d4f8e599013",
-   "summary": "Merged into Area 1 in v1.6. Kept for history; open Area 1 instead.",
-   "status": "superseded",
+   "code": "Chapter 5",
+   "title": "DRRM Financing, Procurement and Resource Accountability",
+   "parent_id": null,
+   "summary": "Area 1. Drafted chapter with 3 annex(es), SOP(s) and form(s).",
+   "status": "draft",
    "sort": 15,
    "current_version_id": null,
    "area_no": 1,
-   "chapter_no": null,
-   "aliases": [],
-   "also_areas": []
+   "chapter_no": 5,
+   "aliases": [
+    "MOO Ch.5"
+   ],
+   "also_areas": [
+    7
+   ]
   },
   {
    "id": "d61fc0e9-7136-5375-ab68-40132bc8dd3c",
@@ -9085,6 +9087,54 @@
    "also_areas": []
   },
   {
+   "id": "a77a3f29-f160-5f96-ac25-e8bbb357e6e8",
+   "manual": "MOO",
+   "kind": "annex",
+   "code": "Annex 5-A",
+   "title": "IAT and master requirements traceability for DRRM financing",
+   "parent_id": "d7190e43-31f8-55d7-b646-04574073dedf",
+   "summary": "Chapter 5 draft (v1.0 working draft (IAT v1.7)). 18 IAT indicator(s) linked.",
+   "status": "draft",
+   "sort": 80,
+   "current_version_id": null,
+   "area_no": 1,
+   "chapter_no": 5,
+   "aliases": [],
+   "also_areas": []
+  },
+  {
+   "id": "4e4e65a0-6865-52e2-a314-05fab33c5395",
+   "manual": "MOO",
+   "kind": "form",
+   "code": "Annex 5-B",
+   "title": "Pre-audit checklist for DRRM transactions",
+   "parent_id": "d7190e43-31f8-55d7-b646-04574073dedf",
+   "summary": "Chapter 5 draft (v1.0 working draft (IAT v1.7)). 3 IAT indicator(s) linked.",
+   "status": "draft",
+   "sort": 81,
+   "current_version_id": null,
+   "area_no": 1,
+   "chapter_no": 5,
+   "aliases": [],
+   "also_areas": []
+  },
+  {
+   "id": "4744143d-bf31-58ae-a850-aa662ce66fd7",
+   "manual": "MOO",
+   "kind": "annex",
+   "code": "Annex 5-C",
+   "title": "Anticipatory action funding pathway and tranche worksheet",
+   "parent_id": "d7190e43-31f8-55d7-b646-04574073dedf",
+   "summary": "Chapter 5 draft (v1.0 working draft (IAT v1.7)). 2 IAT indicator(s) linked.",
+   "status": "draft",
+   "sort": 82,
+   "current_version_id": null,
+   "area_no": 1,
+   "chapter_no": 5,
+   "aliases": [],
+   "also_areas": []
+  },
+  {
    "id": "d47f0498-4189-5772-9e6c-fecd708e1cbc",
    "manual": "MOO",
    "kind": "sop",
@@ -9093,7 +9143,7 @@
    "parent_id": "c4693fb2-e773-5bae-ad3a-be15c30b6131",
    "summary": "Area 6 draft (v0.1 proposed (EOC Module note, 6 Nov 2026)). 3 IAT indicator(s) linked.",
    "status": "draft",
-   "sort": 80,
+   "sort": 83,
    "current_version_id": null,
    "area_no": 6,
    "chapter_no": null,
@@ -9106,7 +9156,7 @@
    "id": "21b3dcb4-f37b-5d17-8e66-6763b26ecfbd",
    "document_id": "b807a5ed-12bb-508f-8a18-0d4f8e599013",
    "label": "v0.1 outline",
-   "body_md": "# Area 1. Governance, Organization & Institutional Arrangements\n\n**Part 1: Legal mandate and governance**\n\n> Outline generated from the Inception Report (Annex A) and the Traceability Dictionary v1.1. Drafted chapters that serve this area are listed below; write the remaining procedures here or in a new chapter.\n\n## Scope\n\nCDRRMO/EOC mandate; organizational structure; LDRRMC relationships; authorities; delegation; duty officers; ICS roles; inter-agency coordination; public-private partnerships; accountability.\n\n## MCR2030 alignment\n\n- Primary: Essential 1 – Organize for Disaster Resilience\n- Supporting: Essentials 6, 7, 9\n\n## Drafted chapters for this area\n\n- Chapter 1: Legal Mandate, DRRM Governance and Institutional Accountability\n- Chapter 2: CDRRMO Organizational Structure, Staffing and Human Resource Management\n\n## Sections merged into this area\n\nThese sections of the earlier two-manual outline were merged here in v1.6. Their codes still find this page.\n\n- MOO Ch.5 (DRRM Financing)\n- MOO Ch.9 (Partnerships)\n- EOC Ch.1 (Legal Basis)\n\n## Requirements this area must meet (36 indicators)\n\n- **A1.1** (M, weight 3) City ordinance/EO creating the CDRRMO as a regular office (not ad hoc), with defined functions mirroring RA 10121 Sec. 12(c)  \n  *Basis:* RA 10121 Sec. 12; IRR Rule 6; JMC 2014-1\n- **A1.2** (M, weight 2) CDRRMC constituted with complete membership per RA 10121 Sec. 11 (incl. CSO and private sector reps)  \n  *Basis:* RA 10121 Sec. 11\n- **A1.3** (M, weight 2) CDRRMC meets at least quarterly (and as needed); minutes and resolutions on file  \n  *Basis:* RA 10121 Sec. 11; GKS/SGLG functionality criteria\n- **A1.4** (M, weight 1) CDRRMO serves as CDRRMC secretariat with documented secretariat procedures  \n  *Basis:* RA 10121 Sec. 12(c)(17)\n- **A1.5** (GP, weight 2) Local DRRM-related ordinances in force (e.g., pre-emptive/forced evacuation, no-build zones, hazard-based zoning)  \n  *Basis:* RA 10121 Sec. 12(c)(19); RA 7160; CLUP/ZO\n- **A1.6** (M, weight 3) Protocol for declaring a State of Calamity, incl. CDRRMC recommendation steps and post-declaration measures (State of Imminent Disaster now assessed separately under A1.8)  \n  *Basis:* RA 10121 Sec. 16\n- **A1.7** (GP, weight 1) DRRM is represented in City Development Council and Local Finance Committee deliberations  \n  *Basis:* RA 7160; JMC 2013-1\n- **A1.8** (M, weight 3) State of Imminent Disaster procedure: CDRRMC coordinates with RDRRMC VIII when the pre-disaster risk assessment shows reasonable certainty of severe impact; request format to RDRRMC (24-hour reply); Mayor's EO template; adoption rule when the Region (or Province, applicability to an ICC to be confirmed) is declared; lifting grounds and authority  \n  *Basis:* RA 12287; RA 12287 IRR (2026) Rule II Sec. 6; Rule III Secs. 2-4\n- **A2.1** (M, weight 3) Organizational structure follows JMC 2014-1: Head + Administration & Training, Research & Planning, and Operations & Warning divisions  \n  *Basis:* NDRRMC-DILG-DBM-CSC JMC 2014-1\n- **A2.2** (M, weight 3) CDRRMO Head is a permanent plantilla position filled by a qualified appointee  \n  *Basis:* RA 10121 Sec. 12(b); JMC 2014-1\n- **A2.3** (M, weight 3) Minimum plantilla positions per JMC 2014-1 created and filled (ratio of filled/required)  \n  *Basis:* JMC 2014-1; CSC QS\n- **A2.4** (M, weight 2) Job descriptions/position descriptions defined for every position, aligned to RA 10121 functions  \n  *Basis:* CSC rules; JMC 2014-1\n- **A2.5** (M, weight 3) 24/7 operations capability with documented shift roster (Operations Center/Duty officers)  \n  *Basis:* RA 10121 Sec. 12(c)(16); EOC guidelines\n- **A2.6** (GP, weight 2) Training needs analysis done and competency-based training plan for staff (ICS, BLS/SFA, WASAR, CSSR, MOSAR, EOC, PDNA, GIS)  \n  *Basis:* RA 10121 Sec. 14; OCD/DRRM Training Institute curricula\n- **A2.7** (M, weight 2) Personnel welfare and safety: insurance, hazard pay, PPE, psychosocial support for responders  \n  *Basis:* RA 10121 Sec. 12; RA 11036 (MHPSS); CSC rules\n- **A2.8** (GP, weight 1) Volunteer/auxiliary responder management system (accreditation, registry, deployment, insurance), incl. mobilization of ACDVs for anticipatory action  \n  *Basis:* RA 10121 Sec. 13; NDRRMC volunteer guidelines; RA 12287 IRR (2026) Rule IV Sec. 5\n- **A2.9** (M, weight 2) Anticipatory action focal person designated in the CDRRMO, with AA training for staff, BDRRMCs, ACDVs and partner CSOs (incl. community-based early warning and early action)  \n  *Basis:* RA 12287 IRR (2026) Rule IV Sec. 1; Rule VII\n- **A2.10** (GP, weight 1) Inventory of DRRM-relevant skills across the CDRRMO, partner offices and barangays (SAR, engineering, logistics, GIS, PDNA, MHPSS) updated within the last 12 months  \n  *Basis:* UNDRR DRSC 6.1.1\n- **A4.1** (M, weight 3) LDRRMF set at not less than 5% of estimated revenue from regular sources  \n  *Basis:* RA 10121 Sec. 21; JMC 2013-1\n- **A4.2** (M, weight 3) 70% Mitigation/Preparedness and 30% Quick Response Fund (QRF) allocation observed  \n  *Basis:* RA 10121 Sec. 21; JMC 2013-1\n- **A4.3** (M, weight 2) Unexpended LDRRMF transferred to Special Trust Fund and used within 5 years  \n  *Basis:* RA 10121 Sec. 21; COA Circular 2012-002\n- **A4.4** (GP, weight 2) LDRRMF utilization rate monitored and reported (target >= 80% of current-year 70% fund)  \n  *Basis:* JMC 2013-1; COA AAR findings\n- **A4.5** (M, weight 2) Emergency procurement procedures (negotiated procurement - emergency cases) documented and pre-arranged (framework agreements, pre-qualified suppliers)  \n  *Basis:* RA 12009 (New Government Procurement Act) & IRR\n- **A4.6** (M, weight 2) Anticipatory action funding pathway: LDRRMFIP sets an AA line within the cap of 10% of the 70% LDRRMF; other sources mapped (Special Trust Fund balances, donations, ODA); Budget, Accounting and BAC procedures allow immediate disbursement and observe the 30%/70% tranche rule around the 3-day lead time  \n  *Basis:* RA 12287; RA 12287 IRR (2026) Rule V Secs. 1-3; RA 10121 Sec. 21; RA 12009\n- **A4.7** (GP, weight 1) Risk transfer/financing instruments explored (indemnity insurance of public assets, PSF access, partnerships)  \n  *Basis:* NDRRMP; RA 10174 (People's Survival Fund); DOF-BTr NIP\n- **A4.8** (M, weight 2) Clean COA findings on LDRRMF in last audit year (or findings addressed)  \n  *Basis:* COA Circular 2012-002\n- **A4.9** (GP, weight 2) QRF and LDRRMF adequacy tested against the most severe credible scenario (e.g., a Thelma-type flash flood or Yolanda-strength typhoon), with the shortfall and other fund sources identified  \n  *Basis:* UNDRR DRSC 3.2.3, 3.2.4; JMC 2013-1\n- **A10.1** (GP, weight 2) MOAs/ mutual aid agreements with neighbouring LGUs (Kananga, Albuera, Merida, Isabel etc.) and Province of Leyte  \n  *Basis:* RA 10121 Sec. 12(c)(15); RA 7160 Sec. 33\n- **A10.2** (GP, weight 1) Partnerships with CSOs, private sector (incl. energy/geothermal operators), academe and faith-based groups documented, with pre- and post-event roles defined and at least annual coordination meetings  \n  *Basis:* RA 10121 Sec. 12(c)(15); UNDRR DRSC 6.1.2, 6.1.4\n- **A10.3** (M, weight 2) Regular reporting to OCD Region VIII/RDRRMC and DILG (SitReps, LDRRMF reports, Operation L!sto)  \n  *Basis:* RA 10121; DILG MCs\n- **A10.4** (M, weight 2) Monitoring & evaluation framework for LDRRMP with indicators and annual review  \n  *Basis:* RA 10121 Sec. 12(c)(6)\n- **A10.5** (M, weight 1) Full Disclosure Policy: LDRRMF and utilization posted publicly  \n  *Basis:* DILG FDP MCs; RA 10121 Sec. 21\n- **A10.6** (GP, weight 2) After-action reviews conducted after significant events and lessons integrated into plans  \n  *Basis:* NDRRMC; good practice\n- **A10.7** (GP, weight 1) Participation in performance recognition/assessment systems (Gawad KALASAG Seal, SGLG Disaster Preparedness) and gaps acted upon  \n  *Basis:* NDRRMC GKS guidelines; RA 11292 (SGLG Act)\n- **A10.8** (M, weight 2) Post-declaration report within 45 days of lifting a State of Imminent Disaster (declaration status, AA fund utilization, estimated economic and social costs minimized); reporting route confirmed with OCD VIII  \n  *Basis:* RA 12287 IRR (2026) Rule VI Sec. 1\n- **A10.9** (GP, weight 1) Structured learning from other LGUs and networks (exchanges, OCD forums, MCR2030), with resulting changes documented  \n  *Basis:* UNDRR DRSC 6.6.1",
+   "body_md": "# Area 1. Governance, Organization & Institutional Arrangements\n\n**Part 1: Legal mandate and governance**\n\n> Outline generated from the Inception Report (Annex A) and the Traceability Dictionary v1.1. Drafted chapters that serve this area are listed below; write the remaining procedures here or in a new chapter.\n\n## Scope\n\nCDRRMO/EOC mandate; organizational structure; LDRRMC relationships; authorities; delegation; duty officers; ICS roles; inter-agency coordination; public-private partnerships; accountability.\n\n## MCR2030 alignment\n\n- Primary: Essential 1 – Organize for Disaster Resilience\n- Supporting: Essentials 6, 7, 9\n\n## Drafted chapters for this area\n\n- Chapter 1: Legal Mandate, DRRM Governance and Institutional Accountability\n- Chapter 2: CDRRMO Organizational Structure, Staffing and Human Resource Management\n- Chapter 5: DRRM Financing, Procurement and Resource Accountability\n\n## Sections merged into this area\n\nThese sections of the earlier two-manual outline were merged here in v1.6. Their codes still find this page.\n\n- MOO Ch.9 (Partnerships)\n- EOC Ch.1 (Legal Basis)\n\n## Requirements this area must meet (36 indicators)\n\n- **A1.1** (M, weight 3) City ordinance/EO creating the CDRRMO as a regular office (not ad hoc), with defined functions mirroring RA 10121 Sec. 12(c)  \n  *Basis:* RA 10121 Sec. 12; IRR Rule 6; JMC 2014-1\n- **A1.2** (M, weight 2) CDRRMC constituted with complete membership per RA 10121 Sec. 11 (incl. CSO and private sector reps)  \n  *Basis:* RA 10121 Sec. 11\n- **A1.3** (M, weight 2) CDRRMC meets at least quarterly (and as needed); minutes and resolutions on file  \n  *Basis:* RA 10121 Sec. 11; GKS/SGLG functionality criteria\n- **A1.4** (M, weight 1) CDRRMO serves as CDRRMC secretariat with documented secretariat procedures  \n  *Basis:* RA 10121 Sec. 12(c)(17)\n- **A1.5** (GP, weight 2) Local DRRM-related ordinances in force (e.g., pre-emptive/forced evacuation, no-build zones, hazard-based zoning)  \n  *Basis:* RA 10121 Sec. 12(c)(19); RA 7160; CLUP/ZO\n- **A1.6** (M, weight 3) Protocol for declaring a State of Calamity, incl. CDRRMC recommendation steps and post-declaration measures (State of Imminent Disaster now assessed separately under A1.8)  \n  *Basis:* RA 10121 Sec. 16\n- **A1.7** (GP, weight 1) DRRM is represented in City Development Council and Local Finance Committee deliberations  \n  *Basis:* RA 7160; JMC 2013-1\n- **A1.8** (M, weight 3) State of Imminent Disaster procedure: CDRRMC coordinates with RDRRMC VIII when the pre-disaster risk assessment shows reasonable certainty of severe impact; request format to RDRRMC (24-hour reply); Mayor's EO template; adoption rule when the Region (or Province, applicability to an ICC to be confirmed) is declared; lifting grounds and authority  \n  *Basis:* RA 12287; RA 12287 IRR (2026) Rule II Sec. 6; Rule III Secs. 2-4\n- **A2.1** (M, weight 3) Organizational structure follows JMC 2014-1: Head + Administration & Training, Research & Planning, and Operations & Warning divisions  \n  *Basis:* NDRRMC-DILG-DBM-CSC JMC 2014-1\n- **A2.2** (M, weight 3) CDRRMO Head is a permanent plantilla position filled by a qualified appointee  \n  *Basis:* RA 10121 Sec. 12(b); JMC 2014-1\n- **A2.3** (M, weight 3) Minimum plantilla positions per JMC 2014-1 created and filled (ratio of filled/required)  \n  *Basis:* JMC 2014-1; CSC QS\n- **A2.4** (M, weight 2) Job descriptions/position descriptions defined for every position, aligned to RA 10121 functions  \n  *Basis:* CSC rules; JMC 2014-1\n- **A2.5** (M, weight 3) 24/7 operations capability with documented shift roster (Operations Center/Duty officers)  \n  *Basis:* RA 10121 Sec. 12(c)(16); EOC guidelines\n- **A2.6** (GP, weight 2) Training needs analysis done and competency-based training plan for staff (ICS, BLS/SFA, WASAR, CSSR, MOSAR, EOC, PDNA, GIS)  \n  *Basis:* RA 10121 Sec. 14; OCD/DRRM Training Institute curricula\n- **A2.7** (M, weight 2) Personnel welfare and safety: insurance, hazard pay, PPE, psychosocial support for responders  \n  *Basis:* RA 10121 Sec. 12; RA 11036 (MHPSS); CSC rules\n- **A2.8** (GP, weight 1) Volunteer/auxiliary responder management system (accreditation, registry, deployment, insurance), incl. mobilization of ACDVs for anticipatory action  \n  *Basis:* RA 10121 Sec. 13; NDRRMC volunteer guidelines; RA 12287 IRR (2026) Rule IV Sec. 5\n- **A2.9** (M, weight 2) Anticipatory action focal person designated in the CDRRMO, with AA training for staff, BDRRMCs, ACDVs and partner CSOs (incl. community-based early warning and early action)  \n  *Basis:* RA 12287 IRR (2026) Rule IV Sec. 1; Rule VII\n- **A2.10** (GP, weight 1) Inventory of DRRM-relevant skills across the CDRRMO, partner offices and barangays (SAR, engineering, logistics, GIS, PDNA, MHPSS) updated within the last 12 months  \n  *Basis:* UNDRR DRSC 6.1.1\n- **A4.1** (M, weight 3) LDRRMF set at not less than 5% of estimated revenue from regular sources  \n  *Basis:* RA 10121 Sec. 21; JMC 2013-1\n- **A4.2** (M, weight 3) 70% Mitigation/Preparedness and 30% Quick Response Fund (QRF) allocation observed  \n  *Basis:* RA 10121 Sec. 21; JMC 2013-1\n- **A4.3** (M, weight 2) Unexpended LDRRMF transferred to Special Trust Fund and used within 5 years  \n  *Basis:* RA 10121 Sec. 21; COA Circular 2012-002\n- **A4.4** (GP, weight 2) LDRRMF utilization rate monitored and reported (target >= 80% of current-year 70% fund)  \n  *Basis:* JMC 2013-1; COA AAR findings\n- **A4.5** (M, weight 2) Emergency procurement procedures (negotiated procurement - emergency cases) documented and pre-arranged (framework agreements, pre-qualified suppliers)  \n  *Basis:* RA 12009 (New Government Procurement Act) & IRR\n- **A4.6** (M, weight 2) Anticipatory action funding pathway: LDRRMFIP sets an AA line within the cap of 10% of the 70% LDRRMF; other sources mapped (Special Trust Fund balances, donations, ODA); Budget, Accounting and BAC procedures allow immediate disbursement and observe the 30%/70% tranche rule around the 3-day lead time  \n  *Basis:* RA 12287; RA 12287 IRR (2026) Rule V Secs. 1-3; RA 10121 Sec. 21; RA 12009\n- **A4.7** (GP, weight 1) Risk transfer/financing instruments explored (indemnity insurance of public assets, PSF access, partnerships)  \n  *Basis:* NDRRMP; RA 10174 (People's Survival Fund); DOF-BTr NIP\n- **A4.8** (M, weight 2) Clean COA findings on LDRRMF in last audit year (or findings addressed)  \n  *Basis:* COA Circular 2012-002\n- **A4.9** (GP, weight 2) QRF and LDRRMF adequacy tested against the most severe credible scenario (e.g., a Thelma-type flash flood or Yolanda-strength typhoon), with the shortfall and other fund sources identified  \n  *Basis:* UNDRR DRSC 3.2.3, 3.2.4; JMC 2013-1\n- **A10.1** (GP, weight 2) MOAs/ mutual aid agreements with neighbouring LGUs (Kananga, Albuera, Merida, Isabel etc.) and Province of Leyte  \n  *Basis:* RA 10121 Sec. 12(c)(15); RA 7160 Sec. 33\n- **A10.2** (GP, weight 1) Partnerships with CSOs, private sector (incl. energy/geothermal operators), academe and faith-based groups documented, with pre- and post-event roles defined and at least annual coordination meetings  \n  *Basis:* RA 10121 Sec. 12(c)(15); UNDRR DRSC 6.1.2, 6.1.4\n- **A10.3** (M, weight 2) Regular reporting to OCD Region VIII/RDRRMC and DILG (SitReps, LDRRMF reports, Operation L!sto)  \n  *Basis:* RA 10121; DILG MCs\n- **A10.4** (M, weight 2) Monitoring & evaluation framework for LDRRMP with indicators and annual review  \n  *Basis:* RA 10121 Sec. 12(c)(6)\n- **A10.5** (M, weight 1) Full Disclosure Policy: LDRRMF and utilization posted publicly  \n  *Basis:* DILG FDP MCs; RA 10121 Sec. 21\n- **A10.6** (GP, weight 2) After-action reviews conducted after significant events and lessons integrated into plans  \n  *Basis:* NDRRMC; good practice\n- **A10.7** (GP, weight 1) Participation in performance recognition/assessment systems (Gawad KALASAG Seal, SGLG Disaster Preparedness) and gaps acted upon  \n  *Basis:* NDRRMC GKS guidelines; RA 11292 (SGLG Act)\n- **A10.8** (M, weight 2) Post-declaration report within 45 days of lifting a State of Imminent Disaster (declaration status, AA fund utilization, estimated economic and social costs minimized); reporting route confirmed with OCD VIII  \n  *Basis:* RA 12287 IRR (2026) Rule VI Sec. 1\n- **A10.9** (GP, weight 1) Structured learning from other LGUs and networks (exchanges, OCD forums, MCR2030), with resulting changes documented  \n  *Basis:* UNDRR DRSC 6.6.1",
    "change_note": "Generated from the Inception Report (Annex A) and Traceability v1.1",
    "status": "draft"
   },
@@ -9130,7 +9180,7 @@
    "id": "56a3017d-d58a-5530-9aad-45a8dda26d35",
    "document_id": "5536a613-b08a-5c03-b7d3-387341294c0b",
    "label": "v0.1 outline",
-   "body_md": "# Area 7. Resource, Logistics & Emergency Support Management\n\n**Part 2: SOPs by alert level**\n\n> Outline generated from the Inception Report (Annex A) and the Traceability Dictionary v1.1. Drafted chapters that serve this area are listed below; write the remaining procedures here or in a new chapter.\n\n## Scope\n\nResource inventory; resource requests; procurement; stockpiling; staging; transport; warehousing; fuel; relief supplies; mutual aid; supplier networks; emergency support services.\n\n## MCR2030 alignment\n\n- Primary: Essential 9 – Ensure Effective Disaster Response\n- Supporting: Essentials 3, 8, 6\n\n## Drafted chapters for this area\n\n- None yet.\n\n## Sections merged into this area\n\nThese sections of the earlier two-manual outline were merged here in v1.6. Their codes still find this page.\n\n- EOC Ch.7 (Coordination and Resource Management)\n\n## Requirements this area must meet (6 indicators)\n\n- **B6.1** (M, weight 3) ICS-EOC interface defined: EOC supports Incident Commander(s); no duplication of command  \n  *Basis:* NDRRMC MC No. 4 s. 2012; EOC Guidelines\n- **B6.2** (M, weight 3) Resource management system: request, tracking, mobilization and demobilization of resources  \n  *Basis:* ICS resource management; EOC Guidelines\n- **B6.3** (M, weight 2) Resource inventory (city, barangays, partners, private sector) accessible from EOC  \n  *Basis:* RA 10121; ICS\n- **B6.4** (GP, weight 1) Procedures for receiving and managing external assistance/ donations and volunteers  \n  *Basis:* NDRRMC guidelines on international/ external assistance\n- **B6.5** (GP, weight 2) Decision-support briefings to CDRRMC/Mayor at fixed intervals during activation  \n  *Basis:* EOC Guidelines\n- **B6.6** (GP, weight 2) Pre-arranged resource commitments from partners and suppliers set out by item, quantity, activation trigger and contact in signed agreements (incl. supplier agreements tapped for anticipatory action)  \n  *Basis:* UNDRR DRSC 1.2.4; RA 12287 IRR (2026) Rule IV Sec. 6(a)(ii)",
+   "body_md": "# Area 7. Resource, Logistics & Emergency Support Management\n\n**Part 2: SOPs by alert level**\n\n> Outline generated from the Inception Report (Annex A) and the Traceability Dictionary v1.1. Drafted chapters that serve this area are listed below; write the remaining procedures here or in a new chapter.\n\n## Scope\n\nResource inventory; resource requests; procurement; stockpiling; staging; transport; warehousing; fuel; relief supplies; mutual aid; supplier networks; emergency support services.\n\n## MCR2030 alignment\n\n- Primary: Essential 9 – Ensure Effective Disaster Response\n- Supporting: Essentials 3, 8, 6\n\n## Drafted chapters for this area\n\n- Chapter 5: DRRM Financing, Procurement and Resource Accountability\n\n## Sections merged into this area\n\nThese sections of the earlier two-manual outline were merged here in v1.6. Their codes still find this page.\n\n- EOC Ch.7 (Coordination and Resource Management)\n\n## Requirements this area must meet (6 indicators)\n\n- **B6.1** (M, weight 3) ICS-EOC interface defined: EOC supports Incident Commander(s); no duplication of command  \n  *Basis:* NDRRMC MC No. 4 s. 2012; EOC Guidelines\n- **B6.2** (M, weight 3) Resource management system: request, tracking, mobilization and demobilization of resources  \n  *Basis:* ICS resource management; EOC Guidelines\n- **B6.3** (M, weight 2) Resource inventory (city, barangays, partners, private sector) accessible from EOC  \n  *Basis:* RA 10121; ICS\n- **B6.4** (GP, weight 1) Procedures for receiving and managing external assistance/ donations and volunteers  \n  *Basis:* NDRRMC guidelines on international/ external assistance\n- **B6.5** (GP, weight 2) Decision-support briefings to CDRRMC/Mayor at fixed intervals during activation  \n  *Basis:* EOC Guidelines\n- **B6.6** (GP, weight 2) Pre-arranged resource commitments from partners and suppliers set out by item, quantity, activation trigger and contact in signed agreements (incl. supplier agreements tapped for anticipatory action)  \n  *Basis:* UNDRR DRSC 1.2.4; RA 12287 IRR (2026) Rule IV Sec. 6(a)(ii)",
    "change_note": "Generated from the Inception Report (Annex A) and Traceability v1.1",
    "status": "draft"
   },
@@ -10015,6 +10065,38 @@
    "status": "draft"
   },
   {
+   "id": "e4c40f42-2c02-513c-9bfa-7f3af91ec663",
+   "document_id": "d7190e43-31f8-55d7-b646-04574073dedf",
+   "label": "v1.0 working draft (IAT v1.7)",
+   "body_md": "**CHAPTER 5**\n\n**DRRM FINANCING, PROCUREMENT AND RESOURCE ACCOUNTABILITY**\n\nORMOC CITY DISASTER RISK REDUCTION AND MANAGEMENT OFFICE (CDRRMO)\nAND EMERGENCY OPERATIONS CENTER (EOC)\n\n*Assessment-informed working draft\nSubject to institutional, financial, legal and audit validation*\n\n**Draft 1.0 | 12 November 2026**\n\n**CONTROLLED WORKING DRAFT**\n\n# DOCUMENT CONTROL\n\n| **Document attribute** | **Control information** |\n|---|---|\n| Document title | Ormoc City CDRRMO–EOC Manual of Operations – Chapter 5 |\n| Chapter title | DRRM Financing, Procurement and Resource Accountability |\n| Document status | Working draft for technical, institutional, legal and audit validation |\n| Document owner | City Disaster Risk Reduction and Management Office |\n| Technical custodian | CDRRMO Head / Research and Planning Division (formulation) and Administration and Training Division (execution) |\n| Reviewing offices | City Budget Office; City Accounting Office; City Treasurer's Office; Bids and Awards Committee (BAC) and its Secretariat; City General Services Office (CGSO); City Planning and Development Office (CPDO); City Legal Office; CSWDO; Internal Audit Service, where constituted; OCD Region VIII for RA 12287 readings |\n| Version / date | Draft 1.0 / 12 November 2026 |\n| Approval authority | To be determined under the City document-control and approval arrangements |\n| Review cycle | At least annually, before the budget call; after a State of Calamity or a State of Imminent Disaster; after a COA Annual Audit Report; and when DBM–COA guidelines on anticipatory action funds are issued |\n\n## REVISION AND APPROVAL RECORD\n\n| **Version** | **Date** | **Description** | **Prepared / reviewed by** | **Approval** |\n|---|---|---|---|---|\n| 1.0 | 12 Nov 2026 | First assessment-informed working draft. Built from IAT v1.7 rows A3.5, A4.1–A4.9 and A10.5, with supporting rows A1.7, A2.7, B6.4, B6.6, B7.5 and C1.2. Applies RA 10121 Sec. 21, NDRRMC–DBM–DILG JMC No. 2013-1, COA Circular No. 2012-002, RA 12287 and its IRR (Rule V, signed 14 Sep 2026) and RA 12009. Ten SOPs (5-01 to 5-10), eleven forms (FIN-F01 to FIN-F11), Annexes 5-A to 5-C. | Project drafting team with CDRRMO | For review |\n\n> **Reading note.** This chapter does not create any power to appropriate, obligate, procure or disburse. Those powers stay with the Sangguniang Panlungsod, the City Mayor as Head of the Procuring Entity (HoPE), the BAC, the City Budget Officer, the City Accountant and the City Treasurer under the Local Government Code, the procurement law and COA rules. The chapter sets out how the CDRRMO prepares, tracks and documents the DRRM share of that work so that money reaches the right action on time and every peso can be accounted for.\n\n# 1. Introduction and Assessment-informed Rationale\n\nMoney is part of the warning-to-action chain. A warning that cannot be matched by funds, supplies and a lawful way to buy them does not turn into protective action. RA 10121 gives the City a dedicated fund for disaster risk reduction and management; RA 12287 now allows part of it to be spent before a hazard strikes. Both depend on plans approved in advance, procedures that the Budget, Accounting, Treasury and BAC offices recognise, and records that stand up to audit.\n\nThe IAT v1.7 baseline shows a sound base and a few critical gaps. A4 (DRRM Financing and Fund Management) has a provisional index of **2.16 (Developing)**. The 5% LDRRMF, the 70/30 split and the Special Trust Fund are in place and approved (A4.1–A4.3 at 3). Gaps sit where speed and evidence matter most:\n\n| IAT row | Finding (v1.7, for validation) | Score | Gap priority |\n|---|---|---|---|\n| A4.6 | No anticipatory action line or disbursement guidance under RA 12287 IRR Rule V | 0 | **High (12.0)** |\n| A4.5 | Emergency procurement not pre-arranged; supplier list not refreshed; FGD evidence only | 2 | Medium (6.0) |\n| A4.8 | Status of COA findings on the LDRRMF not shown; FGD evidence only | 2 | Medium (6.0) |\n| A4.9 | Fund adequacy not tested against a severe credible scenario | 1 | Medium (6.0) |\n| A4.4 | No quarterly utilisation report; large Trust Fund balances carried forward | 2 | Medium (4.0) |\n| A10.5 | Full Disclosure postings of the LDRRMF not verified; FGD evidence only | 2 | Low (3.0) |\n| A4.1 | CY2026 LDRRMF computed on the NTA only, not on all regular revenue | 3 | Medium (4.5) |\n| A4.3 | Trust Fund in use, but no ledger ageing balances by year of origin | 3 | Low (3.0) |\n| A3.5 | LDRRMFIP prepared and adopted; not yet reviewed against LDRRMP results | 3 | Medium (4.5) |\n\nScores and priorities are copied from the IAT v1.7 workbook and remain for validation at the workshop of 1–4 December 2026 (Methodology v1.1 §6).\n\n## 1.1 What the records show\n\n- **Size of the fund.** CDRRMC Res. No. 05, s. 2025 (30 Sep 2025) approves the CY2026 5% LDRRMF Budget Program and Investment Plan at **PHP 139,955,741.40**: PHP 97,969,018.98 (70%) for prevention and mitigation, preparedness, response and recovery, and PHP 41,986,722.42 (30%) for the Quick Response Fund (QRF). The resolution computes the 5% on the National Tax Allotment alone, and its body cites \"LDRRMF CY 2025\".\n- **Trust Fund.** SP Res. 2024-088 adopts the Trust Fund–LDRRMF 2024 plan (PHP 79,512,680.20); CDRRMC Res. No. 01, s. 2025 approves the CY2025 Trust Fund plan (PHP 52,713,712.18); Res. No. 08, s. 2025 reallocates PHP 2.0 M of it to drainage in Barangay South, after City Accountant advice that CDRRMC approval and SP concurrence are needed.\n- **QRF use.** Res. No. 06, s. 2025 draws PHP 2.0 M from the QRF for Typhoon Tino.\n- **Supplemental.** Res. No. 07, s. 2025 splits a supplemental PHP 493,550.11 on the 30/70 rule.\n- **Plan hooks.** CDP 2024–2030 PPA 3.15 (Risk and forecast-based Financing Support Program), PPA 1.1.7 (prepositioning for imminent threats) and PPA 1.3 (Disaster Risk Financing Program, including insurance of equipment, buildings and vital assets) give programme homes for the actions in this chapter. The 10-Year DRRM Plan 2023–2032 lists a 10-year LDRRMFIP of PHP 14.63 B with no anticipatory action line, and its SWOC notes that QRF access is a challenge.\n- **Donations.** SP Res. 2024-102 governs acceptance of donations.\n\n## 1.2 Design considerations\n\n1. **Two clocks.** Normal budgeting runs on an annual calendar. Emergency spending runs in hours. Both must lead to the same records.\n2. **Three funding windows.** Before impact (anticipatory action funds under RA 12287), during and after impact (QRF under a State of Calamity), and the rest of the year (the 70% component and the Special Trust Fund). Each window has its own legal trigger; this chapter keeps them apart.\n3. **Pre-arrangement is the speed.** Emergency procurement is fastest when the supplier list, framework agreements, specifications and price references exist before the event.\n4. **Evidence by design.** Every SOP ends in a form that an auditor can follow from appropriation to delivery and use.\n5. **No invented thresholds.** Where national guidelines are still pending (NDRRMC operational guidelines on AA triggers; DBM–COA AA fund guidelines), the chapter states the gap and holds the parameter in a rule that can change without rewriting the procedure.\n\n# 2. Purpose and Intended Results\n\nThis chapter sets the City's procedures for planning, releasing, spending, recording and reporting DRRM funds, for buying what DRRM needs in normal times and in emergencies, and for accounting for money, goods and donations entrusted to DRRM.\n\nIntended results:\n\n1. The LDRRMF is computed on the correct base, split 70/30, and programmed through an LDRRMFIP that is consistent with the LDRRMP, the CDP and the AIP.\n2. An anticipatory action line of up to 10% of the 70% component is programmed, with Budget, Accounting, Treasury and BAC steps that allow immediate release under a State of Imminent Disaster and observe the 30%/70% tranche rule.\n3. The QRF is used only within its legal trigger and purpose, and its use is reported.\n4. Unexpended balances are tracked by year of origin and used within five years.\n5. Emergency procurement is pre-arranged and every emergency purchase can show its legal ground.\n6. Donations and external assistance are received, recorded, kept and used as the donor and the law require, and are disclosed.\n7. Utilisation is reported quarterly to the CDRRMC and posted under the Full Disclosure Policy.\n8. COA observations on DRRM funds are answered and closed.\n9. The City knows how far its funds cover a severe credible event, and what it would draw on beyond them.\n\n# 3. Scope, Application and Institutional Boundaries\n\n**In scope:** the LDRRMF (70% component and QRF); the Special Trust Fund (STF) of unexpended LDRRMF; anticipatory action (AA) funds under RA 12287; DRRM-related donations and grants in cash or in kind; procurement of DRRM goods, works and services; DRRM-funded property and its accountability; risk financing and insurance of public assets; financial reporting, disclosure and audit response.\n\n**Out of scope, handled elsewhere:**\n\n| Subject | Where |\n|---|---|\n| Declaring a State of Calamity or a State of Imminent Disaster | Chapter 1 (SOP GOV-04, SOP GOV-05) |\n| Resource requests, dispatch and mutual aid during an event | Chapter 4 (SOP 4-07); Chapter 6 for logistics |\n| Warehousing, stock rotation and relief distribution | Chapter 6 |\n| Plantilla, salaries and hazard pay policy | Chapter 2 |\n| After-action review and corrective action system | Chapter 7 |\n| Recovery financing and PDNA-based programmes | Chapter 8 |\n\n**Institutional boundaries.** The CDRRMO plans, requests, monitors and documents. It does not appropriate, certify fund availability, approve disbursement, award contracts or keep the books. The table below names who holds each legal function.\n\n| Function | Holder (legal) | CDRRMO role |\n|---|---|---|\n| Appropriation, supplemental budget, realignment | Sangguniang Panlungsod (SP) | Prepares the justification; CDRRMC endorses |\n| LDRRMFIP approval | CDRRMC (RA 10121 Sec. 11; JMC 2013-1), adopted by the SP | Prepares the draft as secretariat |\n| Certification of availability of appropriation and allotment | City Budget Officer | Requests, attaches the LDRRMFIP line |\n| Certification of availability of funds, accounting entries, STF ledger | City Accountant | Supplies the supporting documents |\n| Custody of cash, disbursement, cash advances | City Treasurer | Requests release; liquidates |\n| Procurement decisions and award | HoPE (City Mayor) on BAC recommendation (RA 12009) | Prepares PPMP, specifications, justification |\n| Property custody and records | CGSO | Receives, issues and accounts for DRRM property |\n| Acceptance of donations | City Mayor under SP Res. 2024-102 and applicable rules | Logs, coordinates custody and use |\n| External audit | Commission on Audit (COA) | Answers observations through the Mayor |\n\n# 4. Legal, Policy and Operational Framework\n\nThe official text governs. Readings from scanned copies are medium confidence until checked against certified copies.\n\n| Instrument | What it requires | How this chapter applies it |\n|---|---|---|\n| RA 10121 Sec. 21 | LDRRMF of not less than 5% of estimated revenue from regular sources; 30% as QRF, a standby fund for relief and recovery; unexpended LDRRMF accrues to a special trust fund used for DRRM within the next five years, after which it reverts to the general fund | SOP 5-01 computation (FIN-F01); SOP 5-03 STF ageing; SOP 5-04 QRF |\n| RA 10121 Sec. 16 and its IRR | State of Calamity declared by the SP on the CDRRMC's recommendation | Trigger for QRF use (SOP 5-04) and for one ground of emergency procurement (SOP 5-07) |\n| NDRRMC–DBM–DILG JMC No. 2013-1 (25 Mar 2013) | Allocation and utilisation of the LDRRMF; the LDRRMP is the basis for allocation; LDRRMFIP; allowable expenses; QRF use upon declaration of a State of Calamity; reporting | SOPs 5-01, 5-02, 5-04 |\n| COA Circular No. 2012-002 (12 Sep 2012) | Accounting and reporting for the LDRRMF, NDRRMF transfers to LGUs and receipts from other sources (donations) | SOPs 5-02, 5-03, 5-08, 5-10 |\n| RA 12287 (12 Sep 2025) and IRR (signed 14 Sep 2026), Rule V | LGUs may include no more than 10% of the 70% LDRRMF for AA measures (Sec. 1(b)); other sources: STF balances, partners and donors, ODA, other LGUs (Sec. 1(b)); funds disbursed immediately until lifting, subject to procurement, budgeting, accounting and audit rules (Sec. 2); for hydrometeorological and geological hazards, disbursements beyond a 3-day lead time ≤ 30% of the AA allocation, up to 70% within 3 days (Sec. 2); slow-onset hazards per pending operational guidelines (Sec. 2); graduation does not apply to grants, donations or other lawful sources (Sec. 2); No Regrets Principle; LGU unused funds accrue to the STF (Sec. 3) | SOP 5-05; FIN-F06 |\n| RA 12287 IRR Rule VI Sec. 1 | Report within 45 days of lifting, including AA fund utilisation | SOP 5-05 step 8 feeds PR-LIFT-REPORT (Chapter 1, SOP GOV-05) |\n| RA 12009 (New Government Procurement Act) and IRR (2025) | Sec. 35(b) negotiated procurement – emergency cases: imminent danger to life or property during a state of calamity, or when time is of the essence arising from calamities where immediate action is needed to prevent loss of life or property or to restore vital public services; Sec. 16 framework agreements | SOPs 5-06 and 5-07 |\n| GPPB issuances on emergency procurement (e.g., GPPB NPM 3-2020, Res. 03-2020, under RA 9184) | Clarifications on emergency cases and APP inclusion | Applied where still consistent with RA 12009; confirm with the BAC Secretariat |\n| DILG MC 2012-141 and later Full Disclosure Policy issuances | LDRRMF utilisation among the documents posted under the Full Disclosure Policy | SOP 5-02 step 6 |\n| RA 656 (Property Insurance Law); GSIS indemnity | Public property insured with GSIS | SOP 5-09 |\n| RA 9729 as amended by RA 10174 (People's Survival Fund) | Access to PSF for adaptation | SOP 5-09 |\n| NDRRMC MC No. 147, s. 2017 | LDRRMP review; judicious use of the LDRRMF; AIP consistency | SOP 5-01 step 2 |\n| Local: SP Res. 2024-088; SP Res. 2024-102; CDRRMC Res. 01–08 s. 2025; EO 2024-032A Sec. 2 | Current approvals, donations rules, CDRRMC functions | Baseline and approvals |\n\n**Pending national rules.** NDRRMC operational guidelines on AA triggers and slow-onset timelines; DBM–COA guidelines on AA funds; NDRRMC AA M&E framework. Until issued, this chapter (a) applies the IRR text, (b) treats slow-onset hazards as not graduated but never above the year's AA allocation (ADR-025 item 4), and (c) asks the City Legal Office and OCD VIII to confirm the readings listed in section 17.\n\n# 5. Systems-Thinking and TQM Principles for DRRM Finance\n\n- **One chain from plan to proof.** LDRRMP target → LDRRMFIP line → AIP/budget → PPMP/APP → obligation → procurement → delivery → use → report → audit. A break anywhere shows up as unspent money or unsupported spending.\n- **Speed through preparation.** The fastest emergency purchase is the one whose supplier, specification and price were agreed before the event.\n- **Separation of duties.** The office that requests is not the office that certifies, pays or awards. MODE records each step by position.\n- **Feedback loops.** Quarterly utilisation, the STF ageing ledger and COA observations feed the next LDRRMFIP.\n- **Prevention over correction.** Pre-audit checklists (Annex 5-B) prevent the most common COA findings: non-DRRM charges, QRF use without a declaration, missing utilisation reports and incomplete supporting documents.\n\n# 6. LDRRMF Planning and Allocation\n\n## 6.1 Computing the fund\n\nThe LDRRMF is not less than 5% of **estimated revenue from regular sources** (RA 10121 Sec. 21). For a city this means the NTA share plus regular local revenue (local taxes, fees and charges, and other recurring income), as defined by the Budget Office under DBM rules. It excludes one-time receipts, grants and borrowings.\n\nThe CY2026 computation used the NTA alone (Res. No. 05, s. 2025). The City Budget Office confirms the base each year on FIN-F01 and keeps the computation with the budget. If the base was understated, the difference is appropriated through a supplemental budget or set right in the next budget, as the Budget Office and SP decide.\n\n## 6.2 The 70/30 split and the AA line\n\n| Component | Share | Use | Trigger |\n|---|---|---|---|\n| Quick Response Fund | 30% of the LDRRMF | Standby fund for relief and recovery | State of Calamity declared by the SP (JMC 2013-1) |\n| Prevention and mitigation, preparedness, response, rehabilitation and recovery | 70% of the LDRRMF | PPAs in the LDRRMFIP | Normal budget execution |\n| — of which anticipatory action line | No more than 10% of the 70% | AA measures under RA 12287 | State of Imminent Disaster in force |\n\n**Worked example (illustration only, CY2026 figures).** 70% component PHP 97,969,018.98 → maximum AA line PHP 9,796,901.90. For a hydrometeorological or geological hazard, at most PHP 2,939,070.57 (30%) may be disbursed for interventions more than 3 days before forecast impact; up to PHP 6,857,831.33 (70%) for interventions within 3 days. The CY2026 plan has no AA line, so these figures apply only once a plan includes one.\n\n## 6.3 The LDRRMF Investment Plan\n\nThe LDRRMFIP is the annual plan that turns the LDRRMP into funded lines. Each line carries: the LDRRMP and CDP PPA code; thematic area (prevention and mitigation, preparedness, response, rehabilitation and recovery); fund source (70%, QRF, STF by year of origin, other); amount; implementing office; output and target; procurement mode; and quarter of implementation. Three lines are always shown on their own: the **AA line** (A4.6), the **EOC operations and maintenance line** (B7.5), and **insurance premiums** for DRRM assets (A4.7).\n\n## 6.4 Placement in the City budget calendar\n\n| Period | Budget calendar event | Chapter 5 action |\n|---|---|---|\n| January–February | Prior-year closing; COA audit fieldwork | STF ageing update (SOP 5-03); Q4 utilisation report (SOP 5-02) |\n| April–May | COA Annual Audit Report | Audit response plan (SOP 5-10) |\n| By mid-year | Budget call; LDC/LFC deliberations | LDRRMFIP drafting (SOP 5-01); adequacy test (SOP 5-09); supplier list refresh (SOP 5-06) |\n| July–September | CDRRMC approval; AIP finalised | LDRRMFIP approval; PPMP and APP |\n| October–December | SP enacts the annual budget; adoption of the LDRRMFIP | Insurance renewal check; framework agreements for the next year |\n| Every quarter | CDRRMC quarterly meeting | Utilisation and results report; FDP posting |\n\nExact dates follow the Local Budget Calendar and the City Budget Office's budget call each year.\n\n# 7. Budget Execution, Utilisation and Disclosure\n\nExecution follows the City's normal controls: allotment, obligation request certified by the Budget Officer, procurement, inspection and acceptance, disbursement voucher certified by the Accountant, payment by the Treasurer. The CDRRMO's role is to keep the LDRRMFIP line visible through each step.\n\n**Utilisation measures (computed quarterly, by component):**\n\n- Obligation rate = obligations ÷ allotment for the year.\n- Disbursement rate = disbursements ÷ obligations.\n- PPA completion = completed PPAs ÷ PPAs due by the quarter.\n\nThe IAT target is at least 80% utilisation of the current-year 70% component (A4.4). PPAs below plan by the end of Q3 are flagged for realignment, with CDRRMC approval and SP concurrence where the law requires it. The quarterly report (FIN-F03, carried in MODE as BUD-F02) goes to the CDRRMC and is posted under the Full Disclosure Policy.\n\n# 8. Special Trust Fund Management\n\nUnexpended LDRRMF accrues to the STF and may be used only for DRRM within five years from the year it accrued; after that it reverts to the general fund (RA 10121 Sec. 21). The STF ledger (FIN-F04) keeps each balance by **year of origin** and shows its deadline, so the oldest money is programmed first. STF balances are also a lawful AA source under RA 12287 IRR Rule V Sec. 1(b), and they are not subject to the 30%/70% graduation.\n\nProgramming STF balances follows the same approvals as the 2024 and 2025 Trust Fund plans: CDRRMC approval, then SP adoption or concurrence on City Accountant advice (Res. No. 08, s. 2025).\n\n# 9. Quick Response Fund\n\nThe QRF is a standby fund for relief and recovery in areas stricken by a disaster. Under JMC 2013-1 it is used when the City is under a **State of Calamity** declared by the SP (Chapter 1, SOP GOV-04). COA has found LGUs using the QRF without that declaration; this chapter does not allow it. A State of Imminent Disaster under RA 12287 does not open the QRF: anticipatory action is funded from the AA line and other lawful sources (IAT A4.6).\n\nUnused QRF at year-end accrues to the STF. The QRF balance is reported in every quarterly report and after each use (FIN-F05).\n\n# 10. Anticipatory Action Financing under RA 12287\n\n## 10.1 Sources and their rules\n\n| Source | Legal basis | 30%/70% graduation | Approval route |\n|---|---|---|---|\n| AA line in the LDRRMFIP (≤ 10% of the 70%) | IRR Rule V Sec. 1(b) | Yes, for hydrometeorological and geological hazards | Released under the State of Imminent Disaster per the LDRRMFIP line |\n| STF balances within their five-year period | IRR Rule V Sec. 1(b)(i) | No | CDRRMC programming; SP concurrence where required |\n| Donations, partners, ODA, other LGUs | IRR Rule V Sec. 1(b)(ii) | No | Per donor terms and SP Res. 2024-102 |\n| NDRRM Fund augmentation | IRR Rule V Sec. 1(c) | Per national rules | Request through OCD; President's approval on NDRRMC recommendation |\n\n## 10.2 Release rules\n\n1. Funds are released only while a State of Imminent Disaster declared by the City Mayor is in force (Chapter 1, SOP GOV-05) and only for AA measures listed in the approved PDRA and the 29-item IRR Rule IV checklist.\n2. Disbursement is based on the anticipated extent of damage and disruption in the PDRA (Rule V Sec. 2).\n3. **Tranche rule** (hydrometeorological and geological hazards): disbursements for interventions to be carried out more than 3 days before forecast impact may not exceed 30% of the AA allocation; up to 70% may be disbursed for interventions within 3 days of impact.\n4. **Slow-onset hazards** (e.g., drought): timelines and rates await the NDRRMC operational guidelines. Until then, they are not graduated, but disbursements never exceed the year's AA allocation (ADR-025 item 4).\n5. **No Regrets Principle.** Goods bought for AA continue to reach the intended beneficiaries even if the hazard does not materialise (Rule V Sec. 3). Their distribution is recorded as for any other relief.\n6. Procurement, budgeting, accounting and auditing rules still apply (Rule V Sec. 2). Where the procurement ground is \"time is of the essence\", the BAC records it under RA 12009 Sec. 35(b) (SOP 5-07).\n7. Unused AA funds accrue to the STF (Rule V Sec. 3).\n8. Third parties engaged for AA are paid on a *quantum meruit* basis from the AA allocation (Rule V Sec. 3).\n\nMODE applies rules 3 and 4 from the `aa_rules` table, so a change in national guidelines is a parameter change, not a code change (ADR-025).\n\n## 10.3 Getting the AA line into the plan\n\nThe CY2026 plan predates the IRR. Two routes are open, for the City to choose:\n\n- **Amend the current or next-year LDRRMFIP** by CDRRMC resolution and SP action, realigning within the 70% component to create the AA line (precedent: Res. No. 08, s. 2025), or\n- **Include it in the FY2028 LDRRMFIP** at the next budget call, under CDP PPA 3.15.\n\nEither way, the line names the AA measures it funds (by hazard and sector, from the contingency plans and the IRR Rule IV checklist), the implementing offices and the procurement mode for each item.\n\n# 11. Procurement for DRRM\n\n## 11.1 Normal procurement\n\nDRRM goods, works and services follow the PPMP → APP → competitive bidding or the appropriate alternative mode, under RA 12009 and its IRR. The CDRRMO prepares the PPMP from the LDRRMFIP and the technical specifications; the BAC runs the procurement.\n\n## 11.2 Pre-arranged supply\n\nBefore each typhoon season and at least once a year, the CDRRMO and CGSO, with the BAC Secretariat, keep (SOP 5-06):\n\n- a list of suppliers for relief goods, fuel, water, heavy equipment rental, transport, medicines and medical supplies, and generator service, with capacity and contact position (FIN-F08);\n- framework agreements under RA 12009 Sec. 16 where the BAC finds them suitable, stating item, quantity range, unit price or price basis, delivery time, activation trigger and validity;\n- standard specifications and price references for recurrent emergency items;\n- agreements usable for AA, as RA 12287 IRR Rule IV contemplates (IAT B6.6).\n\n## 11.3 Emergency procurement\n\nNegotiated procurement – emergency cases (RA 12009 Sec. 35(b)) is used only when its ground exists: imminent danger to life or property during a State of Calamity, or time is of the essence because of a calamity and immediate action is needed to prevent loss of life or property or to restore vital public services, infrastructure or utilities. The ground is written on FIN-F07 before the purchase, by the requesting office, and confirmed by the BAC and the HoPE under the RA 12009 IRR. Items are limited to what the emergency requires. Posting and reporting follow the IRR and GPPB rules.\n\n# 12. Donations and External Assistance\n\nDonations in cash or in kind and external financial assistance are accepted, recorded and used as follows (SOP 5-08):\n\n1. One intake point per event, staffed by CSWDO and CGSO with the EOC Logistics or Finance/Administration desk.\n2. Acceptance follows SP Res. 2024-102 and COA rules; a deed of donation or acknowledgement receipt is issued (FIN-F09).\n3. Cash goes to the City Treasurer and is recorded by the City Accountant under COA Circular No. 2012-002 as a receipt from other sources, kept to its stated purpose.\n4. Goods are inspected, valued, recorded and stored by CGSO (or CSWDO for relief items), then issued against distribution records.\n5. Conditions set by the donor are respected; unsuitable goods are declined politely at intake.\n6. Donations used for AA are not subject to the 30%/70% graduation (IRR Rule V Sec. 2).\n7. Receipts, use and balances are disclosed with the quarterly report.\n\nNo personal data of beneficiaries is copied into the donations log; distribution lists stay with the CSWDO (RA 10173).\n\n# 13. Resource and Property Accountability\n\nDRRM property bought with the LDRRMF, STF, QRF, AA funds or donations is government property. CGSO records it, issues it to the end user on a Property Acknowledgement Receipt or Inventory Custodian Slip, and includes it in the annual physical count. The CDRRMO:\n\n- keeps a DRRM asset register linked to the EOC resource inventory in MODE (Chapter 6), so the same item has one record;\n- returns or transfers property on reassignment or separation of the accountable person;\n- reports loss or damage at once, with the incident record, for relief from accountability under COA rules;\n- applies the same rules to equipment lent to barangays, with a signed receipt.\n\nConsumables issued in an emergency (fuel, food packs, NFIs) are supported by issue slips, trip tickets and distribution summaries; Chapter 6 sets the logistics procedure.\n\n# 14. Risk Financing and Insurance\n\nThe City layers its risk finance: the QRF and the 70% component for frequent, smaller events; the STF and AA funds for imminent events; insurance for damage to public assets; and national funds, contingent credit and partners for catastrophic events. SOP 5-09 tests that layering each year against a severe credible scenario (a Thelma-type flash flood; a Yolanda-strength typhoon) and records the shortfall and the fallback sources.\n\nThe CDRA reports that only 15% of critical point facilities are insured and no lifeline utility is insured. Under RA 656, public property is insured with GSIS. CDP PPA 1.3 and 1.2.3 programme insurance of buildings, equipment and early warning devices. The EOC, evacuation centres and DRRM equipment are listed first.\n\n# 15. Standard Operating Procedures\n\nEach SOP has a control block and a step table. Every step states the actor (a position or office, never a person), the action and decision rule, inputs and outputs, and timing, control and escalation. Form codes are those of section 19. In MODE, each SOP runs as a workflow or protocol that carries the same steps (Annex 5-A).\n\n## SOP 5-01 | LDRRMF computation and LDRRMFIP formulation, approval and adoption\n\nProcess owner: CDRRMO Research and Planning Division, with the City Budget Office. Purpose: compute the LDRRMF on the correct base and turn the LDRRMP into an approved, costed investment plan with the AA, EOC and insurance lines shown.\n\n| **Control element** | **Entry** |\n|---|---|\n| Type and MODE template | Workflow WF-SOP5-01 (budget) |\n| Decision authority (legal) | CDRRMC approves the LDRRMFIP; SP appropriates and adopts |\n| Process owner (operational) | CDRRMO Research and Planning; City Budget Office for the computation |\n| Trigger | The City budget call each year; a supplemental budget; a realignment request |\n| Forms | FIN-F01; FIN-F02 (MODE BUD-F01); GOV-F03 (CDRRMC resolution) |\n| IAT v1.7 indicators | A3.5 (3, Medium); A4.1 (3, Medium); A4.2 (3, Medium); A4.6 (0, High); B7.5 (3); A1.7 (3); C1.2 (1, Part C) |\n| Policy basis | RA 10121 Sec. 21; JMC 2013-1; RA 12287 IRR Rule V Sec. 1(b); NDRRMC MC No. 147, s. 2017 |\n| Cross-references | SOP 5-02, 5-05, 5-09; Chapter 3 (LDRRMP); Chapter 1 (CDRRMC) |\n\n| **Step** | **Actor** | **Action and decision rule** | **Inputs → outputs / records** | **Timing, control and escalation** |\n|---|---|---|---|---|\n| 1. Compute | City Budget Officer with CDRRMO Head | Compute 5% of estimated revenue from regular sources (NTA plus regular local revenue); split 70/30; compute the AA ceiling (10% of 70%). **Decision:** Is the base complete? | Revenue estimates → FIN-F01 | Within 10 working days of the budget call. Base dispute → City Treasurer and Budget Officer reconcile; unresolved → City Administrator |\n| 2. Review results | Research and Planning | Review LDRRMP targets, last year's utilisation (FIN-F03), STF ageing (FIN-F04), adequacy test (FIN-F10), COA observations (FIN-F11) and IAT gaps | Prior reports → review note | Before drafting. Missing data is named, not estimated |\n| 3. Collect proposals | Each CDRRMO division; sector offices | Submit PPAs with LDRRMP/CDP code, output, cost and procurement mode | Proposals → list | Two weeks |\n| 4. Draft | Research and Planning | Prioritise (life-safety and legal first); tag each line; show the AA, EOC operations and insurance lines; apply the DRR/CCA screening for capital items (C1.2). **Decision:** Does every line trace to an LDRRMP PPA and an allowable use? | → FIN-F02 draft LDRRMFIP | Lines without a code are removed or justified in writing |\n| 5. Cost and plan procurement | Administration and Training with BAC Secretariat | Cost each line; prepare PPMP entries; identify items for framework agreements | → PPMP, procurement plan | Before CDRRMC meeting |\n| 6. Endorse | CDRRMO Head; LFC/LDC representative | Present to the LFC and LDC; record CDRRMO input | → minutes | Per budget calendar |\n| 7. Approve | CDRRMC (CDRRMO as secretariat) | Approve the LDRRMFIP by resolution. **Decision:** Approved, returned or approved with changes | → GOV-F03 resolution | Quarterly or special meeting; returned → step 4 |\n| 8. Adopt | SP | Appropriate and adopt the LDRRMFIP with the annual budget | → SP resolution or ordinance | File the SP act with the LDRRMFIP; missing → Secretariat follows up before year-end |\n| 9. Publish and load | Research and Planning | Load approved lines into MODE; post as required | → controlled LDRRMFIP | Within 10 working days of adoption |\n\n## SOP 5-02 | LDRRMF execution, utilisation monitoring, quarterly reporting and disclosure\n\nProcess owner: CDRRMO Administration and Training Division with Research and Planning. Purpose: keep each LDRRMFIP line moving from allotment to use, report it quarterly and disclose it.\n\n| **Control element** | **Entry** |\n|---|---|\n| Type and MODE template | Workflow WF-SOP5-02 (budget) |\n| Decision authority (legal) | Budget Officer, Accountant, Treasurer and HoPE within their powers; CDRRMC and SP for realignment |\n| Process owner (operational) | CDRRMO Administration and Training |\n| Trigger | Start of the fiscal year; end of each quarter |\n| Forms | FIN-F03 (MODE BUD-F02) |\n| IAT v1.7 indicators | A4.4 (2, Medium); A10.5 (2, Low); A10.3 (3) |\n| Policy basis | JMC 2013-1; COA Circular No. 2012-002; DILG Full Disclosure Policy issuances (incl. MC 2012-141) |\n| Cross-references | SOP 5-01, 5-03, 5-10 |\n\n| **Step** | **Actor** | **Action and decision rule** | **Inputs → outputs / records** | **Timing, control and escalation** |\n|---|---|---|---|---|\n| 1. Release | Administration and Training | Request allotment and obligation for each line by its planned quarter | LDRRMFIP → obligation requests | Per quarter plan |\n| 2. Track | Administration and Training | Record obligation, procurement stage, delivery and disbursement per line from Budget and Accounting records | → line tracker | Monthly |\n| 3. Reconcile | City Accountant with Administration | Reconcile the CDRRMO tracker with the books (LDRRMF, QRF, STF by year) | → reconciled figures | Within 15 days after quarter-end; variances explained in writing |\n| 4. Report | Research and Planning | Prepare FIN-F03: obligation, disbursement and PPA completion rates by component; QRF and STF balances; PPAs at risk; results against the LDRRMP | → FIN-F03 | For the next CDRRMC quarterly meeting |\n| 5. Decide | CDRRMC | Note the report; direct catch-up or realignment. **Decision:** Is utilisation of the 70% on track for 80%? | → minutes, resolution | Q3 shortfall → realignment proposal (SOP 5-01 steps 4–8) |\n| 6. Disclose | Administration and Training with the City's FDP focal | Post the LDRRMF utilisation report as the Full Disclosure Policy requires | → posting proof (link or photo) | Within the FDP period; missed posting → CDRRMO Head |\n| 7. File | Administration and Training | File reports and proofs in the Vault | → Vault entries | Same week |\n\n## SOP 5-03 | Special Trust Fund ledger, ageing and programming\n\nProcess owner: City Accountant (ledger) with CDRRMO Research and Planning (programming). Purpose: use every unexpended LDRRMF balance for DRRM within its five-year period.\n\n| **Control element** | **Entry** |\n|---|---|\n| Type and MODE template | Workflow WF-SOP5-03 (budget) |\n| Decision authority (legal) | CDRRMC programmes; SP adopts or concurs |\n| Process owner (operational) | City Accountant; CDRRMO Research and Planning |\n| Trigger | Year-end closing; preparation of the LDRRMFIP; any STF reallocation request |\n| Forms | FIN-F04 |\n| IAT v1.7 indicators | A4.3 (3, Low); A4.6 (0, High) |\n| Policy basis | RA 10121 Sec. 21; COA Circular No. 2012-002; RA 12287 IRR Rule V Secs. 1(b)(i) and 3 |\n\n| **Step** | **Actor** | **Action and decision rule** | **Inputs → outputs / records** | **Timing, control and escalation** |\n|---|---|---|---|---|\n| 1. Close the year | City Accountant | Determine unexpended LDRRMF (70% and QRF) and transfer it to the STF | Year-end books → STF entry | At closing |\n| 2. Age | City Accountant | Record each balance by year of origin with its five-year deadline | → FIN-F04 per year of origin | January |\n| 3. Flag | Research and Planning | Flag balances in their last two years | → flag list | January; balance in final year → CDRRMO Head and CDRRMC |\n| 4. Programme | Research and Planning | Propose STF use, oldest first, within allowable DRRM uses; list balances available as AA sources | → Trust Fund plan | With SOP 5-01 |\n| 5. Approve | CDRRMC; SP | Approve and adopt or concur per City Accountant advice | → resolutions | Per budget calendar |\n| 6. Monitor | Administration and Training | Report STF use quarterly in FIN-F03 | → FIN-F03 | Quarterly |\n\n## SOP 5-04 | Quick Response Fund use under a State of Calamity\n\nProcess owner: CDRRMO Head as CDRRMC secretariat, with Budget, Accounting and Treasury. Purpose: release the QRF quickly, only for relief and recovery, and only under its trigger.\n\n| **Control element** | **Entry** |\n|---|---|\n| Type and MODE template | Protocol PR-QRF-USE (eoc) |\n| Decision authority (legal) | SP declares the State of Calamity (SOP GOV-04); City Mayor approves expenditure within the appropriation |\n| Process owner (operational) | CDRRMO Head; EOC Finance/Administration desk |\n| Trigger | SP declaration of a State of Calamity covering the City or affected barangays |\n| Forms | FIN-F05; FIN-F07 if emergency procurement is used |\n| IAT v1.7 indicators | A4.2 (3, Medium); A1.6 |\n| Policy basis | RA 10121 Secs. 16 and 21; JMC 2013-1; COA Circular No. 2012-002 |\n\n| **Step** | **Actor** | **Action and decision rule** | **Inputs → outputs / records** | **Timing, control and escalation** |\n|---|---|---|---|---|\n| 1. Confirm trigger | EOC Finance/Administration desk | Confirm the SP declaration, its date, area and validity. **Decision:** No declaration → no QRF; use the 70% component or other lawful sources | SP resolution → reference on FIN-F05 | Before any QRF request |\n| 2. Define needs | EOC Operations with CSWDO and sector leads | List relief and recovery needs with quantities from assessments | RDANA, DROMIC, cluster reports → needs list | Within the first operational period |\n| 3. Request | CDRRMO Head | Prepare the QRF request: purpose, items, amount, charging, procurement mode | → FIN-F05 | Same day |\n| 4. Certify | City Budget Officer; City Accountant | Certify appropriation, allotment and funds | → certifications | Same day when possible; delay → City Administrator |\n| 5. Procure and pay | BAC/HoPE; Treasurer | Use framework agreements or pre-arranged suppliers first; otherwise SOP 5-07 | → POs, contracts, vouchers | Per urgency |\n| 6. Receive and distribute | CGSO; CSWDO | Inspect, accept, record and distribute | → IAR, issue slips, distribution summaries | Continuous |\n| 7. Report | Administration and Training | Report QRF use and balance in the SitRep finance annex and FIN-F03 | → FIN-F03; Vault | At deactivation and quarterly |\n\n## SOP 5-05 | Anticipatory action funding and disbursement under a State of Imminent Disaster\n\nProcess owner: CDRRMO Head with the City Budget Office, City Accountant, City Treasurer and BAC. Purpose: release AA funds immediately and lawfully once a State of Imminent Disaster is declared, within the 10% ceiling and the tranche rule, and account for them in the 45-day report.\n\n| **Control element** | **Entry** |\n|---|---|\n| Type and MODE template | Protocol PR-AA-FUNDS (anticipatory_action) |\n| Decision authority (legal) | City Mayor declares the State of Imminent Disaster (SOP GOV-05); expenditure approvals within the appropriation |\n| Process owner (operational) | CDRRMO Head; EOC Finance/Administration desk |\n| Trigger | Mayor's declaration of a State of Imminent Disaster; a revised impact forecast during the declaration |\n| Forms | FIN-F06; FIN-F07; FIN-F09 (donations) |\n| IAT v1.7 indicators | A4.6 (0, High); A10.8 (0, High); B6.6 (1) |\n| Policy basis | RA 12287 Secs. 6–7; IRR Rule IV; Rule V Secs. 1–3; Rule VI Sec. 1; RA 12009 Sec. 35(b) |\n| Cross-references | SOP GOV-05 (PR-SOID-REQUEST, PR-LIFT-REPORT); SOP 4-03 (PR-PDRA); SOP 5-07 |\n\n| **Step** | **Actor** | **Action and decision rule** | **Inputs → outputs / records** | **Timing, control and escalation** |\n|---|---|---|---|---|\n| 1. Confirm declaration | EOC Finance/Administration desk | Confirm the Mayor's declaration, hazard, area, forecast impact time and hazard family | EO → FIN-F06 header | On declaration |\n| 2. Set the envelope | CDRRMO Head with Budget Officer | Record the AA allocation available (LDRRMFIP line less prior use) and other sources (STF, donations, partners) | LDRRMFIP, FIN-F04 → FIN-F06 envelope | Within 1 hour |\n| 3. Match measures | EOC Operations with sector leads | Match each AA measure (PDRA, IRR Rule IV checklist) to a source, amount and lead office; size it to the forecast impact | PDRA → measure list | Within 2 hours |\n| 4. Apply the tranche rule | EOC Finance/Administration desk | For hydromet and geological hazards: interventions more than 3 days before impact ≤ 30% of the AA allocation; within 3 days, up to 70%. Other sources are not graduated. **Decision:** Is the request within the cap for its timing? | → FIN-F06 tranche check (MODE computes from `aa_rules`) | Over the cap → reschedule or use a non-graduated source |\n| 5. Certify and release | Budget Officer; Accountant; Treasurer | Certify and release immediately | → certifications, cash or POs | Same day |\n| 6. Procure | BAC/HoPE | Use framework agreements and pre-arranged suppliers; else negotiated procurement – emergency cases where its ground exists (SOP 5-07) | → contracts, POs | Per lead time |\n| 7. Deliver and record | Lead offices; CGSO; CSWDO | Deliver AA measures; keep receipts and distribution summaries; No Regrets: goods still reach intended beneficiaries if impact does not occur | → delivery and distribution records | Continuous until lifting |\n| 8. Close and report | Administration and Training; City Accountant | On lifting, total AA spending by source and measure; unused AA funds accrue to the STF; feed the 45-day report | → FIN-F06 closure; PR-LIFT-REPORT | Within 45 days of lifting (Rule VI Sec. 1); late → CDRRMO Head and CDRRMC |\n\n## SOP 5-06 | Pre-arranged supply: supplier list, framework agreements and standard specifications\n\nProcess owner: CDRRMO Administration and Training with CGSO and the BAC Secretariat. Purpose: make emergency and AA purchases fast and lawful by agreeing suppliers, items and prices before the event.\n\n| **Control element** | **Entry** |\n|---|---|\n| Type and MODE template | Workflow WF-SOP5-06 (budget) |\n| Decision authority (legal) | BAC recommends; HoPE approves framework agreements |\n| Process owner (operational) | CDRRMO Administration and Training |\n| Trigger | Annually before the typhoon season; after an event that exposed a supply gap |\n| Forms | FIN-F08 |\n| IAT v1.7 indicators | A4.5 (2, Medium); B6.6 (1, Medium); B6.3 (2) |\n| Policy basis | RA 12009 Secs. 16 and 35(b) and IRR; RA 12287 IRR Rule IV |\n\n| **Step** | **Actor** | **Action and decision rule** | **Inputs → outputs / records** | **Timing, control and escalation** |\n|---|---|---|---|---|\n| 1. List needs | Administration and Training with EOC Logistics | List recurrent emergency and AA items from contingency plans and past events | CPs, AARs → item list | By March |\n| 2. Specify | Administration and Training with CGSO | Write standard specifications and price references | → specification sheets | By April |\n| 3. Choose the mode | BAC Secretariat | Advise on framework agreement or other mode per item | → procurement strategy | By April |\n| 4. Procure agreements | BAC; HoPE | Run the procurement; award framework agreements with trigger, quantity range, price basis and delivery time | → agreements | Before June |\n| 5. Register | Administration and Training | Record each supplier and agreement on FIN-F08 and in MODE resources | → FIN-F08 register | On award |\n| 6. Test | EOC Logistics | Confirm contact and capacity before the season; call-down test in a drill | → test record | Each season; failed contact → replace supplier |\n\n## SOP 5-07 | Emergency procurement (negotiated procurement – emergency cases)\n\nProcess owner: EOC Finance/Administration desk with the BAC. Purpose: buy what an emergency requires, quickly and with its legal ground on record.\n\n| **Control element** | **Entry** |\n|---|---|\n| Type and MODE template | Protocol PR-EMERGENCY-PROCURE (eoc) |\n| Decision authority (legal) | HoPE on BAC recommendation, per RA 12009 IRR |\n| Process owner (operational) | EOC Finance/Administration desk; requesting office |\n| Trigger | An urgent need during a State of Calamity or where time is of the essence because of a calamity |\n| Forms | FIN-F07; EOC-F06 (resource request) |\n| IAT v1.7 indicators | A4.5 (2, Medium) |\n| Policy basis | RA 12009 Sec. 35(b) and IRR; applicable GPPB issuances |\n\n| **Step** | **Actor** | **Action and decision rule** | **Inputs → outputs / records** | **Timing, control and escalation** |\n|---|---|---|---|---|\n| 1. Check pre-arranged supply | EOC Finance/Administration desk | Use stock, framework agreements or mutual aid first | EOC-F06 → sourcing decision | Immediately |\n| 2. State the ground | Requesting office | Write the ground on FIN-F07: State of Calamity reference, or the calamity and why immediate action is needed; item, quantity and use. **Decision:** Does the ground exist? If not, use the normal mode | → FIN-F07 | Before purchase |\n| 3. Confirm funds | Budget Officer; Accountant | Certify the charging (QRF, 70% line, AA line, STF, donation) | → certifications | Same day |\n| 4. Negotiate | BAC or as the IRR allows | Negotiate with a qualified supplier; limit to what the emergency requires | → abstract, award recommendation | Hours |\n| 5. Award | HoPE | Approve the award and contract or PO | → contract or PO | Same day |\n| 6. Accept | Inspection team; CGSO | Inspect and accept delivery | → IAR | On delivery |\n| 7. Post and report | BAC Secretariat | Post and report as RA 12009 IRR and GPPB require | → posting proof | Within the required period |\n\n## SOP 5-08 | Donations and external assistance: receipt, recording, custody, use and disclosure\n\nProcess owner: CSWDO and CGSO with the City Treasurer and City Accountant; CDRRMO coordinates through the EOC. Purpose: receive donations transparently and use them as the donor and the law intend.\n\n| **Control element** | **Entry** |\n|---|---|\n| Type and MODE template | Workflow WF-SOP5-08 (budget) |\n| Decision authority (legal) | City Mayor accepts per SP Res. 2024-102 |\n| Process owner (operational) | CSWDO (relief goods), CGSO (property), Treasurer (cash) |\n| Trigger | An offer or delivery of cash or in-kind assistance |\n| Forms | FIN-F09 |\n| IAT v1.7 indicators | B6.4 (1, Medium) |\n| Policy basis | SP Res. 2024-102; COA Circular No. 2012-002; RA 12287 IRR Rule V Sec. 2; RA 10173 |\n\n| **Step** | **Actor** | **Action and decision rule** | **Inputs → outputs / records** | **Timing, control and escalation** |\n|---|---|---|---|---|\n| 1. Receive offer | Intake desk (CSWDO/CGSO) | Record donor type, offer, conditions and value. **Decision:** Suitable and acceptable? Unsuitable goods are declined at intake | → FIN-F09 (draft) | On offer |\n| 2. Accept | City Mayor or delegate | Accept per SP Res. 2024-102; issue deed of acceptance or acknowledgement | → acceptance document | Same day where possible |\n| 3. Take custody | Treasurer (cash); CGSO/CSWDO (goods) | Deposit cash; inspect, value and store goods | → official receipt; stock card | On receipt |\n| 4. Record | City Accountant | Book as a receipt from other sources, kept to its purpose | → accounting entry | Within the month |\n| 5. Use | Lead office | Use per donor conditions; record distribution in aggregates | → issue slips, summaries | Per plan |\n| 6. Report and disclose | Administration and Training | Report receipts, use and balances in FIN-F03 and to donors; disclose | → report; posting | Quarterly and at event close |\n\n## SOP 5-09 | Fund adequacy test and risk financing (including insurance of public assets)\n\nProcess owner: CDRRMO Research and Planning with City Budget Office, CGSO and CPDO. Purpose: know how far City funds cover a severe credible event and close the gap with insurance and pre-arranged sources.\n\n| **Control element** | **Entry** |\n|---|---|\n| Type and MODE template | Workflow WF-SOP5-09 (budget) |\n| Decision authority (legal) | CDRRMC recommends; SP appropriates premiums and contingent measures |\n| Process owner (operational) | CDRRMO Research and Planning |\n| Trigger | Annually before the LDRRMFIP; after a major event or CDRA update |\n| Forms | FIN-F10 |\n| IAT v1.7 indicators | A4.9 (1, Medium); A4.7 (3, Low); A9.5 (1) |\n| Policy basis | RA 10121 Sec. 21; RA 656; RA 10174 (PSF); UNDRR Scorecard 3.2.3–3.2.4; Disaster Rehabilitation and Recovery Planning Guide |\n\n| **Step** | **Actor** | **Action and decision rule** | **Inputs → outputs / records** | **Timing, control and escalation** |\n|---|---|---|---|---|\n| 1. Choose scenarios | Research and Planning | Use the flood and tropical cyclone contingency plans' most severe credible scenarios (e.g., Thelma-type flash flood; Yolanda-strength typhoon) | CPs, CDRA → scenarios | With the budget call |\n| 2. Cost the response | Research and Planning with CSWDO, CEO, CHO | Cost relief, evacuation, debris clearing, emergency repair and early recovery from the plans | → cost estimate | Two weeks |\n| 3. Compare | Research and Planning with Budget Office | Compare with QRF, AA line, STF, insurance cover and other sources | → FIN-F10 shortfall | — |\n| 4. Check insurance | CGSO | Confirm EOC, evacuation centres and critical facilities on the GSIS indemnity schedule; list uninsured priority assets | → insurance schedule | Before renewal |\n| 5. Recommend | CDRRMO Head | Propose premiums, STF reserves, framework agreements, PSF proposals and fallback sources | → recommendations into SOP 5-01 | Before LDRRMFIP draft |\n\n## SOP 5-10 | Audit readiness, COA observations and internal control\n\nProcess owner: CDRRMO Administration and Training with the City Accountant and the Internal Audit Service, where constituted. Purpose: prevent common findings and close COA observations on DRRM funds.\n\n| **Control element** | **Entry** |\n|---|---|\n| Type and MODE template | Workflow WF-SOP5-10 (budget) |\n| Decision authority (legal) | City Mayor answers COA; COA decides |\n| Process owner (operational) | CDRRMO Administration and Training |\n| Trigger | Before year-end (pre-audit check); receipt of an Audit Observation Memorandum (AOM) or the Annual Audit Report (AAR) |\n| Forms | FIN-F11 |\n| IAT v1.7 indicators | A4.8 (2, Medium) |\n| Policy basis | COA Circular No. 2012-002; COA rules on AOMs and AARs |\n\n| **Step** | **Actor** | **Action and decision rule** | **Inputs → outputs / records** | **Timing, control and escalation** |\n|---|---|---|---|---|\n| 1. Pre-audit check | Administration and Training with Accountant | Run the Annex 5-B checklist on DRRM transactions of the year | → checklist record | By November |\n| 2. Annual physical count | CGSO with CDRRMO | Count DRRM property and reconcile with the asset register | → count report | Per COA schedule |\n| 3. Log observations | Administration and Training | Log each AOM or AAR finding on DRRM funds | AOM/AAR → FIN-F11 | On receipt |\n| 4. Respond | Responsible office | Prepare the reply and corrective action with evidence | → reply, action plan | Within the period COA sets |\n| 5. Track | Administration and Training | Report open findings to the CDRRMC each quarter | → FIN-F03 annex | Quarterly; overdue → CDRRMO Head |\n| 6. Close | COA (external); City Accountant | Record COA's status of implementation | → FIN-F11 closed | Next AAR |\n\n# 16. Responsibility Assignment (RACI)\n\n\"A\" is the single proposed process-accountable owner; \"R\" performs; \"C\" is consulted; \"I\" is informed. The RACI allocates work. It does not transfer the legal powers named in section 3.\n\n| **Activity** | **Mayor / HoPE** | **SP** | **CDRRMC** | **CDRRMO Head** | **R&P Div.** | **Admin & Tr. Div.** | **Budget** | **Accounting** | **Treasury** | **BAC** | **CGSO** | **CSWDO** |\n|---|---|---|---|---|---|---|---|---|---|---|---|---|\n| LDRRMF computation | I | I | I | C | C | I | A/R | C | C | – | – | – |\n| LDRRMFIP drafting | I | I | C | A | R | R | C | C | – | C | C | C |\n| LDRRMFIP approval / adoption | I | A (adopt) | A (approve) | R | R | I | C | C | – | – | – | – |\n| Utilisation tracking and quarterly report | I | I | I | A | R | R | C | R | C | I | I | I |\n| STF ageing and programming | I | A (concur) | A (approve) | C | R | I | C | R | C | – | – | – |\n| QRF use | A (expenditure) | A (declaration) | C | R | C | R | R | R | R | R | R | R |\n| AA fund release | A (declaration, expenditure) | I | C | R | C | R | R | R | R | R | R | R |\n| Pre-arranged supply | A (award) | – | I | C | I | R | C | – | – | R | R | C |\n| Emergency procurement | A (award) | I | I | C | – | R | R | R | R | R | R | C |\n| Donations | A (acceptance) | I | I | C | – | R | – | R | R | – | R | R |\n| Adequacy test and insurance | I | A (premiums) | C | A | R | C | C | – | – | – | R | – |\n| Audit response | A (reply) | I | I | R | C | R | – | R | C | C | R | C |\n\n# 17. Performance Monitoring, Quality Assurance and Corrective Action\n\n| **Measure** | **Evidence** | **Review owner** |\n|---|---|---|\n| LDRRMF base computed on regular revenue | FIN-F01 signed by the Budget Officer | CDRRMO Head; CDRRMC |\n| LDRRMFIP lines traced to LDRRMP/CDP PPAs | FIN-F02; share of lines with codes | Research and Planning |\n| AA line present and within 10% of the 70% | LDRRMFIP; FIN-F01 | CDRRMC |\n| 70% utilisation | FIN-F03 obligation and disbursement rates; target ≥ 80% (A4.4) | CDRRMC quarterly |\n| STF balances near deadline | FIN-F04 flags; zero reversions | City Accountant; CDRRMO Head |\n| QRF used only under a State of Calamity | FIN-F05 references | Internal audit; COA |\n| AA releases within the tranche rule | FIN-F06 checks; 45-day report on time | CDRRMO Head; OCD VIII |\n| Emergency procurement grounds recorded | FIN-F07 complete before purchase | BAC Secretariat |\n| Donations recorded and disclosed | FIN-F09; postings | Administration and Training |\n| COA findings closed | FIN-F11 status | City Accountant; CDRRMO Head |\n\nCorrective actions name the finding, evidence, cause, action, accountable office, due date and verification, and go into the Chapter 7 corrective action register.\n\n**Legal readings to confirm with the City Legal Office and OCD VIII before adoption:**\n\n1. Whether the AA line may be created in the current year by realignment within the 70% component, or only in a new LDRRMFIP.\n2. Whether \"allocation for anticipatory action\" in Rule V Sec. 2 means the year's AA line or the amount released for one declaration.\n3. The treatment of slow-onset hazards until the NDRRMC operational guidelines are issued (ADR-025 item 4).\n4. Whether \"time is of the essence\" under RA 12009 Sec. 35(b) covers AA purchases under a State of Imminent Disaster when no State of Calamity is in force.\n5. The exact composition of \"estimated revenue from regular sources\" for the City (A4.1).\n\n# 18. Implementation, Validation and Institutionalisation Priorities\n\n| **Priority** | **Action** | **Office** | **IAT** | **When** |\n|---|---|---|---|---|\n| 1 | Create the AA line (≤ 10% of the 70%) and write Budget, Accounting, Treasury and BAC release steps (SOP 5-05) | CDRRMO Head; Budget; Accounting; BAC | A4.6 | Before the next typhoon season; CDRRMC decision on route (section 10.3) |\n| 2 | Confirm the LDRRMF base and correct the year references in Res. No. 05, s. 2025 | Budget Office | A4.1, A3.5 | Before the workshop |\n| 3 | Start quarterly utilisation reports and FDP posting | Admin and Training | A4.4, A10.5 | Next CDRRMC quarterly meeting |\n| 4 | Build the STF ageing ledger | City Accountant | A4.3 | January 2027 |\n| 5 | Supplier list and framework agreements for relief goods, fuel and heavy equipment | Admin and Training; BAC | A4.5, B6.6 | Before June 2027 |\n| 6 | Attach the latest COA AAR and status of DRRM findings | Admin and Training | A4.8 | Before the workshop |\n| 7 | Run the adequacy test for two scenarios | Research and Planning | A4.9 | With the FY2028 budget call |\n| 8 | Check GSIS coverage of the EOC, evacuation centres and critical facilities | CGSO | A4.7 | Before renewal |\n| 9 | Donations SOP adopted by EO and tested in a drill | CSWDO; CGSO | B6.4 | Next drill |\n\nValidation: each SOP is reviewed by the offices that hold its legal functions, tested in a tabletop exercise with the Budget, Accounting, Treasury and BAC offices, and adopted only after the City Legal Office confirms the readings above.\n\n# 19. Forms, Registers and Annexes\n\n| **Code** | **Form** | **Used in** | **MODE** |\n|---|---|---|---|\n| FIN-F01 | LDRRMF computation and allocation sheet | SOP 5-01 | New |\n| FIN-F02 | LDRRMFIP thematic split | SOP 5-01 | Carried by BUD-F01 |\n| FIN-F03 | Quarterly utilisation and results report | SOP 5-02 | Carried by BUD-F02 |\n| FIN-F04 | Special Trust Fund ageing ledger entry | SOP 5-03 | New |\n| FIN-F05 | QRF use request and certification | SOP 5-04 | New |\n| FIN-F06 | Anticipatory action fund release and tranche record | SOP 5-05 | New |\n| FIN-F07 | Emergency procurement justification and record | SOP 5-07 | New |\n| FIN-F08 | Pre-arranged supplier and framework agreement register entry | SOP 5-06 | New |\n| FIN-F09 | Donation receipt and acknowledgement | SOP 5-08 | New |\n| FIN-F10 | Fund adequacy test | SOP 5-09 | New |\n| FIN-F11 | Audit observation and corrective action tracker | SOP 5-10 | New |\n\nAnnexes: **5-A** IAT and master requirements traceability; **5-B** pre-audit checklist for DRRM transactions; **5-C** anticipatory action funding pathway and tranche worksheet.\n\n# 20. Relationship with Other Chapters\n\n- **Chapter 1** declares the State of Calamity (GOV-04) and the State of Imminent Disaster (GOV-05) that open the QRF and AA funds; the CDRRMC approves plans.\n- **Chapter 2** staffs the Administration and Research and Planning roles that run this chapter (its sec. 2.16.2 budget cycle is carried out through SOPs 5-01 and 5-02).\n- **Chapter 3** sets the LDRRMP and contingency plans that the LDRRMFIP funds and the adequacy test uses.\n- **Chapter 4** raises resource requests (SOP 4-07, EOC-F06); expenditure follows this chapter.\n- **Chapter 6** runs logistics, warehousing and the resource inventory; this chapter keeps the money and property records.\n- **Chapter 7** keeps corrective actions and performance reviews.\n- **Chapter 8** finances recovery beyond the QRF.\n\n# 21. Conclusion\n\nThe City already sets aside and approves its DRRM fund. The work now is to make it reachable at the right moment: an anticipatory action line before impact, a QRF under its proper trigger after impact, suppliers agreed before the season, and records that tell the CDRRMC, the public and COA what each peso did.\n\n# REFERENCES\n\nThe official text governs.\n\n- Republic Act No. 10121, Philippine Disaster Risk Reduction and Management Act of 2010, and its IRR.\n- Republic Act No. 12287, Declaration of State of Imminent Disaster Act (12 September 2025), and its IRR (signed 14 September 2026), Rules IV–VI.\n- Republic Act No. 12009, New Government Procurement Act (20 July 2024), and its IRR (published 10 February 2025).\n- NDRRMC–DBM–DILG Joint Memorandum Circular No. 2013-1, Allocation and Utilization of the LDRRMF (25 March 2013).\n- COA Circular No. 2012-002, Accounting and Reporting Guidelines for the LDRRMF, NDRRMF Given to LGUs and Receipts from Other Sources (12 September 2012).\n- NDRRMC Memorandum Circular No. 147, s. 2017.\n- DILG Memorandum Circular No. 2012-141 and later Full Disclosure Policy issuances.\n- Republic Act No. 656, Property Insurance Law; Republic Act No. 9729 as amended by RA 10174.\n- NEDA/OCD Disaster Rehabilitation and Recovery Planning Guide.\n- UNDRR Disaster Resilience Scorecard for Cities (Detailed Level), Essential 3.\n- City of Ormoc: SP Res. 2024-088; SP Res. 2024-102; CDRRMC Res. Nos. 01–08, s. 2025; EO 2024-032A; CDP 2024–2030; Ormoc City DRRM 10-Year Plan 2023–2032; CDRA.\n- IAT v1.7 workbook and Master Requirements Traceability and Data Dictionary v1.2; Methodology v1.1.\n\n# VALIDATION AND SOURCE CONTROL REGISTER\n\n| **Item** | **Source used** | **Status** |\n|---|---|---|\n| CY2026 LDRRMF figures | CDRRMC Res. No. 05, s. 2025 | Verify SP adoption of the CY2026 plan |\n| LDRRMF base | Res. No. 05, s. 2025 (NTA only) | Budget Office to confirm |\n| AA rules | RA 12287 IRR Rule V, certified true copy read 11–12 Nov 2026 | Medium confidence until City Legal confirms; DBM–COA guidelines pending |\n| Emergency procurement ground | RA 12009 Sec. 35(b) (lawphil text) | Confirm IRR details with the BAC Secretariat |\n| JMC 2013-1 provisions | Secondary sources (COA 2014 DRRM audit; DBM LBC 130) | Check against a certified copy |\n| Donations | SP Res. 2024-102 | Confirm acceptance delegation |\n",
+   "change_note": "Loaded from reference/moo/MOO_Ch5v1_v1.0.md (Chapter 5, v1.0 working draft (IAT v1.7))",
+   "status": "draft"
+  },
+  {
+   "id": "58404cb3-4a0c-5c65-ac4f-dfafc1b70622",
+   "document_id": "a77a3f29-f160-5f96-ac25-e8bbb357e6e8",
+   "label": "v1.0 working draft (IAT v1.7)",
+   "body_md": "# Annex 5-A. IAT and Master Requirements Traceability\n\nCopied from IAT v1.7 and the Master Requirements Traceability and Data Dictionary v1.2. Scores and priorities are for validation (Methodology v1.1 §6). Part C rows carry the lead office as type.\n\n| IAT | Type | Weight | Score | Gap priority | Master requirement(s) | Chapter 5 SOP | Recommended action (IAT v1.7) |\n|---|---|---|---|---|---|---|---|\n| A3.5 | M | 3 | 3 | 4.5 (Medium) | MR-03; MR-04; MR-01; MR-12–MR-15 | 5-01 | Maintain; obtain and file the SP resolution adopting the CY2026 plan; tag each LDRRMFIP item to an LDRRMP and CDP C.1 PPA code; add the AA line (A4.6) and the EOC operations line (B7.5) explicitly. |\n| A4.1 | M | 3 | 3 | 4.5 (Medium) | MR-08; MR-01; MR-12–MR-15 | 5-01 | Have the Budget Office show the computation on estimated revenue from regular sources (NTA and local sources) and keep it with the budget; correct the base if only the NTA was used. |\n| A4.2 | M | 3 | 3 | 4.5 (Medium) | MR-08; MR-01; MR-12–MR-15 | 5-01, 5-04 | Maintain the 70/30 split; show the AA sub-allocation inside the 70% (A4.6). |\n| A4.3 | M | 2 | 3 | 3 (Low) | MR-08; MR-01; MR-12–MR-15 | 5-03 | Keep an STF ledger by year of origin showing the 5-year deadline per balance; list STF balances as an AA fund source (A4.6). |\n| A4.4 | GP | 2 | 2 | 4 (Medium) | MR-08; MR-01; MR-12–MR-15 | 5-02 | Track LDRRMF and Trust Fund utilisation quarterly in the CDRRMC meeting using a standard report; flag PPAs at risk by Q3; programme aged Trust Fund balances first. |\n| A4.5 | M | 2 | 2 | 6 (Medium) | MR-08; MR-01; MR-12–MR-15 | 5-06, 5-07 | Keep a pre-qualified supplier list updated each year; set framework agreements for relief goods, fuel and heavy equipment under RA 12009 IRR, usable for AA (B6.6). |\n| A4.6 | M | 2 | 0 | 12 (High) | MR-08; MR-16; MR-01; MR-12–MR-15 | 5-01, 5-03, 5-05 | Put an AA line (up to 10% of the 70% LDRRMF) in the FY2028 LDRRMFIP under CDP PPA 3.15; map other sources (STF, donations under SP Res. 2024-102, ODA); write Budget/Accounting/BAC steps for immediate disbursement with the 30%/70% tranche rule. Revisit when DBM-COA guidelines issue. |\n| A4.7 | GP | 1 | 3 | 1 (Low) | MR-08; MR-01; MR-12–MR-15 | 5-09 | Check that the EOC, ECs and city-owned critical facilities are on the GSIS indemnity schedule; use the CDRA facility list to set coverage priorities. |\n| A4.8 | M | 2 | 2 | 6 (Medium) | MR-08; MR-01; MR-12–MR-15 | 5-10 | Set an internal audit check of LDRRMF before year-end. |\n| A4.9 | GP | 2 | 1 | 6 (Medium) | MR-08; MR-18; MR-01; MR-12–MR-15 | 5-09 | Cost response and early recovery (relief, evacuation, debris, emergency repair) for a Thelma-type flash flood and a Yolanda-type typhoon from the flood and TC CPs; compare with the current QRF, STF balances and NDRRM Fund access; record the shortfall and fallback sources in the LDRRMFIP. |\n| A10.5 | M | 1 | 2 | 3 (Low) | MR-07; MR-11; MR-01; MR-12–MR-15 | 5-02 | Maintain. |\n| A1.7 | GP | 1 | 3 | 1 (Low) | MR-02; MR-01; MR-12–MR-15 | 5-01 | Keep representation; file CDC and LFC minutes that record CDRRMO input; use the LFC seat to secure the AA line (A4.6) and the EOC budget (B7.5) in the FY2028 budget call. |\n| A2.7 | M | 2 | 2 | 6 (Medium) | MR-02; MR-09; MR-01; MR-12–MR-15 | 5-01 (funding line) | Adopt a responder welfare policy: group accident insurance (staff and accredited volunteers), PPE issue list, rest cycles, MHPSS referral with CHO (RA 11036). Memo 131 also requires EOC personnel welfare. |\n| B6.4 | GP | 1 | 2 | 2 (Low) | MR-08; MR-01; MR-12–MR-15 | 5-08 | Write the donations and volunteer SOP under SP Res. 2024-102: intake desk, deed of donation, logging, warehousing with CSWD/CGSO, distribution records, FDP posting; spontaneous-volunteer registration and tasking through the EOC. |\n| B6.6 | GP | 2 | 1 | 6 (Medium) | MR-08; MR-16; MR-18; MR-01; MR-12–MR-15 | 5-05, 5-06 | Sign agreements listing item, quantity, trigger and contact, usable for AA (IRR Rule IV Sec. 6). |\n| B7.5 | M | 2 | 3 | 3 (Low) | MR-04; MR-11; MR-01; MR-12–MR-15 | 5-01 | Keep the line in each LDRRMFIP. |\n| C1.2 | CPDO; City Budget Office | 1 | 1 | 3 (Low) | MR-03; MR-17; MR-18; MR-01; MR-12–MR-15 | 5-01 step 4 | Add a one-page DRR/CCA screening form to LDC/LFC project review (hazard overlay, exposure, design standard, climate expenditure tag), owned by CPDO with CDRRMO sign-off. |\n| A10.8 | M | 2 | 0 | 12 (High) | MR-07; MR-11; MR-16; MR-01; MR-12–MR-15 | 5-05 step 8 | Prepare the 45-day post-declaration report template and confirm the reporting route with OCD VIII. |\n",
+   "change_note": "Loaded from reference/moo/MOO_Ch5v1_Annex_5-A.md (Chapter 5, v1.0 working draft (IAT v1.7))",
+   "status": "draft"
+  },
+  {
+   "id": "f03bf2a9-ef41-5803-b83c-445f3acaa437",
+   "document_id": "4e4e65a0-6865-52e2-a314-05fab33c5395",
+   "label": "v1.0 working draft (IAT v1.7)",
+   "body_md": "# Annex 5-B. Pre-audit Checklist for DRRM Transactions\n\nUsed in SOP 5-10 step 1, before year-end, by CDRRMO Administration and Training with the City Accountant. Each \"No\" becomes a corrective action on FIN-F11. The checklist prevents the findings COA most often raises on LDRRMF use; it does not replace COA's own requirements (COA Circular No. 2012-001 and No. 2012-002).\n\n| No. | Check | Evidence | Yes / No / NA |\n|---|---|---|---|\n| 1 | The LDRRMF was computed on estimated revenue from regular sources, and the computation is filed | FIN-F01 signed by the Budget Officer | |\n| 2 | The 70/30 split appears in the appropriation and in the books | Appropriation ordinance; ledgers | |\n| 3 | Every charge to the 70% is in the approved LDRRMFIP and is a DRRM use | LDRRMFIP line; obligation request | |\n| 4 | Every QRF charge refers to an SP declaration of a State of Calamity in force at the time | SP resolution; FIN-F05 | |\n| 5 | Every AA charge refers to a State of Imminent Disaster in force, is within the AA line, and passed the tranche check | Mayor's EO; FIN-F06 | |\n| 6 | Unused QRF and 70% balances were transferred to the STF at year-end | Closing entries | |\n| 7 | The STF ledger shows each balance by year of origin and its deadline; no balance passed five years unused | FIN-F04 | |\n| 8 | Each emergency procurement has its written ground, HoPE approval and posting | FIN-F07; BAC records | |\n| 9 | Each delivery has an inspection and acceptance report | IAR | |\n| 10 | Relief goods and NFIs issued have issue slips and distribution summaries | Issue slips; summaries (no personal data in the CDRRMO file) | |\n| 11 | Cash advances for DRRM operations were liquidated within the period | Liquidation reports | |\n| 12 | Donations have acceptance documents, receipts and use records | FIN-F09; ORs | |\n| 13 | Quarterly utilisation reports were submitted to the CDRRMC and posted under the Full Disclosure Policy | FIN-F03; posting proof | |\n| 14 | DRRM property is on the asset register, covered by PAR/ICS and counted this year | Count report | |\n| 15 | Insurance of DRRM buildings and equipment is current | GSIS policy schedule | |\n| 16 | Prior-year COA observations on DRRM funds have a reply and status | FIN-F11 | |\n",
+   "change_note": "Loaded from reference/moo/MOO_Ch5v1_Annex_5-B.md (Chapter 5, v1.0 working draft (IAT v1.7))",
+   "status": "draft"
+  },
+  {
+   "id": "727c8f79-41fe-5581-beb8-108a7e526cdb",
+   "document_id": "4744143d-bf31-58ae-a850-aa662ce66fd7",
+   "label": "v1.0 working draft (IAT v1.7)",
+   "body_md": "# Annex 5-C. Anticipatory Action Funding Pathway and Tranche Worksheet\n\nBasis: RA 12287 and its IRR (signed 14 September 2026), Rule V Secs. 1–3; ADR-025. The official text governs. DBM–COA guidelines on AA funds and NDRRMC operational guidelines are pending; this worksheet will be revised when they are issued.\n\n## 1. Pathway\n\n1. **Plan.** The LDRRMFIP carries an AA line of no more than 10% of the 70% LDRRMF component, naming the AA measures (by hazard and sector), lead offices and procurement mode (SOP 5-01).\n2. **Pre-arrange.** Framework agreements and supplier lists cover AA items (SOP 5-06).\n3. **Declare.** The City Mayor declares a State of Imminent Disaster after the PDRA, CDRRMC recommendation and RDRRMC process (Chapter 1, SOP GOV-05).\n4. **Release.** Budget, Accounting and Treasury release funds immediately, within the tranche rule (SOP 5-05).\n5. **Deliver.** Lead offices carry out AA measures; No Regrets Principle applies.\n6. **Lift and report.** The declaration lifts on hazard occurrence or on the Mayor's lifting; unused AA funds accrue to the STF; the 45-day report includes AA fund use.\n\n## 2. Tranche worksheet (hydrometeorological and geological hazards)\n\n| Line | Item | Formula | Example (CY2026 base) |\n|---|---|---|---|\n| a | LDRRMF for the year | From FIN-F01 | PHP 139,955,741.40 |\n| b | 70% component | a × 0.70 | PHP 97,969,018.98 |\n| c | AA line in the LDRRMFIP | ≤ b × 0.10 | up to PHP 9,796,901.90 |\n| d | Cap for interventions more than 3 days before forecast impact | c × 0.30 | PHP 2,939,070.57 |\n| e | Allowance for interventions within 3 days of forecast impact | c × 0.70 | PHP 6,857,831.33 |\n| f | Already disbursed this year from the AA line | From FIN-F06 | — |\n| g | Available for this declaration | c − f, split by d and e | — |\n\nThe example uses the CY2026 approved figures for illustration only; the CY2026 plan has no AA line. The base may change once the Budget Office confirms the regular-revenue computation (A4.1).\n\n## 3. Sources not subject to graduation\n\nSTF balances within their five-year period; funds from partners and private or international donors; ODA; donations of other LGUs; other lawful sources (IRR Rule V Secs. 1(b) and 2). Their own terms and COA rules still apply.\n\n## 4. Slow-onset hazards\n\nUntil the NDRRMC operational guidelines are issued, drought and other slow-onset hazards are not graduated, but disbursements never exceed the year's AA line (ADR-025 item 4). Confirm with the City Legal Office and OCD VIII.\n",
+   "change_note": "Loaded from reference/moo/MOO_Ch5v1_Annex_5-C.md (Chapter 5, v1.0 working draft (IAT v1.7))",
+   "status": "draft"
+  },
+  {
    "id": "72c76001-de05-5658-b23b-27171551e508",
    "document_id": "d47f0498-4189-5772-9e6c-fecd708e1cbc",
    "label": "v0.1 proposed (EOC Module note, 6 Nov 2026)",
@@ -10769,6 +10851,78 @@
    "indicator_id": "C2.1"
   },
   {
+   "document_id": "d7190e43-31f8-55d7-b646-04574073dedf",
+   "indicator_id": "A3.5"
+  },
+  {
+   "document_id": "d7190e43-31f8-55d7-b646-04574073dedf",
+   "indicator_id": "A4.1"
+  },
+  {
+   "document_id": "d7190e43-31f8-55d7-b646-04574073dedf",
+   "indicator_id": "A4.2"
+  },
+  {
+   "document_id": "d7190e43-31f8-55d7-b646-04574073dedf",
+   "indicator_id": "A4.3"
+  },
+  {
+   "document_id": "d7190e43-31f8-55d7-b646-04574073dedf",
+   "indicator_id": "A4.4"
+  },
+  {
+   "document_id": "d7190e43-31f8-55d7-b646-04574073dedf",
+   "indicator_id": "A4.5"
+  },
+  {
+   "document_id": "d7190e43-31f8-55d7-b646-04574073dedf",
+   "indicator_id": "A4.6"
+  },
+  {
+   "document_id": "d7190e43-31f8-55d7-b646-04574073dedf",
+   "indicator_id": "A4.7"
+  },
+  {
+   "document_id": "d7190e43-31f8-55d7-b646-04574073dedf",
+   "indicator_id": "A4.8"
+  },
+  {
+   "document_id": "d7190e43-31f8-55d7-b646-04574073dedf",
+   "indicator_id": "A4.9"
+  },
+  {
+   "document_id": "d7190e43-31f8-55d7-b646-04574073dedf",
+   "indicator_id": "A10.5"
+  },
+  {
+   "document_id": "d7190e43-31f8-55d7-b646-04574073dedf",
+   "indicator_id": "C1.2"
+  },
+  {
+   "document_id": "d7190e43-31f8-55d7-b646-04574073dedf",
+   "indicator_id": "A1.7"
+  },
+  {
+   "document_id": "d7190e43-31f8-55d7-b646-04574073dedf",
+   "indicator_id": "A2.7"
+  },
+  {
+   "document_id": "d7190e43-31f8-55d7-b646-04574073dedf",
+   "indicator_id": "A10.8"
+  },
+  {
+   "document_id": "d7190e43-31f8-55d7-b646-04574073dedf",
+   "indicator_id": "B6.4"
+  },
+  {
+   "document_id": "d7190e43-31f8-55d7-b646-04574073dedf",
+   "indicator_id": "B6.6"
+  },
+  {
+   "document_id": "d7190e43-31f8-55d7-b646-04574073dedf",
+   "indicator_id": "B7.5"
+  },
+  {
    "document_id": "07c8c36f-3092-5f21-8bb0-5df842023f5c",
    "indicator_id": "A1.1"
   },
@@ -11247,6 +11401,98 @@
   {
    "document_id": "35d5f0ee-1c6a-52de-adec-5234a23a0022",
    "indicator_id": "B1.3"
+  },
+  {
+   "document_id": "a77a3f29-f160-5f96-ac25-e8bbb357e6e8",
+   "indicator_id": "A3.5"
+  },
+  {
+   "document_id": "a77a3f29-f160-5f96-ac25-e8bbb357e6e8",
+   "indicator_id": "A4.1"
+  },
+  {
+   "document_id": "a77a3f29-f160-5f96-ac25-e8bbb357e6e8",
+   "indicator_id": "A4.2"
+  },
+  {
+   "document_id": "a77a3f29-f160-5f96-ac25-e8bbb357e6e8",
+   "indicator_id": "A4.3"
+  },
+  {
+   "document_id": "a77a3f29-f160-5f96-ac25-e8bbb357e6e8",
+   "indicator_id": "A4.4"
+  },
+  {
+   "document_id": "a77a3f29-f160-5f96-ac25-e8bbb357e6e8",
+   "indicator_id": "A4.5"
+  },
+  {
+   "document_id": "a77a3f29-f160-5f96-ac25-e8bbb357e6e8",
+   "indicator_id": "A4.6"
+  },
+  {
+   "document_id": "a77a3f29-f160-5f96-ac25-e8bbb357e6e8",
+   "indicator_id": "A4.7"
+  },
+  {
+   "document_id": "a77a3f29-f160-5f96-ac25-e8bbb357e6e8",
+   "indicator_id": "A4.8"
+  },
+  {
+   "document_id": "a77a3f29-f160-5f96-ac25-e8bbb357e6e8",
+   "indicator_id": "A4.9"
+  },
+  {
+   "document_id": "a77a3f29-f160-5f96-ac25-e8bbb357e6e8",
+   "indicator_id": "A10.5"
+  },
+  {
+   "document_id": "a77a3f29-f160-5f96-ac25-e8bbb357e6e8",
+   "indicator_id": "A1.7"
+  },
+  {
+   "document_id": "a77a3f29-f160-5f96-ac25-e8bbb357e6e8",
+   "indicator_id": "A2.7"
+  },
+  {
+   "document_id": "a77a3f29-f160-5f96-ac25-e8bbb357e6e8",
+   "indicator_id": "A10.8"
+  },
+  {
+   "document_id": "a77a3f29-f160-5f96-ac25-e8bbb357e6e8",
+   "indicator_id": "B6.4"
+  },
+  {
+   "document_id": "a77a3f29-f160-5f96-ac25-e8bbb357e6e8",
+   "indicator_id": "B6.6"
+  },
+  {
+   "document_id": "a77a3f29-f160-5f96-ac25-e8bbb357e6e8",
+   "indicator_id": "B7.5"
+  },
+  {
+   "document_id": "a77a3f29-f160-5f96-ac25-e8bbb357e6e8",
+   "indicator_id": "C1.2"
+  },
+  {
+   "document_id": "4e4e65a0-6865-52e2-a314-05fab33c5395",
+   "indicator_id": "A4.8"
+  },
+  {
+   "document_id": "4e4e65a0-6865-52e2-a314-05fab33c5395",
+   "indicator_id": "A4.4"
+  },
+  {
+   "document_id": "4e4e65a0-6865-52e2-a314-05fab33c5395",
+   "indicator_id": "A10.5"
+  },
+  {
+   "document_id": "4744143d-bf31-58ae-a850-aa662ce66fd7",
+   "indicator_id": "A4.6"
+  },
+  {
+   "document_id": "4744143d-bf31-58ae-a850-aa662ce66fd7",
+   "indicator_id": "A10.8"
   },
   {
    "document_id": "d47f0498-4189-5772-9e6c-fecd708e1cbc",
@@ -11761,6 +12007,96 @@
    "schema": "{\"fields\": [{\"key\": \"finding\", \"label\": \"Finding and evidence\", \"type\": \"textarea\", \"required\": true}, {\"key\": \"cause\", \"label\": \"Root or contributing cause\", \"type\": \"textarea\", \"required\": true}, {\"key\": \"action\", \"label\": \"Corrective action\", \"type\": \"textarea\", \"required\": true}, {\"key\": \"owner\", \"label\": \"Accountable office\", \"type\": \"text\", \"required\": true}, {\"key\": \"due\", \"label\": \"Due date\", \"type\": \"date\", \"required\": true}, {\"key\": \"verification\", \"label\": \"Verification evidence\", \"type\": \"text\", \"required\": false}, {\"key\": \"closure\", \"label\": \"Closure\", \"type\": \"select\", \"required\": false, \"options\": [\"Open\", \"Closed\", \"Escalated\"]}]}",
    "status": "draft",
    "rev": 1
+  },
+  {
+   "id": "4db855d7-e641-51f3-9412-b6f6a1565b0a",
+   "code": "FIN-F01",
+   "title": "LDRRMF computation and allocation sheet",
+   "purpose": "Chapter 5 FIN-F01 (SOP 5-01 step 1). Signed by the City Budget Officer.",
+   "document_id": "d7190e43-31f8-55d7-b646-04574073dedf",
+   "schema": "{\"fields\": [{\"key\": \"fiscal_year\", \"label\": \"Fiscal year\", \"type\": \"integer\", \"required\": true, \"min\": 2020}, {\"key\": \"nta_php\", \"label\": \"NTA share (PHP)\", \"type\": \"number\", \"required\": true, \"min\": 0}, {\"key\": \"local_regular_php\", \"label\": \"Regular local revenue (PHP)\", \"type\": \"number\", \"required\": true, \"hint\": \"Local taxes, fees and charges, other recurring income\", \"min\": 0}, {\"key\": \"base_note\", \"label\": \"What the base includes and excludes\", \"type\": \"textarea\", \"required\": true}, {\"key\": \"ldrrmf_php\", \"label\": \"LDRRMF, at least 5% of the base (PHP)\", \"type\": \"number\", \"required\": true, \"min\": 0}, {\"key\": \"qrf_php\", \"label\": \"QRF, 30% (PHP)\", \"type\": \"number\", \"required\": true, \"min\": 0}, {\"key\": \"seventy_php\", \"label\": \"70% component (PHP)\", \"type\": \"number\", \"required\": true, \"min\": 0}, {\"key\": \"aa_line_php\", \"label\": \"AA line, at most 10% of the 70% (PHP)\", \"type\": \"number\", \"required\": false, \"min\": 0}, {\"key\": \"certified_by\", \"label\": \"Certified by (position)\", \"type\": \"text\", \"required\": true, \"hint\": \"Position, not a personal name\"}]}",
+   "status": "draft",
+   "rev": 1
+  },
+  {
+   "id": "06a7fb53-9552-5d90-8cd5-0d6a9978ae34",
+   "code": "FIN-F04",
+   "title": "Special Trust Fund ageing ledger entry",
+   "purpose": "Chapter 5 FIN-F04 (SOP 5-03). One entry per year of origin.",
+   "document_id": "d7190e43-31f8-55d7-b646-04574073dedf",
+   "schema": "{\"fields\": [{\"key\": \"year_of_origin\", \"label\": \"Year of origin\", \"type\": \"integer\", \"required\": true, \"min\": 2010}, {\"key\": \"amount_php\", \"label\": \"Amount accrued (PHP)\", \"type\": \"number\", \"required\": true, \"min\": 0}, {\"key\": \"used_php\", \"label\": \"Used to date (PHP)\", \"type\": \"number\", \"required\": true, \"min\": 0}, {\"key\": \"deadline_year\", \"label\": \"Last year of use (origin + 5)\", \"type\": \"integer\", \"required\": true}, {\"key\": \"programmed_use\", \"label\": \"Programmed use and approving resolution\", \"type\": \"textarea\", \"required\": false}, {\"key\": \"aa_available\", \"label\": \"Listed as an AA source\", \"type\": \"checkbox\", \"required\": false}]}",
+   "status": "draft",
+   "rev": 1
+  },
+  {
+   "id": "821af167-6f51-5d36-a745-297a1ae1076b",
+   "code": "FIN-F05",
+   "title": "QRF use request and certification",
+   "purpose": "Chapter 5 FIN-F05 (SOP 5-04). No QRF without a State of Calamity.",
+   "document_id": "d7190e43-31f8-55d7-b646-04574073dedf",
+   "schema": "{\"fields\": [{\"key\": \"soc_ref\", \"label\": \"State of Calamity (SP resolution, date, area)\", \"type\": \"text\", \"required\": true}, {\"key\": \"purpose\", \"label\": \"Purpose\", \"type\": \"select\", \"required\": true, \"options\": [\"Relief\", \"Recovery\"]}, {\"key\": \"items\", \"label\": \"Items and quantities\", \"type\": \"textarea\", \"required\": true}, {\"key\": \"amount_php\", \"label\": \"Amount (PHP)\", \"type\": \"number\", \"required\": true, \"min\": 0}, {\"key\": \"procurement_mode\", \"label\": \"Procurement mode\", \"type\": \"select\", \"required\": true, \"options\": [\"Stock or framework agreement\", \"Emergency procurement (FIN-F07)\", \"Other mode\"]}, {\"key\": \"certifications\", \"label\": \"Budget and Accounting certifications obtained\", \"type\": \"checkbox\", \"required\": true}, {\"key\": \"qrf_balance_php\", \"label\": \"QRF balance after this request (PHP)\", \"type\": \"number\", \"required\": false, \"min\": 0}]}",
+   "status": "draft",
+   "rev": 1
+  },
+  {
+   "id": "719aaf67-26f5-5f18-bb0e-b427ab802f38",
+   "code": "FIN-F06",
+   "title": "Anticipatory action fund release and tranche record",
+   "purpose": "Chapter 5 FIN-F06 (SOP 5-05); RA 12287 IRR Rule V. Feeds the 45-day report.",
+   "document_id": "d7190e43-31f8-55d7-b646-04574073dedf",
+   "schema": "{\"fields\": [{\"key\": \"sid_ref\", \"label\": \"State of Imminent Disaster (Mayor's EO, date)\", \"type\": \"text\", \"required\": true}, {\"key\": \"hazard_family\", \"label\": \"Hazard family\", \"type\": \"select\", \"required\": true, \"options\": [\"Hydrometeorological\", \"Geological\", \"Slow-onset (e.g., drought)\", \"Other\"]}, {\"key\": \"impact_time\", \"label\": \"Forecast impact time\", \"type\": \"datetime\", \"required\": true}, {\"key\": \"aa_allocation_php\", \"label\": \"AA allocation for the year (PHP)\", \"type\": \"number\", \"required\": true, \"min\": 0}, {\"key\": \"source\", \"label\": \"Fund source\", \"type\": \"select\", \"required\": true, \"options\": [\"70% component (LDRRMFIP line)\", \"AA line (within the 70%)\", \"QRF (30%)\", \"Special Trust Fund\", \"Donation or grant\", \"Other lawful source\"]}, {\"key\": \"measure\", \"label\": \"AA measure and lead office\", \"type\": \"textarea\", \"required\": true}, {\"key\": \"amount_php\", \"label\": \"Amount released (PHP)\", \"type\": \"number\", \"required\": true, \"min\": 0}, {\"key\": \"timing\", \"label\": \"Intervention timing\", \"type\": \"select\", \"required\": true, \"options\": [\"More than 3 days before impact (cap 30%)\", \"Within 3 days of impact (up to 70%)\", \"Not graduated (other source or slow-onset)\"]}, {\"key\": \"within_cap\", \"label\": \"Within the tranche rule after this release\", \"type\": \"checkbox\", \"required\": true}, {\"key\": \"closure\", \"label\": \"On lifting: spent, unused to STF\", \"type\": \"textarea\", \"required\": false}]}",
+   "status": "draft",
+   "rev": 1
+  },
+  {
+   "id": "c6a4ec41-e380-51cf-9870-7d17debcb304",
+   "code": "FIN-F07",
+   "title": "Emergency procurement justification and record",
+   "purpose": "Chapter 5 FIN-F07 (SOP 5-07); RA 12009 Sec. 35(b). Completed before the purchase.",
+   "document_id": "d7190e43-31f8-55d7-b646-04574073dedf",
+   "schema": "{\"fields\": [{\"key\": \"ground\", \"label\": \"Ground\", \"type\": \"select\", \"required\": true, \"options\": [\"Imminent danger to life or property during a State of Calamity\", \"Time is of the essence because of a calamity\"]}, {\"key\": \"ground_detail\", \"label\": \"Facts showing the ground (declaration reference or calamity, why immediate action is needed)\", \"type\": \"textarea\", \"required\": true}, {\"key\": \"items\", \"label\": \"Item, quantity and use\", \"type\": \"textarea\", \"required\": true}, {\"key\": \"charging\", \"label\": \"Charging\", \"type\": \"select\", \"required\": true, \"options\": [\"70% component (LDRRMFIP line)\", \"AA line (within the 70%)\", \"QRF (30%)\", \"Special Trust Fund\", \"Donation or grant\", \"Other lawful source\"]}, {\"key\": \"amount_php\", \"label\": \"Amount (PHP)\", \"type\": \"number\", \"required\": true, \"min\": 0}, {\"key\": \"supplier\", \"label\": \"Supplier (business name)\", \"type\": \"text\", \"required\": true}, {\"key\": \"hope_approval\", \"label\": \"HoPE approval reference\", \"type\": \"text\", \"required\": true}, {\"key\": \"iar\", \"label\": \"Inspection and acceptance report reference\", \"type\": \"text\", \"required\": false}, {\"key\": \"posted\", \"label\": \"Posted and reported as RA 12009 IRR requires\", \"type\": \"checkbox\", \"required\": false}]}",
+   "status": "draft",
+   "rev": 1
+  },
+  {
+   "id": "9df9d8e0-bbaa-55d1-82dc-27e936e21f12",
+   "code": "FIN-F08",
+   "title": "Pre-arranged supplier and framework agreement register entry",
+   "purpose": "Chapter 5 FIN-F08 (SOP 5-06).",
+   "document_id": "d7190e43-31f8-55d7-b646-04574073dedf",
+   "schema": "{\"fields\": [{\"key\": \"item\", \"label\": \"Item or service\", \"type\": \"text\", \"required\": true}, {\"key\": \"supplier\", \"label\": \"Supplier (business name)\", \"type\": \"text\", \"required\": true}, {\"key\": \"agreement\", \"label\": \"Agreement type and reference\", \"type\": \"select\", \"required\": true, \"options\": [\"Framework agreement\", \"Supplier list only\", \"MOA with partner\", \"Other\"]}, {\"key\": \"quantity\", \"label\": \"Quantity range and delivery time\", \"type\": \"text\", \"required\": true}, {\"key\": \"trigger\", \"label\": \"Activation trigger (incl. AA use)\", \"type\": \"text\", \"required\": true}, {\"key\": \"valid_until\", \"label\": \"Valid until\", \"type\": \"date\", \"required\": true}, {\"key\": \"contact\", \"label\": \"Contact (position and channel)\", \"type\": \"text\", \"required\": true}, {\"key\": \"last_test\", \"label\": \"Last call-down test\", \"type\": \"date\", \"required\": false}]}",
+   "status": "draft",
+   "rev": 1
+  },
+  {
+   "id": "36fe0e80-9ae6-507c-a767-b3a196121344",
+   "code": "FIN-F09",
+   "title": "Donation receipt and acknowledgement",
+   "purpose": "Chapter 5 FIN-F09 (SOP 5-08); SP Res. 2024-102. No beneficiary names.",
+   "document_id": "d7190e43-31f8-55d7-b646-04574073dedf",
+   "schema": "{\"fields\": [{\"key\": \"donor_type\", \"label\": \"Donor type\", \"type\": \"select\", \"required\": true, \"options\": [\"Private individual\", \"Business\", \"NGO or CSO\", \"Other LGU\", \"National agency\", \"International partner\"]}, {\"key\": \"form\", \"label\": \"Form\", \"type\": \"select\", \"required\": true, \"options\": [\"Cash\", \"In kind\"]}, {\"key\": \"description\", \"label\": \"Description and quantity\", \"type\": \"textarea\", \"required\": true}, {\"key\": \"value_php\", \"label\": \"Value (PHP)\", \"type\": \"number\", \"required\": true, \"min\": 0}, {\"key\": \"conditions\", \"label\": \"Donor conditions\", \"type\": \"textarea\", \"required\": false}, {\"key\": \"acceptance_ref\", \"label\": \"Acceptance document reference\", \"type\": \"text\", \"required\": true}, {\"key\": \"custody\", \"label\": \"Custodian office\", \"type\": \"select\", \"required\": true, \"options\": [\"City Treasurer\", \"CGSO\", \"CSWDO\"]}, {\"key\": \"booked\", \"label\": \"Recorded by the City Accountant\", \"type\": \"checkbox\", \"required\": false}, {\"key\": \"disclosed\", \"label\": \"Disclosed\", \"type\": \"checkbox\", \"required\": false}]}",
+   "status": "draft",
+   "rev": 1
+  },
+  {
+   "id": "2f55b820-1001-5ca5-a4c5-b377ee817b0a",
+   "code": "FIN-F10",
+   "title": "Fund adequacy test",
+   "purpose": "Chapter 5 FIN-F10 (SOP 5-09); UNDRR Scorecard 3.2.3-3.2.4.",
+   "document_id": "d7190e43-31f8-55d7-b646-04574073dedf",
+   "schema": "{\"fields\": [{\"key\": \"scenario\", \"label\": \"Scenario and contingency plan\", \"type\": \"text\", \"required\": true}, {\"key\": \"cost_php\", \"label\": \"Cost of response and early recovery (PHP)\", \"type\": \"number\", \"required\": true, \"min\": 0}, {\"key\": \"cost_basis\", \"label\": \"Cost basis by item\", \"type\": \"textarea\", \"required\": true}, {\"key\": \"available_php\", \"label\": \"Available: QRF, AA line, STF, insurance, other (PHP)\", \"type\": \"number\", \"required\": true, \"min\": 0}, {\"key\": \"shortfall_php\", \"label\": \"Shortfall (PHP)\", \"type\": \"number\", \"required\": false, \"min\": 0}, {\"key\": \"fallback\", \"label\": \"Fallback sources and actions\", \"type\": \"textarea\", \"required\": true}]}",
+   "status": "draft",
+   "rev": 1
+  },
+  {
+   "id": "373ea2c4-34fe-51ec-9954-04d5a4ac630f",
+   "code": "FIN-F11",
+   "title": "Audit observation and corrective action tracker",
+   "purpose": "Chapter 5 FIN-F11 (SOP 5-10); feeds Chapter 7.",
+   "document_id": "d7190e43-31f8-55d7-b646-04574073dedf",
+   "schema": "{\"fields\": [{\"key\": \"reference\", \"label\": \"AOM or AAR reference\", \"type\": \"text\", \"required\": true}, {\"key\": \"finding\", \"label\": \"Finding\", \"type\": \"textarea\", \"required\": true}, {\"key\": \"action\", \"label\": \"Corrective action\", \"type\": \"textarea\", \"required\": true}, {\"key\": \"owner\", \"label\": \"Accountable office\", \"type\": \"text\", \"required\": true}, {\"key\": \"due\", \"label\": \"Due date\", \"type\": \"date\", \"required\": true}, {\"key\": \"status\", \"label\": \"Status\", \"type\": \"select\", \"required\": true, \"options\": [\"Open\", \"Replied\", \"Implemented\", \"Closed by COA\", \"Not implemented\"]}]}",
+   "status": "draft",
+   "rev": 1
   }
  ],
  "protocol_templates": [
@@ -12001,26 +12337,32 @@
   {
    "id": "abcc88a5-8f0d-577d-84f7-eef04656abf0",
    "code": "WF-BUDGET-CYCLE",
-   "title": "LDRRMF budget cycle (formulation to quarterly report)",
-   "purpose": "Research and Planning leads formulation, Administration leads execution, the Head approves and the CDRRMC endorses (Ch.2 sec. 2.16.2).",
-   "trigger_text": "Each budget call, and every quarter for the results-and-finance report.",
-   "document_id": "f379ea8e-ae82-5eb6-9887-f700227215ce",
+   "title": "LDRRMF budget cycle (SOPs 5-01 and 5-02: computation to quarterly report)",
+   "purpose": "Compute the LDRRMF on the correct base, plan it through an approved LDRRMFIP, execute it, and report and disclose its use every quarter (Chapter 5, SOPs 5-01 and 5-02).",
+   "trigger_text": "Each budget call, a supplemental budget or realignment, and the end of every quarter.",
+   "document_id": "d7190e43-31f8-55d7-b646-04574073dedf",
    "owner_role": "cdrrmo_head",
    "category": "budget",
    "status": "draft",
    "template_rev": 1,
    "kind": "workflow",
-   "sop_ref": "MOO Ch.2 sec. 2.16.2",
-   "process_owner": "CDRRMO Research and Planning (formulation); Administration and Training (execution)",
+   "sop_ref": "SOP 5-01 and SOP 5-02 (MOO Ch.5 v1.0); formerly MOO Ch.2 sec. 2.16.2",
+   "process_owner": "CDRRMO Research and Planning (formulation, reporting); Administration and Training (execution); City Budget Office (computation)",
    "policy_refs": [
     "RA 10121 Sec. 21",
-    "NDRRMC-DBM-DILG JMC 2013-1"
+    "NDRRMC-DBM-DILG JMC 2013-1",
+    "RA 12287 IRR (2026) Rule V Sec. 1(b)",
+    "COA Circular No. 2012-002",
+    "DILG Full Disclosure Policy issuances"
    ],
    "indicator_ids": [
     "A3.5",
     "A4.1",
     "A4.2",
-    "A4.4"
+    "A4.4",
+    "A4.6",
+    "A10.5",
+    "B7.5"
    ]
   },
   {
@@ -12436,6 +12778,195 @@
     "B1.3",
     "B7.4",
     "A10.6"
+   ]
+  },
+  {
+   "id": "07f102ff-c1d0-5203-924f-6bdcca90726d",
+   "code": "WF-SOP5-03",
+   "title": "SOP 5-03 Special Trust Fund ledger, ageing and programming",
+   "purpose": "Use every unexpended LDRRMF balance for DRRM within its five-year period, oldest first.",
+   "trigger_text": "Year-end closing; LDRRMFIP preparation; any STF reallocation request.",
+   "document_id": "d7190e43-31f8-55d7-b646-04574073dedf",
+   "owner_role": "cdrrmo_head",
+   "category": "budget",
+   "status": "draft",
+   "template_rev": 1,
+   "kind": "workflow",
+   "sop_ref": "SOP 5-03 (MOO Ch.5 v1.0)",
+   "process_owner": "City Accountant (ledger); CDRRMO Research and Planning (programming)",
+   "policy_refs": [
+    "RA 10121 Sec. 21",
+    "COA Circular No. 2012-002",
+    "RA 12287 IRR (2026) Rule V Secs. 1(b) and 3"
+   ],
+   "indicator_ids": [
+    "A4.3",
+    "A4.6"
+   ]
+  },
+  {
+   "id": "b653cdf1-b886-5c46-bb92-39bd6d122d66",
+   "code": "PR-QRF-USE",
+   "title": "SOP 5-04 Quick Response Fund use under a State of Calamity",
+   "purpose": "Release the QRF quickly, only for relief and recovery, and only under a State of Calamity declared by the SP.",
+   "trigger_text": "SP declaration of a State of Calamity covering the City or affected barangays.",
+   "document_id": "d7190e43-31f8-55d7-b646-04574073dedf",
+   "owner_role": "cdrrmo_head",
+   "category": "eoc",
+   "status": "draft",
+   "template_rev": 1,
+   "kind": "protocol",
+   "sop_ref": "SOP 5-04 (MOO Ch.5 v1.0)",
+   "process_owner": "CDRRMO Head; EOC Finance/Administration desk. Declaration: SP (SOP GOV-04). Expenditure: City Mayor within the appropriation",
+   "policy_refs": [
+    "RA 10121 Secs. 16 and 21",
+    "NDRRMC-DBM-DILG JMC 2013-1",
+    "COA Circular No. 2012-002"
+   ],
+   "indicator_ids": [
+    "A4.2",
+    "A1.6"
+   ]
+  },
+  {
+   "id": "4f52ff98-ce0a-56a6-a7e1-1c2effedca46",
+   "code": "PR-AA-FUNDS",
+   "title": "SOP 5-05 Anticipatory action funding and disbursement under a State of Imminent Disaster",
+   "purpose": "Release AA funds immediately and lawfully once a State of Imminent Disaster is declared, within the 10% ceiling and the tranche rule.",
+   "trigger_text": "The Mayor's declaration of a State of Imminent Disaster; a revised impact forecast during the declaration.",
+   "document_id": "d7190e43-31f8-55d7-b646-04574073dedf",
+   "owner_role": "cdrrmo_head",
+   "category": "anticipatory_action",
+   "status": "draft",
+   "template_rev": 1,
+   "kind": "protocol",
+   "sop_ref": "SOP 5-05 (MOO Ch.5 v1.0)",
+   "process_owner": "CDRRMO Head; EOC Finance/Administration desk. Declaration: City Mayor (SOP GOV-05). Certification and release: Budget, Accounting, Treasury",
+   "policy_refs": [
+    "RA 12287 Secs. 6-7",
+    "RA 12287 IRR (2026) Rules IV-VI",
+    "RA 12009 Sec. 35(b)"
+   ],
+   "indicator_ids": [
+    "A4.6",
+    "A10.8",
+    "B6.6"
+   ]
+  },
+  {
+   "id": "233233d0-5320-5050-bbae-e7069048869e",
+   "code": "WF-SOP5-06",
+   "title": "SOP 5-06 Pre-arranged supply: supplier list, framework agreements and specifications",
+   "purpose": "Make emergency and AA purchases fast and lawful by agreeing suppliers, items and prices before the event.",
+   "trigger_text": "Each year before the typhoon season; after an event that exposed a supply gap.",
+   "document_id": "d7190e43-31f8-55d7-b646-04574073dedf",
+   "owner_role": "cdrrmo_head",
+   "category": "budget",
+   "status": "draft",
+   "template_rev": 1,
+   "kind": "workflow",
+   "sop_ref": "SOP 5-06 (MOO Ch.5 v1.0)",
+   "process_owner": "CDRRMO Administration and Training with CGSO and the BAC Secretariat; award by the HoPE",
+   "policy_refs": [
+    "RA 12009 Secs. 16 and 35(b) and IRR",
+    "RA 12287 IRR (2026) Rule IV"
+   ],
+   "indicator_ids": [
+    "A4.5",
+    "B6.6",
+    "B6.3"
+   ]
+  },
+  {
+   "id": "ad223db4-da40-5c63-85cc-42ad2f6463d3",
+   "code": "PR-EMERGENCY-PROCURE",
+   "title": "SOP 5-07 Emergency procurement (negotiated procurement - emergency cases)",
+   "purpose": "Buy what an emergency requires, quickly, with its legal ground on record before the purchase.",
+   "trigger_text": "An urgent need during a State of Calamity, or where time is of the essence because of a calamity.",
+   "document_id": "d7190e43-31f8-55d7-b646-04574073dedf",
+   "owner_role": "eoc_manager",
+   "category": "eoc",
+   "status": "draft",
+   "template_rev": 1,
+   "kind": "protocol",
+   "sop_ref": "SOP 5-07 (MOO Ch.5 v1.0)",
+   "process_owner": "EOC Finance/Administration desk and the requesting office; award by the HoPE on BAC recommendation",
+   "policy_refs": [
+    "RA 12009 Sec. 35(b) and IRR"
+   ],
+   "indicator_ids": [
+    "A4.5"
+   ]
+  },
+  {
+   "id": "67421122-54ae-5d9f-97f3-6eaa6c1652d7",
+   "code": "WF-SOP5-08",
+   "title": "SOP 5-08 Donations and external assistance: receipt, recording, custody, use and disclosure",
+   "purpose": "Receive donations transparently and use them as the donor and the law intend.",
+   "trigger_text": "An offer or delivery of cash or in-kind assistance.",
+   "document_id": "d7190e43-31f8-55d7-b646-04574073dedf",
+   "owner_role": "cdrrmo_head",
+   "category": "budget",
+   "status": "draft",
+   "template_rev": 1,
+   "kind": "workflow",
+   "sop_ref": "SOP 5-08 (MOO Ch.5 v1.0)",
+   "process_owner": "CSWDO (relief goods), CGSO (property), City Treasurer (cash); acceptance by the City Mayor (SP Res. 2024-102); CDRRMO coordinates",
+   "policy_refs": [
+    "SP Res. 2024-102",
+    "COA Circular No. 2012-002",
+    "RA 12287 IRR (2026) Rule V Sec. 2",
+    "RA 10173"
+   ],
+   "indicator_ids": [
+    "B6.4"
+   ]
+  },
+  {
+   "id": "8779a83c-c39d-5829-8f4f-77ee65426a1f",
+   "code": "WF-SOP5-09",
+   "title": "SOP 5-09 Fund adequacy test and risk financing",
+   "purpose": "Know how far City funds cover a severe credible event, and close the gap with insurance and pre-arranged sources.",
+   "trigger_text": "Each year before the LDRRMFIP; after a major event or a CDRA update.",
+   "document_id": "d7190e43-31f8-55d7-b646-04574073dedf",
+   "owner_role": "cdrrmo_head",
+   "category": "budget",
+   "status": "draft",
+   "template_rev": 1,
+   "kind": "workflow",
+   "sop_ref": "SOP 5-09 (MOO Ch.5 v1.0)",
+   "process_owner": "CDRRMO Research and Planning with the City Budget Office, CGSO and CPDO",
+   "policy_refs": [
+    "RA 10121 Sec. 21",
+    "RA 656",
+    "RA 9729 as amended by RA 10174",
+    "UNDRR Disaster Resilience Scorecard 3.2.3-3.2.4"
+   ],
+   "indicator_ids": [
+    "A4.9",
+    "A4.7",
+    "A9.5"
+   ]
+  },
+  {
+   "id": "a6f9ffbc-06b0-50f5-9b7c-e7d54d8e2986",
+   "code": "WF-SOP5-10",
+   "title": "SOP 5-10 Audit readiness, COA observations and internal control",
+   "purpose": "Prevent common findings and close COA observations on DRRM funds.",
+   "trigger_text": "Before year-end (pre-audit check); receipt of an AOM or the Annual Audit Report.",
+   "document_id": "d7190e43-31f8-55d7-b646-04574073dedf",
+   "owner_role": "cdrrmo_head",
+   "category": "budget",
+   "status": "draft",
+   "template_rev": 1,
+   "kind": "workflow",
+   "sop_ref": "SOP 5-10 (MOO Ch.5 v1.0)",
+   "process_owner": "CDRRMO Administration and Training with the City Accountant and the Internal Audit Service where constituted; the City Mayor replies to COA",
+   "policy_refs": [
+    "COA Circular No. 2012-002"
+   ],
+   "indicator_ids": [
+    "A4.8"
    ]
   }
  ],
@@ -13104,18 +13635,18 @@
    "id": "744c3559-5d9d-5008-9aa0-e015134dafba",
    "template_id": "abcc88a5-8f0d-577d-84f7-eef04656abf0",
    "seq": 1,
-   "instruction": "Baseline: CDRA, LDRRMP results and last year's utilization (Research and Planning)",
+   "instruction": "Compute 5% of estimated revenue from regular sources, the 70/30 split and the AA ceiling (City Budget Officer)",
    "is_critical": true,
-   "requires_note": false,
+   "requires_note": true,
    "due_offset_minutes": null,
-   "form_code": "STEP-RECORD"
+   "form_code": "FIN-F01"
   },
   {
    "id": "22a30b64-b7cb-5316-adfb-5c36df49c2a6",
    "template_id": "abcc88a5-8f0d-577d-84f7-eef04656abf0",
    "seq": 2,
-   "instruction": "Collect division needs and proposals (each division)",
-   "is_critical": false,
+   "instruction": "Review LDRRMP results, utilisation, STF ageing, adequacy test and COA observations (Research and Planning)",
+   "is_critical": true,
    "requires_note": false,
    "due_offset_minutes": null,
    "form_code": "STEP-RECORD"
@@ -13124,26 +13655,36 @@
    "id": "362d103e-3fa6-5bae-b800-b8cff09f9a6b",
    "template_id": "abcc88a5-8f0d-577d-84f7-eef04656abf0",
    "seq": 3,
-   "instruction": "Draft the LDRRMFIP: prioritized, tagged to LDRRMP/CDP PPAs and thematic areas, 70/30, AA line (Research and Planning)",
+   "instruction": "Collect division and sector proposals with LDRRMP/CDP codes (each division)",
+   "is_critical": false,
+   "requires_note": false,
+   "due_offset_minutes": null,
+   "form_code": "STEP-RECORD"
+  },
+  {
+   "id": "b96a6923-72da-5d1c-9c43-eaf77236cb48",
+   "template_id": "abcc88a5-8f0d-577d-84f7-eef04656abf0",
+   "seq": 4,
+   "instruction": "Draft the LDRRMFIP: prioritized, tagged, 70/30, with the AA, EOC operations and insurance lines (Research and Planning)",
    "is_critical": true,
    "requires_note": false,
    "due_offset_minutes": null,
    "form_code": "BUD-F01"
   },
   {
-   "id": "b96a6923-72da-5d1c-9c43-eaf77236cb48",
+   "id": "171d9e84-bd1a-5764-b6cf-0be636a8b21d",
    "template_id": "abcc88a5-8f0d-577d-84f7-eef04656abf0",
-   "seq": 4,
-   "instruction": "Cost it and prepare the PPMP/APP and procurement plan (Administration)",
+   "seq": 5,
+   "instruction": "Cost it and prepare the PPMP/APP and procurement plan (Administration with the BAC Secretariat)",
    "is_critical": true,
    "requires_note": false,
    "due_offset_minutes": null,
    "form_code": "STEP-RECORD"
   },
   {
-   "id": "171d9e84-bd1a-5764-b6cf-0be636a8b21d",
+   "id": "d0f43b0e-3ab5-55b3-9403-d8da02413edf",
    "template_id": "abcc88a5-8f0d-577d-84f7-eef04656abf0",
-   "seq": 5,
+   "seq": 6,
    "instruction": "CDRRMC approval, then SP adoption (Secretariat)",
    "is_critical": true,
    "requires_note": false,
@@ -13151,29 +13692,39 @@
    "form_code": "GOV-F03"
   },
   {
-   "id": "d0f43b0e-3ab5-55b3-9403-d8da02413edf",
+   "id": "53e712ae-dffa-5ffe-ba26-1a37fa8a1d51",
    "template_id": "abcc88a5-8f0d-577d-84f7-eef04656abf0",
-   "seq": 6,
-   "instruction": "Execute: obligation, procurement and disbursement (Administration with Budget, Accounting and BAC)",
+   "seq": 7,
+   "instruction": "Execute: obligation, procurement and disbursement, tracked per line (Administration with Budget, Accounting and BAC)",
    "is_critical": false,
    "requires_note": false,
    "due_offset_minutes": null,
    "form_code": "STEP-RECORD"
   },
   {
-   "id": "53e712ae-dffa-5ffe-ba26-1a37fa8a1d51",
+   "id": "d4877d63-1401-580d-ae82-dc803e792267",
    "template_id": "abcc88a5-8f0d-577d-84f7-eef04656abf0",
-   "seq": 7,
-   "instruction": "Quarterly results-and-finance report to the CDRRMC (Research and Planning with Administration)",
+   "seq": 8,
+   "instruction": "Quarterly results-and-finance report to the CDRRMC, reconciled with the books (Research and Planning with Administration)",
    "is_critical": true,
    "requires_note": false,
    "due_offset_minutes": null,
    "form_code": "BUD-F02"
   },
   {
-   "id": "d4877d63-1401-580d-ae82-dc803e792267",
+   "id": "d6fa9724-e1b2-523b-b72e-5c43b829f02c",
    "template_id": "abcc88a5-8f0d-577d-84f7-eef04656abf0",
-   "seq": 8,
+   "seq": 9,
+   "instruction": "Post the utilisation report under the Full Disclosure Policy and file the proof (Administration)",
+   "is_critical": true,
+   "requires_note": false,
+   "due_offset_minutes": null,
+   "form_code": "STEP-RECORD"
+  },
+  {
+   "id": "dd09f081-92b2-5715-be61-1c01401b540e",
+   "template_id": "abcc88a5-8f0d-577d-84f7-eef04656abf0",
+   "seq": 10,
    "instruction": "Realign or reallocate when needed, with CDRRMC approval and SP concurrence (Research and Planning)",
    "is_critical": false,
    "requires_note": false,
@@ -14409,6 +14960,516 @@
    "requires_note": true,
    "due_offset_minutes": null,
    "form_code": "STEP-RECORD"
+  },
+  {
+   "id": "39463431-0386-5e0e-b071-1888b6e5eb99",
+   "template_id": "07f102ff-c1d0-5203-924f-6bdcca90726d",
+   "seq": 1,
+   "instruction": "Close the year and transfer unexpended LDRRMF (70% and QRF) to the STF (City Accountant)",
+   "is_critical": true,
+   "requires_note": false,
+   "due_offset_minutes": null,
+   "form_code": "STEP-RECORD"
+  },
+  {
+   "id": "056ce3dc-7b6c-56cb-b1c8-5d276ff43d89",
+   "template_id": "07f102ff-c1d0-5203-924f-6bdcca90726d",
+   "seq": 2,
+   "instruction": "Record each balance by year of origin with its five-year deadline",
+   "is_critical": true,
+   "requires_note": false,
+   "due_offset_minutes": null,
+   "form_code": "FIN-F04"
+  },
+  {
+   "id": "5e48677d-6cb7-5002-88fd-29a9ba36fa79",
+   "template_id": "07f102ff-c1d0-5203-924f-6bdcca90726d",
+   "seq": 3,
+   "instruction": "Flag balances in their last two years; final-year balances go to the CDRRMO Head and CDRRMC",
+   "is_critical": true,
+   "requires_note": true,
+   "due_offset_minutes": null,
+   "form_code": "STEP-RECORD"
+  },
+  {
+   "id": "830c5199-3e2b-51cb-9942-12e061308e17",
+   "template_id": "07f102ff-c1d0-5203-924f-6bdcca90726d",
+   "seq": 4,
+   "instruction": "Programme STF use, oldest first, within DRRM uses; list balances available as AA sources",
+   "is_critical": true,
+   "requires_note": false,
+   "due_offset_minutes": null,
+   "form_code": "STEP-RECORD"
+  },
+  {
+   "id": "2258e5e7-4243-587a-8a18-17d08ed0c417",
+   "template_id": "07f102ff-c1d0-5203-924f-6bdcca90726d",
+   "seq": 5,
+   "instruction": "CDRRMC approval; SP adoption or concurrence per City Accountant advice",
+   "is_critical": true,
+   "requires_note": false,
+   "due_offset_minutes": null,
+   "form_code": "GOV-F03"
+  },
+  {
+   "id": "0c1526d1-c289-5c94-9459-1cbe0bb8b6aa",
+   "template_id": "07f102ff-c1d0-5203-924f-6bdcca90726d",
+   "seq": 6,
+   "instruction": "Report STF use every quarter in the results-and-finance report",
+   "is_critical": false,
+   "requires_note": false,
+   "due_offset_minutes": null,
+   "form_code": "BUD-F02"
+  },
+  {
+   "id": "238240b7-e293-5ecf-af2c-124466800532",
+   "template_id": "b653cdf1-b886-5c46-bb92-39bd6d122d66",
+   "seq": 1,
+   "instruction": "Confirm the SP declaration, date, area and validity. No declaration: no QRF; use the 70% or other lawful sources",
+   "is_critical": true,
+   "requires_note": true,
+   "due_offset_minutes": 0,
+   "form_code": "STEP-RECORD"
+  },
+  {
+   "id": "0c12ad73-a506-548f-ba37-acb3a52b110d",
+   "template_id": "b653cdf1-b886-5c46-bb92-39bd6d122d66",
+   "seq": 2,
+   "instruction": "List relief and recovery needs with quantities from assessments (Operations, CSWDO, sector leads)",
+   "is_critical": true,
+   "requires_note": false,
+   "due_offset_minutes": null,
+   "form_code": "STEP-RECORD"
+  },
+  {
+   "id": "eba8554f-5190-5700-ad70-b4a976c625a4",
+   "template_id": "b653cdf1-b886-5c46-bb92-39bd6d122d66",
+   "seq": 3,
+   "instruction": "Prepare the QRF request: purpose, items, amount, charging, procurement mode",
+   "is_critical": true,
+   "requires_note": false,
+   "due_offset_minutes": null,
+   "form_code": "FIN-F05"
+  },
+  {
+   "id": "2d78e285-bd2e-551e-9e49-0b232c14eafc",
+   "template_id": "b653cdf1-b886-5c46-bb92-39bd6d122d66",
+   "seq": 4,
+   "instruction": "Obtain Budget and Accounting certifications; delay goes to the City Administrator",
+   "is_critical": true,
+   "requires_note": true,
+   "due_offset_minutes": null,
+   "form_code": "STEP-RECORD"
+  },
+  {
+   "id": "1b492da2-cdbf-5803-a3be-7b8b4d15602e",
+   "template_id": "b653cdf1-b886-5c46-bb92-39bd6d122d66",
+   "seq": 5,
+   "instruction": "Procure through stock or framework agreements first; otherwise emergency procurement (SOP 5-07)",
+   "is_critical": true,
+   "requires_note": false,
+   "due_offset_minutes": null,
+   "form_code": "STEP-RECORD"
+  },
+  {
+   "id": "628755af-575e-573e-a948-3f4e0ea81bda",
+   "template_id": "b653cdf1-b886-5c46-bb92-39bd6d122d66",
+   "seq": 6,
+   "instruction": "Inspect, accept, record and distribute (CGSO, CSWDO)",
+   "is_critical": true,
+   "requires_note": false,
+   "due_offset_minutes": null,
+   "form_code": "STEP-RECORD"
+  },
+  {
+   "id": "0f49a1b8-4d22-5b9a-857a-9070b71231cf",
+   "template_id": "b653cdf1-b886-5c46-bb92-39bd6d122d66",
+   "seq": 7,
+   "instruction": "Report QRF use and balance in the SitRep finance annex and the quarterly report",
+   "is_critical": true,
+   "requires_note": false,
+   "due_offset_minutes": null,
+   "form_code": "BUD-F02"
+  },
+  {
+   "id": "e85028eb-26b5-51a9-91c1-d330e9b67a02",
+   "template_id": "4f52ff98-ce0a-56a6-a7e1-1c2effedca46",
+   "seq": 1,
+   "instruction": "Confirm the declaration, hazard, area, forecast impact time and hazard family",
+   "is_critical": true,
+   "requires_note": false,
+   "due_offset_minutes": 0,
+   "form_code": "FIN-F06"
+  },
+  {
+   "id": "dda6b6fc-36ec-5599-b1f8-0e7337d7485a",
+   "template_id": "4f52ff98-ce0a-56a6-a7e1-1c2effedca46",
+   "seq": 2,
+   "instruction": "Set the envelope: AA line less prior use, plus STF, donations and partner funds",
+   "is_critical": true,
+   "requires_note": true,
+   "due_offset_minutes": 60,
+   "form_code": "FIN-F06"
+  },
+  {
+   "id": "0621bee2-7c55-5032-beb0-7a3769d13802",
+   "template_id": "4f52ff98-ce0a-56a6-a7e1-1c2effedca46",
+   "seq": 3,
+   "instruction": "Match each AA measure (PDRA, IRR Rule IV checklist) to a source, amount and lead office",
+   "is_critical": true,
+   "requires_note": true,
+   "due_offset_minutes": 120,
+   "form_code": "STEP-RECORD"
+  },
+  {
+   "id": "7a60c249-f4c2-599f-9838-be09025c4192",
+   "template_id": "4f52ff98-ce0a-56a6-a7e1-1c2effedca46",
+   "seq": 4,
+   "instruction": "Apply the tranche rule: more than 3 days before impact at most 30% of the AA allocation; within 3 days up to 70% (hydromet and geological only)",
+   "is_critical": true,
+   "requires_note": true,
+   "due_offset_minutes": null,
+   "form_code": "FIN-F06"
+  },
+  {
+   "id": "dd2a3d6d-4afe-522e-afae-db4e6094ba9d",
+   "template_id": "4f52ff98-ce0a-56a6-a7e1-1c2effedca46",
+   "seq": 5,
+   "instruction": "Budget, Accounting and Treasury certify and release the same day",
+   "is_critical": true,
+   "requires_note": false,
+   "due_offset_minutes": null,
+   "form_code": "STEP-RECORD"
+  },
+  {
+   "id": "229bd354-5169-525d-a850-e89a6ffcc51e",
+   "template_id": "4f52ff98-ce0a-56a6-a7e1-1c2effedca46",
+   "seq": 6,
+   "instruction": "Procure through framework agreements or pre-arranged suppliers; else emergency procurement (SOP 5-07)",
+   "is_critical": true,
+   "requires_note": false,
+   "due_offset_minutes": null,
+   "form_code": "STEP-RECORD"
+  },
+  {
+   "id": "2bec9637-6067-57f1-a588-615d34c5a3ac",
+   "template_id": "4f52ff98-ce0a-56a6-a7e1-1c2effedca46",
+   "seq": 7,
+   "instruction": "Deliver and record; No Regrets: goods still reach intended beneficiaries if impact does not occur",
+   "is_critical": true,
+   "requires_note": false,
+   "due_offset_minutes": null,
+   "form_code": "STEP-RECORD"
+  },
+  {
+   "id": "9ab7c557-b192-561c-a906-0792203e0398",
+   "template_id": "4f52ff98-ce0a-56a6-a7e1-1c2effedca46",
+   "seq": 8,
+   "instruction": "On lifting, total AA spending by source and measure; unused funds to the STF; feed the 45-day report",
+   "is_critical": true,
+   "requires_note": true,
+   "due_offset_minutes": null,
+   "form_code": "FIN-F06"
+  },
+  {
+   "id": "8fc9e6c0-64a8-566d-a157-ef0b889026f4",
+   "template_id": "233233d0-5320-5050-bbae-e7069048869e",
+   "seq": 1,
+   "instruction": "List recurrent emergency and AA items from contingency plans and past events",
+   "is_critical": true,
+   "requires_note": false,
+   "due_offset_minutes": null,
+   "form_code": "STEP-RECORD"
+  },
+  {
+   "id": "21d0a053-6f53-5db2-9e4d-15916a55d3b2",
+   "template_id": "233233d0-5320-5050-bbae-e7069048869e",
+   "seq": 2,
+   "instruction": "Write standard specifications and price references (with CGSO)",
+   "is_critical": true,
+   "requires_note": false,
+   "due_offset_minutes": null,
+   "form_code": "STEP-RECORD"
+  },
+  {
+   "id": "c7177192-229f-56b0-97bc-566c526eb1de",
+   "template_id": "233233d0-5320-5050-bbae-e7069048869e",
+   "seq": 3,
+   "instruction": "BAC Secretariat advises the procurement strategy per item (framework agreement or other mode)",
+   "is_critical": true,
+   "requires_note": false,
+   "due_offset_minutes": null,
+   "form_code": "STEP-RECORD"
+  },
+  {
+   "id": "5b58f547-430c-5e8d-ad47-63389fc62897",
+   "template_id": "233233d0-5320-5050-bbae-e7069048869e",
+   "seq": 4,
+   "instruction": "Procure and award agreements with trigger, quantity range, price basis and delivery time",
+   "is_critical": true,
+   "requires_note": false,
+   "due_offset_minutes": null,
+   "form_code": "STEP-RECORD"
+  },
+  {
+   "id": "9740f8fb-00df-5384-a7d6-73eb85455842",
+   "template_id": "233233d0-5320-5050-bbae-e7069048869e",
+   "seq": 5,
+   "instruction": "Register each supplier and agreement",
+   "is_critical": true,
+   "requires_note": false,
+   "due_offset_minutes": null,
+   "form_code": "FIN-F08"
+  },
+  {
+   "id": "7241ad2b-b52c-56d0-bf1c-e3900436aa0e",
+   "template_id": "233233d0-5320-5050-bbae-e7069048869e",
+   "seq": 6,
+   "instruction": "Call-down test before the season; replace suppliers that fail",
+   "is_critical": false,
+   "requires_note": true,
+   "due_offset_minutes": null,
+   "form_code": "FIN-F08"
+  },
+  {
+   "id": "b37454bf-acc1-5721-a132-d9640060479f",
+   "template_id": "ad223db4-da40-5c63-85cc-42ad2f6463d3",
+   "seq": 1,
+   "instruction": "Use stock, framework agreements or mutual aid first",
+   "is_critical": true,
+   "requires_note": false,
+   "due_offset_minutes": 0,
+   "form_code": "EOC-F06"
+  },
+  {
+   "id": "725b9187-594e-50da-82eb-abf309178def",
+   "template_id": "ad223db4-da40-5c63-85cc-42ad2f6463d3",
+   "seq": 2,
+   "instruction": "Write the ground: State of Calamity reference, or the calamity and why immediate action is needed. No ground: normal mode",
+   "is_critical": true,
+   "requires_note": true,
+   "due_offset_minutes": null,
+   "form_code": "FIN-F07"
+  },
+  {
+   "id": "d7f6d738-20d3-58cb-a445-17073a7e1969",
+   "template_id": "ad223db4-da40-5c63-85cc-42ad2f6463d3",
+   "seq": 3,
+   "instruction": "Budget and Accounting certify the charging",
+   "is_critical": true,
+   "requires_note": false,
+   "due_offset_minutes": null,
+   "form_code": "STEP-RECORD"
+  },
+  {
+   "id": "28c06d32-bfde-5fa3-bc62-7324ab15176c",
+   "template_id": "ad223db4-da40-5c63-85cc-42ad2f6463d3",
+   "seq": 4,
+   "instruction": "Negotiate with a qualified supplier; limit to what the emergency requires",
+   "is_critical": true,
+   "requires_note": true,
+   "due_offset_minutes": null,
+   "form_code": "STEP-RECORD"
+  },
+  {
+   "id": "0185cb3c-eb1a-53b2-8f0b-d1598d12dda8",
+   "template_id": "ad223db4-da40-5c63-85cc-42ad2f6463d3",
+   "seq": 5,
+   "instruction": "HoPE approves the award and contract or purchase order",
+   "is_critical": true,
+   "requires_note": false,
+   "due_offset_minutes": null,
+   "form_code": "STEP-RECORD"
+  },
+  {
+   "id": "5d77c0ed-8b0e-5cc2-8d6f-1aecac42b427",
+   "template_id": "ad223db4-da40-5c63-85cc-42ad2f6463d3",
+   "seq": 6,
+   "instruction": "Inspect and accept delivery",
+   "is_critical": true,
+   "requires_note": false,
+   "due_offset_minutes": null,
+   "form_code": "STEP-RECORD"
+  },
+  {
+   "id": "3496a6da-e2ef-5e93-acd8-b83d3bb7b355",
+   "template_id": "ad223db4-da40-5c63-85cc-42ad2f6463d3",
+   "seq": 7,
+   "instruction": "Post and report as the RA 12009 IRR and GPPB require",
+   "is_critical": true,
+   "requires_note": false,
+   "due_offset_minutes": null,
+   "form_code": "FIN-F07"
+  },
+  {
+   "id": "040f0d26-cbcc-552c-aedc-dfdad8b3aedb",
+   "template_id": "67421122-54ae-5d9f-97f3-6eaa6c1652d7",
+   "seq": 1,
+   "instruction": "Record the offer: donor type, items or amount, conditions, value; decline unsuitable goods at intake",
+   "is_critical": true,
+   "requires_note": true,
+   "due_offset_minutes": null,
+   "form_code": "FIN-F09"
+  },
+  {
+   "id": "a46fa4e0-a9a0-5333-aa8b-bf65f11e4230",
+   "template_id": "67421122-54ae-5d9f-97f3-6eaa6c1652d7",
+   "seq": 2,
+   "instruction": "Accept under SP Res. 2024-102; issue the acceptance document",
+   "is_critical": true,
+   "requires_note": false,
+   "due_offset_minutes": null,
+   "form_code": "STEP-RECORD"
+  },
+  {
+   "id": "43604d8e-2f07-5e98-a92d-4683dad94bc7",
+   "template_id": "67421122-54ae-5d9f-97f3-6eaa6c1652d7",
+   "seq": 3,
+   "instruction": "Take custody: cash to the Treasurer; goods inspected, valued and stored by CGSO or CSWDO",
+   "is_critical": true,
+   "requires_note": false,
+   "due_offset_minutes": null,
+   "form_code": "STEP-RECORD"
+  },
+  {
+   "id": "b417466f-f188-59fe-a074-2d44e435e8a7",
+   "template_id": "67421122-54ae-5d9f-97f3-6eaa6c1652d7",
+   "seq": 4,
+   "instruction": "City Accountant records the receipt, kept to its purpose",
+   "is_critical": true,
+   "requires_note": false,
+   "due_offset_minutes": null,
+   "form_code": "STEP-RECORD"
+  },
+  {
+   "id": "973799b4-1487-508f-8297-dc725aa59a80",
+   "template_id": "67421122-54ae-5d9f-97f3-6eaa6c1652d7",
+   "seq": 5,
+   "instruction": "Use per donor conditions; record distribution in aggregates only",
+   "is_critical": true,
+   "requires_note": false,
+   "due_offset_minutes": null,
+   "form_code": "STEP-RECORD"
+  },
+  {
+   "id": "9e5be308-9543-57fa-bbba-e62160e917e4",
+   "template_id": "67421122-54ae-5d9f-97f3-6eaa6c1652d7",
+   "seq": 6,
+   "instruction": "Report receipts, use and balances quarterly and to donors; disclose",
+   "is_critical": false,
+   "requires_note": false,
+   "due_offset_minutes": null,
+   "form_code": "BUD-F02"
+  },
+  {
+   "id": "73af8e20-c665-5ea2-b65e-d60a2f810423",
+   "template_id": "8779a83c-c39d-5829-8f4f-77ee65426a1f",
+   "seq": 1,
+   "instruction": "Choose the most severe credible scenarios from the flood and tropical cyclone contingency plans",
+   "is_critical": true,
+   "requires_note": false,
+   "due_offset_minutes": null,
+   "form_code": "STEP-RECORD"
+  },
+  {
+   "id": "1979f870-5499-5fe8-b7ba-e7906de3f63f",
+   "template_id": "8779a83c-c39d-5829-8f4f-77ee65426a1f",
+   "seq": 2,
+   "instruction": "Cost relief, evacuation, debris clearing, emergency repair and early recovery",
+   "is_critical": true,
+   "requires_note": false,
+   "due_offset_minutes": null,
+   "form_code": "STEP-RECORD"
+  },
+  {
+   "id": "110411fa-6ef2-5f6e-89a1-314abc0f1bc7",
+   "template_id": "8779a83c-c39d-5829-8f4f-77ee65426a1f",
+   "seq": 3,
+   "instruction": "Compare with the QRF, AA line, STF, insurance and other sources; record the shortfall",
+   "is_critical": true,
+   "requires_note": false,
+   "due_offset_minutes": null,
+   "form_code": "FIN-F10"
+  },
+  {
+   "id": "3d0e1455-9f04-5fff-ae13-d61038b56968",
+   "template_id": "8779a83c-c39d-5829-8f4f-77ee65426a1f",
+   "seq": 4,
+   "instruction": "Check GSIS cover of the EOC, evacuation centres and critical facilities; list uninsured priority assets",
+   "is_critical": true,
+   "requires_note": false,
+   "due_offset_minutes": null,
+   "form_code": "STEP-RECORD"
+  },
+  {
+   "id": "61e68e15-bbcc-5d76-bb7c-df82954e2e8f",
+   "template_id": "8779a83c-c39d-5829-8f4f-77ee65426a1f",
+   "seq": 5,
+   "instruction": "Recommend premiums, reserves, agreements, PSF proposals and fallback sources into the LDRRMFIP",
+   "is_critical": true,
+   "requires_note": false,
+   "due_offset_minutes": null,
+   "form_code": "STEP-RECORD"
+  },
+  {
+   "id": "58ddc298-583a-5dd1-a69c-1f7b7be92b74",
+   "template_id": "a6f9ffbc-06b0-50f5-9b7c-e7d54d8e2986",
+   "seq": 1,
+   "instruction": "Run the pre-audit checklist (Annex 5-B) on the year's DRRM transactions",
+   "is_critical": true,
+   "requires_note": false,
+   "due_offset_minutes": null,
+   "form_code": "STEP-RECORD"
+  },
+  {
+   "id": "9d85095a-bcb8-50ac-8432-1d8f4589f57b",
+   "template_id": "a6f9ffbc-06b0-50f5-9b7c-e7d54d8e2986",
+   "seq": 2,
+   "instruction": "Annual physical count of DRRM property with CGSO; reconcile with the asset register",
+   "is_critical": true,
+   "requires_note": false,
+   "due_offset_minutes": null,
+   "form_code": "STEP-RECORD"
+  },
+  {
+   "id": "fa2143f1-3f57-5c9a-882e-5228f3f87e1e",
+   "template_id": "a6f9ffbc-06b0-50f5-9b7c-e7d54d8e2986",
+   "seq": 3,
+   "instruction": "Log each AOM or AAR finding on DRRM funds",
+   "is_critical": true,
+   "requires_note": false,
+   "due_offset_minutes": null,
+   "form_code": "FIN-F11"
+  },
+  {
+   "id": "ff031115-3137-5a0a-96d1-6929c4eee701",
+   "template_id": "a6f9ffbc-06b0-50f5-9b7c-e7d54d8e2986",
+   "seq": 4,
+   "instruction": "Prepare the reply and corrective action with evidence within COA's period",
+   "is_critical": true,
+   "requires_note": true,
+   "due_offset_minutes": null,
+   "form_code": "FIN-F11"
+  },
+  {
+   "id": "d63c29d9-de21-5d16-8e8e-5d735490d3cb",
+   "template_id": "a6f9ffbc-06b0-50f5-9b7c-e7d54d8e2986",
+   "seq": 5,
+   "instruction": "Report open findings to the CDRRMC each quarter; overdue items to the CDRRMO Head",
+   "is_critical": false,
+   "requires_note": true,
+   "due_offset_minutes": null,
+   "form_code": "STEP-RECORD"
+  },
+  {
+   "id": "cb4f54dd-b474-5b0b-99c1-eab7ea6ebeef",
+   "template_id": "a6f9ffbc-06b0-50f5-9b7c-e7d54d8e2986",
+   "seq": 6,
+   "instruction": "Record COA's status of implementation and close",
+   "is_critical": false,
+   "requires_note": false,
+   "due_offset_minutes": null,
+   "form_code": "FIN-F11"
   }
  ],
  "aa_action_templates": [
