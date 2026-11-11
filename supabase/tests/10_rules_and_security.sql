@@ -158,6 +158,43 @@ select tests.expect_error('CPDO cannot answer C2.1 (Building Official)',
 select tests.expect_error('CPDO cannot answer Part A',
   $$insert into public.responses (cycle_id, indicator_id) values ('10000000-0000-0000-0000-000000000001','A1.2')$$, '42501');
 
+-- Evidence validation status (IAT v1-6 column V; 1.13.0).
+select tests.expect_eq('a new response starts with its evidence pending validation',
+  (select evidence_check from public.responses where cycle_id = '10000000-0000-0000-0000-000000000001' and indicator_id = 'C1.1'), 'pending');
+select tests.expect_ok('CPDO still edits its own C1.1 notes',
+  $$update public.responses set gap_remarks = 'CDP and CLUP reference the CDRA', version = version
+    where cycle_id = '10000000-0000-0000-0000-000000000001' and indicator_id = 'C1.1'$$);
+select tests.expect_error('a lead office cannot verify its own evidence',
+  $$update public.responses set evidence_check = 'verified', version = version
+    where cycle_id = '10000000-0000-0000-0000-000000000001' and indicator_id = 'C1.1'$$, '42501');
+select tests.login('00000000-0000-0000-0000-00000000000b');  -- assessor
+select tests.expect_ok('the assessor records the evidence check',
+  $$update public.responses set evidence_check = 'partially_verified', version = version
+    where cycle_id = '10000000-0000-0000-0000-000000000001' and indicator_id = 'C1.1'$$);
+select tests.expect_eq('the server stamps who checked the evidence',
+  (select evidence_checked_by::text from public.responses where cycle_id = '10000000-0000-0000-0000-000000000001' and indicator_id = 'C1.1'),
+  '00000000-0000-0000-0000-00000000000b');
+select tests.expect_ok('a device cannot rewrite who checked the evidence',
+  $$update public.responses set gap_remarks = 'checked', evidence_checked_by = '00000000-0000-0000-0000-000000000010',
+       evidence_checked_at = '2020-01-01', version = version
+    where cycle_id = '10000000-0000-0000-0000-000000000001' and indicator_id = 'C1.1'$$);
+select tests.expect_eq('the stamp survives a device edit',
+  (select evidence_checked_by::text || '|' || (evidence_checked_at > now() - interval '1 hour')::text from public.responses
+    where cycle_id = '10000000-0000-0000-0000-000000000001' and indicator_id = 'C1.1'),
+  '00000000-0000-0000-0000-00000000000b|true');
+select tests.expect_error('an unknown evidence status is refused',
+  $$update public.responses set evidence_check = 'approved', version = version
+    where cycle_id = '10000000-0000-0000-0000-000000000001' and indicator_id = 'C1.1'$$, '23514');
+select tests.expect_ok('the check can be set back to pending',
+  $$update public.responses set evidence_check = 'pending', version = version
+    where cycle_id = '10000000-0000-0000-0000-000000000001' and indicator_id = 'C1.1'$$);
+select tests.expect_eq('pending clears the stamps',
+  (select coalesce(evidence_checked_by::text, 'none') || '|' || coalesce(evidence_checked_at::text, 'none') from public.responses
+    where cycle_id = '10000000-0000-0000-0000-000000000001' and indicator_id = 'C1.1'), 'none|none');
+select tests.expect_error('a validated response keeps its evidence check locked to validators',
+  $$update public.responses set evidence_check = 'missing', version = version where id = '20000000-0000-0000-0000-000000000001'$$, '42501');
+select tests.login('00000000-0000-0000-0000-00000000000f');  -- back to the CPDO focal for the next checks
+
 select tests.login('00000000-0000-0000-0000-000000000010');  -- viewer
 select tests.expect_error('viewer cannot score',
   $$insert into public.responses (cycle_id, indicator_id) values ('10000000-0000-0000-0000-000000000001','A1.3')$$, '42501');
@@ -179,6 +216,12 @@ values ('10000000-0000-0000-0000-000000000002','A1.8','true','No State of Immine
 
 select tests.login('00000000-0000-0000-0000-000000000010');  -- results readable by viewer
 -- Expected, from the IAT formula with v1.1 weights and types (computed independently below)
+select tests.expect_eq('domain bands use the unrounded index (1.13.0)',
+  (select count(*)::text from public.v_domain_results dr
+    where dr.maturity_band is distinct from (
+      select public.maturity_band(sum(rr.score * rr.weight)::numeric / nullif(sum(rr.weight), 0))
+      from public.v_response_results rr join public.iat_indicators i on i.id = rr.indicator_id
+      where rr.cycle_id = dr.cycle_id and i.domain = dr.domain and rr.is_scored = 1)), '0');
 select tests.expect_eq('A1 maturity index',
   (select maturity_index::text from public.v_domain_results where cycle_id = '10000000-0000-0000-0000-000000000002' and domain = 'A1'),
   (select round(sum(s.score * i.weight)::numeric / sum(i.weight), 2)::text
