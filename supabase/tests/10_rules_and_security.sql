@@ -859,6 +859,21 @@ select tests.expect_rows('a viewer reads the DDRiVE profiles',
   $$select count(*) from public.ddrive_barangay_profiles$$, 85);
 select tests.expect_error('a viewer cannot edit DDRiVE reference data',
   $$update public.ddrive_barangay_profiles set population_2024 = 0 where psgc = '0803738001'$$, '42501');
+select tests.expect_rows('a viewer reads the computed DDRiVE city risk',
+  $$select count(*) from public.v_ddrive_city_risk$$, 10);
+select tests.login('00000000-0000-0000-0000-00000000000a');  -- admin
+select tests.expect_error('even an admin cannot edit DDRiVE reference data through the API',
+  $$delete from public.ddrive_sources where source_id = 'S-31'$$, '42501');
+-- 1.12.2: signed-out visitors read nothing (ADR-009), including through the view, and the view
+-- applies the reader's RLS (security_invoker), like every other MODE view.
+reset role;
+select tests.expect_eq('a signed-out visitor holds no privilege on the DDRiVE view',
+  (has_table_privilege('anon', 'public.v_ddrive_city_risk', 'SELECT'))::text, 'false');
+select tests.expect_eq('a signed-out visitor holds no privilege on DDRiVE profiles',
+  (has_table_privilege('anon', 'public.ddrive_barangay_profiles', 'SELECT'))::text, 'false');
+select tests.expect_eq('the DDRiVE view runs with the reader''s rights',
+  (coalesce((select reloptions from pg_class where oid = 'public.v_ddrive_city_risk'::regclass), '{}')
+     @> array['security_invoker=true'])::text, 'true');
 
 reset role;
 select tests.expect_eq('audit trail recorded', ((select count(*) from public.audit_log) > 50)::text, 'true');
