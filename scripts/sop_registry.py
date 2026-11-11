@@ -375,3 +375,184 @@ CH4_PROTOCOLS = [
 ]
 for p_ in CH4_PROTOCOLS:
     META[p_['code']] = p_.pop('meta')
+
+# ---------------------------------------------------------------- Chapter 5 v1.0 (12 Nov 2026)
+# DRRM Financing, Procurement and Resource Accountability: SOPs 5-01 to 5-10, forms FIN-F01 to FIN-F11 (section 19).
+# SOPs 5-01 and 5-02 run on the existing WF-BUDGET-CYCLE (its META and steps now follow Chapter 5);
+# FIN-F02 and FIN-F03 are carried by the existing BUD-F01 and BUD-F02 (records exist under those codes).
+# Expenditure, certification, procurement and award stay with the offices that hold them by law (Ch.5 sec. 3).
+CH5_FORM_ALIASES = {'FIN-F02': 'BUD-F01', 'FIN-F03': 'BUD-F02'}
+HAZ_FAMILY = ['Hydrometeorological', 'Geological', 'Slow-onset (e.g., drought)', 'Other']
+FUND = ['70% component (LDRRMFIP line)', 'AA line (within the 70%)', 'QRF (30%)', 'Special Trust Fund', 'Donation or grant', 'Other lawful source']
+CH5_FORMS = [
+    ('FIN-F01', 'LDRRMF computation and allocation sheet', 'Chapter 5 FIN-F01 (SOP 5-01 step 1). Signed by the City Budget Officer.', 'MOO Ch.5', [
+        f('fiscal_year', 'Fiscal year', 'integer', True, min=2020),
+        f('nta_php', 'NTA share (PHP)', 'number', True, min=0),
+        f('local_regular_php', 'Regular local revenue (PHP)', 'number', True, min=0, hint='Local taxes, fees and charges, other recurring income'),
+        f('base_note', 'What the base includes and excludes', 'textarea', True),
+        f('ldrrmf_php', 'LDRRMF, at least 5% of the base (PHP)', 'number', True, min=0),
+        f('qrf_php', 'QRF, 30% (PHP)', 'number', True, min=0), f('seventy_php', '70% component (PHP)', 'number', True, min=0),
+        f('aa_line_php', 'AA line, at most 10% of the 70% (PHP)', 'number', min=0),
+        f('certified_by', 'Certified by (position)', 'text', True, hint='Position, not a personal name')]),
+    ('FIN-F04', 'Special Trust Fund ageing ledger entry', 'Chapter 5 FIN-F04 (SOP 5-03). One entry per year of origin.', 'MOO Ch.5', [
+        f('year_of_origin', 'Year of origin', 'integer', True, min=2010),
+        f('amount_php', 'Amount accrued (PHP)', 'number', True, min=0), f('used_php', 'Used to date (PHP)', 'number', True, min=0),
+        f('deadline_year', 'Last year of use (origin + 5)', 'integer', True),
+        f('programmed_use', 'Programmed use and approving resolution', 'textarea'),
+        f('aa_available', 'Listed as an AA source', 'checkbox')]),
+    ('FIN-F05', 'QRF use request and certification', 'Chapter 5 FIN-F05 (SOP 5-04). No QRF without a State of Calamity.', 'MOO Ch.5', [
+        f('soc_ref', 'State of Calamity (SP resolution, date, area)', 'text', True),
+        f('purpose', 'Purpose', 'select', True, ['Relief', 'Recovery']), f('items', 'Items and quantities', 'textarea', True),
+        f('amount_php', 'Amount (PHP)', 'number', True, min=0),
+        f('procurement_mode', 'Procurement mode', 'select', True, ['Stock or framework agreement', 'Emergency procurement (FIN-F07)', 'Other mode']),
+        f('certifications', 'Budget and Accounting certifications obtained', 'checkbox', True),
+        f('qrf_balance_php', 'QRF balance after this request (PHP)', 'number', min=0)]),
+    ('FIN-F06', 'Anticipatory action fund release and tranche record', 'Chapter 5 FIN-F06 (SOP 5-05); RA 12287 IRR Rule V. Feeds the 45-day report.', 'MOO Ch.5', [
+        f('sid_ref', 'State of Imminent Disaster (Mayor\'s EO, date)', 'text', True),
+        f('hazard_family', 'Hazard family', 'select', True, HAZ_FAMILY),
+        f('impact_time', 'Forecast impact time', 'datetime', True),
+        f('aa_allocation_php', 'AA allocation for the year (PHP)', 'number', True, min=0),
+        f('source', 'Fund source', 'select', True, FUND),
+        f('measure', 'AA measure and lead office', 'textarea', True),
+        f('amount_php', 'Amount released (PHP)', 'number', True, min=0),
+        f('timing', 'Intervention timing', 'select', True, ['More than 3 days before impact (cap 30%)', 'Within 3 days of impact (up to 70%)', 'Not graduated (other source or slow-onset)']),
+        f('within_cap', 'Within the tranche rule after this release', 'checkbox', True),
+        f('closure', 'On lifting: spent, unused to STF', 'textarea')]),
+    ('FIN-F07', 'Emergency procurement justification and record', 'Chapter 5 FIN-F07 (SOP 5-07); RA 12009 Sec. 35(b). Completed before the purchase.', 'MOO Ch.5', [
+        f('ground', 'Ground', 'select', True, ['Imminent danger to life or property during a State of Calamity', 'Time is of the essence because of a calamity']),
+        f('ground_detail', 'Facts showing the ground (declaration reference or calamity, why immediate action is needed)', 'textarea', True),
+        f('items', 'Item, quantity and use', 'textarea', True), f('charging', 'Charging', 'select', True, FUND),
+        f('amount_php', 'Amount (PHP)', 'number', True, min=0), f('supplier', 'Supplier (business name)', 'text', True),
+        f('hope_approval', 'HoPE approval reference', 'text', True), f('iar', 'Inspection and acceptance report reference', 'text'),
+        f('posted', 'Posted and reported as RA 12009 IRR requires', 'checkbox')]),
+    ('FIN-F08', 'Pre-arranged supplier and framework agreement register entry', 'Chapter 5 FIN-F08 (SOP 5-06).', 'MOO Ch.5', [
+        f('item', 'Item or service', 'text', True), f('supplier', 'Supplier (business name)', 'text', True),
+        f('agreement', 'Agreement type and reference', 'select', True, ['Framework agreement', 'Supplier list only', 'MOA with partner', 'Other']),
+        f('quantity', 'Quantity range and delivery time', 'text', True), f('trigger', 'Activation trigger (incl. AA use)', 'text', True),
+        f('valid_until', 'Valid until', 'date', True), f('contact', 'Contact (position and channel)', 'text', True),
+        f('last_test', 'Last call-down test', 'date')]),
+    ('FIN-F09', 'Donation receipt and acknowledgement', 'Chapter 5 FIN-F09 (SOP 5-08); SP Res. 2024-102. No beneficiary names.', 'MOO Ch.5', [
+        f('donor_type', 'Donor type', 'select', True, ['Private individual', 'Business', 'NGO or CSO', 'Other LGU', 'National agency', 'International partner']),
+        f('form', 'Form', 'select', True, ['Cash', 'In kind']), f('description', 'Description and quantity', 'textarea', True),
+        f('value_php', 'Value (PHP)', 'number', True, min=0), f('conditions', 'Donor conditions', 'textarea'),
+        f('acceptance_ref', 'Acceptance document reference', 'text', True), f('custody', 'Custodian office', 'select', True, ['City Treasurer', 'CGSO', 'CSWDO']),
+        f('booked', 'Recorded by the City Accountant', 'checkbox'), f('disclosed', 'Disclosed', 'checkbox')]),
+    ('FIN-F10', 'Fund adequacy test', 'Chapter 5 FIN-F10 (SOP 5-09); UNDRR Scorecard 3.2.3-3.2.4.', 'MOO Ch.5', [
+        f('scenario', 'Scenario and contingency plan', 'text', True), f('cost_php', 'Cost of response and early recovery (PHP)', 'number', True, min=0),
+        f('cost_basis', 'Cost basis by item', 'textarea', True),
+        f('available_php', 'Available: QRF, AA line, STF, insurance, other (PHP)', 'number', True, min=0),
+        f('shortfall_php', 'Shortfall (PHP)', 'number', min=0), f('fallback', 'Fallback sources and actions', 'textarea', True)]),
+    ('FIN-F11', 'Audit observation and corrective action tracker', 'Chapter 5 FIN-F11 (SOP 5-10); feeds Chapter 7.', 'MOO Ch.5', [
+        f('reference', 'AOM or AAR reference', 'text', True), f('finding', 'Finding', 'textarea', True),
+        f('action', 'Corrective action', 'textarea', True), f('owner', 'Accountable office', 'text', True), f('due', 'Due date', 'date', True),
+        f('status', 'Status', 'select', True, ['Open', 'Replied', 'Implemented', 'Closed by COA', 'Not implemented'])]),
+]
+
+
+def _c5(code, sop, title, category, role, purpose, trigger, owner, refs, inds, steps):
+    """A Chapter 5 workflow or protocol. Steps: (instruction, critical, needs note, minutes, form)."""
+    return dict(code=code, title=f'SOP {sop} {title}', category=category, owner_role=role, doc='MOO Ch.5', purpose=purpose,
+                trigger=trigger, steps=steps, meta=(f'SOP {sop} (MOO Ch.5 v1.0)', owner, refs, inds))
+
+
+CH5_PROCEDURES = [
+    _c5('WF-SOP5-03', '5-03', 'Special Trust Fund ledger, ageing and programming', 'budget', 'cdrrmo_head',
+        'Use every unexpended LDRRMF balance for DRRM within its five-year period, oldest first.',
+        'Year-end closing; LDRRMFIP preparation; any STF reallocation request.',
+        'City Accountant (ledger); CDRRMO Research and Planning (programming)',
+        ['RA 10121 Sec. 21', 'COA Circular No. 2012-002', 'RA 12287 IRR (2026) Rule V Secs. 1(b) and 3'], ['A4.3', 'A4.6'],
+        [('Close the year and transfer unexpended LDRRMF (70% and QRF) to the STF (City Accountant)', True, False, None, None),
+         ('Record each balance by year of origin with its five-year deadline', True, False, None, 'FIN-F04'),
+         ('Flag balances in their last two years; final-year balances go to the CDRRMO Head and CDRRMC', True, True, None, None),
+         ('Programme STF use, oldest first, within DRRM uses; list balances available as AA sources', True, False, None, None),
+         ('CDRRMC approval; SP adoption or concurrence per City Accountant advice', True, False, None, 'GOV-F03'),
+         ('Report STF use every quarter in the results-and-finance report', False, False, None, 'BUD-F02')]),
+    _c5('PR-QRF-USE', '5-04', 'Quick Response Fund use under a State of Calamity', 'eoc', 'cdrrmo_head',
+        'Release the QRF quickly, only for relief and recovery, and only under a State of Calamity declared by the SP.',
+        'SP declaration of a State of Calamity covering the City or affected barangays.',
+        'CDRRMO Head; EOC Finance/Administration desk. Declaration: SP (SOP GOV-04). Expenditure: City Mayor within the appropriation',
+        ['RA 10121 Secs. 16 and 21', 'NDRRMC-DBM-DILG JMC 2013-1', 'COA Circular No. 2012-002'], ['A4.2', 'A1.6'],
+        [('Confirm the SP declaration, date, area and validity. No declaration: no QRF; use the 70% or other lawful sources', True, True, 0, None),
+         ('List relief and recovery needs with quantities from assessments (Operations, CSWDO, sector leads)', True, False, None, None),
+         ('Prepare the QRF request: purpose, items, amount, charging, procurement mode', True, False, None, 'FIN-F05'),
+         ('Obtain Budget and Accounting certifications; delay goes to the City Administrator', True, True, None, None),
+         ('Procure through stock or framework agreements first; otherwise emergency procurement (SOP 5-07)', True, False, None, None),
+         ('Inspect, accept, record and distribute (CGSO, CSWDO)', True, False, None, None),
+         ('Report QRF use and balance in the SitRep finance annex and the quarterly report', True, False, None, 'BUD-F02')]),
+    _c5('PR-AA-FUNDS', '5-05', 'Anticipatory action funding and disbursement under a State of Imminent Disaster', 'anticipatory_action', 'cdrrmo_head',
+        'Release AA funds immediately and lawfully once a State of Imminent Disaster is declared, within the 10% ceiling and the tranche rule.',
+        'The Mayor\'s declaration of a State of Imminent Disaster; a revised impact forecast during the declaration.',
+        'CDRRMO Head; EOC Finance/Administration desk. Declaration: City Mayor (SOP GOV-05). Certification and release: Budget, Accounting, Treasury',
+        ['RA 12287 Secs. 6-7', 'RA 12287 IRR (2026) Rules IV-VI', 'RA 12009 Sec. 35(b)'], ['A4.6', 'A10.8', 'B6.6'],
+        [('Confirm the declaration, hazard, area, forecast impact time and hazard family', True, False, 0, 'FIN-F06'),
+         ('Set the envelope: AA line less prior use, plus STF, donations and partner funds', True, True, 60, 'FIN-F06'),
+         ('Match each AA measure (PDRA, IRR Rule IV checklist) to a source, amount and lead office', True, True, 120, None),
+         ('Apply the tranche rule: more than 3 days before impact at most 30% of the AA allocation; within 3 days up to 70% (hydromet and geological only)', True, True, None, 'FIN-F06'),
+         ('Budget, Accounting and Treasury certify and release the same day', True, False, None, None),
+         ('Procure through framework agreements or pre-arranged suppliers; else emergency procurement (SOP 5-07)', True, False, None, None),
+         ('Deliver and record; No Regrets: goods still reach intended beneficiaries if impact does not occur', True, False, None, None),
+         ('On lifting, total AA spending by source and measure; unused funds to the STF; feed the 45-day report', True, True, None, 'FIN-F06')]),
+    _c5('WF-SOP5-06', '5-06', 'Pre-arranged supply: supplier list, framework agreements and specifications', 'budget', 'cdrrmo_head',
+        'Make emergency and AA purchases fast and lawful by agreeing suppliers, items and prices before the event.',
+        'Each year before the typhoon season; after an event that exposed a supply gap.',
+        'CDRRMO Administration and Training with CGSO and the BAC Secretariat; award by the HoPE',
+        ['RA 12009 Secs. 16 and 35(b) and IRR', 'RA 12287 IRR (2026) Rule IV'], ['A4.5', 'B6.6', 'B6.3'],
+        [('List recurrent emergency and AA items from contingency plans and past events', True, False, None, None),
+         ('Write standard specifications and price references (with CGSO)', True, False, None, None),
+         ('BAC Secretariat advises the procurement strategy per item (framework agreement or other mode)', True, False, None, None),
+         ('Procure and award agreements with trigger, quantity range, price basis and delivery time', True, False, None, None),
+         ('Register each supplier and agreement', True, False, None, 'FIN-F08'),
+         ('Call-down test before the season; replace suppliers that fail', False, True, None, 'FIN-F08')]),
+    _c5('PR-EMERGENCY-PROCURE', '5-07', 'Emergency procurement (negotiated procurement - emergency cases)', 'eoc', 'eoc_manager',
+        'Buy what an emergency requires, quickly, with its legal ground on record before the purchase.',
+        'An urgent need during a State of Calamity, or where time is of the essence because of a calamity.',
+        'EOC Finance/Administration desk and the requesting office; award by the HoPE on BAC recommendation',
+        ['RA 12009 Sec. 35(b) and IRR'], ['A4.5'],
+        [('Use stock, framework agreements or mutual aid first', True, False, 0, 'EOC-F06'),
+         ('Write the ground: State of Calamity reference, or the calamity and why immediate action is needed. No ground: normal mode', True, True, None, 'FIN-F07'),
+         ('Budget and Accounting certify the charging', True, False, None, None),
+         ('Negotiate with a qualified supplier; limit to what the emergency requires', True, True, None, None),
+         ('HoPE approves the award and contract or purchase order', True, False, None, None),
+         ('Inspect and accept delivery', True, False, None, None),
+         ('Post and report as the RA 12009 IRR and GPPB require', True, False, None, 'FIN-F07')]),
+    _c5('WF-SOP5-08', '5-08', 'Donations and external assistance: receipt, recording, custody, use and disclosure', 'budget', 'cdrrmo_head',
+        'Receive donations transparently and use them as the donor and the law intend.',
+        'An offer or delivery of cash or in-kind assistance.',
+        'CSWDO (relief goods), CGSO (property), City Treasurer (cash); acceptance by the City Mayor (SP Res. 2024-102); CDRRMO coordinates',
+        ['SP Res. 2024-102', 'COA Circular No. 2012-002', 'RA 12287 IRR (2026) Rule V Sec. 2', 'RA 10173'], ['B6.4'],
+        [('Record the offer: donor type, items or amount, conditions, value; decline unsuitable goods at intake', True, True, None, 'FIN-F09'),
+         ('Accept under SP Res. 2024-102; issue the acceptance document', True, False, None, None),
+         ('Take custody: cash to the Treasurer; goods inspected, valued and stored by CGSO or CSWDO', True, False, None, None),
+         ('City Accountant records the receipt, kept to its purpose', True, False, None, None),
+         ('Use per donor conditions; record distribution in aggregates only', True, False, None, None),
+         ('Report receipts, use and balances quarterly and to donors; disclose', False, False, None, 'BUD-F02')]),
+    _c5('WF-SOP5-09', '5-09', 'Fund adequacy test and risk financing', 'budget', 'cdrrmo_head',
+        'Know how far City funds cover a severe credible event, and close the gap with insurance and pre-arranged sources.',
+        'Each year before the LDRRMFIP; after a major event or a CDRA update.',
+        'CDRRMO Research and Planning with the City Budget Office, CGSO and CPDO',
+        ['RA 10121 Sec. 21', 'RA 656', 'RA 9729 as amended by RA 10174', 'UNDRR Disaster Resilience Scorecard 3.2.3-3.2.4'], ['A4.9', 'A4.7', 'A9.5'],
+        [('Choose the most severe credible scenarios from the flood and tropical cyclone contingency plans', True, False, None, None),
+         ('Cost relief, evacuation, debris clearing, emergency repair and early recovery', True, False, None, None),
+         ('Compare with the QRF, AA line, STF, insurance and other sources; record the shortfall', True, False, None, 'FIN-F10'),
+         ('Check GSIS cover of the EOC, evacuation centres and critical facilities; list uninsured priority assets', True, False, None, None),
+         ('Recommend premiums, reserves, agreements, PSF proposals and fallback sources into the LDRRMFIP', True, False, None, None)]),
+    _c5('WF-SOP5-10', '5-10', 'Audit readiness, COA observations and internal control', 'budget', 'cdrrmo_head',
+        'Prevent common findings and close COA observations on DRRM funds.',
+        'Before year-end (pre-audit check); receipt of an AOM or the Annual Audit Report.',
+        'CDRRMO Administration and Training with the City Accountant and the Internal Audit Service where constituted; the City Mayor replies to COA',
+        ['COA Circular No. 2012-002'], ['A4.8'],
+        [('Run the pre-audit checklist (Annex 5-B) on the year\'s DRRM transactions', True, False, None, None),
+         ('Annual physical count of DRRM property with CGSO; reconcile with the asset register', True, False, None, None),
+         ('Log each AOM or AAR finding on DRRM funds', True, False, None, 'FIN-F11'),
+         ('Prepare the reply and corrective action with evidence within COA\'s period', True, True, None, 'FIN-F11'),
+         ('Report open findings to the CDRRMC each quarter; overdue items to the CDRRMO Head', False, True, None, None),
+         ('Record COA\'s status of implementation and close', False, False, None, 'FIN-F11')]),
+]
+for p_ in CH5_PROCEDURES:
+    META[p_['code']] = p_.pop('meta')
+# SOPs 5-01 and 5-02 run on the existing budget workflow.
+META['WF-BUDGET-CYCLE'] = ('SOP 5-01 and SOP 5-02 (MOO Ch.5 v1.0); formerly MOO Ch.2 sec. 2.16.2',
+                           'CDRRMO Research and Planning (formulation, reporting); Administration and Training (execution); City Budget Office (computation)',
+                           ['RA 10121 Sec. 21', 'NDRRMC-DBM-DILG JMC 2013-1', 'RA 12287 IRR (2026) Rule V Sec. 1(b)',
+                            'COA Circular No. 2012-002', 'DILG Full Disclosure Policy issuances'],
+                           ['A3.5', 'A4.1', 'A4.2', 'A4.4', 'A4.6', 'A10.5', 'B7.5'])

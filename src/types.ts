@@ -42,7 +42,13 @@ export interface Response extends Versioned {
   assessed_by?: string | null; validated_by?: string | null; validated_at?: string | null;
   /** Server-stamped who and when; optional because rows synced before 1.13.0 lack them. */
   evidence_check?: EvidenceCheck; evidence_checked_by?: string | null; evidence_checked_at?: string | null;
+  /** 1.15.0 (migration 20261112002700): server-stamped; validation_note is the validator's reason for a revision. */
+  scored_by?: string | null; validation_decision?: 'confirmed' | 'revised' | null; validation_note?: string | null;
+  score_before_validation?: number | null;
 }
+/** Per cycle and domain (view v_validation_progress). */
+export interface ValidationProgress { cycle_id: string; part: 'A' | 'B' | 'C'; domain: string; indicators: number; draft: number;
+  submitted: number; validated: number; confirmed: number; revised: number; evidence_verified: number; evidence_pending: number }
 export interface Evidence extends Versioned {
   response_id: string; kind: EvidenceKind; strength: EvidenceStrength; title: string; doc_date: string | null;
   source: string | null; storage_path: string | null; note: string | null;

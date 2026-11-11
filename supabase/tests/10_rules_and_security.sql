@@ -938,7 +938,14 @@ select tests.expect_eq('the nine Chapter 3 workflows are loaded with their forms
   '9 19');
 select tests.expect_eq('kinds split incident protocols from management workflows',
   (select string_agg(kind || ':' || n, ' ' order by kind) from (select kind, count(*) n from public.protocol_templates group by kind) k),
-  'protocol:13 workflow:15');
+  'protocol:16 workflow:20');
+select tests.expect_eq('Chapter 5 runs on ten SOPs: eight new templates plus the budget cycle, with their FIN forms',
+  (select count(distinct t.code)::text || ' ' || count(*) filter (where s.form_code like 'FIN-%')::text
+     from public.protocol_templates t join public.protocol_steps s on s.template_id = t.id
+    where t.sop_ref like '%MOO Ch.5%'),
+  '9 16');
+select tests.expect_eq('Chapter 5 is a drafted chapter, not a superseded shell',
+  (select status || ' ' || coalesce(chapter_no::text, '-') from public.moo_documents where code = 'Chapter 5'), 'draft 5');
 select tests.login('00000000-0000-0000-0000-000000000012');  -- author
 select tests.expect_error('an unknown indicator is refused',
   $$update public.protocol_templates set indicator_ids = array['Z9.9'] where code = 'WF-SOP3-01'$$, '23503');
@@ -994,6 +1001,42 @@ select tests.expect_eq('a signed-out visitor cannot call ' || f, has_function_pr
                          'admin_list_accounts', 'connected_app_status', 'my_account', 'my_roles')) p;
 select tests.expect_eq('a signed-in user can still call start_protocol',
   has_function_privilege('authenticated', (select oid from pg_proc where proname = 'start_protocol' and pronamespace = 'public'::regnamespace limit 1), 'EXECUTE')::text, 'true');
+
+-- 1.15.0: validation workshop (Methodology v1.1 section 6). Assessor and validator are different people;
+-- a validator's change of score needs a reason; the decision and the submitted score are kept.
+select tests.login('00000000-0000-0000-0000-00000000000b');  -- assessor
+insert into public.assessment_cycles (id, name, cycle_year) values ('11000000-0000-0000-0000-000000000001', 'Workshop checks', 2026);
+insert into public.responses (id, cycle_id, indicator_id) values ('21000000-0000-0000-0000-000000000001', '11000000-0000-0000-0000-000000000001', 'A1.2'), ('21000000-0000-0000-0000-000000000002', '11000000-0000-0000-0000-000000000001', 'A1.3'), ('21000000-0000-0000-0000-000000000003', '11000000-0000-0000-0000-000000000001', 'A1.4');
+insert into public.evidence (response_id, kind, strength, title, doc_date) values ('21000000-0000-0000-0000-000000000001', 'document', 'approved_in_use', 'EO on CDRRMC composition', '2024-07-01');
+insert into public.evidence (response_id, kind, strength, title, source) values ('21000000-0000-0000-0000-000000000002', 'fgd', 'verbal', 'FGD CDRRMO', 'CDRRMO'), ('21000000-0000-0000-0000-000000000003', 'fgd', 'verbal', 'FGD CDRRMO', 'CDRRMO');
+select tests.expect_ok('assessor scores and submits A1.2', $$update public.responses set score = 3, status = 'provisional', version = (select version from public.responses where id = '21000000-0000-0000-0000-000000000001') where id = '21000000-0000-0000-0000-000000000001'$$);
+select tests.expect_ok('assessor scores and submits A1.3', $$update public.responses set score = 2, status = 'provisional', version = (select version from public.responses where id = '21000000-0000-0000-0000-000000000002') where id = '21000000-0000-0000-0000-000000000002'$$);
+select tests.expect_eq('the scorer is stamped by the server', (select scored_by::text from public.responses where id = '21000000-0000-0000-0000-000000000001'), '00000000-0000-0000-0000-00000000000b');
+select tests.expect_ok('a device cannot rewrite who scored', $$update public.responses set scored_by = '00000000-0000-0000-0000-00000000000c', version = (select version from public.responses where id = '21000000-0000-0000-0000-000000000001') where id = '21000000-0000-0000-0000-000000000001'$$);
+select tests.expect_eq('scored_by unchanged', (select scored_by::text from public.responses where id = '21000000-0000-0000-0000-000000000001'), '00000000-0000-0000-0000-00000000000b');
+
+select tests.login('00000000-0000-0000-0000-00000000000c');  -- validator
+select tests.expect_ok('validator confirms A1.2', $$update public.responses set status = 'validated', version = (select version from public.responses where id = '21000000-0000-0000-0000-000000000001') where id = '21000000-0000-0000-0000-000000000001'$$);
+select tests.expect_eq('decision recorded as confirmed', (select validation_decision || ' ' || score_before_validation from public.responses where id = '21000000-0000-0000-0000-000000000001'), 'confirmed 3');
+select tests.expect_error('revising a score at validation needs a reason',
+  $$update public.responses set score = 1, status = 'validated', version = (select version from public.responses where id = '21000000-0000-0000-0000-000000000002') where id = '21000000-0000-0000-0000-000000000002'$$, '23514');
+select tests.expect_ok('validator revises A1.3 with a reason',
+  $$update public.responses set score = 1, status = 'validated', validation_note = 'FGD describes a draft only', version = (select version from public.responses where id = '21000000-0000-0000-0000-000000000002') where id = '21000000-0000-0000-0000-000000000002'$$);
+select tests.expect_eq('decision recorded as revised from 2', (select validation_decision || ' ' || score_before_validation || ' ' || score from public.responses where id = '21000000-0000-0000-0000-000000000002'), 'revised 2 1');
+select tests.expect_ok('validator scores A1.4 and submits it', $$update public.responses set score = 2, status = 'provisional', version = (select version from public.responses where id = '21000000-0000-0000-0000-000000000003') where id = '21000000-0000-0000-0000-000000000003'$$);
+select tests.expect_error('a validator cannot validate a score they set',
+  $$update public.responses set status = 'validated', version = (select version from public.responses where id = '21000000-0000-0000-0000-000000000003') where id = '21000000-0000-0000-0000-000000000003'$$, '42501');
+select tests.expect_error('a validator cannot create a response already validated',
+  $$insert into public.responses (cycle_id, indicator_id, score, status) values ('11000000-0000-0000-0000-000000000001', 'A1.5', 0, 'validated')$$, '42501');
+
+select tests.login('00000000-0000-0000-0000-000000000011');  -- CDRRMO Head
+select tests.expect_ok('another person validates A1.4', $$update public.responses set status = 'validated', version = (select version from public.responses where id = '21000000-0000-0000-0000-000000000003') where id = '21000000-0000-0000-0000-000000000003'$$);
+select tests.expect_ok('reopening a validated score', $$update public.responses set status = 'provisional', version = (select version from public.responses where id = '21000000-0000-0000-0000-000000000001') where id = '21000000-0000-0000-0000-000000000001'$$);
+select tests.expect_eq('reopening clears the decision', coalesce((select validation_decision from public.responses where id = '21000000-0000-0000-0000-000000000001'), 'none'), 'none');
+select tests.expect_eq('progress view counts validated and revised',
+  (select validated || '/' || revised || '/' || submitted from public.v_validation_progress where cycle_id = '11000000-0000-0000-0000-000000000001' and domain = 'A1'), '2/1/1');
+reset role;
+select tests.expect_eq('a signed-out visitor cannot read validation progress', has_table_privilege('anon', 'public.v_validation_progress', 'SELECT')::text, 'false');
 
 reset role;
 select tests.expect_eq('audit trail recorded', ((select count(*) from public.audit_log) > 50)::text, 'true');
