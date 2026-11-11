@@ -2,31 +2,31 @@
  "manual_parts": [
   {
    "no": 1,
-   "title": "Legal mandate and governance",
+   "title": "Legal Mandate and Governance",
    "summary": "Mandate, structure, authorities and accountability of the CDRRMO, the CDRRMC and the EOC.",
    "sort": 1
   },
   {
    "no": 2,
-   "title": "SOPs by alert level",
+   "title": "SOPs by Alert Level",
    "summary": "Preparedness, EOC activation, logistics and responder safety. The core of EOC operations and the largest Part.",
    "sort": 2
   },
   {
    "no": 3,
-   "title": "Information management and public communication",
+   "title": "Information Management and Public Communication",
    "summary": "Risk intelligence, early warning and public information, situational awareness and GIS.",
    "sort": 3
   },
   {
    "no": 4,
-   "title": "Continuity and infrastructure safeguards",
+   "title": "Continuity and Infrastructure Safeguards",
    "summary": "Digital continuity, cybersecurity and systems resilience.",
    "sort": 4
   },
   {
    "no": 5,
-   "title": "Recovery and continuous improvement",
+   "title": "Recovery and Continuous Improvement",
    "summary": "Recovery, learning, performance and manual revision.",
    "sort": 5
   }
@@ -138,7 +138,7 @@
   },
   {
    "code": "C",
-   "name": "Part C – Interface indicators",
+   "name": "Part C – Interface Indicators",
    "in_imi": false,
    "sort": 3
   }
@@ -347,7 +347,7 @@
   {
    "id": "A1.1",
    "domain": "A1",
-   "statement": "City ordinance/EO creating the CDRRMO as a regular office (not ad hoc), with defined functions mirroring RA 10121 Sec. 12(c)",
+   "statement": "City Ordinance/EO Creating the CDRRMO as a Regular Office (not ad hoc), with Defined Functions mirroring RA 10121 Sec. 12(c)",
    "reference": "RA 10121 Sec. 12; IRR Rule 6; JMC 2014-1",
    "type": "M",
    "weight": 3,
