@@ -7643,6 +7643,7 @@
    "typical_lead_hours": 96,
    "declaration_eligible": true,
    "note": "PAGASA bulletins; usually reaches the 3-day lead time",
+   "aa_family": "hydromet",
    "sort": 1
   },
   {
@@ -7652,6 +7653,7 @@
    "typical_lead_hours": 72,
    "declaration_eligible": true,
    "note": "Forecast with tropical cyclones; coastal barangays",
+   "aa_family": "hydromet",
    "sort": 2
   },
   {
@@ -7661,6 +7663,7 @@
    "typical_lead_hours": 48,
    "declaration_eligible": true,
    "note": "Eligible only when the forecast gives 3 days or more",
+   "aa_family": "hydromet",
    "sort": 3
   },
   {
@@ -7670,6 +7673,7 @@
    "typical_lead_hours": 6,
    "declaration_eligible": false,
    "note": "Lead time usually hours: city early action under LGU authority",
+   "aa_family": "hydromet",
    "sort": 4
   },
   {
@@ -7679,6 +7683,7 @@
    "typical_lead_hours": 12,
    "declaration_eligible": false,
    "note": "Upland barangays; city early action on rainfall thresholds",
+   "aa_family": "hydromet",
    "sort": 5
   },
   {
@@ -7687,7 +7692,8 @@
    "forecastable": true,
    "typical_lead_hours": 720,
    "declaration_eligible": true,
-   "note": "Slow onset; NDRRMC to set timelines for drought",
+   "note": "Slow onset: timelines and disbursement rates per the NDRRMC operational guidelines (IRR Rule V Sec. 2)",
+   "aa_family": "climatic",
    "sort": 6
   },
   {
@@ -7697,6 +7703,7 @@
    "typical_lead_hours": 72,
    "declaration_eligible": true,
    "note": "PAGASA heat index forecasts",
+   "aa_family": "hydromet",
    "sort": 7
   },
   {
@@ -7705,7 +7712,8 @@
    "forecastable": false,
    "typical_lead_hours": null,
    "declaration_eligible": false,
-   "note": "Not forecastable; outside RA 12287",
+   "note": "Not forecastable: no lead time for a declaration",
+   "aa_family": "geological",
    "sort": 8
   },
   {
@@ -7714,7 +7722,8 @@
    "forecastable": false,
    "typical_lead_hours": null,
    "declaration_eligible": false,
-   "note": "Minutes of warning; outside RA 12287",
+   "note": "Minutes of warning: no lead time for a declaration",
+   "aa_family": "geological",
    "sort": 9
   },
   {
@@ -7723,7 +7732,8 @@
    "forecastable": false,
    "typical_lead_hours": null,
    "declaration_eligible": false,
-   "note": "Not forecastable; outside RA 12287",
+   "note": "Not forecastable: no lead time for a declaration",
+   "aa_family": "other",
    "sort": 10
   }
  ],

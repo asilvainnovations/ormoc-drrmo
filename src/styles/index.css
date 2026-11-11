@@ -99,12 +99,9 @@ iframe.badge {
   width: 0 !important;
 }
 
-/* Fixed position badges (common placement) */
-[style*="position: fixed"][style*="bottom"],
-[style*="position:fixed"][style*="bottom"],
-div[style*="z-index: 999"],
-div[style*="z-index:999"],
-div[style*="z-index: 9999"],
+/* Builder badge links. (1.13.0: the broad rules that hid any element with an inline fixed position near the
+   bottom, any div with inline z-index 999/9999, and the last fixed element in <body> were removed: they can hide
+   the app's own toasts, drawers and popovers. Audit 9 Nov 2026, C6.) */
 a[href*="bolt.new"],
 a[href*="bolt.diy"] {
   display: none !important;
@@ -126,14 +123,6 @@ a[href*="bolt.diy"] {
   visibility: hidden !important;
   opacity: 0 !important;
   pointer-events: none !important;
-}
-
-/* Bottom-right corner elements (typical badge placement) */
-body > div:last-child[style*="position: fixed"],
-body > div:last-child[style*="position:fixed"],
-body > a:last-child[style*="position: fixed"],
-body > a:last-child[style*="position:fixed"] {
-  display: none !important;
 }
 
 /* SVG-based badges */

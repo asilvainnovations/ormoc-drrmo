@@ -399,17 +399,17 @@ def lead_offices(text: str) -> list[str]:
 
 
 # ------------------------------------------------------------------ hazards ---
-HAZARDS = [  # code, name, forecastable, typical lead h, declaration eligible, note
-    ('tropical_cyclone', 'Tropical cyclone (severe winds)', True, 96, True, 'PAGASA bulletins; usually reaches the 3-day lead time'),
-    ('storm_surge', 'Storm surge (Ormoc Bay)', True, 72, True, 'Forecast with tropical cyclones; coastal barangays'),
-    ('flood', 'Riverine flood', True, 48, True, 'Eligible only when the forecast gives 3 days or more'),
-    ('flash_flood', 'Flash flood (Anilao–Malbasag system)', True, 6, False, 'Lead time usually hours: city early action under LGU authority'),
-    ('rain_landslide', 'Rain-induced landslide', True, 12, False, 'Upland barangays; city early action on rainfall thresholds'),
-    ('drought', 'Drought (El Niño)', True, 720, True, 'Slow onset; NDRRMC to set timelines for drought'),
-    ('extreme_heat', 'Extreme heat', True, 72, True, 'PAGASA heat index forecasts'),
-    ('earthquake', 'Earthquake (Philippine Fault)', False, None, False, 'Not forecastable; outside RA 12287'),
-    ('tsunami', 'Tsunami (local source)', False, None, False, 'Minutes of warning; outside RA 12287'),
-    ('industrial', 'Industrial / geothermal incident', False, None, False, 'Not forecastable; outside RA 12287'),
+HAZARDS = [  # code, name, forecastable, typical lead h, declaration eligible, note, AA family (IRR Rule II Sec. 2)
+    ('tropical_cyclone', 'Tropical cyclone (severe winds)', True, 96, True, 'PAGASA bulletins; usually reaches the 3-day lead time', 'hydromet'),
+    ('storm_surge', 'Storm surge (Ormoc Bay)', True, 72, True, 'Forecast with tropical cyclones; coastal barangays', 'hydromet'),
+    ('flood', 'Riverine flood', True, 48, True, 'Eligible only when the forecast gives 3 days or more', 'hydromet'),
+    ('flash_flood', 'Flash flood (Anilao–Malbasag system)', True, 6, False, 'Lead time usually hours: city early action under LGU authority', 'hydromet'),
+    ('rain_landslide', 'Rain-induced landslide', True, 12, False, 'Upland barangays; city early action on rainfall thresholds', 'hydromet'),
+    ('drought', 'Drought (El Niño)', True, 720, True, 'Slow onset: timelines and disbursement rates per the NDRRMC operational guidelines (IRR Rule V Sec. 2)', 'climatic'),
+    ('extreme_heat', 'Extreme heat', True, 72, True, 'PAGASA heat index forecasts', 'hydromet'),
+    ('earthquake', 'Earthquake (Philippine Fault)', False, None, False, 'Not forecastable: no lead time for a declaration', 'geological'),
+    ('tsunami', 'Tsunami (local source)', False, None, False, 'Minutes of warning: no lead time for a declaration', 'geological'),
+    ('industrial', 'Industrial / geothermal incident', False, None, False, 'Not forecastable: no lead time for a declaration', 'other'),
 ]
 
 # ------------------------------------------------- AA checklist (IRR Rule IV) -
@@ -596,8 +596,8 @@ def main():
     out['indicator_lead_offices'] = [dict(indicator_id=i['id'], office_id=office_id[c])
                                      for i in indicators if i['lead_office'] for c in lead_offices(i['lead_office'])]
 
-    out['hazards'] = [dict(code=c, name=n, forecastable=f, typical_lead_hours=l, declaration_eligible=e, note=no, sort=i)
-                      for i, (c, n, f, l, e, no) in enumerate(HAZARDS, 1)]
+    out['hazards'] = [dict(code=c, name=n, forecastable=f, typical_lead_hours=l, declaration_eligible=e, note=no, aa_family=fam, sort=i)
+                      for i, (c, n, f, l, e, no, fam) in enumerate(HAZARDS, 1)]
 
     # ---- Library: one manual, five Parts, ten functional areas (ADR-012) ----
     docs, doc_links, versions = [], [], []

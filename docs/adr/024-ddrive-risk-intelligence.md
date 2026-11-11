@@ -50,3 +50,13 @@ overlays (PHIVOLCS maps, QGIS exports, NASA GPM IMERG) are drawn on top.
   prior validation records are unaffected because nothing here is an assessed response.
 - The desk scores are explicitly labelled "Desk score — pending DDRiVE working-session
   validation" in the source workbook; the platform shows the same status verbatim.
+
+## Amendments
+
+- **1.12.2 (11 Nov 2026), migration `20261111002200_ddrive_grants.sql`:** the `ddrive_*` tables
+  keep select only for signed-in users (no API write grants for anyone), signed-out visitors read
+  nothing, and `v_ddrive_city_risk` runs as `security_invoker` so the tables' RLS applies to it.
+- **1.12.2:** seed part 26 is split into parts `26a`-`26d` (each under 90 KB) so the Supabase SQL
+  editor accepts them. The check is unchanged: 85 | 85 | 85 | 85 | 85 | 85 | 10 | 25 | 31.
+- **1.13.0:** part `26a` restores the former barangay names on South (`0803738116`) and West
+  (`0803738117`), as listed in City Ordinance No. 052 s. 2021.

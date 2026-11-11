@@ -238,8 +238,8 @@ Then, in the dashboard:
        vulnerability and priority with "—" for fields not yet assessed;
      - the SQL suite (`npm run test:db`) passes its new DDRiVE checks.
 
-- **To 1.13.0** (11 November 2026), scoring band fix and the evidence validation status. Two migrations,
-  no seed change. Apply 1.12.2 first if it is not applied.
+- **To 1.13.0** (11 November 2026), scoring band fix, the evidence validation status and the RA 12287 IRR
+  alignment. Three migrations and three seed re-runs. Apply 1.12.2 first if it is not applied.
   1. **Migrations** (safe to run again), in order:
      - `supabase/migrations/20261111002300_band_unrounded.sql`: `v_domain_results` and `v_cycle_results`
        now band the unrounded maturity index, as the workbook does (an index of 2.495 is Developing,
@@ -249,14 +249,50 @@ Then, in the dashboard:
        Unverified, Missing evidence; every existing response starts Pending, as in the workbook).
        Only assessors, validators and the CDRRMO Head record it; a lead-office focal cannot verify its
        own Part C evidence. Who and when are stamped by the server. The check never changes the score.
-  2. **App.** Assess → an indicator → Evidence has an "Evidence check" control; the cycle overview
+     - `supabase/migrations/20261111002500_ra12287_alignment.sql` (ADR-025): the anticipatory action
+       rules now follow the certified IRR of RA 12287. Lead time is counted in **days**: a declaration
+       needs at least three (3) days, extendable to five (5) (Sec. 6(b); IRR Rule II Sec. 3), and the
+       lead time is checked again when the Mayor signs. Tranches (≤30% beyond 3 days, ≤70% within) apply
+       to hydrometeorological and geological hazards only (IRR Rule V Sec. 2); drought waits for the
+       NDRRMC operational guidelines; agency, donor and ODA funds are not split. AA spending is checked
+       against the year's allocation (≤10% of the 70% LDRRMF). Lifting: automatic when the hazard
+       occurs (Sec. 7; record when), or by the Mayor on RDRRMC recommendation when impacts are not met
+       (record the reference). The 45-day OCD report runs from the lifting. Each hazard gets a family
+       (`hazards.aa_family`).
+  2. **Seed re-runs** (all idempotent), after the migrations:
+     - `supabase/seed/parts/04_seed.sql`: hazards with their family (the migration already sets
+       the families and the `aa_rules` day keys; this keeps the seed and the database the same).
+     - `supabase/seed/parts/26a_ddrive.sql`: restores the former barangay names of South (Districts 1-8,
+       12, 13, 15, 17, 23, 27) and West (14, 19-22, 24, 26). Its check still returns 85 | … | 31.
+     - `supabase/seed/operational/04_vault_register.sql` (item 7 below).
+     Parts `01`, `02` and `02b` of `seed/operational` were regenerated from IAT v1-6 (A3.6 and A7.4
+     evidence text; the A8.5 site evidence removed) but **do not re-run them** on production: they
+     would overwrite assessor work. The A8.5 retraction is a decision for the assessor (decision list).
+  3. **Vault files.** `scripts/vault_attach.py` attaches 81 files of the 9 Nov 2026 issuance bundle
+     to their Vault entries, using `supabase/admin/vault_bundle_manifest.csv`. Run it on a City ICT
+     computer that holds the unzipped bundle: first without `--apply` (checks only), then with
+     `SUPABASE_URL` and `SERVICE_ROLE_KEY` typed in the shell for that run. It never replaces an
+     attached file. Attachments, the EO 28 s. 2016 page scans and the second version of Res. 04
+     s. 2021 are left for the records office to attach by hand.
+  4. **App.** Assess → an indicator → Evidence has an "Evidence check" control; the cycle overview
      shows the five counts (as on the workbook Dashboard) and the CSV export has an "Evidence check"
      column. Devices pick up the new fields on their next sync; no Dexie schema change.
-  3. **CI** runs the SQL suite on Postgres 17, the version the City's project runs (17.11).
+  5. **CI** runs the SQL suite on Postgres 17, the version the City's project runs (17.11).
      Push `.github/workflows/ci.yml` with git; the web upload drops `.github/`.
-  4. Push with git, redeploy, then check: `migration_status.sql` lists both migrations as applied;
+  6. Push with git, redeploy, then check: `migration_status.sql` lists the three migrations as applied;
+     open EOC → Anticipatory action and check that the PDRA shows the lead time in days;
      open any indicator as an assessor, set "Evidence check" to Verified and save; the overview's
      Verified count goes up by one and the score is unchanged.
+  7. **Vault register.** Re-run `supabase/seed/operational/04_vault_register.sql` (idempotent). It adds three
+     documents that were in the 9 Nov 2026 issuance bundle but not in the register: **EO No. 151, s. 2021**
+     (reorganizing the CDRRMC; signed but undated, received by the CDRRMO 19 Mar 2021, number partly
+     handwritten), **CDRRMC Res. No. 13, s. 2021** (adopting Proclamation No. 1267, Typhoon Odette) and
+     **CDRRMC Res. No. 08, s. 2023** (PHP 4,307,225.13 supplemental appropriation). The "Executive orders for
+     2021 — NOT OBTAINED" record is kept and marked superseded by EO No. 151. The register now holds 127 distinct documents (the generator also stops writing 16 documents twice; the database never held them twice).
+  8. **`migration_status.sql`** now prints the migration list last, so the SQL editor (which shows only the
+     last result) shows it.
+  9. **Never run `supabase/tests/*.sql` on a Supabase project.** They build a fake platform (roles, `auth`
+     schema, test users) for CI and local testing only; Supabase refuses the stub at `auth.users`.
 
 - **To 1.12.2** (11 November 2026), production readiness audit fixes. One migration, no seed change,
   no app screen change.

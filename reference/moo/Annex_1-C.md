@@ -4,7 +4,7 @@
 
 **Document status**: Draft instrument. This text is a drafting aid and must be checked against the latest certified statutes, implementing rules, local organizational structure, approved plantilla, budget, and applicable City procedures before signature or enactment.
 
-> **Review flag (platform, 2 Nov 2026):** Section 4 uses Levels 0–3. NDRRMC Memo 131 s. 2018, the EOC board in this platform and SOP GOV-05 use the White, Blue and Red alert levels. Settle one scheme before the 1–4 Dec validation workshop, or add a crosswalk (for example Level 0–1 = White, Level 2 = Blue, Level 3 = Red).
+> **Review flag (platform, 2 Nov 2026):** Section 4 uses Levels 0–3. The National Disaster Response Plan and the RDRRMC VIII SOP (Res. No. 12-006, s. 2023), the EOC board in this platform and SOP GOV-05 use the White, Blue and Red alert levels; NDRRMC Memorandum No. 131, s. 2018 lets each EOC set its own codes (para. 9.2.2). Settle one scheme before the 1–4 Dec validation workshop, or add a crosswalk (for example Level 0–1 = White, Level 2 = Blue, Level 3 = Red).
 
 ## Republic of the Philippines
 

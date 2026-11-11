@@ -3,6 +3,13 @@ name: ormoc-drrm-platform-architect
 description: "Use this skill for any architecture, design, back-end or front-end work on the Ormoc's Manual of Operations for the DRRMO and EOC (MODE) Platform: the mobile-first, offline-capable PWA that supports the CDRRMO Manual of Operations (MOO) and the EOC Manual, built for the City Government of Ormoc by Alvin M. Silva. The platform makes the manual easy to read.. The approved MOO and EOC Manual remain the legal documents. The platform holds their current text, version history, protocols, and the evidence that they are used. Architect, develop, design and build the Ormoc CDRRMO/EOC Manual of Operations platform and toolkit (repo asilvainnovations/ormoc-drrmo) — SQL/RLS back end, offline PWA front end, rules from RA 12287, Memo 131 and DILG VIII."
 ---
 
+> **Out of date (11 Nov 2026).** This copy describes release 1.10.0. The repository is at 1.13.0. Before acting on
+> anything below, read `docs/system-design.md`, `DEPLOY.md` (the newest "To x.y" entries) and `docs/adr/` (ADR-021 to
+> ADR-027). In particular: CI exists; the 1.11.0 items are on `main`; anticipatory-action lead times are in days
+> (ADR-025); DDRiVE is read-only reference data (ADR-024); hosting stays on free tiers during development (ADR-026);
+> Bolt works on branches with pull requests (ADR-027, proposed).
+
+
 ## 0. Sources of truth, in order  
   
 1. \*\*Source code in the repo\*\* (\`github.com/asilvainnovations/ormoc-drrmo\`, branch \`main\`). Clone fresh every session: \`GIT\_LFS\_SKIP\_SMUDGE=1 git clone --depth 1 https://github.com/asilvainnovations/ormoc-drrmo\`. Read \`package.json\` for the current version and \`git log -1\` for the commit. The repo moves fast, so never trust a version number from memory or from a summary.  

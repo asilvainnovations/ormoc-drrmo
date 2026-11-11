@@ -369,7 +369,7 @@ select tests.login('00000000-0000-0000-0000-00000000000d');
 select tests.expect_error('lifting needs a ground',
   $$update public.declarations set status = 'lifted', version = 4 where id = '80000000-0000-0000-0000-000000000001'$$, '23514');
 select tests.expect_ok('lift: impacts not met',
-  $$update public.declarations set status = 'lifted', lifting_ground = 'impacts_not_met', lifting_basis = 'PDRA #3', version = 4 where id = '80000000-0000-0000-0000-000000000001'$$);
+  $$update public.declarations set status = 'lifted', lifting_ground = 'impacts_not_met', lifting_basis = 'PDRA #3', lifting_reference = 'RDRRMC VIII Memo 2026-xx; EO No. 2026-002', version = 4 where id = '80000000-0000-0000-0000-000000000001'$$);
 select tests.expect_eq('45-day report deadline set',
   (select (report_due_at - lifted_at)::text from public.declarations where id = '80000000-0000-0000-0000-000000000001'), '45 days');
 select tests.login('00000000-0000-0000-0000-000000000011');  -- CDRRMO Head (may record funds)
@@ -380,6 +380,74 @@ select tests.expect_ok('report recorded after lifting',
   $$update public.declarations set report_submitted_at = now(), report_reference = 'CDRRMO-2026-AA-01', version = 5 where id = '80000000-0000-0000-0000-000000000001'$$);
 select tests.expect_error('a lifted declaration cannot be edited otherwise',
   $$update public.declarations set eo_number = 'changed', version = 6 where id = '80000000-0000-0000-0000-000000000001'$$, '42501');
+
+-- RA 12287 and IRR alignment (1.13.0, migration 20261111002500).
+select tests.expect_eq('lead-time rules are stated in days, as the law states them',
+  (select string_agg(key || '=' || value::int, ',' order by key) from public.aa_rules where key like '%lead%'),
+  'extended_declaration_lead_days=5,lead_threshold_days=3,min_declaration_lead_days=3');
+select tests.expect_eq('impacts not met: the recommendation and lifting issuance are kept',
+  (select lifting_reference from public.declarations where id = '80000000-0000-0000-0000-000000000001'), 'RDRRMC VIII Memo 2026-xx; EO No. 2026-002');
+select tests.expect_error('impacts not met: lifting needs the RDRRMC recommendation and lifting issuance',
+  $$update public.declarations set lifting_reference = null, version = version where id = '80000000-0000-0000-0000-000000000001'$$, '42501');
+
+-- Drought (climatic, IRR Rule II Sec. 2(b)): adopted provincial declaration; no graduation; allocation still capped.
+insert into public.declarations (id, hazard_code, expected_impact_at, origin) values
+  ('80000000-0000-0000-0000-0000000000d1', 'drought', now() + interval '20 days', 'adopted_provincial');
+select tests.expect_ok('adopt the provincial drought declaration (IRR Rule III Sec. 3)',
+  $$update public.declarations set status = 'declared', version = 1 where id = '80000000-0000-0000-0000-0000000000d1'$$);
+select tests.expect_ok('a larger 2026 LDRRMF raises the AA allocation (the earlier checks used all of it)',
+  $$update public.aa_fund_years set ldrrmf_total = 20000000, aa_allocation = 1400000, version = version where fiscal_year = 2026$$);
+select tests.expect_ok('drought: an LDRRMF disbursement 20 days out is not graduated (IRR Rule V Sec. 2)',
+  $$insert into public.aa_disbursements (declaration_id, fiscal_year, source, amount, purpose, intervention_at)
+    values ('80000000-0000-0000-0000-0000000000d1', 2026, 'ldrrmf_aa', 1, 'Water rationing preparation', now())$$);
+select tests.expect_eq('drought disbursements carry no tranche',
+  (select coalesce(tranche, 'none') from public.aa_disbursements where purpose = 'Water rationing preparation'), 'none');
+select tests.expect_error('drought: LDRRMF disbursements stay within the year''s allocation (IRR Rule V Sec. 1(b))',
+  $$insert into public.aa_disbursements (declaration_id, fiscal_year, source, amount, purpose, intervention_at)
+    values ('80000000-0000-0000-0000-0000000000d1', 2026, 'ldrrmf_aa',
+            (select 1400001 - coalesce(sum(amount), 0) from public.aa_disbursements where fiscal_year = 2026 and source = 'ldrrmf_aa'),
+            'Over the allocation', now())$$, '23514');
+
+-- Automatic lifting on occurrence (RA 12287 Sec. 7; IRR Rule II Sec. 6(a)).
+select tests.expect_error('automatic lifting needs the occurrence time',
+  $$update public.declarations set status = 'lifted', lifting_ground = 'hazard_occurred', lifting_basis = 'SitRep 2', version = version
+    where id = '80000000-0000-0000-0000-0000000000d1'$$, '23514');
+select tests.expect_error('automatic lifting needs the evidence of occurrence',
+  $$update public.declarations set status = 'lifted', lifting_ground = 'hazard_occurred', hazard_occurred_at = now(), version = version
+    where id = '80000000-0000-0000-0000-0000000000d1'$$, '23514');
+select tests.expect_error('the occurrence cannot precede the declaration',
+  $$update public.declarations set status = 'lifted', lifting_ground = 'hazard_occurred', hazard_occurred_at = now() - interval '2 days',
+       lifting_basis = 'PAGASA advisory', version = version where id = '80000000-0000-0000-0000-0000000000d1'$$, '23514');
+select tests.expect_ok('the hazard occurred: the declaration is lifted at that time',
+  $$update public.declarations set status = 'lifted', lifting_ground = 'hazard_occurred', hazard_occurred_at = now(),
+       lifting_basis = 'PAGASA El Nino advisory; SitRep 2', version = version where id = '80000000-0000-0000-0000-0000000000d1'$$);
+select tests.expect_eq('lifted at the occurrence time; the report is due 45 days from it',
+  (select (lifted_at = hazard_occurred_at and report_due_at - lifted_at = interval '45 days')::text
+     from public.declarations where id = '80000000-0000-0000-0000-0000000000d1'), 'true');
+select tests.expect_ok('the occurrence time stays as recorded',
+  $$update public.declarations set hazard_occurred_at = now() + interval '1 day', report_reference = 'CDRRMO-2026-AA-02', version = version
+    where id = '80000000-0000-0000-0000-0000000000d1'$$);
+select tests.expect_eq('the occurrence time did not move',
+  (select (hazard_occurred_at = lifted_at)::text from public.declarations where id = '80000000-0000-0000-0000-0000000000d1'), 'true');
+
+-- The three-day minimum is checked again at the Mayor's declaration (IRR Rule II Sec. 3).
+insert into public.pdra_sessions (id, hazard_code, forecast_source, forecast_issued_at, expected_impact_at, impact_class, decision, decision_basis)
+values ('70000000-0000-0000-0000-0000000000d2', 'tropical_cyclone', 'PAGASA TCB #1', now(), now() + interval '74 hours', 'severe',
+        'request_declaration', 'Severe winds forecast for coastal barangays');
+insert into public.declarations (id, pdra_id, hazard_code, expected_impact_at) values
+  ('80000000-0000-0000-0000-0000000000d2', '70000000-0000-0000-0000-0000000000d2', 'tropical_cyclone', now() + interval '74 hours');
+select tests.expect_ok('a request with just over three days left is accepted',
+  $$update public.declarations set status = 'requested', version = 1 where id = '80000000-0000-0000-0000-0000000000d2'$$);
+-- Simulate the RDRRMC taking 14 hours: move the clock by moving the expected impact (test only, triggers off).
+reset role;
+set session_replication_role = replica;
+update public.declarations set status = 'recommended', rdrrmc_reference = 'RDRRMC VIII Memo 2026-yy', rdrrmc_responded_at = now(),
+  expected_impact_at = now() + interval '60 hours' where id = '80000000-0000-0000-0000-0000000000d2';
+set session_replication_role = origin;
+select tests.login('00000000-0000-0000-0000-000000000011');  -- CDRRMO Head
+select tests.expect_error('the declaration cannot go below a lead time of three days',
+  $$update public.declarations set status = 'declared', eo_number = 'EO No. 2026-009', version = version
+    where id = '80000000-0000-0000-0000-0000000000d2'$$, '23514');
 
 
 -- ================================================ Protocols ==================

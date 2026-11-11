@@ -150,6 +150,13 @@ ISS_UPLOADS = [
  ('cdrrmc-res-08-2025','Reallocating PHP 2 M from the 2025 LDRRMIP Trust Fund for the Malacadios Street drainage program','CDRRMC Res. No. 08, s. 2025',C,None,['A4.3'],
   'Issuance bundle 9 Nov 2026: CDRRMC Resolutions 2025/CDRRMC RESOLUTION NO. 08 S.2025.pdf',
   'Endorsed to the 17th SP: drainage construction/rehabilitation along Malacadios St., Brgy. South, a flood-prone area.'),
+ # Found in the bundle but missing from this register (bundle check, 11 Nov 2026). Scans read page by page.
+ ('cdrrmc-res-13-2021','Adopting Presidential Proclamation No. 1267 (s. 2021) declaring a State of Calamity in Regions IV-B, VI, VII, VIII, X and XIII (Typhoon Odette)','CDRRMC Res. No. 13, s. 2021',C,'2021-12-23',['A1.6'],
+  'Issuance bundle 9 Nov 2026: CDRRMC Resolutions 2021/CDRRMC Resolution_13 series 2021_Adopting Presidential Proclamation 1267 (8 pages); Drive file 1D69qFW6kzekTrSqZ1QxjRnrQb0pYXjKq',
+  'Fourth-quarter full Council meeting, 23 Dec 2021. Adopts Proclamation No. 1267 (s. 2021), issued after NDRRMC Res. No. 11 (s. 2021), so the City can use its LDRRMF for repair and rehabilitation and to assist other affected LGUs, especially in Southern Leyte.'),
+ ('cdrrmc-res-08-2023','Supplemental appropriation: PHP 4,307,225.13 reverted from the flood mitigation and drainage master plan and feasibility study (Trust Fund LDRRMF 2023) to disaster preparedness programs','CDRRMC Res. No. 08, s. 2023',C,'2023-12-12',['A4.2'],
+  'Issuance bundle 9 Nov 2026: CDRRMC Resolutions 2023/CDRRMC Resolution_08 s 2023 (2 pages, with 3 attachments: budget program, investment plan, reversion summary); Drive file 1XEa4kMpjg6YjFhlevlGBteBD6zkkmtPu',
+  'Fourth-quarter full Council meeting, 12 Dec 2023. Cites RA 10121 Sec. 21 and COA Circular 2012-002 Sec. 4.4; the reversion was reviewed by the CPDO, City Budget Office and City Accountant. Follows CDRRMC Res. No. 07, s. 2023.'),
  # Executive orders
  ('eo-2016-28','Re-organizing the City Disaster Risk Reduction Management Council','EO No. 28, s. 2016',MO,None,['A2.7'],
   'Issuance bundle 9 Nov 2026: Executive Orders 2016/EO_28_page1-2 (scanned JPG)',
@@ -163,6 +170,9 @@ ISS_UPLOADS = [
  ('eo-2019-14','CDRRMC Council reorganization','EO No. 14, s. 2019',MO,None,['A2.7'],
   'Issuance bundle 9 Nov 2026: Executive Orders 2019/Executive Order 14_CDRRMC Council Reorganization_2019.pdf',
   'Reorganizes the CDRRMC.'),
+ ('eo-2021-151','An order reorganizing the Ormoc City Disaster Risk Reduction and Management Council','EO No. 151, s. 2021',MO,None,['A1.2'],
+  'Issuance bundle 9 Nov 2026: Executive Orders 2021/Executive Order 151 s 2021_Reorganizing Ormoc CDRRM Council (5 pages); Drive file 1Z2nll_TTQRb6Burmg11UMmYUNbyCb-vM',
+  'Reorganizes the CDRRMC under RA 10121 Sec. 11(a), chaired by Mayor Richard I. Gomez. Signed, but the date line is blank; received by the CDRRMO on 19 Mar 2021. The last digit of the number is handwritten: confirm "151" with the Office of the City Mayor records. Later reorganizations: EO Nos. 2022-0006, 2023-0041 and 2024-032A.'),
  ('eo-2023-0025','Creating the Climate and Disaster Risk Assessment Technical Working Group','EO No. 2023-0025',MO,'2023-03-08',['A3.4'],
   'Issuance bundle 9 Nov 2026: Executive Orders 2023/Executive Order_2023-0025_CDRA TWG.pdf',
   'CDRA technical working group; basis for CDRA updates feeding the plans.'),
@@ -203,4 +213,10 @@ ISS_NOT_OBTAINED = [
   'Not obtained as of 10 November 2026: no 2026 executive orders yet in the shared folders. Request from the Office of the City Mayor records.'),
  ('missing-sp-2025','Sangguniang Panlungsod resolutions for 2025 — NOT OBTAINED','SP Resolutions, 2025',SP,None,[],
   'Not obtained as of 10 November 2026: no 2025 SP resolutions in the shared folders. Request from the City Secretary / SP records office.'),
+]
+
+# A NOT OBTAINED record replaced by a document found later (bundle check, 11 Nov 2026). The absence record is kept,
+# marked superseded by the document (Vault records are superseded, never deleted). (old key, new key)
+ISS_SUPERSEDED = [
+ ('missing-eo-2021', 'eo-2021-151'),
 ]

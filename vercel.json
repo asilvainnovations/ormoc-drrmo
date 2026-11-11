@@ -3,6 +3,7 @@
   "framework": "vite",
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
+  "ignoreCommand": "git diff --quiet HEAD^ HEAD -- src public index.html package.json package-lock.json vite.config.ts tsconfig.json tsconfig.app.json tsconfig.node.json tailwind.config.ts postcss.config.js vercel.json",
   "rewrites": [
     {
       "source": "/((?!assets/|icons/|fonts/|sw.js|workbox-|manifest.webmanifest|favicon).*)",

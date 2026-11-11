@@ -21,6 +21,13 @@ import openpyxl
 ROOT = Path(__file__).resolve().parents[1]
 OUT_DIR = ROOT / 'supabase/seed/parts'
 
+# Verified compositions of the 2022 Poblacion barangays (City Ordinance No. 052, s. 2021; plebiscite 8 Oct 2022;
+# Tribune and SunStar, Oct 2022; same as src/domain/barangays.ts). The workbook still marks South and West pending.
+FORMER_NAME_FIX = {
+    '0803738116': 'Poblacion — former Barangay Districts 1–8, 12, 13, 15, 17, 23 and 27; created by 2022 plebiscite (City Ordinance 052 s.2021)',
+    '0803738117': 'Poblacion — former Barangay Districts 14, 19, 20, 21, 22, 24 and 26; created by 2022 plebiscite (City Ordinance 052 s.2021)',
+}
+
 MISSING = ('', 'not available', 'not assessed', 'n/a', '—', '-')
 PSGC_RE = re.compile(r'\D')
 
@@ -180,7 +187,7 @@ def main() -> None:
         cl_label = text(c.get('Proposed Cluster (1–6)'))
         cl_m = re.search(r'(\d+)', cl_label) if cl_label else None
         cl_no = int(cl_m.group(1)) if cl_m else None
-        data.append([psgc, text(m.get('Barangay Name (workbook)')), text(m.get('Former Name / Predecessor / Note')),
+        data.append([psgc, text(m.get('Barangay Name (workbook)')), FORMER_NAME_FIX.get(psgc) or text(m.get('Former Name / Predecessor / Note')),
                      text(m.get('Urban/Rural')), integer(m.get('Population, 2024 POPCEN')),
                      integer(m.get('Population, 2020 CPH')), num(m.get('Annual Growth Rate 2020–2024')),
                      integer(m.get('Households, 2024')), num(m.get('Population Density (per ha, validated area)')),

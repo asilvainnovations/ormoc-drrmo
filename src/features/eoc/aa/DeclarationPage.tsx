@@ -8,12 +8,12 @@ import { save } from '@/lib/store';
 import { uuid } from '@/lib/ids';
 import { useAuth } from '@/lib/auth';
 import { useAaParams, useNow } from '@/lib/hooks';
-import { advanceDeclaration, disbursementProblem, fmtPeso, hoursBetween, nextDeadline, trancheOf } from '@/domain/aa';
+import { advanceDeclaration, disbursementProblem, fmtPeso, hoursBetween, isGraduated, nextDeadline, trancheOf } from '@/domain/aa';
 import { duration, fmtDateTime, fromLocalInput, toLocalInput } from '@/lib/time';
 import { Badge, Button, ChoiceGroup, Field, Input, List, ListRow, Loading, Notice, PageHeader, Section, Select, Textarea, TextLink } from '@/components/ui';
 import { Sheet } from '@/components/Sheet';
 import { useToast } from '@/components/Toast';
-import type { AaDisbursement, Declaration, DeclarationStatus, FundSource } from '@/types';
+import type { AaDisbursement, AaFamily, Declaration, DeclarationStatus, FundSource } from '@/types';
 import { ChecklistSection } from './Checklist';
 import { loadChecklist } from './actions';
 import { DECL_STATUS, SOURCE } from './labels';
@@ -122,12 +122,23 @@ export function DeclarationPage() {
             {reached('declared') && <p className="text-sm">{data.actions.filter((a) => a.status !== 'pending' && a.status !== 'in_progress').length} of {data.actions.length} actions closed. ₱{fmtPeso(used)} disbursed.</p>}
           </Step>
           <Step n={6} title="Lifting" state={d.lifted_at ? 'done' : d.status === 'declared' ? 'current' : 'future'}>
-            {d.lifted_at && <p className="text-sm">{d.lifting_ground === 'hazard_occurred' ? 'Hazard occurred' : 'Projected impacts not met'}, {fmtDateTime(d.lifted_at)}. {d.lifting_basis}</p>}
+            {d.lifted_at && <p className="text-sm">{d.lifting_ground === 'hazard_occurred'
+              ? `Lifted automatically when the hazard occurred, ${fmtDateTime(d.lifted_at)} (RA 12287 Sec. 7). Evidence: ${d.lifting_basis ?? '—'}`
+              : `Projected impacts not met; lifted ${fmtDateTime(d.lifted_at)}. ${d.lifting_reference ?? ''} ${d.lifting_basis ?? ''}`}</p>}
             {d.status === 'declared' && actor && <>
               <ChoiceGroup legend="Ground for lifting" value={input.lifting_ground ?? null} onChange={(v) => setInput({ ...input, lifting_ground: v })}
-                options={[{ value: 'hazard_occurred', label: 'The hazard occurred', detail: 'Shift to response and early recovery.' },
-                  { value: 'impacts_not_met', label: 'Projected impacts not met', detail: 'Per the latest PDRA. Unused LDRRMF AA funds return to the Special Trust Fund.' }]} />
-              {field('lifting_basis', 'Basis', 'Advisory, incident report, SitRep or PDRA reference.')}
+                options={[{ value: 'hazard_occurred', label: 'The hazard occurred', detail: 'Lifted automatically at the time of occurrence (RA 12287 Sec. 7). No lifting order is needed. Shift to response and early recovery.' },
+                  { value: 'impacts_not_met', label: 'Projected impacts not met', detail: 'The Mayor lifts upon the RDRRMC recommendation, per the latest PDRA (RA 12287 Sec. 7). Unused LDRRMF AA funds accrue to the Special Trust Fund (IRR Rule V Sec. 3).' }]} />
+              {input.lifting_ground === 'hazard_occurred' && <>
+                <Field label="When the hazard occurred" hint="Manila time. The 45-day report to OCD counts from this time (IRR Rule VI Sec. 1).">{(fid, desc) => (
+                  <Input id={fid} aria-describedby={desc} type="datetime-local" value={input.hazard_occurred_at ? toLocalInput(input.hazard_occurred_at) : ''}
+                    onChange={(e) => setInput({ ...input, hazard_occurred_at: e.target.value ? fromLocalInput(e.target.value) : null })} />)}</Field>
+                {field('lifting_basis', 'Evidence of occurrence', 'Advisory from PAGASA, PHIVOLCS or MGB, incident report, SitRep or damage assessment (IRR Rule II Sec. 6(a)).')}
+              </>}
+              {input.lifting_ground === 'impacts_not_met' && <>
+                {field('lifting_reference', 'RDRRMC recommendation and lifting issuance', 'For example: RDRRMC VIII Memo No. __; Mayor\u2019s EO No. __ lifting the declaration.')}
+                {field('lifting_basis', 'PDRA basis', 'The latest PDRA that found the projected impacts are not met.')}
+              </>}
               <Button tip="Record the lifting. Starts the 45-day deadline for the report to OCD" onClick={() => go('lifted')}>Record lifting</Button>
             </>}
           </Step>
@@ -153,18 +164,18 @@ export function DeclarationPage() {
             {data.disb.length === 0 ? <p className="text-muted">No disbursement recorded.</p> : (
               <List>{data.disb.map((x) => <ListRow key={x.id} title={`₱${fmtPeso(Number(x.amount))} ${x.purpose}`}
                 meta={`${SOURCE[x.source]}. Intervention ${fmtDateTime(x.intervention_at)}`}
-                trailing={x.source === 'ldrrmf_aa' && <Badge>{x.tranche === 'beyond_threshold' ? 'Beyond 3 days' : 'Within 3 days'}</Badge>} />)}</List>
+                trailing={x.source === 'ldrrmf_aa' && x.tranche && <Badge>{x.tranche === 'beyond_threshold' ? 'Beyond three days' : 'Within three days'}</Badge>} />)}</List>
             )}
             <p className="mt-2 text-sm"><TextLink tip="Open the fund status for the year" to="/eoc/aa/funds">See the fund status for the year</TextLink></p>
           </Section>
         </div>
       </div>
-      <FundSheet open={fundOpen} onClose={() => setFundOpen(false)} decl={d} existing={data.allDisb} years={data.years} />
+      <FundSheet open={fundOpen} onClose={() => setFundOpen(false)} decl={d} family={data.hazard?.aa_family ?? null} existing={data.allDisb} years={data.years} />
     </div>
   );
 }
 
-function FundSheet({ open, onClose, decl, existing, years }: { open: boolean; onClose: () => void; decl: Declaration; existing: AaDisbursement[]; years: import('@/types').AaFundYear[] }) {
+function FundSheet({ open, onClose, decl, family, existing, years }: { open: boolean; onClose: () => void; decl: Declaration; family: AaFamily | null; existing: AaDisbursement[]; years: import('@/types').AaFundYear[] }) {
   const params = useAaParams();
   const toast = useToast();
   const [f, setF] = useState({ source: 'ldrrmf_aa' as FundSource, amount: '', purpose: '', intervention_at: toLocalInput(), obligation_ref: '' });
@@ -173,8 +184,9 @@ function FundSheet({ open, onClose, decl, existing, years }: { open: boolean; on
   const amount = Number(f.amount);
   const year = years.find((y) => y.fiscal_year === fiscalYear);
   const iso = fromLocalInput(f.intervention_at);
-  const { lead, tranche } = trancheOf(decl.expected_impact_at, iso, params);
-  const problem = f.amount ? disbursementProblem({ source: f.source, amount, intervention_at: iso, fiscal_year: fiscalYear }, decl, year, existing, params) : null;
+  const { lead, tranche } = trancheOf(decl.expected_impact_at, iso, params, family);
+  const graduated = isGraduated(family);
+  const problem = f.amount ? disbursementProblem({ source: f.source, amount, intervention_at: iso, fiscal_year: fiscalYear }, decl, year, existing, params, family) : null;
   const add = async () => {
     if (problem || !f.purpose.trim()) return;
     const row: AaDisbursement & { _new: true } = { _new: true, id: uuid(), declaration_id: decl.id, fiscal_year: fiscalYear, source: f.source, amount, purpose: f.purpose.trim(),
@@ -192,10 +204,12 @@ function FundSheet({ open, onClose, decl, existing, years }: { open: boolean; on
         <Field label="Fiscal year" hint="From the intervention date.">{(id, d) => <Input id={id} aria-describedby={d} value={String(fiscalYear || '')} readOnly />}</Field>
       </div>
       <Field label="Purpose">{(id) => <Input id={id} value={f.purpose} onChange={(e) => setF({ ...f, purpose: e.target.value })} />}</Field>
-      <Field label="When the intervention is carried out" hint={lead >= 0 ? `${duration(lead)} before expected impact: ${tranche === 'beyond_threshold' ? 'beyond' : 'within'} the 3-day threshold.` : 'After the expected impact.'}>
+      <Field label="When the intervention is carried out" hint={lead < 0 ? 'After the expected impact.' : tranche
+        ? `${duration(lead)} before expected impact: ${tranche === 'beyond_threshold' ? 'beyond' : 'within'} a lead time of three (3) days.` : `${duration(lead)} before expected impact.`}>
         {(id, d) => <Input id={id} aria-describedby={d} type="datetime-local" value={f.intervention_at} onChange={(e) => setF({ ...f, intervention_at: e.target.value })} />}</Field>
       <Field label="Obligation or voucher reference" optional>{(id) => <Input id={id} value={f.obligation_ref} onChange={(e) => setF({ ...f, obligation_ref: e.target.value })} />}</Field>
-      {f.source !== 'ldrrmf_aa' && <p className="text-sm text-muted">The 30%/70% graduation applies only to the LDRRMF anticipatory action allocation (RA 12287 Sec. 10).</p>}
+      {f.source !== 'ldrrmf_aa' && <p className="text-sm text-muted">The 30%/70% graduation applies only to the LDRRMF anticipatory action allocation, not to other lawful sources such as agency budgets, external grants or donations (IRR Rule V Sec. 2).</p>}
+      {f.source === 'ldrrmf_aa' && !graduated && <p className="text-sm text-muted">This hazard is not hydrometeorological or geological, so the 30%/70% graduation does not apply. For slow-onset hazards such as drought the timelines and rates await the NDRRMC operational guidelines (IRR Rule V Sec. 2). LDRRMF disbursements still cannot exceed the year&apos;s AA allocation.</p>}
       {problem && <p role="alert" className="font-semibold text-bad">{problem}</p>}
     </Sheet>
   );

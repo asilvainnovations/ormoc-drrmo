@@ -1303,18 +1303,18 @@ insert into public.indicator_lead_offices (indicator_id,office_id) values
 ('C5.1','0a3b2431-e518-5e61-84c0-6b0733489aa9'::uuid)
 on conflict (indicator_id,office_id) do nothing;
 
-insert into public.hazards (code,name,forecastable,typical_lead_hours,declaration_eligible,note,sort) values
-('tropical_cyclone','Tropical cyclone (severe winds)',true,96,true,'PAGASA bulletins; usually reaches the 3-day lead time',1),
-('storm_surge','Storm surge (Ormoc Bay)',true,72,true,'Forecast with tropical cyclones; coastal barangays',2),
-('flood','Riverine flood',true,48,true,'Eligible only when the forecast gives 3 days or more',3),
-('flash_flood','Flash flood (Anilao–Malbasag system)',true,6,false,'Lead time usually hours: city early action under LGU authority',4),
-('rain_landslide','Rain-induced landslide',true,12,false,'Upland barangays; city early action on rainfall thresholds',5),
-('drought','Drought (El Niño)',true,720,true,'Slow onset; NDRRMC to set timelines for drought',6),
-('extreme_heat','Extreme heat',true,72,true,'PAGASA heat index forecasts',7),
-('earthquake','Earthquake (Philippine Fault)',false,null,false,'Not forecastable; outside RA 12287',8),
-('tsunami','Tsunami (local source)',false,null,false,'Minutes of warning; outside RA 12287',9),
-('industrial','Industrial / geothermal incident',false,null,false,'Not forecastable; outside RA 12287',10)
-on conflict (code) do update set name = excluded.name, forecastable = excluded.forecastable, typical_lead_hours = excluded.typical_lead_hours, declaration_eligible = excluded.declaration_eligible, note = excluded.note, sort = excluded.sort;
+insert into public.hazards (code,name,forecastable,typical_lead_hours,declaration_eligible,note,aa_family,sort) values
+('tropical_cyclone','Tropical cyclone (severe winds)',true,96,true,'PAGASA bulletins; usually reaches the 3-day lead time','hydromet',1),
+('storm_surge','Storm surge (Ormoc Bay)',true,72,true,'Forecast with tropical cyclones; coastal barangays','hydromet',2),
+('flood','Riverine flood',true,48,true,'Eligible only when the forecast gives 3 days or more','hydromet',3),
+('flash_flood','Flash flood (Anilao–Malbasag system)',true,6,false,'Lead time usually hours: city early action under LGU authority','hydromet',4),
+('rain_landslide','Rain-induced landslide',true,12,false,'Upland barangays; city early action on rainfall thresholds','hydromet',5),
+('drought','Drought (El Niño)',true,720,true,'Slow onset: timelines and disbursement rates per the NDRRMC operational guidelines (IRR Rule V Sec. 2)','climatic',6),
+('extreme_heat','Extreme heat',true,72,true,'PAGASA heat index forecasts','hydromet',7),
+('earthquake','Earthquake (Philippine Fault)',false,null,false,'Not forecastable: no lead time for a declaration','geological',8),
+('tsunami','Tsunami (local source)',false,null,false,'Minutes of warning: no lead time for a declaration','geological',9),
+('industrial','Industrial / geothermal incident',false,null,false,'Not forecastable: no lead time for a declaration','other',10)
+on conflict (code) do update set name = excluded.name, forecastable = excluded.forecastable, typical_lead_hours = excluded.typical_lead_hours, declaration_eligible = excluded.declaration_eligible, note = excluded.note, aa_family = excluded.aa_family, sort = excluded.sort;
 
 insert into public.moo_documents (id,manual,kind,code,title,parent_id,summary,status,sort,area_no,chapter_no,aliases,also_areas) values
 ('b807a5ed-12bb-508f-8a18-0d4f8e599013'::uuid,'MOO','area','Area 1','Governance, Organization & Institutional Arrangements',null::uuid,'Part 1. 36 IAT indicator(s) name this as their primary area.','draft',1,1,null,array['MOO Ch.5','MOO Ch.9','EOC Ch.1']::text[],'{}'::text[]::smallint[]),

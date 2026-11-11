@@ -124,7 +124,7 @@ function SetupView({ setup, setSetup, onBack, onStart }: { setup: Setup; setSetu
   return (
     <div className="page">
       <PageHeader title={ttx ? 'Set up a tabletop' : setup.mode === 'drill' ? 'Set up a position drill' : 'Set up an individual drill'} />
-      <button type="button" onClick={onBack} className="mb-4 font-semibold underline" {...tip('Back to the list of exercises')}>Back</button>
+      <button type="button" onClick={onBack} className="mb-4 inline-flex min-h-tap items-center font-semibold underline" {...tip('Back to the list of exercises')}>Back</button>
       <div className="max-w-3xl space-y-6">
         <div className="grid gap-4 sm:grid-cols-2">
           <Field label={ttx ? 'Team or group name' : 'Your name'} hint="Shown on the after-action review. Staff names only, never affected persons.">
@@ -353,10 +353,10 @@ function LearnView({ onBack }: { onBack: () => void }) {
   return (
     <div className="page">
       <PageHeader title="Learn the framework" subtitle="Philippine ICS, the EOC, reporting and anticipatory action, localized for Ormoc." />
-      <button type="button" onClick={onBack} className="mb-4 font-semibold underline" {...tip('Back to the list of exercises')}>Back</button>
+      <button type="button" onClick={onBack} className="mb-4 inline-flex min-h-tap items-center font-semibold underline" {...tip('Back to the list of exercises')}>Back</button>
       <div className="grid gap-6 lg:grid-cols-[16rem_minmax(0,1fr)]">
         <nav aria-label="Topics"><ul className="space-y-1">
-          {ICS.LEARN.map((l, k) => <li key={l.id}><button type="button" onClick={() => setI(k)} {...tip(`Open: ${l.t}`)} className={clsx('w-full rounded-control px-3 py-2 text-left font-semibold', k === i ? 'bg-sky-soft ring-1 ring-action' : 'hover:bg-sky-soft/60')}>{l.t}</button></li>)}
+          {ICS.LEARN.map((l, k) => <li key={l.id}><button type="button" onClick={() => setI(k)} {...tip(`Open: ${l.t}`)} className={clsx('min-h-tap w-full rounded-control px-3 py-2 text-left font-semibold', k === i ? 'bg-sky-soft ring-1 ring-action' : 'hover:bg-sky-soft/60')}>{l.t}</button></li>)}
         </ul></nav>
         <article>
           <h2 className="mb-3 text-xl font-bold">{item.t}</h2>
@@ -378,7 +378,7 @@ function QuizView({ onBack }: { onBack: () => void }) {
   return (
     <div className="page">
       <PageHeader title="Quick quiz" subtitle="Choose an answer to see whether it is right and why." />
-      <button type="button" onClick={onBack} className="mb-4 font-semibold underline" {...tip('Back to the list of exercises')}>Back</button>
+      <button type="button" onClick={onBack} className="mb-4 inline-flex min-h-tap items-center font-semibold underline" {...tip('Back to the list of exercises')}>Back</button>
       <div className="max-w-3xl space-y-6">
         {ICS.QUIZ.map((q, qi) => (
           <div key={qi}>

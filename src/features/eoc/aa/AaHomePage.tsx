@@ -31,7 +31,7 @@ export function AaHomePage() {
         NDRRMC operational guidelines on hazard triggers and thresholds, and DBM–COA guidelines on AA funds, are still to be issued. The rules here follow the IRR signed 14 September 2026; an administrator updates them when the guidelines come out.
       </Notice>
       <Section title="Declarations needing attention">
-        {live.length === 0 ? <EmptyState title="No declaration in progress" body="A declaration starts from a PDRA that finds severe impacts with at least 3 days of lead time." /> : (
+        {live.length === 0 ? <EmptyState title="No declaration in progress" body="A declaration starts from a PDRA that finds severe impacts with a lead time of at least three (3) days (RA 12287 Sec. 6(b))." /> : (
           <List>{live.map((d) => {
             const dl = nextDeadline(d, now);
             return <ListRow tip="Open this declaration: its next step, deadline, checklist and funds" key={d.id} to={`/eoc/aa/d/${d.id}`} tone={dl?.overdue ? 'bad' : undefined}
