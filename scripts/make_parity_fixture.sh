@@ -23,8 +23,8 @@ SQL
 psql -At -d $DB -c "
 select json_build_object(
   'responses', (select json_agg(json_build_object('indicator_id', indicator_id, 'score', score, 'is_na', is_na) order by indicator_id) from public.responses where cycle_id = '11111111-1111-1111-1111-111111111111'),
-  'domains', (select json_agg(json_build_object('domain', domain, 'scored', scored, 'maturity_index', maturity_index, 'mandatory_compliance', mandatory_compliance, 'high_gaps', high_gaps) order by domain) from public.v_domain_results where cycle_id = '11111111-1111-1111-1111-111111111111'),
-  'cycle', (select json_agg(json_build_object('grp', grp, 'scored', scored, 'maturity_index', maturity_index, 'mandatory_compliance', mandatory_compliance, 'high_gaps', high_gaps) order by grp) from public.v_cycle_results where cycle_id = '11111111-1111-1111-1111-111111111111'),
+  'domains', (select json_agg(json_build_object('domain', domain, 'scored', scored, 'maturity_index', maturity_index, 'maturity_band', maturity_band, 'mandatory_compliance', mandatory_compliance, 'high_gaps', high_gaps) order by domain) from public.v_domain_results where cycle_id = '11111111-1111-1111-1111-111111111111'),
+  'cycle', (select json_agg(json_build_object('grp', grp, 'scored', scored, 'maturity_index', maturity_index, 'maturity_band', maturity_band, 'mandatory_compliance', mandatory_compliance, 'high_gaps', high_gaps) order by grp) from public.v_cycle_results where cycle_id = '11111111-1111-1111-1111-111111111111'),
   'uuidv5', (select json_agg(json_build_object('ns', ns, 'name', nm, 'id', extensions.uuid_generate_v5(ns::uuid, nm))) from (values
      ('90000000-0000-0000-0000-000000000001','1'), ('90000000-0000-0000-0000-000000000001','12'),
      ('80000000-0000-0000-0000-000000000001', '0b2f7e3a-8f6b-5c1d-9a4e-2d3c4b5a6f70')) v(ns, nm))
