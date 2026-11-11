@@ -824,6 +824,10 @@ The chapter is not considered implemented merely because it is approved or inclu
 
 # REFERENCES
 
+- City Government of Ormoc, City Disaster Risk Reduction and Management Office. (2026). *CDRRMO reference: Local policies* [Shared Drive folder of the City's DRRM policy instruments: Sangguniang Panlungsod ordinances, executive orders, CDRRMC resolutions and SP resolutions]. https://drive.google.com/drive/folders/12NWwUTAE6ub1vW31M2NSMktYlP-BP4oR
+
+- City Government of Ormoc, Sangguniang Panlungsod. (1993–2025). *SP ordinances* [Shared Drive folder, by year, including Ordinance No. 008, s. 2014 establishing the CDRRMO and Ordinance No. 011, s. 2015 amending it]. https://drive.google.com/drive/folders/132g-VeSpXkorcNCte2fpyVY3Az3baBXS
+
 - City Government of Ormoc. (n.d.). Climate and disaster risk assessment (CDRA) final report. City Disaster Risk Reduction and Management Office.
 
 - City Government of Ormoc. (2017). Comprehensive Land Use Plan 2017–2027 (Volumes 1–3). City Planning and Development Office.

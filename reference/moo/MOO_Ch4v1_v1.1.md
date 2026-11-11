@@ -1910,6 +1910,10 @@ The chapter is not implemented merely because these procedures are written. Inst
 
 # REFERENCES
 
+- City Government of Ormoc, City Disaster Risk Reduction and Management Office. (2026). *CDRRMO reference: Local policies* [Shared Drive folder of the City's DRRM policy instruments: Sangguniang Panlungsod ordinances, executive orders, CDRRMC resolutions and SP resolutions]. https://drive.google.com/drive/folders/12NWwUTAE6ub1vW31M2NSMktYlP-BP4oR
+
+- City Government of Ormoc, Sangguniang Panlungsod. (1993–2025). *SP ordinances* [Shared Drive folder, by year, including Ordinance No. 008, s. 2014 establishing the CDRRMO and Ordinance No. 011, s. 2015 amending it]. https://drive.google.com/drive/folders/132g-VeSpXkorcNCte2fpyVY3Az3baBXS
+
 - City Government of Ormoc. (2026). Ormoc CDRRMO–EOC Institutional Assessment Tool (v1.7, 11 November 2026). Unpublished assessment workbook. Repository source: reference/Ormoc_CDRRMO-EOC_Institutional_Assessment_Tool_v1-7.xlsx.
 
 - City Government of Ormoc. (2026). Ormoc CDRRMO–EOC Master Requirements Traceability and 140-Indicator Data Dictionary (v1.1). Unpublished project reference workbook.
