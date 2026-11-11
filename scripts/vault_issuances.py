@@ -3,6 +3,9 @@ Used by generate_operational_seed.py. Summaries are factual; dates are left blan
 # key, drive id, title, doc_number, issuer, date, indicators, summary
 C='CDRRMC'; SP='Sangguniang Panlungsod'; MO='Office of the City Mayor'
 ISS = [
+ # 12 Nov 2026: SP ordinance shared by the City (certified true copy, 21 Apr 2025), read in full with the committee minutes.
+ ('sp-ord-189-2025','1TBDjosHkhf0QOpifePnffwfid8jO0Hso','Amending Section 6 of Ordinance No. 135, s. 2023 (Policy on suspending or cancelling classes and work during emergencies or disasters)','SP Ordinance No. 189, s. 2025',SP,'2025-04-08',['A1.5','A6.2','A7.1','A7.7','C4.2'],
+  'Enacted 8 Apr 2025 (145th regular session); approved by Mayor Lucy Torres-Gomez. Tertiary in-person classes are suspended when PAGASA issues a Red Rainfall Warning AND there is actual heavy rainfall in Ormoc; with a Red warning but no heavy rain, the school head may keep classes after consulting the official platform the CDRRMO provides for the local situation. Online, hybrid or asynchronous classes may continue during a suspension. The City Mayor decides when there is flooding under an Orange, Yellow or no rainfall warning. New duties: the CDRRMO holds coordination meetings with all school DRRM coordinators on school disaster and contingency plans and trains the education sector; the CDRRMC requires schools to record in enrolment forms which students live in flood-prone and other risk areas. Joint committee minutes of 2 Apr 2025 attached (CDRRMO represented).'),
  ('cdrrmc-res-01-2021','16txQX1C_LF2nZFLVkL3lQdBCWZpKjdrZ','Omnibus resolution realigning PHP 33 M for COVID-19 response','CDRRMC Res. No. 01, s. 2021',C,None,['A4.2'],'Realigns LDRRMF funds for COVID-19 response, including vaccine procurement support under the City vaccine council.'),
  ('cdrrmc-res-2a-2021','1Je1wp3uBzVbjAB7_uUmcRkujK2oOCg4Y','Adopting the Enhanced Contingency Plan for flood-affected barangays ("Oplan Lunop") with COVID-19 protocols','CDRRMC Res. No. 2-A, s. 2021',C,'2021-05-03',['A3.3'],'Adopts the flood contingency plan and sends it to the SP for approval. SP approval not on file.'),
  ('cdrrmc-res-2b-2021','1Y4J7Cdi0ozGPD24MRJi454ztt086qnO4','Adopting the Enhanced Contingency Plan for Earthquake (2020-2025) with COVID-19 protocols','CDRRMC Res. No. 2-B, s. 2021',C,'2021-05-03',['A3.3'],'Adopts the earthquake contingency plan for 2020-2025 and sends it to the SP. The plan period has ended; due for update.'),
@@ -197,6 +200,8 @@ ISS_UPLOADS = [
 # gap is visible instead of silent. Status stays 'draft' (the only non-assertive state) with a dated note.
 # (key, title, doc_number, issuer, date, indicators, summary)
 ISS_NOT_OBTAINED = [
+ ('missing-sp-ord-135-2023','SP Ordinance No. 135, s. 2023 (Policy on suspending or cancelling classes and work during emergencies or disasters) — NOT OBTAINED','SP Ordinance No. 135, s. 2023',SP,None,['A1.5','A6.2'],
+  'Not obtained as of 12 November 2026. The base ordinance amended by SP Ordinance No. 189, s. 2025 (Section 6(B) heavy rainfall). Request a certified copy from the Office of the SP Secretary.'),
  ('missing-cdrrmc-2017','CDRRMC resolutions for 2017 — NOT OBTAINED','CDRRMC Resolutions, s. 2017',C,None,[],
   'Not obtained as of 10 November 2026: the 2017 resolution folder arrived empty (folder only, no files). Request from the City Secretary/CDRRMO records.'),
  ('missing-cdrrmc-2018','CDRRMC resolutions for 2018 — NOT OBTAINED','CDRRMC Resolutions, s. 2018',C,None,[],
