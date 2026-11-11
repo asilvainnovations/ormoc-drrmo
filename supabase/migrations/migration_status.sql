@@ -48,6 +48,8 @@ from (values
   ('20261111002400_evidence_check',           exists (select 1 from information_schema.columns
                                                       where table_schema = 'public' and table_name = 'responses' and column_name = 'evidence_check')),
   ('20261111002500_ra12287_alignment',        exists (select 1 from information_schema.columns
-                                                      where table_schema = 'public' and table_name = 'declarations' and column_name = 'hazard_occurred_at'))
+                                                      where table_schema = 'public' and table_name = 'declarations' and column_name = 'hazard_occurred_at')),
+  ('20261112002600_revoke_anon_execute',      not has_function_privilege('anon',
+                                                      (select oid from pg_proc where proname = 'set_eoc_level' and pronamespace = 'public'::regnamespace limit 1), 'EXECUTE'))
 ) as m(migration, present)
 order by m.migration;

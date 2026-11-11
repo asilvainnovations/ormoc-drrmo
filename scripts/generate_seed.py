@@ -29,7 +29,7 @@ def _one(pattern: str) -> Path:
 
 # The IAT workbook is renamed as it is revised (v1.1 -> v1-3), so match any version suffix.
 IAT = _one('Ormoc_CDRRMO-EOC_Institutional_Assessment_Tool_v*.xlsx')
-MRT = ROOT / 'reference' / 'Ormoc_CDRRMO_EOC_Master_Requirements_Traceability_and_140_Indicator_Data_Dictionary_v1.1.xlsx'
+MRT = ROOT / 'reference' / 'Ormoc_CDRRMO_EOC_Master_Requirements_Traceability_and_140_Indicator_Data_Dictionary_v1.2.xlsx'
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 NS = uuid.UUID('6f1c1d1e-0a0b-4c4d-9e8f-0123456789ab')   # namespace for deterministic ids
 
@@ -229,7 +229,7 @@ LIBRARY_DRAFTS += [('MOO Ch.3', 'MOO', 'chapter', None, 'MOO_Ch3v11_v1.1.md', _C
 # Chapter 4 v1.1 (8 Nov 2026, ADR-022): Early Warning, Activation, Incident Management and Emergency Response.
 # Made with: split_manual_docx.py Chapter4_..._v1.1.docx --slug ch4v11 --prefix MOO_Ch4v1 --version v1.1.
 # Figures in public/library/ch4v11/. Its SOPs 4-01 to 4-09 run as protocols (sop_registry.py).
-_CH4V1 = 'v1.1 working draft (IAT v1.6)'
+_CH4V1 = 'v1.1 working draft (IAT v1.7)'
 _CH4_INDS = ['A6.1', 'A6.2', 'A6.3', 'A6.4', 'A6.5', 'A6.6', 'A6.7', 'A7.1', 'A7.2', 'A7.3', 'A7.4', 'A7.5', 'A7.6', 'A7.7', 'A7.8', 'A7.9', 'A8.1', 'A8.2', 'A8.3', 'A8.4', 'A8.5', 'A8.6', 'A8.7', 'A8.8', 'A8.9', 'B1.2', 'B1.3', 'B1.4', 'B1.5']
 LIBRARY_DRAFTS += [('MOO Ch.4', 'MOO', 'chapter', None, 'MOO_Ch4v1_v1.1.md', _CH4V1, None)] + [
     (f'Annex {aid}', 'MOO', kind, title, f'MOO_Ch4v1_Annex_{aid}.md', _CH4V1, inds)

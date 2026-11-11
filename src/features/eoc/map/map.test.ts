@@ -94,18 +94,14 @@ describe('identify on a published image', () => {
   });
 });
 
-describe('know your hazards', () => {
-  it('gives advice only where a sheet shows a class, and sorts places by distance', async () => {
-    const { adviceFor, nearest, ADVICE } = await import('./knowYourHazards');
-    const flood = HAZARD_MAPS.find((m) => m.code === 'flood')!;
-    const tsu = HAZARD_MAPS.find((m) => m.code === 'tsunami')!;
-    const a = adviceFor([{ map: flood, value: 'High' }, { map: tsu, value: 'No class shown' }]);
-    expect(a.map((x) => x.map.code)).toEqual(['flood']);
-    for (const m of HAZARD_MAPS) expect(ADVICE[m.code], m.code).toBeTruthy();
+describe('nearest EOC places', () => {
+  it('sorts places by straight-line distance', async () => {
+    const { nearest, GEOANALYTICS_URL } = await import('./places');
     const n = nearest([124.6043, 11.0139], [
       { id: 'far', name: 'Far', kind: 'Other', lat: 11.2, lng: 124.6, status: 'x' },
       { id: 'near', name: 'Near', kind: 'EOC', lat: 11.014, lng: 124.6045, status: 'x' }]);
     expect(n[0]!.id).toBe('near');
     expect(n[0]!.km).toBeLessThan(0.1);
+    expect(GEOANALYTICS_URL.startsWith('https://geoanalytics.georisk.gov.ph')).toBe(true);
   });
 });

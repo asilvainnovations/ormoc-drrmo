@@ -1,15 +1,15 @@
 // EOC → Hazard maps (ADR-028): the City's official hazard sheets over the barangays, with the QGIS tools the EOC
 // uses — layers, opacity and order, categorised barangay colouring, identify, measure, coordinates, exposure summary
-// and a PNG export that carries title, sources and accuracy. Sheets are pictures fitted to their own grid: read them
+// and a PNG export that carries title, sources and accuracy. Barangay-level analysis is GeoAnalyticsPH, embedded. Sheets are pictures fitted to their own grid: read them
 // at barangay level, never for a site decision. Nothing here sets a hazard threshold.
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import * as maplibregl from 'maplibre-gl';
 import type { GeoJSONSource, MapMouseEvent } from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
-import { ArrowDown, ArrowUp, ChevronDown, Crosshair, Download, Info, LocateFixed, Ruler, Square } from 'lucide-react';
+import { ArrowDown, ArrowUp, ChevronDown, Crosshair, Download, ExternalLink, Info, LocateFixed, Ruler, Square } from 'lucide-react';
 import { db } from '@/lib/db';
-import { Badge, Button, Checkbox, Notice, PageHeader, Section, Select, Tabs } from '@/components/ui';
+import { Badge, Button, ButtonAnchor, Checkbox, Notice, PageHeader, Section, Select, Tabs } from '@/components/ui';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Separator } from '@/components/ui/separator';
 import { Slider } from '@/components/ui/slider';
@@ -20,7 +20,7 @@ import { HAZARD_MAPS, type HazardMap } from './hazardMaps';
 import { classOf, exposureSummary, rawValue, THEMES, type ThemeData, type ThemeKey } from './themes';
 import { fmtArea, fmtDistance, pathLength, polygonArea, toUtm51, type LngLat } from './geodesy';
 import { identifyAt } from './identify';
-import { ADVICE_STATUS, GO_BAG, adviceFor, nearest } from './knowYourHazards';
+import { GEOANALYTICS_URL, nearest } from './places';
 import { POINT_KIND, POINT_STATUS } from '../labels';
 
 type Tool = 'identify' | 'distance' | 'area';
@@ -59,6 +59,7 @@ export default function HazardMapPage() {
   const places = useLiveQuery(async () => (await db.geo_reference_points.toArray()).filter((x) => x.verification_status !== 'superseded')
     .map((x) => ({ id: x.id, name: x.name, kind: POINT_KIND[x.kind], lat: x.lat, lng: x.lng, status: POINT_STATUS[x.verification_status] })), []);
   const [locProblem, setLocProblem] = useState<string | null>(null);
+  const [geoOpen, setGeoOpen] = useState(false);
 
   // ---------------------------------------------------------------- boundaries (static file, cached offline)
   useEffect(() => {
@@ -334,29 +335,22 @@ export default function HazardMapPage() {
                 </ul>
               ) : <p className="text-sm text-muted">No reference points yet. Add them on the Map tab.</p>}
               <p className="mt-1 text-xs text-muted">Straight-line distance, not the road route.</p>
-              {adviceFor(found.sheets).length > 0 && (
-                <>
-                  <Separator className="my-3" />
-                  <h3 className="font-semibold">What to do</h3>
-                  <Notice tone="info">{ADVICE_STATUS}</Notice>
-                  {adviceFor(found.sheets).map((a) => (
-                    <Collapsible key={a.map.code} className="mt-2">
-                      <CollapsibleTrigger className="flex min-h-tap w-full items-center justify-between rounded-control px-2 text-left font-medium hover:bg-sky-soft" {...tip(`What to do for ${a.map.title.toLowerCase()}`)}>
-                        {a.map.title}: about {a.value} <ChevronDown className="h-4 w-4 shrink-0" aria-hidden />
-                      </CollapsibleTrigger>
-                      <CollapsibleContent><ul className="ml-6 list-disc space-y-1 py-2 text-sm">{a.steps.map((t) => <li key={t}>{t}</li>)}</ul></CollapsibleContent>
-                    </Collapsible>
-                  ))}
-                  <Collapsible className="mt-2">
-                    <CollapsibleTrigger className="flex min-h-tap w-full items-center justify-between rounded-control px-2 text-left font-medium hover:bg-sky-soft" {...tip('A go-bag list for each household')}>
-                      Go-bag <ChevronDown className="h-4 w-4 shrink-0" aria-hidden />
-                    </CollapsibleTrigger>
-                    <CollapsibleContent><ul className="ml-6 list-disc space-y-1 py-2 text-sm">{GO_BAG.map((t) => <li key={t}>{t}</li>)}</ul></CollapsibleContent>
-                  </Collapsible>
-                </>
-              )}
             </Section>
           )}
+          <Section title="Barangay hazard assessment (GeoAnalyticsPH)">
+            <p className="max-w-prose text-sm text-muted">GeoAnalyticsPH, from DOST-PHIVOLCS GeoRiskPH, gives the official barangay-level analysis: population prone and safe by sex and age, affected facilities and land area for each hazard. In its map choose Region VIII (Eastern Visayas), then the province, City of Ormoc and the barangay{found?.barangay ? <> (here: <strong className="text-ink">{found.barangay.name}</strong>)</> : ''}, pick a hazard and select Submit.</p>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {!geoOpen && <Button variant="secondary" tip="Load GeoAnalyticsPH inside this page (it uses data; it is a separate site)" onClick={() => setGeoOpen(true)}>Show GeoAnalyticsPH here</Button>}
+              <ButtonAnchor href={GEOANALYTICS_URL} icon={ExternalLink} tip="Open GeoAnalyticsPH in a new tab">Open in a new tab</ButtonAnchor>
+            </div>
+            {geoOpen && (
+              <>
+                <iframe src={GEOANALYTICS_URL} title="GeoAnalyticsPH barangay hazard assessment" className="mt-3 h-[75vh] min-h-[520px] w-full rounded-card border border-line bg-surface"
+                  allow="geolocation" referrerPolicy="strict-origin-when-cross-origin" loading="lazy" />
+                <p className="mt-2 text-xs text-muted">If the frame stays blank or asks you to sign in, GeoAnalyticsPH may not allow use inside another site: use Open in a new tab.</p>
+              </>
+            )}
+          </Section>
         </div>
       </div>
     </div>

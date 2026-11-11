@@ -31,5 +31,5 @@ Each record states a decision, why it was made, and what it costs. Change a deci
 | [024](024-ddrive-risk-intelligence.md) | DDRiVE desk assessment as read-only reference; bands computed; decision support only; no API writes | Accepted (amended by 1.12.2 and 1.13.0) |
 | [025](025-ra12287-irr-alignment.md) | AA rules follow RA 12287 and the IRR: three-day lead time (extendable to five), checked again at declaration; graduation only for hydromet and geological hazards; automatic lifting on occurrence | Accepted (amends 006; legal readings to confirm with the City Legal Office and OCD VIII) |
 | [026](026-free-tier-hosting-during-development.md) | Vercel Hobby and Supabase Free during development; one Vercel project; app-only builds | Accepted (narrows 002 and 021 for development) |
-| [027](027-bolt-workspace.md) | Bolt.new works on branches with pull requests; connectors on only when needed | Proposed |
-| [028](028-hazard-map-layers.md) | Official hazard sheets as georeferenced image overlays over the COD-AB barangays, with QGIS-style tools (layers, identify, measure, export) | Proposed |
+| [027](027-bolt-workspace.md) | Bolt.new is the working space (terminal, preview); changes reach `main` only through pull requests | Accepted |
+| [028](028-hazard-map-layers.md) | Official hazard sheets as georeferenced image overlays over the COD-AB barangays, with QGIS-style tools (layers, identify, measure, export) and GeoAnalyticsPH embedded | Accepted |

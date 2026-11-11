@@ -6,7 +6,7 @@ import type reference from '@/data/reference.json';
 import { db, getMeta, setMeta } from './db';
 import { DEFAULT_AA_PARAMS } from '@/domain/aa';
 
-export const REFERENCE_VERSION = 'iat-1.6/2026-11-11-v1-6-rescore-ch1-ch2';
+export const REFERENCE_VERSION = 'iat-1.7/2026-11-12-v1-7-geoanalytics';
 
 type Ref = typeof reference;
 

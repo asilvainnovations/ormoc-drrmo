@@ -18,3 +18,7 @@ The repository's `public/` folder held four stand-alone pages: an ICS simulator,
 - Exercise results are not shared between devices. If the City wants them as server-side evidence for B7.2 and B7.3, add a `training_runs` table later. The run record format is already fixed (`RunRecord`).
 - Tools is in the desktop rail. On phones it opens from the Today screen, because the tab bar holds six items.
 - Manual figures (`public/library/`) are not precached. The manual text works offline; the figures load when there is a connection.
+
+## Amendment (12 Nov 2026, release 1.14.0)
+
+One outside site may be shown inside MODE: **GeoAnalyticsPH** (`https://geoanalytics.georisk.gov.ph`, DOST-PHIVOLCS GeoRiskPH), on EOC → Hazard maps, for barangay-level hazard assessment (Alvin M. Silva, decision A7). It loads only when the person selects "Show GeoAnalyticsPH here"; "Open in a new tab" stays beside it in case the site refuses framing or asks for sign-in. The Content-Security-Policy allows `frame-src` for that one origin only, and the Permissions-Policy lets it ask for location (its "Use current location"). Every other outside page still opens in a new tab, never in a frame.

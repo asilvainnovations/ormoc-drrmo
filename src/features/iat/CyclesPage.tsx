@@ -31,7 +31,7 @@ export function CyclesPage() {
 
   const create = async () => {
     setBusy(true);
-    const c: Cycle & { _new: true } = { _new: true, id: uuid(), name: name.trim(), cycle_year: new Date().getFullYear(), iat_version: '1.6',
+    const c: Cycle & { _new: true } = { _new: true, id: uuid(), name: name.trim(), cycle_year: new Date().getFullYear(), iat_version: '1.7',
       status: 'draft', period_from: null, period_to: null, notes: notes.trim() || null, version: 1 };
     await save('assessment_cycles', c, `Create assessment cycle ${c.name}`);
     setBusy(false); setOpen(false);
@@ -41,7 +41,7 @@ export function CyclesPage() {
 
   return (
     <div className="page">
-      <PageHeader title="Institutional assessment" subtitle="IAT v1.6: 125 core indicators (Parts A and B) and 15 interface indicators (Part C)."
+      <PageHeader title="Institutional assessment" subtitle="IAT v1.7: 125 core indicators (Parts A and B) and 15 interface indicators (Part C)."
         actions={canCreate && <Button tip="Start a new assessment cycle, for example the annual reassessment" icon={Plus} onClick={() => setOpen(true)}>New cycle</Button>} />
       <Section title="Assessment cycles">
         {rows && rows.length === 0 ? (

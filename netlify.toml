@@ -57,9 +57,9 @@
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
     X-Frame-Options = "DENY"
-    Permissions-Policy = "camera=(self), geolocation=(), microphone=()"
+    Permissions-Policy = 'camera=(self), geolocation=(self "https://geoanalytics.georisk.gov.ph"), microphone=()'
     Strict-Transport-Security = "max-age=63072000; includeSubDomains"
-    Content-Security-Policy = "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https://jmctsspadywjcbbqwweh.supabase.co wss://jmctsspadywjcbbqwweh.supabase.co; worker-src 'self' blob:; child-src blob:; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
+    Content-Security-Policy = "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https://jmctsspadywjcbbqwweh.supabase.co wss://jmctsspadywjcbbqwweh.supabase.co; worker-src 'self' blob:; child-src blob:; frame-src https://geoanalytics.georisk.gov.ph; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
 
 # 1.10: the workspace and sign-in screens are never indexed; only the public pages are (robots.txt, sitemap.xml).
 [[headers]]

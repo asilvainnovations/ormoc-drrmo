@@ -1,12 +1,12 @@
 # ANNEX 4-A \| IAT AND MASTER REQUIREMENTS TRACEABILITY REGISTER
 
-This register copies the IAT v1.6 rows for A6, A7, A8 and B1.2–B1.5 (8 November 2026) and the functional master requirements linked to each indicator in the Data Dictionary v1.1. Cross-cutting requirements MR-01 and MR-12 to MR-15 apply to every indicator and are not repeated.
+This register copies the IAT v1.7 rows for A6, A7, A8 and B1.2–B1.5 (8 November 2026) and the functional master requirements linked to each indicator in the Data Dictionary v1.1. Cross-cutting requirements MR-01 and MR-12 to MR-15 apply to every indicator and are not repeated.
 
 **Table 4.40**
 
 *Assessment Rows and Chapter 4 Procedures*
 
-| **ID** | **Indicator (IAT v1.6)**                                                                                                                                                                                                                                                                                                                                                                         | **Type** | **Score** | **Priority** | **Compliance** | **Evidence status** | **Functional MR**          | **SOP**                  |
+| **ID** | **Indicator (IAT v1.7)**                                                                                                                                                                                                                                                                                                                                                                         | **Type** | **Score** | **Priority** | **Compliance** | **Evidence status** | **Functional MR**          | **SOP**                  |
 |--------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------|-----------|--------------|----------------|---------------------|----------------------------|--------------------------|
 | A6.1   | Hazard-specific EWS operational for flood (incl. Anilao/Malbasag river systems), rain-induced landslide, tsunami (Ormoc Bay) and tropical cyclone                                                                                                                                                                                                                                                | M        | 3         | Medium       | Compliant      | Pending validation  | MR-06                      | 4-01                     |
 | A6.2   | Warning thresholds linked to specific actions (alert levels -\> pre-emptive evacuation, class/work suspension, State of Imminent Disaster request) in written protocols, built to take up NDRRMC impact-based triggers once issued                                                                                                                                                               | M        | 2         | High         | Non-compliant  | Pending validation  | MR-06, MR-16               | 4-02, 4-06               |
@@ -42,7 +42,7 @@ This register copies the IAT v1.6 rows for A6, A7, A8 and B1.2–B1.5 (8 Novembe
 
 **Table 4.41**
 
-*Action Plan Rows (IAT v1.6), Copied Without Change*
+*Action Plan Rows (IAT v1.7), Copied Without Change*
 
 | **ID** | **Recommended action**                                                                                                                                                                                                                                                           | **Responsible office**                    | **Target**                          | **Status**  |
 |--------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------|-------------------------------------|-------------|

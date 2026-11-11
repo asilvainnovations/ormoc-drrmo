@@ -198,7 +198,7 @@ The integration suite found two defects that the fake client could not show, and
 `src/features/eoc/map/`: `HazardMapPage.tsx` (EOC → Hazard maps), `hazardMaps.ts` (catalogue of fitted sheets:
 corners, source, custodian, fit error, legend), `themes.ts` (DDRiVE barangay colouring and exposure summary),
 `geodesy.ts` (geodesic distance and area, UTM 51N, sheet pixel mapping), `identify.ts` (class from a sheet's pixel
-colour), `knowYourHazards.ts` (draft advice and go-bag, after the Project NOAH feature), `base.ts` (basemap set-up
+colour), `places.ts` (nearest EOC places; the GeoAnalyticsPH address, embedded per the ADR-011 amendment), `base.ts` (basemap set-up
 shared with the Geo-COP map). Files: `public/geo/hazard/*.webp`, `public/geo/ormoc-barangays.geojson` (OCHA COD-AB,
 PSGC-keyed), cached by the service worker on first use. Sheets are pictures: identify answers "about" a class, and
 every export carries the source and fit error.

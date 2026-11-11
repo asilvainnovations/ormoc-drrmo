@@ -50,15 +50,15 @@ The October 2026 Institutional Assessment identifies the CDRRMO's organizational
 
 The assessment is diagnostic. It does not itself establish legal non-compliance, approve a staffing pattern or create positions. All staffing and organizational proposals remain subject to verification of the current legal framework, approved City organizational structure, plantilla, qualification standards, appropriations and applicable Civil Service Commission (CSC) and Department of Budget and Management (DBM) rules.
 
-## 1.1 Assessment Findings for this Chapter (IAT v1.6)
+## 1.1 Assessment Findings for this Chapter (IAT v1.7)
 
-The findings below come from the Ormoc CDRRMO–EOC Institutional Assessment Tool v1.6 (workbook v1-6, updated 11 November 2026). The October 2026 assessment combined a focus group discussion with the CDRRMO Head and staff at the CDRRM Office, which houses the OpCen and the EOC; key informant interviews with the CDRRMO Chiefs of Operations, Research and Planning, and Administration, the CPDO, the CSWDO and the City Administrator's Office; site visits to the EOC and the Operations and Rescue Office; and a visit to Brgy. Liloan, one of the flood-prone barangays, with an established evacuation site, evacuation protocol, and camp coordination and management arrangements. The team also reviewed City plans, 2021–2025 issuances, the CDRRMO organizational chart and internal staff papers.
+The findings below come from the Ormoc CDRRMO–EOC Institutional Assessment Tool v1.7 (workbook v1-7, 11 November 2026). The October 2026 assessment combined a focus group discussion with the CDRRMO Head and staff at the CDRRM Office, which houses the OpCen and the EOC; key informant interviews with the CDRRMO Chiefs of Operations, Research and Planning, and Administration, the CPDO, the CSWDO and the City Administrator's Office; site visits to the EOC and the Operations and Rescue Office; and a visit to Brgy. Liloan, one of the flood-prone barangays, with an established evacuation site, evacuation protocol, and camp coordination and management arrangements. The team also reviewed City plans, 2021–2025 issuances, the CDRRMO organizational chart and internal staff papers.
 
 **Stakeholder position.** All offices consulted share one aim: clear roles and responsibilities for each unit and accountable person, and that these are carried out. All agree that a Manual of Operations will help significantly. This chapter turns that aim into approved structures, positions, rosters and records.
 
 **Table 2.1**
 
-*Maturity and Compliance of the Chapter 2 Domains, IAT v1.6*
+*Maturity and Compliance of the Chapter 2 Domains, IAT v1.7*
 
 | **Domain**                                                    | **Maturity index (0–4)** | **Band**   | **Mandatory compliance** | **High-priority gaps** |
 |---------------------------------------------------------------|--------------------------|------------|--------------------------|------------------------|
@@ -71,9 +71,9 @@ Scores follow the evidence rule in Methodology 5.2: interviews alone support a m
 
 **Table 2.2**
 
-*Chapter 2 Indicators, Findings and Responses (IAT v1.6)*
+*Chapter 2 Indicators, Findings and Responses (IAT v1.7)*
 
-| **IAT ref** | **Score** | **Priority** | **Finding (IAT v1.6)**                                                                                                                                                                                    | **Chapter response (section)** |
+| **IAT ref** | **Score** | **Priority** | **Finding (IAT v1.7)**                                                                                                                                                                                    | **Chapter response (section)** |
 |-------------|-----------|--------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------|
 | A1.4        | 3         | Low          | CDRRMO acts as CDRRMC Secretariat; no written secretariat procedure; records lapses.                                                                                                                      | 7.2; Chapter 1 GOV-02          |
 | A2.1        | 2         | High         | Sections exist, but not as an approved JMC 2014-1 structure; normal-operations and response tasks are mixed.                                                                                              | 6; 7                           |
@@ -814,7 +814,7 @@ Targets shall be set only after baseline validation and alignment with City perf
 
 # 18. Priority Institutional Improvement Actions
 
-The October 2026 assessment (IAT v1.6) shows that the CDRRMO's organizational and staffing arrangements need strengthening. The actions below follow the workbook's gap-priority order and its Action Plan targets. They are proposed for validation and do not replace HRMO, Budget, DBM, CSC or City Legal Office approvals.
+The October 2026 assessment (IAT v1.7) shows that the CDRRMO's organizational and staffing arrangements need strengthening. The actions below follow the workbook's gap-priority order and its Action Plan targets. They are proposed for validation and do not replace HRMO, Budget, DBM, CSC or City Legal Office approvals.
 
 ![Figure 18: 18. Priority Institutional Improvement Actions](/library/ch2v12/fig-18.webp)
 
@@ -989,7 +989,7 @@ The October 2026 assessment (IAT v1.6) shows that the CDRRMO's organizational an
 </tbody>
 </table>
 
-*Note.* Targets follow the IAT v1.6 Action Plan and remain subject to HRMO, Budget, DBM, CSC and City Legal Office approvals.
+*Note.* Targets follow the IAT v1.7 Action Plan and remain subject to HRMO, Budget, DBM, CSC and City Legal Office approvals.
 
 # 19. Required SOPs, Forms and Controlled Records
 
@@ -1121,7 +1121,7 @@ RACI interpretation: one Accountable (A) role is assigned per activity, except w
 
 9.  City Government of Ormoc. (2026). Inception report: Ormoc City CDRRMO and EOC Manual of Operations development. Unpublished project document.
 
-10. City Government of Ormoc. (2026). Ormoc CDRRMO–EOC Institutional Assessment Tool (v1-6, updated 11 November 2026). Unpublished assessment workbook.
+10. City Government of Ormoc. (2026). Ormoc CDRRMO–EOC Institutional Assessment Tool (v1-7, 11 November 2026). Unpublished assessment workbook.
 
 11. City Government of Ormoc, City Disaster Risk Reduction and Management Council. (2022). Resolution Nos. 03 and 04, s. 2022: Adoption of NDRRMC Memorandum Circular No. 64, s. 2021 and risk categorization for ACDV insurance.
 

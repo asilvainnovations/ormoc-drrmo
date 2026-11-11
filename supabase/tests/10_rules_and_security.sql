@@ -986,6 +986,15 @@ select tests.expect_eq('the DDRiVE view runs with the reader''s rights',
   (coalesce((select reloptions from pg_class where oid = 'public.v_ddrive_city_risk'::regclass), '{}')
      @> array['security_invoker=true'])::text, 'true');
 
+-- 1.14.0 (C11): signed-out visitors cannot call the platform's actions; signed-in users still can.
+reset role;
+select tests.expect_eq('a signed-out visitor cannot call ' || f, has_function_privilege('anon', p.oid, 'EXECUTE')::text, 'false')
+  from (select distinct on (proname) proname as f, oid from pg_proc where pronamespace = 'public'::regnamespace
+         and proname in ('set_eoc_level', 'activate_contingency_plan', 'start_protocol', 'load_aa_checklist',
+                         'admin_list_accounts', 'connected_app_status', 'my_account', 'my_roles')) p;
+select tests.expect_eq('a signed-in user can still call start_protocol',
+  has_function_privilege('authenticated', (select oid from pg_proc where proname = 'start_protocol' and pronamespace = 'public'::regnamespace limit 1), 'EXECUTE')::text, 'true');
+
 reset role;
 select tests.expect_eq('audit trail recorded', ((select count(*) from public.audit_log) > 50)::text, 'true');
 \o

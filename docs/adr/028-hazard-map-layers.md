@@ -1,6 +1,6 @@
 # ADR-028: Hazard map layers and QGIS-style tools in the EOC map
 
-**Status:** Proposed (needs CPDO-GIS and CDRRMO sign-off on the layer list and the accuracy notes)
+**Status:** Accepted (Alvin M. Silva, 12 Nov 2026). The sheets came from the CLUP 2017–2027 (CPDO-GIS sheets) and GeoRiskPH (PHIVOLCS sheets); no further sign-off is needed.
 **Date:** 11 November 2026
 **Deciders:** Alvin M. Silva (lead assessor); CDRRMO Head; CPDO-GIS (custodian of the City hazard sheets)
 **Extends:** ADR-015 (City basemap), ADR-024 (DDRiVE base layer). Supports MR-03 (risk intelligence), MR-07 (situational awareness); Area 3 and Area 6.
@@ -17,7 +17,8 @@ Add an **EOC → Hazard maps** page that brings the parts of QGIS the EOC uses i
 
 1. **Georeferenced hazard sheets as image overlays.** Each sheet was fitted once (11 Nov 2026) from its own grid: UTM 51N ticks on the CPDO sheets (fit error about 5–6 m), Luzon 1911 graticule ticks on the READY sheets (about 7 m), and the printed city boundary on the PHIVOLCS 2024/2026 sheets (about 80 m). Classified sheets keep only their legend colours (everything else transparent); the PHIVOLCS sheets are shown as published. Corners, source, custodian, issue date, scale and fit error are in `src/features/eoc/map/hazardMaps.ts`; the fit record is `docs/adr/028-georef-fits.json`. Files are static (`public/geo/`), so the service worker caches them.
 2. **Barangay boundaries** from OCHA COD-AB (PSGC-keyed, simplified, `public/geo/ormoc-barangays.geojson`) with **categorised and graduated symbology** from the DDRiVE tables (flood, hazards, proposed priority, 2024 population). A blank is "Not assessed", never zero.
-3. **QGIS-style tools:** layer list with visibility, opacity and draw order; legends; identify (barangay attributes plus the hazard class read from each visible sheet at the clicked point); measure distance and area (geodesic); coordinates in WGS 84 and UTM 51N (EPSG:32651); zoom to barangay; exposure summary (barangays and population per class); export the view as PNG with title, sources and date.
+3. **GeoAnalyticsPH** embedded for barangay-level hazard assessment (ADR-011 amendment).
+4. **QGIS-style tools:** layer list with visibility, opacity and draw order; legends; identify (barangay attributes plus the hazard class read from each visible sheet at the clicked point); measure distance and area (geodesic); coordinates in WGS 84 and UTM 51N (EPSG:32651); zoom to barangay; exposure summary (barangays and population per class); export the view as PNG with title, sources and date.
 
 ## Options considered
 
@@ -50,7 +51,7 @@ Kept as outside links (ADR-011), but staff lose the barangay overlay and offline
 
 ## Trade-off analysis
 
-A gives the EOC the official pictures in place, offline, at no cost, and keeps their meaning. Its limit is precision: a print fitted to its grid is good to a few metres for the CPDO and READY sheets and to about 80 m for the PHIVOLCS city sheets. That is enough for barangay-level situational awareness and not enough for a site decision. The page says so on every sheet and in every export, and the identify tool reports "about" the class. B and C stay open for when the City obtains the source vector data.
+A gives the EOC the official pictures in place, offline, at no cost, and keeps their meaning. Its limit is precision: a print fitted to its grid is good to a few metres for the CPDO and READY sheets and to about 80 m for the PHIVOLCS city sheets. That is enough for barangay-level situational awareness and not enough for a site decision. The page says so on every sheet and in every export, and the identify tool reports "about" the class. B and C stay open for when the City obtains the source vector data. For barangay-level numbers (population prone and safe, affected facilities), the page embeds GeoAnalyticsPH, which runs on the agencies' own layers.
 
 ## Consequences
 
@@ -65,6 +66,6 @@ A gives the EOC the official pictures in place, offline, at no cost, and keeps t
 
 1. [x] Fit the eight sheets and record the fits (11 Nov 2026).
 2. [x] Build the page, tools and tests.
-3. [ ] CPDO-GIS checks two control points per sheet against QGIS and confirms the layer list.
-4. [ ] Request the source shapefiles from MGB VIII (flood, landslide), PHIVOLCS (READY layers, GSH-2025, TSU-2023) and DOST (storm surge).
+3. [x] Source of the sheets confirmed: CLUP 2017–2027 and GeoRiskPH (12 Nov 2026).
+4. [x] Barangay-level analysis: GeoAnalyticsPH (GeoRiskPH) is embedded on the page (ADR-011 amendment); the agencies' source layers live there, so MODE does not copy them.
 5. [ ] Add the page to the Chapter 6 GIS SOP (6-GIS-01) once validated.

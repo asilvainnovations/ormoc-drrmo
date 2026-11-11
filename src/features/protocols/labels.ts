@@ -20,7 +20,7 @@ export const KIND_LABEL = { protocol: 'Protocol (point of action)', workflow: 'W
 export const FORM_STATUS: Record<'draft' | 'approved' | 'retired', string> = { draft: 'Draft', approved: 'Approved', retired: 'Retired' };
 
 /** 1.14: the four DRRM thematic areas (RA 10121; NDRRMP). Each category sits under one area. The placement follows
- *  the NDRRMP outcomes and is a proposal for CDRRMO validation: governance, workforce and the CDRRMC are placed
+ *  the NDRRMP outcomes (approved by Alvin M. Silva, 12 Nov 2026): governance, workforce and the CDRRMC are placed
  *  under Preparedness (LDRRMC/O capacity); the LDRRMF budget cycle and planning under Prevention and Mitigation
  *  (mainstreaming DRRM-CCA in plans and budgets). */
 export type ThematicArea = 'prevention' | 'preparedness' | 'response' | 'recovery';

@@ -17,7 +17,7 @@ For CDRRMO and EOC staff with an account that can edit the Document Vault. No ke
 
 If the save fails, note the line and the message and tell the CDRRMO records focal. Do not attach a file to a different entry.
 
-Not on this list (attach by hand only if the records office asks): the annexes inside the bundle, the page photos of EO No. 28, s. 2016 (a clean scan is still needed), and the second version of CDRRMC Res. No. 04, s. 2021 (the Secretariat must confirm which version is final).
+Not on this list: the annexes inside the bundle (attach by hand only if the records office asks). EO No. 28, s. 2016 is linked to its Drive folder (three page photos); attach the photos only if the records office wants them in the Vault. CDRRMC Res. No. 04, s. 2021: the final version is the one listed below ("Realigning and reappropriating remaining balances of donations", confirmed 12 Nov 2026); skip the other copy.
 
 ## 2016 (1 files)
 

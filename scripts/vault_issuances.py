@@ -159,7 +159,7 @@ ISS_UPLOADS = [
   'Fourth-quarter full Council meeting, 12 Dec 2023. Cites RA 10121 Sec. 21 and COA Circular 2012-002 Sec. 4.4; the reversion was reviewed by the CPDO, City Budget Office and City Accountant. Follows CDRRMC Res. No. 07, s. 2023.'),
  # Executive orders
  ('eo-2016-28','Re-organizing the City Disaster Risk Reduction Management Council','EO No. 28, s. 2016',MO,None,['A2.7'],
-  'Issuance bundle 9 Nov 2026: Executive Orders 2016/EO_28_page1-2 (scanned JPG)',
+  'Issuance bundle 9 Nov 2026: Executive Orders 2016/EO_28_page1-2 (scanned JPG); Drive folder 1W3jCXZKjJiDfvO2zC8u1F-IaGM4RcsOv (three page photos, the City\'s copy)',
   'Re-organizes the CDRRMC under Mayor Richard I. Gomez; chairman/vice-chairman and member composition.'),
  ('eo-2017-26','Creating the Incident Command System','EO No. 26, s. 2017',MO,None,['B4.1'],
   'Issuance bundle 9 Nov 2026: Executive Orders 2017/Executive Order_26-2017_Creating the ICS.pdf',
@@ -172,7 +172,7 @@ ISS_UPLOADS = [
   'Reorganizes the CDRRMC.'),
  ('eo-2021-151','An order reorganizing the Ormoc City Disaster Risk Reduction and Management Council','EO No. 151, s. 2021',MO,None,['A1.2'],
   'Issuance bundle 9 Nov 2026: Executive Orders 2021/Executive Order 151 s 2021_Reorganizing Ormoc CDRRM Council (5 pages); Drive file 1Z2nll_TTQRb6Burmg11UMmYUNbyCb-vM',
-  'Reorganizes the CDRRMC under RA 10121 Sec. 11(a), chaired by Mayor Richard I. Gomez. Signed, but the date line is blank; received by the CDRRMO on 19 Mar 2021. The last digit of the number is handwritten: confirm "151" with the Office of the City Mayor records. Later reorganizations: EO Nos. 2022-0006, 2023-0041 and 2024-032A.'),
+  'Reorganizes the CDRRMC under RA 10121 Sec. 11(a), chaired by Mayor Richard I. Gomez. Signed, but the date line is blank; received by the CDRRMO on 19 Mar 2021. The last digit of the number is handwritten. Later reorganizations: EO Nos. 2022-0006, 2023-0041 and 2024-032A.'),
  ('eo-2023-0025','Creating the Climate and Disaster Risk Assessment Technical Working Group','EO No. 2023-0025',MO,'2023-03-08',['A3.4'],
   'Issuance bundle 9 Nov 2026: Executive Orders 2023/Executive Order_2023-0025_CDRA TWG.pdf',
   'CDRA technical working group; basis for CDRA updates feeding the plans.'),
@@ -219,4 +219,13 @@ ISS_NOT_OBTAINED = [
 # marked superseded by the document (Vault records are superseded, never deleted). (old key, new key)
 ISS_SUPERSEDED = [
  ('missing-eo-2021', 'eo-2021-151'),
+ # 1.14.0: newer versions of the engagement's own workbooks (same mechanism; the older entry stays, superseded).
+ ('iat-workbook-v15', 'iat-workbook-v17'),
+ ('mrt', 'mrt-v1-2'),
+]
+
+# 1.14.0 (12 Nov 2026): links for records already in production. The register inserts new rows only, so these
+# are applied as guarded updates (only where the entry has no link yet). (key, url)
+ISS_LINKS = [
+ ('eo-2016-28', 'https://drive.google.com/drive/folders/1W3jCXZKjJiDfvO2zC8u1F-IaGM4RcsOv'),
 ]
