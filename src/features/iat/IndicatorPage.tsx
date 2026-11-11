@@ -6,23 +6,23 @@ import { db } from '@/lib/db';
 import { save, saveMany, queueUpload, evidenceFileUrl, uploadProblem } from '@/lib/store';
 import { uuid } from '@/lib/ids';
 import { useAuth } from '@/lib/auth';
-import { fmtDate } from '@/lib/time';
+import { fmtDate, fmtDateTime } from '@/lib/time';
 import { Badge, Button, ChoiceGroup, Field, Input, KeyValue, List, ListRow, Loading, Notice, PageHeader, Section, Select, Textarea, TextLink } from '@/components/ui';
 import { Sheet } from '@/components/Sheet';
 import { useToast } from '@/components/Toast';
 import { EVIDENCE_CAP, EVIDENCE_LABEL, SCORE_LEVELS, complianceStatus, gapPriorityScore, priorityBand, scoreBlockReason } from '@/domain/scoring';
-import type { Evidence, EvidenceKind, EvidenceStrength, Response } from '@/types';
+import type { Evidence, EvidenceCheck, EvidenceKind, EvidenceStrength, Response } from '@/types';
 import { useCycleData, isEditable } from './data';
 import { tip } from '@/components/Tooltip';
 import { RefText } from '@/components/RefText';
 import { VaultForIndicator } from '@/features/vault/VaultPages';
-import { EVIDENCE_KIND, RESPONSE_STATUS } from './labels';
+import { EVIDENCE_CHECK, EVIDENCE_CHECK_HELP, EVIDENCE_CHECK_TONE, EVIDENCE_KIND, RESPONSE_STATUS } from './labels';
 
 const VERBAL_KINDS: EvidenceKind[] = ['interview', 'fgd'];
 
 function newResponse(cycleId: string, indicatorId: string): Response & { _new: true } {
   return { _new: true, id: uuid(), cycle_id: cycleId, indicator_id: indicatorId, score: null, is_na: false, na_justification: null,
-    gap_remarks: null, recommended_action: null, status: 'draft', version: 1 };
+    gap_remarks: null, recommended_action: null, status: 'draft', evidence_check: 'pending', version: 1 };
 }
 
 export function IndicatorPage() {
@@ -53,6 +53,7 @@ export function IndicatorPage() {
   const [naWhy, setNaWhy] = useState('');
   const [gap, setGap] = useState('');
   const [action, setAction] = useState('');
+  const [evCheck, setEvCheck] = useState<EvidenceCheck>('pending');
   const [evOpen, setEvOpen] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -60,6 +61,7 @@ export function IndicatorPage() {
   useEffect(() => {
     setScore(resp ? (resp.is_na ? 'NA' : resp.score) : null);
     setNaWhy(resp?.na_justification ?? ''); setGap(resp?.gap_remarks ?? ''); setAction(resp?.recommended_action ?? '');
+    setEvCheck(resp?.evidence_check ?? 'pending');
   }, [resp?.id, resp?.version]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (!data || !ind || !domain) return <Loading />;
@@ -69,6 +71,8 @@ export function IndicatorPage() {
   const canAnswer = has('assessor', 'validator', 'cdrrmo_head') || (isC && has('lead_office_focal') && myOfficeLeads);
   const locked = resp?.status === 'validated' && !has('validator', 'cdrrmo_head');
   const editable = isEditable(data.cycle.status) && canAnswer && !locked;
+  // The assessment team checks evidence; a lead office does not verify its own (20261111002400_evidence_check.sql).
+  const canCheck = editable && has('assessor', 'validator', 'cdrrmo_head');
   const blocked = typeof score === 'number' ? scoreBlockReason(score, cap) : null;
   const gps = typeof score === 'number' ? gapPriorityScore(score, ind.weight, ind.type, domain.part) : null;
 
@@ -80,7 +84,8 @@ export function IndicatorPage() {
     setBusy(true);
     const base = resp ?? newResponse(data.cycle.id, ind.id);
     const next: Response = { ...base, score: typeof score === 'number' ? score : null, is_na: score === 'NA', na_justification: score === 'NA' ? naWhy.trim() : null,
-      gap_remarks: gap.trim() || null, recommended_action: action.trim() || null, status: status ?? (base.status === 'validated' ? 'provisional' : base.status) };
+      gap_remarks: gap.trim() || null, recommended_action: action.trim() || null, status: status ?? (base.status === 'validated' ? 'provisional' : base.status),
+      evidence_check: canCheck ? evCheck : (base.evidence_check ?? 'pending') };
     await save('responses', next, `${status === 'validated' ? 'Validate' : 'Score'} ${ind.id}`);
     setBusy(false);
     toast(status === 'validated' ? `${ind.id} validated` : status === 'provisional' ? `${ind.id} submitted for validation` : `${ind.id} saved`);
@@ -100,6 +105,7 @@ export function IndicatorPage() {
         subtitle={<span className="flex flex-wrap gap-1.5">
           <Badge>{isC ? 'Interface' : ind.type === 'M' ? 'Mandatory' : 'Good practice'}</Badge><Badge>Weight {ind.weight}</Badge>
           {resp && <Badge tone={resp.status === 'validated' ? 'ok' : 'neutral'}>{RESPONSE_STATUS[resp.status]}</Badge>}
+          <Badge tone={EVIDENCE_CHECK_TONE[resp?.evidence_check ?? 'pending']}>Evidence: {EVIDENCE_CHECK[resp?.evidence_check ?? 'pending']}</Badge>
           {ind.tags.map((t) => <Badge key={t} tone="info">{t}</Badge>)}
         </span>} />
 
@@ -122,6 +128,17 @@ export function IndicatorPage() {
                 ))}
               </List>
             )}
+            <div className="mt-4 max-w-md">
+              <Field label="Evidence check" tip="Record whether the cited evidence was checked against the source record. It does not change the score"
+                hint={resp?.evidence_checked_at ? `${EVIDENCE_CHECK_HELP[evCheck]} Recorded ${fmtDateTime(resp.evidence_checked_at)}.` : EVIDENCE_CHECK_HELP[evCheck]}>
+                {(id, d) => (
+                  <Select id={id} aria-describedby={d} value={evCheck} disabled={!canCheck} onChange={(e) => setEvCheck(e.target.value as EvidenceCheck)}>
+                    {(Object.keys(EVIDENCE_CHECK) as EvidenceCheck[]).map((k) => <option key={k} value={k}>{EVIDENCE_CHECK[k]}</option>)}
+                  </Select>)}
+              </Field>
+              {editable && !canCheck && <p className="mt-1 text-sm text-muted">The assessment team records the evidence check.</p>}
+              {canCheck && evCheck !== (resp?.evidence_check ?? 'pending') && <p className="mt-1 text-sm text-muted">Save to record the check.</p>}
+            </div>
           </Section>
 
           <VaultForIndicator indicatorId={ind.id} />

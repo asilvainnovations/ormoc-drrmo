@@ -10,7 +10,8 @@ import { MaturityRadar } from './MaturityRadar';
 import { Tabs as KitTabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { tip } from '@/components/Tooltip';
 import { useCycleData } from './data';
-import { CYCLE_NEXT, CYCLE_NEXT_LABEL, CYCLE_STATUS } from './labels';
+import { CYCLE_NEXT, CYCLE_NEXT_LABEL, CYCLE_STATUS, EVIDENCE_CHECK } from './labels';
+import type { EvidenceCheck } from '@/types';
 
 function Readout({ label, row, note }: { label: string; row: ResultRow; note?: string }) {
   return (
@@ -43,6 +44,8 @@ export function CycleOverview() {
   const next = CYCLE_NEXT[cycle.status];
   const canAdvance = next && (next === 'final' ? has('validator', 'cdrrmo_head') : has('assessor', 'validator', 'cdrrmo_head'));
   const unvalidated = data.responses.filter((r) => r.status !== 'validated' && (r.score !== null || r.is_na)).length;
+  // Evidence validation control (IAT v1-6 Dashboard): indicators with no response count as pending.
+  const checks = (Object.keys(EVIDENCE_CHECK) as EvidenceCheck[]).map((k) => [k, indicators.filter((i) => (byIndicator.get(i.id)?.evidence_check ?? 'pending') === k).length] as const);
 
   const advance = async () => {
     if (!next) return;
@@ -53,12 +56,12 @@ export function CycleOverview() {
 
   const exportCsv = () => {
     const partOf = new Map(domains.map((d) => [d.code, d.part]));
-    const head = ['Indicator', 'Part', 'Domain', 'Type', 'Weight', 'Score', 'NA', 'Status', 'Gap priority score', 'Priority', 'Compliance', 'Gap / remarks', 'Recommended action', 'Manual chapter'];
+    const head = ['Indicator', 'Part', 'Domain', 'Type', 'Weight', 'Score', 'NA', 'Status', 'Gap priority score', 'Priority', 'Compliance', 'Evidence check', 'Gap / remarks', 'Recommended action', 'Manual chapter'];
     const lines = indicators.map((i) => {
       const r = byIndicator.get(i.id); const part = partOf.get(i.domain) ?? '';
       const gps = r && !r.is_na ? gapPriorityScore(r.score, i.weight, i.type, part) : null;
       return [i.id, part, i.domain, i.type, i.weight, r?.score ?? '', r?.is_na ? 'NA' : '', r?.status ?? '', gps ?? '', priorityBand(gps) ?? '',
-        complianceStatus(r, i.type, part), r?.gap_remarks ?? '', r?.recommended_action ?? '', i.moo_chapter ?? ''].map(csvCell).join(',');
+        complianceStatus(r, i.type, part), EVIDENCE_CHECK[r?.evidence_check ?? 'pending'], r?.gap_remarks ?? '', r?.recommended_action ?? '', i.moo_chapter ?? ''].map(csvCell).join(',');
     });
     const blob = new Blob(['﻿' + [head.join(','), ...lines].join('\r\n')], { type: 'text/csv;charset=utf-8' });
     const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(blob), download: `${cycle.name.replace(/\W+/g, '_')}_results.csv` });
@@ -89,6 +92,18 @@ export function CycleOverview() {
         {results.imi.highGaps + results.interface.highGaps > 0 && (
           <p className="mt-2 font-semibold text-bad">{results.imi.highGaps + results.interface.highGaps} high-priority gap(s). Raise mandatory weight-3 gaps with the Mayor and CDRRMC now.</p>
         )}
+      </Section>
+
+      <Section title="Evidence check">
+        <p className="mb-3 text-sm text-muted">Whether the evidence behind each score was checked against its source record. A check does not change the score.</p>
+        <dl className="grid grid-cols-2 gap-x-6 gap-y-2 sm:grid-cols-5">
+          {checks.map(([k, n]) => (
+            <div key={k} {...tip(`${n} of ${indicators.length} indicators are ${EVIDENCE_CHECK[k].toLowerCase()}`)}>
+              <dt className="text-sm text-muted">{EVIDENCE_CHECK[k]}</dt>
+              <dd className="text-2xl font-bold">{n}</dd>
+            </div>
+          ))}
+        </dl>
       </Section>
 
       <Section title="Parts A and B by domain">

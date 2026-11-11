@@ -1,4 +1,4 @@
-import type { CycleStatus, EvidenceKind, Response } from '@/types';
+import type { CycleStatus, EvidenceCheck, EvidenceKind, Response } from '@/types';
 
 export const CYCLE_STATUS: Record<CycleStatus, string> = {
   draft: 'Draft', fieldwork: 'Fieldwork', validation: 'Validation', final: 'Final', archived: 'Archived',
@@ -11,4 +11,20 @@ export const RESPONSE_STATUS: Record<Response['status'], string> = { draft: 'Dra
 export const EVIDENCE_KIND: Record<EvidenceKind, string> = {
   document: 'Document', observation: 'Site observation', interview: 'Key informant interview', fgd: 'Focus group discussion',
   test: 'Live test or exercise', photo: 'Photo',
+};
+
+/** IAT v1-6 Evidence Validation Status. "Verified" does not by itself change the score. */
+export const EVIDENCE_CHECK: Record<EvidenceCheck, string> = {
+  pending: 'Pending validation', verified: 'Verified', partially_verified: 'Partially verified',
+  unverified: 'Unverified', missing: 'Missing evidence',
+};
+export const EVIDENCE_CHECK_HELP: Record<EvidenceCheck, string> = {
+  pending: 'Not yet checked against the source record.',
+  verified: 'The cited record was checked and supports the indicator.',
+  partially_verified: 'The record supports part of the indicator.',
+  unverified: 'The record was checked but does not support the indicator.',
+  missing: 'The cited record could not be found.',
+};
+export const EVIDENCE_CHECK_TONE: Record<EvidenceCheck, 'ok' | 'warn' | 'bad' | 'neutral'> = {
+  pending: 'neutral', verified: 'ok', partially_verified: 'warn', unverified: 'bad', missing: 'bad',
 };
