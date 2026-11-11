@@ -238,6 +238,36 @@ Then, in the dashboard:
        vulnerability and priority with "—" for fields not yet assessed;
      - the SQL suite (`npm run test:db`) passes its new DDRiVE checks.
 
+- **To 1.12.2** (11 November 2026), production readiness audit fixes. One migration, no seed change,
+  no app screen change.
+  1. **Migration** (safe to run again): `supabase/migrations/20261111002200_ddrive_grants.sql`. It makes
+     `v_ddrive_city_risk` a `security_invoker` view like every other MODE view, gives active users
+     read-only access to the nine `ddrive_*` tables, and removes every privilege for signed-out
+     visitors. The DDRiVE layer was readable through the view without signing in, and writable by
+     any signed-in account at the grant level (RLS still refused the rows).
+  2. **Remove the duplicate workbook**: delete `reference/Ormoc_CDRRMO-EOC_Institutional_Assessment_Tool_v1.5.xlsx`
+     (keep it in Drive). `npm run seed:generate` needs exactly one IAT workbook and now regenerates the
+     committed parts 01-25 unchanged.
+  3. **Seed pipeline.** `scripts/generate_seed.py` no longer deletes `26_ddrive.sql`, and
+     `scripts/db_test_reset.sh` loads part 26 after `seed.sql`, so the CI SQL suite passes
+     (272 checks; it failed on 1.12.1).
+  4. **`.env.example`** is back. It lists every `VITE_` setting the app reads, with placeholders only.
+  5. **Live database check (read-only).** `supabase/admin/live_audit.sql` reports reference and DDRiVE
+     counts, RLS coverage, anon policies, delete grants on legal records, definer functions without a
+     fixed `search_path`, storage buckets, account and role counts (no names), the IAT results per
+     cycle, crash reports and extensions. Run `migration_status.sql` and then this file in the SQL
+     editor, or from a City ICT computer with psql:
+     `export DATABASE_URL='<session pooler string>'; export PGPASSWORD='…'; bash scripts/live_audit.sh`.
+     The script forces a read-only session and refuses the transaction pooler.
+     **Which connection string:** the app itself needs none (it uses the project URL and publishable
+     key through the API). For psql, pg_dump and this audit use the **session pooler**
+     (`aws-0-ap-northeast-1.pooler.supabase.com:5432`, user `postgres.<project-ref>`): it works on
+     IPv4. The direct connection needs IPv6; the transaction pooler (port 6543) is for serverless
+     functions, which MODE does not use (ADR-001). Never put the database password or the secret key
+     in the repository, in a `VITE_` variable, or in Vercel's browser environment.
+  6. Push with git, redeploy, then check: `migration_status.sql` lists
+     `20261111002200_ddrive_grants | applied`; EOC → Risk still opens for a signed-in viewer.
+
 - **To 1.11.1** (10 November 2026), build and governance fixes on 1.11.0: restores the missing `src/lib` modules and
   fixes the restored component kit so `main` builds clean; rebuilds `supabase/seed/seed.sql` from the 25 parts (the 1.11.0
   parts were never assembled); updates the stale SQL-suite expectation (13 protocols, 15 workflows); removes the stale

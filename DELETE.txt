@@ -1,0 +1,5 @@
+MODE 1.12.2 - files to delete from the repository (instruction to the person applying; do not commit this file)
+
+reference/Ormoc_CDRRMO-EOC_Institutional_Assessment_Tool_v1.5.xlsx
+    Duplicate workbook. scripts/generate_seed.py needs exactly one IAT workbook in reference/.
+    Keep the v1.5 copy in Google Drive only. The v1-6 copy stays.
