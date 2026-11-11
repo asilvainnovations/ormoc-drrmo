@@ -238,6 +238,26 @@ Then, in the dashboard:
        vulnerability and priority with "—" for fields not yet assessed;
      - the SQL suite (`npm run test:db`) passes its new DDRiVE checks.
 
+- **To 1.13.0** (11 November 2026), scoring band fix and the evidence validation status. Two migrations,
+  no seed change. Apply 1.12.2 first if it is not applied.
+  1. **Migrations** (safe to run again), in order:
+     - `supabase/migrations/20261111002300_band_unrounded.sql`: `v_domain_results` and `v_cycle_results`
+       now band the unrounded maturity index, as the workbook does (an index of 2.495 is Developing,
+       although it displays as 2.50). The index shown is unchanged. No 2026 baseline figure changes.
+     - `supabase/migrations/20261111002400_evidence_check.sql`: adds the IAT v1-6 **Evidence Validation
+       Status** to each response (`evidence_check`: Pending validation, Verified, Partially verified,
+       Unverified, Missing evidence; every existing response starts Pending, as in the workbook).
+       Only assessors, validators and the CDRRMO Head record it; a lead-office focal cannot verify its
+       own Part C evidence. Who and when are stamped by the server. The check never changes the score.
+  2. **App.** Assess → an indicator → Evidence has an "Evidence check" control; the cycle overview
+     shows the five counts (as on the workbook Dashboard) and the CSV export has an "Evidence check"
+     column. Devices pick up the new fields on their next sync; no Dexie schema change.
+  3. **CI** runs the SQL suite on Postgres 17, the version the City's project runs (17.11).
+     Push `.github/workflows/ci.yml` with git; the web upload drops `.github/`.
+  4. Push with git, redeploy, then check: `migration_status.sql` lists both migrations as applied;
+     open any indicator as an assessor, set "Evidence check" to Verified and save; the overview's
+     Verified count goes up by one and the score is unchanged.
+
 - **To 1.12.2** (11 November 2026), production readiness audit fixes. One migration, no seed change,
   no app screen change.
   1. **Migration** (safe to run again): `supabase/migrations/20261111002200_ddrive_grants.sql`. It makes

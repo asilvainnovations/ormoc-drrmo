@@ -4,7 +4,7 @@
 
 A mobile-first, offline-capable web app (PWA) for the City Disaster Risk Reduction and Management Office (CDRRMO) and the Emergency Operations Center (EOC) of the City Government of Ormoc. It supports the single Manual of Operations for the CDRRMO and the EOC (five Parts, ten functional areas; ADR-012). The platform has five modules:
 
-- **Assessment.** Runs the Institutional Assessment Tool v1.1 (140 indicators). Scoring is gated by evidence, results are shown by domain and maturity, and gaps feed a prioritised action plan.
+- **Assessment.** Runs the Institutional Assessment Tool v1.1 (140 indicators). Scoring is gated by evidence, results are shown by domain and maturity, and gaps feed a prioritised action plan. The assessment team records whether each indicator's evidence was checked against its source (the workbook v1-6 Evidence Validation Status); the check never changes the score.
 - **Library.** Holds the Manual of Operations by Part and functional area: area outlines, drafted chapters and their annexes, SOPs and forms, with version control and approval by the CDRRMO Head. Old chapter codes (MOO Ch.4, EOC Ch.2) still find their new home. Each section traces to the indicators and master requirements MR-01 to MR-18, and to the UNDRR Scorecard and RA 12287 IRR crosswalk.
 - **DRRM: workflows, protocols and forms** (`/drrm`). Turns the Manual's SOPs into steps the CDRRMO can run, live or as drills, with an audit trail. Every step closes on a form. An **SOP** is the controlled Manual text. A **protocol** is a point-of-action checklist for an event or duty shift. A **workflow** is a multi-office management cycle. Every template names its controlling SOP, process owner, policy basis and IAT indicators (ADR-019). 28 templates are drafted for validation: 13 protocols and 15 workflows, including the nine Chapter 3 risk-information and planning workflows and the nine Chapter 4 SOPs (early warning, activation, incident coordination, evacuation, resources, SitReps, deactivation).
 - **EOC.** Covers the White / Blue / Red alert level, an append-only logbook, SitReps, barangay status (counts only), resource requests, and the EOC's location with map links and a KML placemark.
@@ -69,7 +69,7 @@ docs/             system design, design system, architecture decision records
 | `npm run build` | Typecheck and production build to `dist/` |
 | `npm run preview` | Serve the build on port 4173 |
 | `npm test` | Unit tests, including the scoring parity test against SQL |
-| `npm run test:db` | Rebuild a local Postgres database from the migrations and run the 272 rule and security checks. Needs `PGHOST`, `PGPORT` and `PGUSER` for a local superuser |
+| `npm run test:db` | Rebuild a local Postgres database from the migrations and run the 284 rule and security checks. Needs `PGHOST`, `PGPORT` and `PGUSER` for a local superuser |
 | `npm run test:it` | Integration tests through real PostgREST. Needs the same plus `POSTGREST_BIN` (PostgREST 12) |
 | `npm run test:e2e` | Playwright on phone and desktop sizes against the production build, PostgREST and a fresh local database with every migration: sign-up and approval, journeys, axe and offline checks. Needs the same as `test:it` |
 | `python3 scripts/brand_assets.py` | Rebuild the circular seals, banner copies and app icons from the originals in `public/` |
