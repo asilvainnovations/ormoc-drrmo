@@ -44,7 +44,7 @@ The October 2026 institutional assessment and the Chapter 1–3 drafts indicate 
 
 This chapter applies systems thinking and Total Quality Management (TQM). It considers warning and response as an end-to-end process with feedback loops: warning receipt and verification; impact and exposure analysis; decision and authorisation; dissemination and acknowledgement; protective action; operational monitoring; review; and improvement. A warning successfully transmitted is not necessarily a warning understood or acted upon. An activation order is not evidence of adequate staffing. A response activity is not complete until its outcome, outstanding needs and handover are recorded.
 
-| VALIDATION NOTE. Draft 1.1 reconciles the indicator references with the controlled IAT workbook (v1.6, 8 November 2026) and the Master Requirements Traceability and 140-Indicator Data Dictionary (v1.1). Annex 4-A copies each A6, A7, A8 and B1.2–B1.5 row (score, priority, compliance, recommended action, owner, target, status and evidence-validation status) without change. All 29 rows are still "Pending validation" in the workbook, so the scores remain provisional until the December 2026 validation workshop. Chapters 1 and 2 (Draft 1.2, 6 November 2026) and Chapter 3 (v1.0, 8 November 2026) are the companion texts. |
+| VALIDATION NOTE. Draft 1.1 reconciles the indicator references with the controlled IAT workbook (v1.7, 11 November 2026) and the Master Requirements Traceability and 140-Indicator Data Dictionary (v1.1). Annex 4-A copies each A6, A7, A8 and B1.2–B1.5 row (score, priority, compliance, recommended action, owner, target, status and evidence-validation status) without change. All 29 rows are still "Pending validation" in the workbook, so the scores remain provisional until the December 2026 validation workshop. Chapters 1 and 2 (Draft 1.2, 6 November 2026) and Chapter 3 (v1.0, 8 November 2026) are the companion texts. |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 
 ## 1.1 Operational Context and Priority Design Considerations
@@ -638,7 +638,7 @@ Response stabilisation does not automatically mean that all needs have been reso
 
 # 14. Standard Operating Procedures
 
-The following procedures provide the minimum control sequence. Before adoption, the CDRRMO shall reconcile them with the current official EOC and ICS manuals, valid City EOC/ICS issuances, approved contingency plans and the IAT v1.6 Action Plan (Annex 4-A). Each procedure shall be converted into a controlled protocol and tested through a tabletop, functional or full-scale exercise as appropriate.
+The following procedures provide the minimum control sequence. Before adoption, the CDRRMO shall reconcile them with the current official EOC and ICS manuals, valid City EOC/ICS issuances, approved contingency plans and the IAT v1.7 Action Plan (Annex 4-A). Each procedure shall be converted into a controlled protocol and tested through a tabletop, functional or full-scale exercise as appropriate.
 
 Figure 4.5 places the nine procedures in the operating phases. Each procedure has a control block (type, the MODE protocol that carries it, the legal decision authority kept apart from the operational owner, trigger, forms, indicators and policy basis) and a step table. Every step states its actor, action, decision or criteria, inputs, outputs and records, timing, control and escalation.
 
@@ -665,7 +665,7 @@ Process owner: CDRRMO Operations and Warning Division / designated duty officer.
 | **Process owner (operational)** | CDRRMO Operations and Warning (OpCen duty officer); escalation to the CDRRMO Head                         |
 | **Trigger**                     | Receipt of an official product or a significant local report                                              |
 | **Forms**                       | EWR-F01 (MODE EOC-WARN-01)                                                                                |
-| **IAT v1.6 indicators**         | A6.1 (score 3, Medium); B4.3 (score 2, Medium)                                                            |
+| **IAT v1.7 indicators**         | A6.1 (score 3, Medium); B4.3 (score 2, Medium)                                                            |
 | **Functional MR links**         | A6.1: MR-06; B4.3: MR-09                                                                                  |
 | **Policy basis**                | RA 10121 Sec. 12(c); DILG VIII Memorandum R08-LGCDD-2025-02-26-008 (RDRRMC VIII Res. No. 12-006, s. 2023) |
 | **Cross-references**            | SOP HR-05 (duty); SOP 4-02, 4-03                                                                          |
@@ -782,7 +782,7 @@ Process owner: CDRRMO Head / designated warning and public information focal per
 | **Process owner (operational)** | CDRRMO Head / warning and public information focal person                                                  |
 | **Trigger**                     | A validated matrix trigger or decision need                                                                |
 | **Forms**                       | EWR-F02 (Annex 4-C register); EWR-F03 (MODE EOC-WARN-02); ER-F04                                           |
-| **IAT v1.6 indicators**         | A6.2 (score 2, High); A6.3 (score 2, High); A6.4 (score 4, Low); A6.5 (score 2, Low); A6.7 (score 0, High) |
+| **IAT v1.7 indicators**         | A6.2 (score 2, High); A6.3 (score 2, High); A6.4 (score 2, Medium); A6.5 (score 2, Low); A6.7 (score 0, High) |
 | **Functional MR links**         | A6.2: MR-06, MR-16; A6.3: MR-06; A6.4: MR-06; A6.5: MR-06; A6.7: MR-06, MR-16                              |
 | **Policy basis**                | RA 10121 Sec. 12(c); RA 11106 (Filipino Sign Language); DILG VIII Res. No. 12-006 Table 2                  |
 | **Cross-references**            | SOP 4-01, 4-06; SOP GOV-05 (public notice of a SOID)                                                       |
@@ -910,7 +910,7 @@ Process owner: CDRRMO Head; Research and Planning and Operations and Warning Div
 | **Process owner (operational)** | CDRRMO Head; Research and Planning with Operations and Warning          |
 | **Trigger**                     | An approved warning or scenario trigger                                 |
 | **Forms**                       | EWR-F04 (MODE GOV-F09)                                                  |
-| **IAT v1.6 indicators**         | A8.6 (score 3, Medium); A8.8 (score 1, High); B1.2 (score 3, Medium)    |
+| **IAT v1.7 indicators**         | A8.6 (score 2, High); A8.8 (score 1, High); B1.2 (score 3, Medium)    |
 | **Functional MR links**         | A8.6: MR-05, MR-16; A8.8: MR-05, MR-08, MR-16; B1.2: MR-05, MR-16       |
 | **Policy basis**                | RA 12287 and its IRR (2026); NDRRMC-OCD CP Guidebook (2020), Chapter IV |
 | **Cross-references**            | SOP 3-6 (contingency plans); SOP GOV-05                                 |
@@ -1038,7 +1038,7 @@ Process owner: Official designated in the EOC EO authorises activation; EOC Mana
 | **Process owner (operational)** | EOC Manager implements                                                                                         |
 | **Trigger**                     | An adopted activation trigger, PDRA result or incident                                                         |
 | **Forms**                       | EOC-F01 (MODE EOC-ACT-01); EOC-F02; EOC-F04                                                                    |
-| **IAT v1.6 indicators**         | B1.2 (score 3, Medium); B1.3 (score 2, High); B1.4 (score 2, Medium); B4.2 (score 1, High)                     |
+| **IAT v1.7 indicators**         | B1.2 (score 3, Medium); B1.3 (score 2, High); B1.4 (score 2, Medium); B4.2 (score 1, High)                     |
 | **Functional MR links**         | B1.2: MR-05, MR-16; B1.3: MR-05; B1.4: MR-05; B4.2: MR-05                                                      |
 | **Policy basis**                | NDRRMC Memo 131 s. 2018; DILG VIII Res. No. 12-006 s. IV.3                                                     |
 | **Cross-references**            | SOP HR-06 (designations); SOP 3-7 (alternate EOC)                                                              |
@@ -1166,7 +1166,7 @@ Process owner: EOC Manager; Incident Commander/IMT retains field command. Purpos
 | **Process owner (operational)** | EOC Manager                                                                                |
 | **Trigger**                     | Notification of an incident needing EOC coordination                                       |
 | **Forms**                       | EOC-F03; EOC-F04; ER-F02                                                                   |
-| **IAT v1.6 indicators**         | A8.1 (score 2, High); B6.1 (score 1, High); B1.4 (score 2, Medium); B1.5 (score 2, Medium) |
+| **IAT v1.7 indicators**         | A8.1 (score 2, High); B6.1 (score 1, High); B1.4 (score 2, Medium); B1.5 (score 2, Medium) |
 | **Functional MR links**         | A8.1: MR-05; B6.1: MR-08; B1.4: MR-05; B1.5: MR-05                                         |
 | **Policy basis**                | NDRRMC MC No. 4 s. 2012 (ICS); NDRRMC Memo 131 s. 2018; CP Guidebook CP Forms 10, 11       |
 | **Cross-references**            | SOP 6-GIS-01 (Geo-COP); SOP 4-07                                                           |
@@ -1294,7 +1294,7 @@ Process owner: Decision authority: official/body specified by law and City issua
 | **Process owner (operational)** | CDRRMO coordinates; CSWDO leads camp management                                                    |
 | **Trigger**                     | An official warning, PDRA or incident report showing people may need to move                       |
 | **Forms**                       | ER-F01; ER-F03; EWR-F03 (MODE EOC-WARN-02)                                                         |
-| **IAT v1.6 indicators**         | A6.2 (score 2, High); A7.4 (score 2, High); A7.6 (score 3, Low); A7.9 (score 1, Medium)            |
+| **IAT v1.7 indicators**         | A6.2 (score 2, High); A7.4 (score 2, High); A7.6 (score 3, Low); A7.9 (score 1, Medium)            |
 | **Functional MR links**         | A6.2: MR-06, MR-16; A7.4: MR-04; A7.6: MR-04, MR-09, MR-16, MR-18; A7.9: MR-04, MR-18              |
 | **Policy basis**                | RA 10121; RA 12076; RA 10821; DSWD-DILG-DOH-DepEd JMC No. 2 s. 2021 (CCCM and IDP protection)      |
 | **Cross-references**            | SOP 4-02; SOP 3-9 (inclusion)                                                                      |
@@ -1411,7 +1411,7 @@ Process owner: EOC Manager / Logistics function; approval and expenditure author
 | **Process owner (operational)** | EOC Manager / Logistics                                           |
 | **Trigger**                     | A resource or service request during an activation                |
 | **Forms**                       | EOC-F06                                                           |
-| **IAT v1.6 indicators**         | B6.2 (score 1, High); A8.3 (score 3, Low); A7.5 (score 4, Low)    |
+| **IAT v1.7 indicators**         | B6.2 (score 1, High); A8.3 (score 3, Low); A7.5 (score 3, Low)    |
 | **Functional MR links**         | B6.2: MR-08; A8.3: MR-05, MR-08; A7.5: MR-04, MR-08               |
 | **Policy basis**                | RA 10121 Sec. 21; RA 12009 and its IRR                            |
 | **Cross-references**            | Chapter 5; SOP 4-05                                               |
@@ -1539,7 +1539,7 @@ Process owner: EOC Planning / situation unit; authorised reviewing/approving off
 | **Process owner (operational)** | EOC Planning / situation unit                                                            |
 | **Trigger**                     | Each reporting period under the alert status in force                                    |
 | **Forms**                       | EOC-F05 (MODE EOC-SITREP-01)                                                             |
-| **IAT v1.6 indicators**         | B5.1 (score 2, High); B5.2 (score 1, High); B1.5 (score 2, Medium); A10.3 (score 4, Low) |
+| **IAT v1.7 indicators**         | B5.1 (score 2, High); B5.2 (score 1, High); B1.5 (score 2, Medium); A10.3 (score 3, Low) |
 | **Functional MR links**         | B5.1: MR-07; B5.2: MR-07; B1.5: MR-05; A10.3: MR-02, MR-07                               |
 | **Policy basis**                | DILG VIII Memorandum R08-LGCDD-2025-02-26-008, Tables 3 and 4                            |
 | **Cross-references**            | SOP 4-05, 4-06                                                                           |
@@ -1667,7 +1667,7 @@ Process owner: Deactivation authority: official designated in EOC EO; EOC Manage
 | **Process owner (operational)** | EOC Manager coordinates handover and closeout                                                                     |
 | **Trigger**                     | Incident stabilised; IC recommends termination                                                                    |
 | **Forms**                       | EOC-F01 (MODE EOC-ACT-01); ER-F05; ER-F06                                                                         |
-| **IAT v1.6 indicators**         | B1.3 (score 2, High); B7.4 (score 2, Medium); A10.6 (score 4, Low)                                                |
+| **IAT v1.7 indicators**         | B1.3 (score 2, High); B7.4 (score 2, Medium); A10.6 (score 2, Medium)                                                |
 | **Functional MR links**         | B1.3: MR-05; B7.4: MR-04, MR-11; A10.6: MR-07, MR-11                                                              |
 | **Policy basis**                | NDRRMC Memo 131 s. 2018; CP Guidebook (2020) Chapter IV; NEDA Disaster Rehabilitation and Recovery Planning Guide |
 | **Cross-references**            | Chapter 7 (learning); Chapter 8 (recovery)                                                                        |
@@ -1831,7 +1831,7 @@ Corrective actions shall identify the finding, evidence, cause or contributing c
 
 # 17. Implementation, Validation and Institutionalisation Priorities
 
-The following items are derived from the assessment references and operational gaps explicitly described in Chapters 1–3 and from the repository architecture. Annex 4-A gives the exact owner, target and status of each A6, A7, A8 and B1.2–B1.5 row from the IAT v1.6 Action Plan; the references below use its priorities.
+The following items are derived from the assessment references and operational gaps explicitly described in Chapters 1–3 and from the repository architecture. Annex 4-A gives the exact owner, target and status of each A6, A7, A8 and B1.2–B1.5 row from the IAT v1.7 Action Plan; the references below use its priorities.
 
 **Table 4.36**
 
@@ -1841,15 +1841,15 @@ The following items are derived from the assessment references and operational g
 |--------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------|----------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------|
 | P1 – B1.1 (Ch.1 assessment narrative)                                                | Issue the local EOC-establishing EO defining authority, relationship with the OpCen/CDRRMO, activation levels, EOC Manager, coordination interfaces and ICS boundary.                                           | Mayor / City Legal Office route; CDRRMO Head process lead                                    | CDRRMC; OCD VIII; response clusters                                  | Signed EO, legal review, approved structure and implementation notice.                                           |
 | P1 – B6.1 (Ch.1 assessment narrative)                                                | Approve the ICS–EOC interface and chain of command: EOC supports the Incident Commander and does not command field operations.                                                                                  | Mayor / CDRRMO Head within approval route                                                    | City Legal Office; OCD VIII; IMT/response clusters                   | Approved ICS/EOC issuance, RACI, command/coordination diagram and exercise evidence.                             |
-| P1 – B1.3 (High); B1.2, B1.4, B1.5 (Medium) (IAT v1.6)                               | Confirm EOC concept of operations, activation/deactivation authority and scenarios, and incorporate the validated operating levels and scenario modules in the EO and contingency plans.                        | CDRRMO Head / designated EOC Manager                                                         | CDRRMC; partner offices; OCD VIII; City Legal Office                 | Approved EOC CONOPS and scenario matrix, controlled trigger records and tabletop/functional exercise.            |
-| P1 – A6.2, A6.3, A6.7 (High); A6.1 (Medium) (IAT v1.6)                               | Complete the warning-to-action matrix for priority hazards with official trigger sources, legal decision authorities, message approval, multi-channel dissemination and acknowledgement evidence.               | CDRRMO Operations and Warning                                                                | PAGASA; PHIVOLCS; MGB; barangays; public information; sector offices | Validated warning matrix, SOP 4-01/4-02, source register, message templates and exercise/AAR.                    |
-| P1 – A7.4, A8.1, A8.2, A8.8, A8.9 (High); A7.9, A8.4, A8.6, A8.7 (Medium) (IAT v1.6) | Document and test evacuation, response-service coordination, shelter/CCCM, inclusion, reporting and field-to-EOC interfaces in hazard-specific plans.                                                           | CDRRMO Head as coordinator; statutory lead offices for each service                          | CSWDO; CHO; PNP; BFP; barangays; Engineering; DepEd; partners        | Approved protocols, lead/support assignments, site/service status, exercise and after-action evidence.           |
+| P1 – B1.3 (High); B1.2, B1.4, B1.5 (Medium) (IAT v1.7)                               | Confirm EOC concept of operations, activation/deactivation authority and scenarios, and incorporate the validated operating levels and scenario modules in the EO and contingency plans.                        | CDRRMO Head / designated EOC Manager                                                         | CDRRMC; partner offices; OCD VIII; City Legal Office                 | Approved EOC CONOPS and scenario matrix, controlled trigger records and tabletop/functional exercise.            |
+| P1 – A6.2, A6.3, A6.7 (High); A6.1 (Medium) (IAT v1.7)                               | Complete the warning-to-action matrix for priority hazards with official trigger sources, legal decision authorities, message approval, multi-channel dissemination and acknowledgement evidence.               | CDRRMO Operations and Warning                                                                | PAGASA; PHIVOLCS; MGB; barangays; public information; sector offices | Validated warning matrix, SOP 4-01/4-02, source register, message templates and exercise/AAR.                    |
+| P1 – A7.4, A8.1, A8.2, A8.8, A8.9 (High); A7.9, A8.4, A8.6, A8.7 (Medium) (IAT v1.7) | Document and test evacuation, response-service coordination, shelter/CCCM, inclusion, reporting and field-to-EOC interfaces in hazard-specific plans.                                                           | CDRRMO Head as coordinator; statutory lead offices for each service                          | CSWDO; CHO; PNP; BFP; barangays; Engineering; DepEd; partners        | Approved protocols, lead/support assignments, site/service status, exercise and after-action evidence.           |
 | P1 – B4.1/B4.2/B4.3/B4.4/B4.5/B4.6 (Chapter 2)                                       | Adopt the scenario-based EOC structure, alternates, roster, liaison desks, job action sheets and welfare arrangements.                                                                                          | CDRRMO Head / EOC Manager                                                                    | HRMO; partner offices; cluster leads; OCD VIII                       | Approved roster/designations, alternates, job action sheets, welfare and shift plans.                            |
 | P2 – A2.5 / B4.3 (Chapter 2)                                                         | Formalise routine 24-hour duty roster, shift handover and distinct task streams in the existing OpCen arrangement.                                                                                              | CDRRMO Head / Operations and Warning                                                         | HRMO; City Traffic; Public Safety; Emergency Monitoring              | Approved duty SOP, roster, handover records, staffing gap analysis and review.                                   |
 | P2 – B2–B7 (Chapter 1 scope map for Chapter 6)                                       | Coordinate Chapter 4 operational requirements with Chapter 6 EOC information management, logistics, resource requests, communications, situation reporting and Geo-COP without duplicating those detailed SOPs. | CDRRMO Head / EOC Manager                                                                    | EOC sections; GIS/data custodian; Logistics; ICT; sector offices     | Chapter cross-reference, shared forms, data dictionary and tested integrated workflow.                           |
 | P2 – C-interface indicators (Part C ownership; exact rows to verify)                 | Confirm cross-office warning, transport, health, education, utilities, social protection and critical facility interfaces with named focal persons and continuity arrangements.                                 | Each sector office for its statutory function; City Administrator coordination as designated | CDRRMO; CPDO; CSWDO; CHO; Engineering; DepEd; utilities; barangays   | Signed focal-person/coordination register, MOA/issuances where needed, contact tests and documented plan inputs. |
 
-| VALIDATION NOTE. Owners, targets and status are copied from the IAT v1.6 Action Plan (8 November 2026) in Annex 4-A without change; the workbook stays the controlled source. Targets such as "Jan 2027 (with MOP)" are the workbook entries, confirmed there for B1.1, B1.2, B1.3, B1.4, B1.5, A6.2, A6.3, A6.7 and A8.8. This draft is an operational chapter, not an approved local issuance. |
+| VALIDATION NOTE. Owners, targets and status are copied from the IAT v1.7 Action Plan (8 November 2026) in Annex 4-A without change; the workbook stays the controlled source. Targets such as "Jan 2027 (with MOP)" are the workbook entries, confirmed there for B1.1, B1.2, B1.3, B1.4, B1.5, A6.2, A6.3, A6.7 and A8.8. This draft is an operational chapter, not an approved local issuance. |
 |--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 
 # 18. Forms, Registers and Annexes
@@ -1910,7 +1910,7 @@ The chapter is not implemented merely because these procedures are written. Inst
 
 # REFERENCES
 
-- City Government of Ormoc. (2026). Ormoc CDRRMO–EOC Institutional Assessment Tool (v1.6, 8 November 2026). Unpublished assessment workbook. Repository source: reference/Ormoc_CDRRMO-EOC_Institutional_Assessment_Tool_v1-6.xlsx.
+- City Government of Ormoc. (2026). Ormoc CDRRMO–EOC Institutional Assessment Tool (v1.7, 11 November 2026). Unpublished assessment workbook. Repository source: reference/Ormoc_CDRRMO-EOC_Institutional_Assessment_Tool_v1-7.xlsx.
 
 - City Government of Ormoc. (2026). Ormoc CDRRMO–EOC Master Requirements Traceability and 140-Indicator Data Dictionary (v1.1). Unpublished project reference workbook.
 
@@ -1960,7 +1960,7 @@ The chapter is not implemented merely because these procedures are written. Inst
 
 | **Validation item**              | **Required action before approval**                                                                                                                                                                                   | **Responsible institution / reviewer** |
 |----------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------|
-| IAT v1.6 A6/A7/A8/B1.2–B1.5      | Rows reconciled and copied into Annex 4-A (8 November 2026). Validate scores and evidence at the December 2026 workshop; all 29 rows are "Pending validation" in the workbook.                                        | CDRRMO / assessment team               |
+| IAT v1.7 A6/A7/A8/B1.2–B1.5      | Rows reconciled and copied into Annex 4-A (8 November 2026). Validate scores and evidence at the December 2026 workshop; all 29 rows are "Pending validation" in the workbook.                                        | CDRRMO / assessment team               |
 | MR-01–MR-18 mapping              | Functional MR links taken from the indicator-to-MR table of the Data Dictionary (Annex 4-A). Confirm the primary MR for indicators linked to more than one functional area.                                           | CDRRMO / platform data custodian       |
 | EOC establishment / CONOPS       | Verify EOC EO, activation authority, OpCen transition, alternate EOC and reporting route.                                                                                                                             | Mayor / CLO / CDRRMO / OCD VIII        |
 | NDRRMC Memo 131 (2018)           | Scanned project copy holds the title; obtain a certified copy and verify the operative provisions.                                                                                                                    | OCD VIII / CDRRMO                      |

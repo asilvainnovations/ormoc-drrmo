@@ -5,7 +5,17 @@
 -- project (production, training) before an update, and keep the result with the update
 -- record. Add a line here with every new migration.
 --
--- Read-only. Safe to run at any time.
+-- Read-only. Safe to run at any time. The Supabase SQL editor shows only the last result, so the
+-- migration list comes last (1.13.0); the grants check runs first.
+-- Grants that must hold on a real Supabase project (ADR-013). Every row should say "ok".
+select t.tbl,
+       case when has_table_privilege('authenticated', t.tbl, 'DELETE') then 'DELETE STILL GRANTED' else 'ok' end as delete_check,
+       case when has_table_privilege('authenticated', t.tbl, 'TRUNCATE') then 'TRUNCATE STILL GRANTED' else 'ok' end as truncate_check
+from unnest(array['public.declarations', 'public.aa_disbursements', 'public.pdra_sessions', 'public.aa_fund_years',
+                  'public.logbook_entries', 'public.sitreps', 'public.vault_documents', 'public.audit_log',
+                  'public.connected_apps', 'public.form_templates', 'public.eoc_designations', 'public.activation_clusters',
+                  'public.geo_reference_points', 'public.geo_layers']) as t(tbl);
+
 select m.migration, case when m.present then 'applied' else 'MISSING' end as status
 from (values
   ('20261015000100_core',                     to_regclass('public.profiles') is not null),
@@ -36,15 +46,10 @@ from (values
   ('20261111002300_band_unrounded',           coalesce(pg_get_viewdef(to_regclass('public.v_cycle_results')), '')
                                               not like '%maturity_band(round(%'),
   ('20261111002400_evidence_check',           exists (select 1 from information_schema.columns
-                                                      where table_schema = 'public' and table_name = 'responses' and column_name = 'evidence_check'))
+                                                      where table_schema = 'public' and table_name = 'responses' and column_name = 'evidence_check')),
+  ('20261111002500_ra12287_alignment',        exists (select 1 from information_schema.columns
+                                                      where table_schema = 'public' and table_name = 'declarations' and column_name = 'hazard_occurred_at')),
+  ('20261112002600_revoke_anon_execute',      not has_function_privilege('anon',
+                                                      (select oid from pg_proc where proname = 'set_eoc_level' and pronamespace = 'public'::regnamespace limit 1), 'EXECUTE'))
 ) as m(migration, present)
 order by m.migration;
-
--- Grants that must hold on a real Supabase project (ADR-013). Every row should say "ok".
-select t.tbl,
-       case when has_table_privilege('authenticated', t.tbl, 'DELETE') then 'DELETE STILL GRANTED' else 'ok' end as delete_check,
-       case when has_table_privilege('authenticated', t.tbl, 'TRUNCATE') then 'TRUNCATE STILL GRANTED' else 'ok' end as truncate_check
-from unnest(array['public.declarations', 'public.aa_disbursements', 'public.pdra_sessions', 'public.aa_fund_years',
-                  'public.logbook_entries', 'public.sitreps', 'public.vault_documents', 'public.audit_log',
-                  'public.connected_apps', 'public.form_templates', 'public.eoc_designations', 'public.activation_clusters',
-                  'public.geo_reference_points', 'public.geo_layers']) as t(tbl);

@@ -8,15 +8,13 @@ const alertVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-background text-foreground",
-        destructive:
-          "border-destructive/50 text-destructive dark:border-destructive [&>svg]:text-destructive",
-        success:
-          "border-green-500/50 text-green-600 dark:text-green-400 [&>svg]:text-green-600 dark:[&>svg]:text-green-400 bg-green-50 dark:bg-green-950/20",
-        warning:
-          "border-yellow-500/50 text-yellow-600 dark:text-yellow-400 [&>svg]:text-yellow-600 dark:[&>svg]:text-yellow-400 bg-yellow-50 dark:bg-yellow-950/20",
-        info:
-          "border-primary/50 text-primary dark:text-primary-foreground [&>svg]:text-primary bg-primary/10 dark:bg-primary/20",
+        // 1.14: status variants use the MODE status tokens (design-system.md section 3), so they follow dark mode
+        // and never use colour without words. Text stays ink for contrast; the border and icon carry the tone.
+        default: "bg-surface text-ink border-line",
+        destructive: "border-bad bg-bad-soft text-ink [&>svg]:text-bad",
+        success: "border-ok bg-ok-soft text-ink [&>svg]:text-ok",
+        warning: "border-warn bg-warn-soft text-ink [&>svg]:text-warn",
+        info: "border-info bg-info-soft text-ink [&>svg]:text-info",
       },
     },
     defaultVariants: {
@@ -56,7 +54,7 @@ const AlertDescription = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn("text-sm [&_p]:leading-relaxed opacity-90", className)}
+    className={cn("text-sm [&_p]:leading-relaxed", className)}
     {...props}
   />
 ))

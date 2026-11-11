@@ -1,14 +1,16 @@
 // Ormoc City's barangays, per the PSA Philippine Standard Geographic Code (PSGC).
 //
-// Since the PSA 4th quarter 2022 PSGC update, Ormoc has 85 barangays. Under City Ordinance
-// No. 052, s. 2021, ratified by plebiscite on 8 October 2022, 28 numbered Poblacion barangays
+// The PSA PSGC lists 85 barangays for the City of Ormoc (PSGC 0803738000) as of 31 July 2025. Under City
+// Ordinance No. 052, s. 2021, ratified by plebiscite on 8 October 2022 (COMELEC: 89.34% Yes), 28 numbered Poblacion barangays
 // were merged into three, and Barangay 29 was renamed:
 //   Barangay South  <- Barangays 1-8, 12, 13, 15, 17, 23 and 27
 //   Barangay East   <- Barangays 9, 10, 11, 16, 18, 25 and 28
 //   Barangay West   <- Barangays 14, 19, 20, 21, 22, 24 and 26
 //   Barangay North  <- Barangay 29 (renamed)
 // 110 - 28 + 3 = 85. Older lists online (110 barangays, "Barangay 1 (Pob.)" and so on) are out of date.
-// Source: PSA, "Fourth Quarter 2022 PSGC Updates" press release.
+// Sources: PSA PSGC, City of Ormoc (psa.gov.ph/classification/psgc/barangays/0803738000), as of 31 July 2025;
+// plebiscite reports (Inquirer, Tribune, SunStar, Oct 2022). Use the PSGC spellings (Barangay South, East,
+// West, North), not "South Poblacion" and the like.
 export const ORMOC_BARANGAY_COUNT = 85;
 export const POBLACION_2022 = ['South', 'East', 'West', 'North'] as const;
 

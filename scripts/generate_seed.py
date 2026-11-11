@@ -29,7 +29,7 @@ def _one(pattern: str) -> Path:
 
 # The IAT workbook is renamed as it is revised (v1.1 -> v1-3), so match any version suffix.
 IAT = _one('Ormoc_CDRRMO-EOC_Institutional_Assessment_Tool_v*.xlsx')
-MRT = ROOT / 'reference' / 'Ormoc_CDRRMO_EOC_Master_Requirements_Traceability_and_140_Indicator_Data_Dictionary_v1.1.xlsx'
+MRT = ROOT / 'reference' / 'Ormoc_CDRRMO_EOC_Master_Requirements_Traceability_and_140_Indicator_Data_Dictionary_v1.2.xlsx'
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 NS = uuid.UUID('6f1c1d1e-0a0b-4c4d-9e8f-0123456789ab')   # namespace for deterministic ids
 
@@ -229,7 +229,7 @@ LIBRARY_DRAFTS += [('MOO Ch.3', 'MOO', 'chapter', None, 'MOO_Ch3v11_v1.1.md', _C
 # Chapter 4 v1.1 (8 Nov 2026, ADR-022): Early Warning, Activation, Incident Management and Emergency Response.
 # Made with: split_manual_docx.py Chapter4_..._v1.1.docx --slug ch4v11 --prefix MOO_Ch4v1 --version v1.1.
 # Figures in public/library/ch4v11/. Its SOPs 4-01 to 4-09 run as protocols (sop_registry.py).
-_CH4V1 = 'v1.1 working draft (IAT v1.6)'
+_CH4V1 = 'v1.1 working draft (IAT v1.7)'
 _CH4_INDS = ['A6.1', 'A6.2', 'A6.3', 'A6.4', 'A6.5', 'A6.6', 'A6.7', 'A7.1', 'A7.2', 'A7.3', 'A7.4', 'A7.5', 'A7.6', 'A7.7', 'A7.8', 'A7.9', 'A8.1', 'A8.2', 'A8.3', 'A8.4', 'A8.5', 'A8.6', 'A8.7', 'A8.8', 'A8.9', 'B1.2', 'B1.3', 'B1.4', 'B1.5']
 LIBRARY_DRAFTS += [('MOO Ch.4', 'MOO', 'chapter', None, 'MOO_Ch4v1_v1.1.md', _CH4V1, None)] + [
     (f'Annex {aid}', 'MOO', kind, title, f'MOO_Ch4v1_Annex_{aid}.md', _CH4V1, inds)
@@ -399,17 +399,17 @@ def lead_offices(text: str) -> list[str]:
 
 
 # ------------------------------------------------------------------ hazards ---
-HAZARDS = [  # code, name, forecastable, typical lead h, declaration eligible, note
-    ('tropical_cyclone', 'Tropical cyclone (severe winds)', True, 96, True, 'PAGASA bulletins; usually reaches the 3-day lead time'),
-    ('storm_surge', 'Storm surge (Ormoc Bay)', True, 72, True, 'Forecast with tropical cyclones; coastal barangays'),
-    ('flood', 'Riverine flood', True, 48, True, 'Eligible only when the forecast gives 3 days or more'),
-    ('flash_flood', 'Flash flood (Anilao–Malbasag system)', True, 6, False, 'Lead time usually hours: city early action under LGU authority'),
-    ('rain_landslide', 'Rain-induced landslide', True, 12, False, 'Upland barangays; city early action on rainfall thresholds'),
-    ('drought', 'Drought (El Niño)', True, 720, True, 'Slow onset; NDRRMC to set timelines for drought'),
-    ('extreme_heat', 'Extreme heat', True, 72, True, 'PAGASA heat index forecasts'),
-    ('earthquake', 'Earthquake (Philippine Fault)', False, None, False, 'Not forecastable; outside RA 12287'),
-    ('tsunami', 'Tsunami (local source)', False, None, False, 'Minutes of warning; outside RA 12287'),
-    ('industrial', 'Industrial / geothermal incident', False, None, False, 'Not forecastable; outside RA 12287'),
+HAZARDS = [  # code, name, forecastable, typical lead h, declaration eligible, note, AA family (IRR Rule II Sec. 2)
+    ('tropical_cyclone', 'Tropical cyclone (severe winds)', True, 96, True, 'PAGASA bulletins; usually reaches the 3-day lead time', 'hydromet'),
+    ('storm_surge', 'Storm surge (Ormoc Bay)', True, 72, True, 'Forecast with tropical cyclones; coastal barangays', 'hydromet'),
+    ('flood', 'Riverine flood', True, 48, True, 'Eligible only when the forecast gives 3 days or more', 'hydromet'),
+    ('flash_flood', 'Flash flood (Anilao–Malbasag system)', True, 6, False, 'Lead time usually hours: city early action under LGU authority', 'hydromet'),
+    ('rain_landslide', 'Rain-induced landslide', True, 12, False, 'Upland barangays; city early action on rainfall thresholds', 'hydromet'),
+    ('drought', 'Drought (El Niño)', True, 720, True, 'Slow onset: timelines and disbursement rates per the NDRRMC operational guidelines (IRR Rule V Sec. 2)', 'climatic'),
+    ('extreme_heat', 'Extreme heat', True, 72, True, 'PAGASA heat index forecasts', 'hydromet'),
+    ('earthquake', 'Earthquake (Philippine Fault)', False, None, False, 'Not forecastable: no lead time for a declaration', 'geological'),
+    ('tsunami', 'Tsunami (local source)', False, None, False, 'Minutes of warning: no lead time for a declaration', 'geological'),
+    ('industrial', 'Industrial / geothermal incident', False, None, False, 'Not forecastable: no lead time for a declaration', 'other'),
 ]
 
 # ------------------------------------------------- AA checklist (IRR Rule IV) -
@@ -596,8 +596,8 @@ def main():
     out['indicator_lead_offices'] = [dict(indicator_id=i['id'], office_id=office_id[c])
                                      for i in indicators if i['lead_office'] for c in lead_offices(i['lead_office'])]
 
-    out['hazards'] = [dict(code=c, name=n, forecastable=f, typical_lead_hours=l, declaration_eligible=e, note=no, sort=i)
-                      for i, (c, n, f, l, e, no) in enumerate(HAZARDS, 1)]
+    out['hazards'] = [dict(code=c, name=n, forecastable=f, typical_lead_hours=l, declaration_eligible=e, note=no, aa_family=fam, sort=i)
+                      for i, (c, n, f, l, e, no, fam) in enumerate(HAZARDS, 1)]
 
     # ---- Library: one manual, five Parts, ten functional areas (ADR-012) ----
     docs, doc_links, versions = [], [], []

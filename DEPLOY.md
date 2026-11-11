@@ -87,12 +87,11 @@ The SQL editor rejects long scripts, so the reference data comes in parts in `su
 2. **Reference data.** Paste and run `supabase/seed/parts/01_seed.sql`, then `02_seed.sql`, and so on to the last part. Use the parts, not `supabase/seed/seed.sql`, which is the same data in one file for `psql`.
 3. The last part ends with a check query. It should return **140 | 18 | 935 | 71 | 14 | 94 | 29 | 10 | 140 | 29** (protocols and workflows, their steps, AA items, functional areas, indicators with an area, forms).
 4. **Operational data (once).** Paste and run, in order, these files in `supabase/seed/operational/`:
-   - `01_iat_baseline_responses.sql`, `02_iat_baseline_evidence.sql`, `02b_iat_baseline_evidence.sql`, `03_iat_baseline_scores_actions.sql`: the October 2026 IAT baseline (workbook v1-5) as the cycle **2026 Baseline (IAT v1.1)**, with 140 provisional responses, their evidence notes and the action plan. Part 3 ends with the cycle results.
+   - `01_iat_baseline_responses.sql`, `02_iat_baseline_evidence.sql`, `02b_iat_baseline_evidence.sql`, `03_iat_baseline_scores_actions.sql`: the October 2026 IAT baseline (workbook v1-7, 11 Nov 2026) as the cycle **2026 Baseline (IAT v1.7)**, with 140 provisional responses, their evidence notes and the action plan. Part 3 ends with the cycle results.
    - `04_vault_register.sql`: Document Vault entries for the engagement's source documents and City issuances. Attach the files in the app afterwards.
    - `06_eoc_structure.sql`: response clusters, contingency plans, EOC positions, barangay clusters and the EOC reference point.
-   - Skip `05_iat_v1_5_update.sql` on a new database: it updates databases loaded from the older workbook.
 
-   These are working records the City then edits in the app. Running them again never overwrites anything, and never changes a score someone has set. 27 baseline scores are loaded below the workbook score, because the evidence on record does not support them (see the note at the top of each response's Gap / Remarks).
+   These are working records the City then edits in the app. Running them again never overwrites anything, and never changes a score someone has set. The scores equal the workbook: the evidence rule (Methodology 5.2) is already applied in workbook v1-6 to 15 items, each noted at the start of its Gap / Remarks. The cycle results match the workbook Dashboard: IMI 1.98, mandatory compliance 32.9%, 30 high-priority gaps.
 
 Each part runs as a single transaction, so a part that fails changes nothing. During setup a part can be run again on its own, and it only replaces its own rows. If a part fails or you lose your place, run that part again and carry on from there. Re-running the parts is safe after go-live: manual versions are only ever added, never rewritten, and the approval status of manual sections and protocols is kept.
 
@@ -177,7 +176,7 @@ Then, in the dashboard:
   2. **Reference data.** Delete every file in `supabase/seed/parts/`, upload the new ones, and run all **18** parts in order. Parts 12 to 14 carry Chapters 1 and 2 v1.2 in pieces (the chapters are too long for one part); run them in order. The last part's check should return **140 | 18 | 935 | 71 | 14 | 94 | 29 | 10 | 140 | 29** (protocols and workflows, steps, AA items, areas, indicators with an area, forms). Approved text and approval status are never changed; the 14 templates and 29 forms load as drafts for the Head to approve.
   3. **Operational files**, in this order:
      - `04_vault_register.sql` again: adds the IAT v1.5 workbook, the EOC placemark (KML), 48 City issuances with their Drive links, and three **restricted** entries (organisational chart and two staff papers: CDRRMO Head, assessors and validators only). It leaves existing entries alone. It needs migration 1600.
-     - `05_iat_v1_5_update.sql`: brings the "2026 Baseline" cycle from workbook v1-3 to v1-5 (71 indicators; 84 evidence notes; 27 score changes). It never changes a validated response, and changes a score only where it still equals the v1-3 import.
+     - `05_iat_v1_5_update.sql` (removed in 1.14.0; use `07_iat_v1_7_update.sql` instead): brought the "2026 Baseline" cycle from workbook v1-3 to v1-5 (71 indicators; 84 evidence notes; 27 score changes). It never changes a validated response, and changes a score only where it still equals the v1-3 import.
      - `06_eoc_structure.sql`: 10 response clusters, 7 contingency plans with their activation sets, the EOC positions, barangay clusters D1–D6 (pilots D1 and D3) and the EOC reference point (pending field validation).
      On a **new** database run `01`, `02`, `02b`, `03`, `04`, `06` instead (`02` is now in two files; `05` is not needed because `01`–`03` already carry v1-5).
   4. Run `supabase/migrations/migration_status.sql`: the four new migrations should say `applied` and every grant `ok`.
@@ -238,8 +237,46 @@ Then, in the dashboard:
        vulnerability and priority with "—" for fields not yet assessed;
      - the SQL suite (`npm run test:db`) passes its new DDRiVE checks.
 
-- **To 1.13.0** (11 November 2026), scoring band fix and the evidence validation status. Two migrations,
-  no seed change. Apply 1.12.2 first if it is not applied.
+- **To 1.14.0** (12 November 2026), one baseline figure, Hazard maps, Library by chapter and DRRM thematic areas.
+  One migration (0026) and one update script. Apply 1.13.0 first (migration 0025).
+  1. **Baseline: one figure everywhere.** IAT workbook v1-7 (11 Nov 2026) is the only baseline: the
+     evidence rule (Methodology 5.2) is applied in the workbook to 15 items (11 FGD-only items capped at 2;
+     4 items without a test set from 4 to 3). Of the 27 items first counted as FGD-only, 24 still rest on FGD
+     alone, and all 24 are at 2 or lower. **IMI 1.98 (Developing)**, Part A 2.06, Part B 1.85, mandatory compliance
+     32.9%, 30 high-priority gaps, Interface Index 1.41. Chapters 1 and 2 and Figure 1.1 now quote these figures.
+  2. **Assess: no reset, update in place to IAT v1.7.** Run migration `20261112002600_revoke_anon_execute.sql`,
+     then `supabase/seed/operational/07_iat_v1_7_update.sql` (generated by `scripts/iat_update_sql.py`). It renames the
+     cycle "2026 Baseline (IAT v1.1)" to **"2026 Baseline (IAT v1.7)"** and updates 15 notes and 2 evidence texts and
+     retracts 1 evidence note (A8.5's re-attributed site observation; its score of 3 rests on three approved
+     documents). A value changes only where it still equals the earlier import; validated responses and anything
+     entered in the app are left alone. No score changes: the 140 scores already equal workbook v1-7. Its last query
+     lists any score the evidence does not support: expect no rows. Safe to run again. Tested: a database loaded with
+     the earlier seed and then this script is identical to a fresh v1.7 load.
+     The workbook is now **v1-7** (`reference/..._v1-7.xlsx`): the 11 Nov update of v1-6, renamed so the version is
+     not confused with the original v1-6.
+  3. **Reference data.** Re-run all seed parts in order (Chapters 1 and 2 changed). Devices reload on their next sync.
+  4. **App.** EOC → **Hazard maps** (ADR-028): eight official hazard sheets fitted to their grids, the OCHA COD-AB
+     barangay boundaries, DDRiVE colouring, identify (with the nearest EOC places), GeoAnalyticsPH embedded for barangay-level assessment,
+     distance and area, coordinates in WGS 84 and UTM 51N, and PNG export. The sheets and boundaries are static files
+     in `public/geo/`, cached on first use. **Library** lists the written chapters, each opening to its SOPs, forms
+     and annexes. **Workflows and Protocols** are grouped by the four DRRM thematic areas. One status colour code
+     throughout: Draft (ochre), For validation (blue), Approved (green).
+  5. **Emails.** After the deploy is live (the images load from the City domain), paste the six templates in
+     `supabase/email/` into Supabase → Authentication → Emails. Each now carries the CDRRMO seal, the MODE banner and
+     a "MODE ·" title; the footer links to www.mode-cddrmo-ormoc.online. Suggested subjects: "MODE: Confirm your email
+     address", "MODE: You are invited", "MODE: Your sign-in link", "MODE: Confirm your new email address", "MODE: Reset
+     your password", "MODE: Verification code". The images are PNG and JPG (`public/brand/cdrrmo-seal-128.png`,
+     `app-banner-800.jpg`) because Outlook does not show WebP.
+  6. **Security (C11).** Migration `20261112002600_revoke_anon_execute.sql` (step 2). Headers: `geolocation` is allowed
+     for the app and for GeoAnalyticsPH, and `frame-src` allows only GeoAnalyticsPH. Dependencies updated (React
+     Router 6.30.6, DOMPurify 3.4.17; Vite 5.4.21, Vitest 2.1.9 and PostCSS 8.5.32 for development).
+  7. **Hosting.** One Vercel project (`ormoc-drrmo-eoc`). The uptime check runs by default every six hours; set the
+     repository variable `UPTIME_ENABLED` to `false` to pause it. The basemap workflow skips without its secrets.
+  8. Push with git, redeploy, then check: Assess shows "2026 Baseline (IAT v1.7)" with IMI 1.98; EOC → Hazard maps opens with the
+     flood sheet; clicking in San Juan reads "about Very high" for flood; Library → Chapter 2 opens to 8 SOPs.
+
+- **To 1.13.0** (11 November 2026), scoring band fix, the evidence validation status and the RA 12287 IRR
+  alignment. Three migrations and three seed re-runs. Apply 1.12.2 first if it is not applied.
   1. **Migrations** (safe to run again), in order:
      - `supabase/migrations/20261111002300_band_unrounded.sql`: `v_domain_results` and `v_cycle_results`
        now band the unrounded maturity index, as the workbook does (an index of 2.495 is Developing,
@@ -249,14 +286,47 @@ Then, in the dashboard:
        Unverified, Missing evidence; every existing response starts Pending, as in the workbook).
        Only assessors, validators and the CDRRMO Head record it; a lead-office focal cannot verify its
        own Part C evidence. Who and when are stamped by the server. The check never changes the score.
-  2. **App.** Assess → an indicator → Evidence has an "Evidence check" control; the cycle overview
+     - `supabase/migrations/20261111002500_ra12287_alignment.sql` (ADR-025): the anticipatory action
+       rules now follow the certified IRR of RA 12287. Lead time is counted in **days**: a declaration
+       needs at least three (3) days, extendable to five (5) (Sec. 6(b); IRR Rule II Sec. 3), and the
+       lead time is checked again when the Mayor signs. Tranches (≤30% beyond 3 days, ≤70% within) apply
+       to hydrometeorological and geological hazards only (IRR Rule V Sec. 2); drought waits for the
+       NDRRMC operational guidelines; agency, donor and ODA funds are not split. AA spending is checked
+       against the year's allocation (≤10% of the 70% LDRRMF). Lifting: automatic when the hazard
+       occurs (Sec. 7; record when), or by the Mayor on RDRRMC recommendation when impacts are not met
+       (record the reference). The 45-day OCD report runs from the lifting. Each hazard gets a family
+       (`hazards.aa_family`).
+  2. **Seed re-runs** (all idempotent), after the migrations:
+     - `supabase/seed/parts/04_seed.sql`: hazards with their family (the migration already sets
+       the families and the `aa_rules` day keys; this keeps the seed and the database the same).
+     - `supabase/seed/parts/26a_ddrive.sql`: restores the former barangay names of South (Districts 1-8,
+       12, 13, 15, 17, 23, 27) and West (14, 19-22, 24, 26). Its check still returns 85 | … | 31.
+     - `supabase/seed/operational/04_vault_register.sql` (item 7 below).
+     Parts `01`, `02` and `02b` of `seed/operational` were regenerated from IAT v1-6 (A3.6 and A7.4
+     evidence text; the A8.5 site evidence removed) but do not re-run them on production: 1.14.0's
+     `07_iat_v1_7_update.sql` applies these changes safely, including the A8.5 retraction.
+  3. **Vault files.** CDRRMO and EOC staff attach the 81 files of the 9 Nov 2026 issuance bundle in the app,
+     with `docs/vault-attach-checklist.md` (one line per file, grouped by year; no keys or scripts). An attached
+     file is never replaced. The bulk script was removed in 1.14.0: it needed the service-role key.
+  4. **App.** Assess → an indicator → Evidence has an "Evidence check" control; the cycle overview
      shows the five counts (as on the workbook Dashboard) and the CSV export has an "Evidence check"
      column. Devices pick up the new fields on their next sync; no Dexie schema change.
-  3. **CI** runs the SQL suite on Postgres 17, the version the City's project runs (17.11).
+  5. **CI** runs the SQL suite on Postgres 17, the version the City's project runs (17.11).
      Push `.github/workflows/ci.yml` with git; the web upload drops `.github/`.
-  4. Push with git, redeploy, then check: `migration_status.sql` lists both migrations as applied;
+  6. Push with git, redeploy, then check: `migration_status.sql` lists the three migrations as applied;
+     open EOC → Anticipatory action and check that the PDRA shows the lead time in days;
      open any indicator as an assessor, set "Evidence check" to Verified and save; the overview's
      Verified count goes up by one and the score is unchanged.
+  7. **Vault register.** Re-run `supabase/seed/operational/04_vault_register.sql` (idempotent). It adds three
+     documents that were in the 9 Nov 2026 issuance bundle but not in the register: **EO No. 151, s. 2021**
+     (reorganizing the CDRRMC; signed but undated, received by the CDRRMO 19 Mar 2021, number partly
+     handwritten), **CDRRMC Res. No. 13, s. 2021** (adopting Proclamation No. 1267, Typhoon Odette) and
+     **CDRRMC Res. No. 08, s. 2023** (PHP 4,307,225.13 supplemental appropriation). The "Executive orders for
+     2021 — NOT OBTAINED" record is kept and marked superseded by EO No. 151. The register now holds 127 distinct documents (the generator also stops writing 16 documents twice; the database never held them twice).
+  8. **`migration_status.sql`** now prints the migration list last, so the SQL editor (which shows only the
+     last result) shows it.
+  9. **Never run `supabase/tests/*.sql` on a Supabase project.** They build a fake platform (roles, `auth`
+     schema, test users) for CI and local testing only; Supabase refuses the stub at `auth.users`.
 
 - **To 1.12.2** (11 November 2026), production readiness audit fixes. One migration, no seed change,
   no app screen change.

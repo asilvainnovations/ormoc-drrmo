@@ -25,7 +25,9 @@ export interface IndicatorRequirement { indicator_id: string; mr_id: string }
 export interface Office { id: string; code: string; name: string; kind: string; version?: number }
 export interface IndicatorLeadOffice { indicator_id: string; office_id: string }
 export interface Crosswalk { framework: 'UNDRR DRSC' | 'RA 12287 IRR'; ref: string; subject: string; treatment: string; indicators: string | null; note: string | null; sort: number }
-export interface Hazard { code: string; name: string; forecastable: boolean; typical_lead_hours: number | null; declaration_eligible: boolean; note: string | null; sort: number }
+/** IRR Rule II Sec. 2 hazard families: graduated AA disbursement covers hydromet and geological (Rule V Sec. 2). */
+export type AaFamily = 'hydromet' | 'geological' | 'climatic' | 'other';
+export interface Hazard { code: string; name: string; forecastable: boolean; typical_lead_hours: number | null; declaration_eligible: boolean; note: string | null; aa_family?: AaFamily | null; sort: number }
 
 // ------------------------------------------------------------------ IAT
 export type CycleStatus = 'draft' | 'fieldwork' | 'validation' | 'final' | 'archived';
@@ -256,6 +258,8 @@ export interface Declaration extends Versioned {
   status: DeclarationStatus; requested_at: string | null; rdrrmc_due_at: string | null; rdrrmc_responded_at: string | null;
   rdrrmc_reference: string | null; eo_number: string | null; declared_at: string | null; lifted_at: string | null;
   lifting_ground: 'hazard_occurred' | 'impacts_not_met' | null; lifting_basis: string | null; report_due_at: string | null;
+  /** RA 12287 Sec. 7: automatic lifting at occurrence (1.13.0). */ hazard_occurred_at?: string | null;
+  /** Impacts not met: RDRRMC recommendation and lifting issuance (1.13.0). */ lifting_reference?: string | null;
   report_submitted_at: string | null; report_reference: string | null; costs_minimized_note: string | null;
 }
 export type AaTiming = 'before_impact_beyond_3d' | 'within_3d' | 'on_declaration' | 'after_lifting';

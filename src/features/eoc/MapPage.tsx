@@ -4,14 +4,10 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import * as maplibregl from 'maplibre-gl';
-import type { GeoJSONSource, StyleSpecification } from 'maplibre-gl';
+import type { GeoJSONSource } from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 // The map's worker is served from this site (CSP worker-src 'self'), not built from a blob.
-import workerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?url';
-import { Protocol } from 'pmtiles';
-import { layers as basemapLayers, namedFlavor } from '@protomaps/basemaps';
 import { db } from '@/lib/db';
-import { env } from '@/lib/env';
 import { useAuth } from '@/lib/auth';
 import { currentReportWindow, latestPerBarangay } from '@/domain/eoc';
 import { firstPoint, parseLayerFile, type ParsedLayer } from '@/domain/kml';
@@ -20,54 +16,9 @@ import { Badge, Button, Checkbox, ChoiceGroup, EmptyState, Field, Input, List, L
 import { Sheet } from '@/components/Sheet';
 import { useToast } from '@/components/Toast';
 import type { GeoLayer, GeoLayerGroup, GeoPointKind, GeoReferencePoint } from '@/types';
+import { ORMOC, basemapReady, baseStyle, ensureProtocol, plainStyle, token } from './map/base';
 import { addLayer, addPoint, loadLayer, markOfficial, parseCoord, supersedeLayer, supersedePoint, verifyPoint } from './geo';
 import { CONDITION, EOC_TABS, LAYER_GROUP, LAYER_VALIDATION, POINT_KIND, POINT_STATUS } from './labels';
-
-// Ormoc City: the EOC reference point the City shared (6 Nov 2026) is the default centre.
-const ORMOC: [number, number] = [124.6043, 11.0139];
-let protocolAdded = false;
-
-/** A design token as a colour MapLibre can read ("r g b" → "rgb(r,g,b)"). */
-const token = (name: string) => {
-  const v = getComputedStyle(document.documentElement).getPropertyValue(`--${name}`).trim();
-  return v ? `rgb(${v.split(/\s+/).join(',')})` : '#888';
-};
-// 1.11: follow the theme the person chose (Light, Dark or System; see components/theme-provider.tsx).
-const dark = () => {
-  const c = document.documentElement.classList;
-  if (c.contains('dark')) return true;
-  if (c.contains('light')) return false;
-  return window.matchMedia?.('(prefers-color-scheme: dark)').matches ?? false;
-};
-
-function baseStyle(): StyleSpecification {
-  const base = env.basemapBase;
-  const flavor = dark() ? 'dark' : 'light';
-  return {
-    version: 8,
-    glyphs: `${base}/fonts/{fontstack}/{range}.pbf`,
-    sprite: `${base}/sprites/v4/${flavor}`,
-    sources: { protomaps: { type: 'vector', url: `pmtiles://${base}/ormoc.pmtiles`, attribution: '© OpenStreetMap contributors' } },
-    layers: basemapLayers('protomaps', namedFlavor(flavor), { lang: 'en' }),
-  };
-}
-
-/** Without the City basemap: a plain background, so points and layers still show and nothing else is fetched. */
-function plainStyle(): StyleSpecification {
-  return { version: 8, sources: {}, layers: [{ id: 'background', type: 'background', paint: { 'background-color': token('sunken') } }] };
-}
-
-/** Is the City's PMTiles file there? Reads its first bytes once (the file starts with "PMTiles"). */
-async function basemapReady(): Promise<string | null> {
-  if (!env.basemapBase) return 'The basemap address is not set.';
-  if (!navigator.onLine) return 'The basemap needs a connection.';
-  try {
-    const r = await fetch(`${env.basemapBase}/ormoc.pmtiles`, { headers: { Range: 'bytes=0-6' } });
-    if (!r.ok) return 'The City basemap has not been uploaded yet.';
-    const magic = new TextDecoder().decode(new Uint8Array(await r.arrayBuffer()).slice(0, 7));
-    return magic === 'PMTiles' ? null : 'The basemap file is not a PMTiles file.';
-  } catch { return 'The City basemap could not be reached.'; }
-}
 
 const empty = { type: 'FeatureCollection' as const, features: [] as unknown[] };
 
@@ -102,7 +53,7 @@ export default function MapPage() {
   useEffect(() => { void basemapReady().then((p) => { setBaseProblem(p); setHasBase(p === null); }); }, []);
   useEffect(() => {
     if (!box.current || hasBase === null) return;
-    if (!protocolAdded) { maplibregl.setWorkerUrl(workerUrl); maplibregl.addProtocol('pmtiles', new Protocol().tile); protocolAdded = true; }
+    ensureProtocol();
     const m = new maplibregl.Map({ container: box.current, style: hasBase ? baseStyle() : plainStyle(), center: ORMOC, zoom: 12, attributionControl: { compact: true }, cooperativeGestures: true });
     m.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-right');
     m.addControl(new maplibregl.ScaleControl({ unit: 'metric' }), 'bottom-left');

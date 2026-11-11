@@ -1,4 +1,4 @@
-export const DOC_STATUS: Record<string, string> = { draft: 'Draft', in_review: 'In review', approved: 'Approved', superseded: 'Superseded', rejected: 'Returned' };
+export const DOC_STATUS: Record<string, string> = { draft: 'Draft', in_review: 'For validation', approved: 'Approved', superseded: 'Superseded', rejected: 'Returned' };
 /** 1.12: short kind labels for the Library rows (chapters carry no chip — the Part/Area header already says what they are). */
 export const DOC_KIND: Record<string, string> = { sop: 'SOP', form: 'Form', annex: 'Annex', area: 'Area' };
 export const LIB_TABS = [

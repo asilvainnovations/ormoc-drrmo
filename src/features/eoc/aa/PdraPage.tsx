@@ -6,7 +6,7 @@ import { save, saveMany } from '@/lib/store';
 import { uuid } from '@/lib/ids';
 import { useAuth } from '@/lib/auth';
 import { useAaParams } from '@/lib/hooks';
-import { hoursBetween, pdraDecisionProblem, rawHoursBetween } from '@/domain/aa';
+import { daysText, hoursBetween, pdraDecisionProblem, pdraLeadNote, rawHoursBetween } from '@/domain/aa';
 import { duration, fmtDateTime, fromLocalInput, toLocalInput } from '@/lib/time';
 import { Badge, Button, Checkbox, ChoiceGroup, Field, Input, KeyValue, Loading, Notice, PageHeader, Section, Select, Textarea, TextLink } from '@/components/ui';
 import { useToast } from '@/components/Toast';
@@ -32,7 +32,8 @@ export function PdraNewPage() {
   const lead = rawHoursBetween(conductedAt, fromLocalInput(f.expected_impact_at));
   const hazard = ref?.hazards.find((h) => h.code === f.hazard_code);
   const problem = pdraDecisionProblem({ impact_class: f.impact_class, decision: f.decision, expected_impact_at: fromLocalInput(f.expected_impact_at), conducted_at: conductedAt, decision_basis: f.decision_basis }, params);
-  const eligible = f.impact_class === 'severe' && lead >= params.min_declaration_lead_hours;
+  const eligible = f.impact_class === 'severe' && lead >= params.min_declaration_lead_days * 24;
+  const leadNote = f.decision === 'request_declaration' ? pdraLeadNote(lead, params) : null;
 
   if (!has('cdrrmo_head', 'eoc_manager', 'eoc_staff')) return <div className="page"><PageHeader title="New PDRA" back="/eoc/aa" /><Notice>Only the CDRRMO Head and EOC staff record PDRAs.</Notice></div>;
 
@@ -103,13 +104,14 @@ export function PdraNewPage() {
         <Section title="Decision">
           <div className="mb-4 rounded-control bg-sunken p-4">
             <p className="font-semibold">Lead time left: {lead > 0 ? duration(lead) : 'none'}</p>
-            <p className="text-sm text-muted">{eligible ? 'Severe impact with at least 3 days of lead time: a declaration can be requested.'
+            <p className="text-sm text-muted">{eligible ? `Severe impact with a lead time of at least ${daysText(params.min_declaration_lead_days)}: a declaration can be requested (RA 12287 Sec. 6(b)).`
               : f.impact_class !== 'severe' ? 'A declaration needs impacts classified as severe.'
-                : `A declaration needs at least ${params.min_declaration_lead_hours} hours. Use city early action.`}</p>
+                : `A declaration needs a lead time of at least ${daysText(params.min_declaration_lead_days)} (RA 12287 Sec. 6(b)). Use city early action.`}</p>
+            {leadNote && <div className="mt-3"><Notice tone="warn" title="Earlier than the five-day extension">{leadNote}</Notice></div>}
           </div>
           <ChoiceGroup legend="Decision" value={f.decision} onChange={(v) => setF({ ...f, decision: v })}
             options={(Object.keys(DECISION) as PdraDecision[]).map((k) => ({ value: k, label: DECISION[k].label, detail: DECISION[k].detail,
-              disabled: k === 'request_declaration' && !eligible, disabledReason: 'Needs severe impact and at least 3 days of lead time' }))} />
+              disabled: k === 'request_declaration' && !eligible, disabledReason: `Needs severe impact and a lead time of at least ${daysText(params.min_declaration_lead_days)}` }))} />
           {f.decision === 'request_declaration' && <div className="mt-4"><Field label="Basis for the request">{(id) => <Textarea id={id} value={f.decision_basis} onChange={(e) => setF({ ...f, decision_basis: e.target.value })} />}</Field></div>}
           {f.decision === 'local_early_action' && <Notice tone="info" title="City early action">The anticipatory action checklist will load for this PDRA. For flash floods and landslides, also run the flash flood early action protocol.</Notice>}
           {problem && f.decision === 'request_declaration' && <p role="alert" className="mt-2 font-semibold text-bad">{problem}</p>}

@@ -86,12 +86,17 @@ export default defineConfig(({ command, mode }) => {
           '**/*-{cyrillic,cyrillic-ext,greek,greek-ext,vietnamese,devanagari,math,symbols,latin-ext}-*.woff2',
           'brand/*-512.webp', 'brand/*-64.webp',
           // Manual figures load when online; the manual text itself is in the bundled reference data.
-          'library/**'],
+          'library/**',
+          // Hazard map sheets and barangay boundaries (ADR-028): cached the first time the Hazard maps page opens.
+          'geo/**'],
         navigateFallback: '/index.html',
         navigateFallbackDenylist: [/^\/auth\//],
         // Supabase API calls are never cached by the service worker; the app keeps its own
         // offline copy in IndexedDB and syncs through an outbox (ADR-003).
-        runtimeCaching: [],
+        runtimeCaching: [
+          { urlPattern: ({ url, sameOrigin }) => sameOrigin && url.pathname.startsWith('/geo/'),
+            handler: 'CacheFirst', options: { cacheName: 'mode-geo', expiration: { maxEntries: 40 } } },
+        ],
         cleanupOutdatedCaches: true,
       },
       devOptions: { enabled: false },

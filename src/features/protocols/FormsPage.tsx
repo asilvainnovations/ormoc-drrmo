@@ -5,6 +5,7 @@ import { db } from '@/lib/db';
 import { updateOnline } from '@/lib/store';
 import { useAuth } from '@/lib/auth';
 import { Badge, Button, List, ListRow, Notice, Section, TextLink } from '@/components/ui';
+import { StatusBadge } from '@/components/StatusBadge';
 import { Sheet } from '@/components/Sheet';
 import { useToast } from '@/components/Toast';
 import { tip } from '@/components/Tooltip';
@@ -16,7 +17,6 @@ const FIELD_TYPE: Record<FormFieldType, string> = {
   text: 'Short text', textarea: 'Text', number: 'Number', integer: 'Whole number', date: 'Date', datetime: 'Date and time',
   time: 'Time', select: 'One choice', multiselect: 'Several choices', checkbox: 'Tick box',
 };
-const STATUS_TONE = { draft: 'warn', approved: 'ok', retired: 'neutral' } as const;
 
 export function FormsPage() {
   const { has } = useAuth();
@@ -70,7 +70,7 @@ export function FormsPage() {
               const n = data?.uses.get(f.code)?.length ?? 0;
               return <ListRow key={f.id} tip="See the fields and the steps that use this form" onClick={() => setOpenId(f.id)}
                 title={`${f.code} ${f.title}`} meta={`${f.schema.fields.length} fields. Used by ${n} step${n === 1 ? '' : 's'}. Rev. ${f.rev}`}
-                trailing={<Badge tone={STATUS_TONE[f.status]}>{FORM_STATUS[f.status]}</Badge>} />;
+                trailing={<StatusBadge status={f.status} />} />;
             })}
           </List>
         </Section>

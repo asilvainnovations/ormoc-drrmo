@@ -6,7 +6,7 @@ import type reference from '@/data/reference.json';
 import { db, getMeta, setMeta } from './db';
 import { DEFAULT_AA_PARAMS } from '@/domain/aa';
 
-export const REFERENCE_VERSION = 'iat-1.1/2026-11-08-ch4-v1.1-ch3-v1.1';
+export const REFERENCE_VERSION = 'iat-1.7/2026-11-12-v1-7-geoanalytics';
 
 type Ref = typeof reference;
 
@@ -30,13 +30,14 @@ export async function bootstrapReference(): Promise<void> {
     await db.hazards.bulkPut(R.hazards as never[]);
     await db.aa_action_templates.bulkPut(R.aa_action_templates as never[]);
     const labels: Record<string, [string, string]> = {
-      aa_share_of_ldrrmf_70: ['Maximum AA share of the 70% LDRRMF', 'IRR Rule V Sec. 1(b)'],
-      tranche_beyond_max: ['Maximum share for interventions beyond the lead-time threshold', 'IRR Rule V Sec. 2'],
-      tranche_within_max: ['Maximum share for interventions within the lead-time threshold', 'IRR Rule V Sec. 2'],
-      lead_threshold_hours: ['Lead-time threshold (3 days)', 'RA 12287 Sec. 6(b)'],
-      min_declaration_lead_hours: ['Minimum lead time for a declaration', 'RA 12287 Sec. 6(b)'],
-      rdrrmc_reply_hours: ['RDRRMC recommendation time', 'IRR Rule III Sec. 2'],
-      report_days: ['Report to OCD after lifting', 'RA 12287 Sec. 8; IRR Rule VI Sec. 1'],
+      aa_share_of_ldrrmf_70: ['No more than 10% of the 70% LDRRMF for anticipatory action', 'IRR Rule V Sec. 1(b)'],
+      tranche_beyond_max: ['At most 30% of the AA allocation beyond a lead time of three (3) days (hydromet and geological hazards)', 'IRR Rule V Sec. 2'],
+      tranche_within_max: ['Up to 70% of the AA allocation within a maximum lead time of three (3) days (hydromet and geological hazards)', 'IRR Rule V Sec. 2'],
+      lead_threshold_days: ['Graduated disbursement: beyond or within a lead time of three (3) days', 'IRR Rule V Sec. 2'],
+      min_declaration_lead_days: ['Minimum lead time for a declaration: three (3) days', 'RA 12287 Sec. 6(b); IRR Rule II Sec. 3'],
+      extended_declaration_lead_days: ['The three-day lead time may be extended to five (5) days', 'RA 12287 Sec. 6(b)'],
+      rdrrmc_reply_hours: ['RDRRMC recommendation within twenty-four (24) hours', 'IRR Rule III Sec. 2'],
+      report_days: ['Report to OCD within forty-five (45) days from the lifting', 'RA 12287 Sec. 8; IRR Rule VI Sec. 1'],
     };
     if ((await db.aa_rules.count()) === 0) {
       await db.aa_rules.bulkPut(Object.entries(DEFAULT_AA_PARAMS).map(([key, value]) => ({ key, value, label: labels[key]![0], source_ref: labels[key]![1], version: 1 })));

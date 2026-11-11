@@ -40,9 +40,9 @@ export function FundsPage() {
   return (
     <div className="page">
       <PageHeader title="Anticipatory Action Funds" back="/eoc/aa"
-        subtitle={`Up to ${params.aa_share_of_ldrrmf_70 * 100}% of the 70% LDRRMF. Interventions more than 3 days before impact may use up to ${params.tranche_beyond_max * 100}% of the allocation; within 3 days, up to ${params.tranche_within_max * 100}% (IRR Rule V).`}
+        subtitle={`No more than ${params.aa_share_of_ldrrmf_70 * 100}% of the 70% LDRRMF (IRR Rule V Sec. 1(b)). For hydrometeorological and geological hazards, interventions beyond a lead time of three (3) days may use at most ${params.tranche_beyond_max * 100}% of the allocation, and up to ${params.tranche_within_max * 100}% within a maximum lead time of three (3) days (IRR Rule V Sec. 2).`}
         actions={has('cdrrmo_head') && <Button tip="Set this year’s LDRRMF total and the anticipatory action allocation" onClick={() => setEdit({ year: String(new Date().getFullYear()), total: '', alloc: '', ref: '', version: 1, isNew: true })}>Set allocation</Button>} />
-      <Notice tone="info">The DBM–COA guidelines on funding, budgeting and utilization of AA measures are pending (IRR Rule V Sec. 4). Other lawful sources (Special Trust Fund, donations, ODA) are not limited by the 30%/70% graduation.</Notice>
+      <Notice tone="info">Pending national guidance: the DBM–COA guidelines on funding, budgeting and use of AA funds (IRR Rule V Sec. 4) and the NDRRMC operational guidelines on triggers, thresholds and drought timelines (IRR Rule II Sec. 2, Rule V Sec. 2). The 30%/70% graduation does not apply to other lawful sources: Special Trust Fund balances, donations, ODA, other LGUs or agency budgets.</Notice>
       {data?.years.length === 0 ? <EmptyState title="No allocation set" body="Record the year's LDRRMF and the amount set aside for anticipatory action in the LDRRMFIP." /> : data?.years.map((y) => {
         const st = fundStatus(y, data.disb, params);
         return (
@@ -50,8 +50,10 @@ export function FundsPage() {
             action={has('cdrrmo_head') && <Button tip="Change this year’s figures" variant="quiet" onClick={() => setEdit({ year: String(y.fiscal_year), total: String(y.ldrrmf_total), alloc: String(y.aa_allocation), ref: y.appropriation_ref ?? '', version: y.version, isNew: false })}>Edit</Button>}>
             <p className="mb-3 text-sm text-muted">LDRRMF ₱{fmtPeso(Number(y.ldrrmf_total))}. AA allocation ₱{fmtPeso(Number(y.aa_allocation))} (cap ₱{fmtPeso(st.cap)}).{y.appropriation_ref ? ` ${y.appropriation_ref}.` : ''}</p>
             <div className="max-w-xl space-y-4">
-              <Tranche label="Beyond 3 days before impact" used={st.beyondUsed} limit={st.beyondLimit} />
-              <Tranche label="Within 3 days of impact" used={st.withinUsed} limit={st.withinLimit} />
+              <Tranche label="Beyond a lead time of three (3) days" used={st.beyondUsed} limit={st.beyondLimit} />
+              <Tranche label="Within a lead time of three (3) days" used={st.withinUsed} limit={st.withinLimit} />
+              {st.ungraduatedUsed > 0 && <p className="text-sm">LDRRMF used for hazards outside the graduation (for example drought): ₱{fmtPeso(st.ungraduatedUsed)}</p>}
+              <p className="text-sm">LDRRMF AA used in all: ₱{fmtPeso(st.beyondUsed + st.withinUsed + st.ungraduatedUsed)} of ₱{fmtPeso(Number(y.aa_allocation))}</p>
               <p className="text-sm">Other sources used: ₱{fmtPeso(st.otherUsed)}</p>
             </div>
           </Section>

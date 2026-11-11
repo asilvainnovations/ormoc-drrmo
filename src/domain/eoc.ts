@@ -1,10 +1,14 @@
 // EOC rules. Mirrors supabase/migrations/20261015000400_eoc.sql.
 import type { Activation, BarangayCondition, BarangayReport, EocLevel, RequestStatus, Role } from '@/types';
 
+// Alert levels: National Disaster Response Plan, as restated in the RDRRMC VIII SOP (Res. No. 12-006, s. 2023).
+// NDRRMC Memorandum No. 131, s. 2018 governs EOC activation and functions; it lets each EOC set its own
+// alert-level codes (para. 9.2.2) and does not itself define White, Blue and Red.
+export const LEVEL_BASIS = 'National Disaster Response Plan; RDRRMC VIII Res. No. 12-006, s. 2023';
 export const LEVEL_INFO: Record<EocLevel, { name: string; meaning: string }> = {
   white: { name: 'White', meaning: 'Normal operations' },
-  blue: { name: 'Blue', meaning: 'Alert: partial activation' },
-  red: { name: 'Red', meaning: 'Full activation' },
+  blue: { name: 'Blue', meaning: 'Partial activation: at least half of resources on standby' },
+  red: { name: 'Red', meaning: 'Full activation: all resources available' },
 };
 
 export const REQUEST_NEXT: Record<RequestStatus, RequestStatus[]> = {

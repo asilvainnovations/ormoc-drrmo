@@ -318,7 +318,7 @@ export function BarangaysAdminPage() {
           <Upload className="h-4 w-4" aria-hidden />Or choose a CSV file
           <input type="file" accept=".csv,text/csv" className="sr-only" onChange={async (e) => { const f = e.target.files?.[0]; if (f) { setText(await f.text()); setWarnings([]); setConfirmed(false); } }} />
         </label>
-        <Notice tone="info" title="Use the current list">The PSA PSGC lists {ORMOC_BARANGAY_COUNT} barangays for Ormoc since its 4th quarter 2022 update. The former numbered Poblacion barangays are now Barangays South, East and West (City Ordinance No. 052, s. 2021, ratified on 8 October 2022), and Barangay 29 is Barangay North. Lists showing 110 barangays are out of date. Import the City master list once CPDO, the City Secretary and the DILG City LGOO have reconciled it with the PSGC.</Notice>
+        <Notice tone="info" title="Use the current list">The PSA PSGC lists {ORMOC_BARANGAY_COUNT} barangays for the City of Ormoc (PSGC 0803738000) as of 31 July 2025, following the 8 October 2022 plebiscite. The former numbered Poblacion barangays are now Barangays South, East and West (City Ordinance No. 052, s. 2021, ratified on 8 October 2022), and Barangay 29 is Barangay North. Lists showing 110 barangays are out of date. Import the City master list once CPDO, the City Secretary and the DILG City LGOO have reconciled it with the PSGC.</Notice>
         {warnings.length > 0 && (
           <Notice tone="warn" title="This does not look like the current PSA list">
             <ul className="list-disc pl-5">{warnings.map((x) => <li key={x}>{x}</li>)}</ul>

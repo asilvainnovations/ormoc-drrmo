@@ -106,7 +106,7 @@ function FilterChip({ label, onClear }: { label: string; onClear: () => void }) 
   return (
     <span className="inline-flex items-center gap-1 rounded-full bg-sky-soft py-0.5 pl-3 pr-1 font-data font-semibold">
       {label}
-      <button type="button" onClick={onClear} aria-label={`Clear filter ${label}`} {...tip('Clear this filter')} className="inline-flex h-8 w-8 items-center justify-center rounded-full hover:bg-surface"><X className="h-4 w-4" aria-hidden /></button>
+      <button type="button" onClick={onClear} aria-label={`Clear filter ${label}`} {...tip('Clear this filter')} className="-my-2 inline-flex h-tap w-tap items-center justify-center rounded-full hover:bg-surface"><X className="h-4 w-4" aria-hidden /></button>
     </span>
   );
 }

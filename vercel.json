@@ -3,6 +3,7 @@
   "framework": "vite",
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
+  "ignoreCommand": "git diff --quiet HEAD^ HEAD -- src public index.html package.json package-lock.json vite.config.ts tsconfig.json tsconfig.app.json tsconfig.node.json tailwind.config.ts postcss.config.js vercel.json",
   "rewrites": [
     {
       "source": "/((?!assets/|icons/|fonts/|sw.js|workbox-|manifest.webmanifest|favicon).*)",
@@ -76,7 +77,7 @@
         },
         {
           "key": "Permissions-Policy",
-          "value": "camera=(self), geolocation=(), microphone=()"
+          "value": "camera=(self), geolocation=(self \"https://geoanalytics.georisk.gov.ph\"), microphone=()"
         },
         {
           "key": "Strict-Transport-Security",
@@ -84,7 +85,7 @@
         },
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https://jmctsspadywjcbbqwweh.supabase.co wss://jmctsspadywjcbbqwweh.supabase.co; worker-src 'self' blob:; child-src blob:; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
+          "value": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https://jmctsspadywjcbbqwweh.supabase.co wss://jmctsspadywjcbbqwweh.supabase.co; worker-src 'self' blob:; child-src blob:; frame-src https://geoanalytics.georisk.gov.ph; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
         }
       ]
     }
