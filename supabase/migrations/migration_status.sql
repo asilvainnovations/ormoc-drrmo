@@ -28,7 +28,11 @@ from (values
   ('20261106001700_step_forms',               to_regclass('public.form_templates') is not null),
   ('20261106001800_eoc_structure_and_clusters', to_regclass('public.eoc_designations') is not null),
   ('20261106001900_geo_cop',                  to_regclass('public.geo_layers') is not null),
-  ('20261108002000_sop_registry',             to_regclass('public.v_indicator_sops') is not null)
+  ('20261108002000_sop_registry',             to_regclass('public.v_indicator_sops') is not null),
+  ('20261110002100_ddrive_base',              to_regclass('public.v_ddrive_city_risk') is not null),
+  ('20261111002200_ddrive_grants',            coalesce((select reloptions from pg_class
+                                                        where oid = to_regclass('public.v_ddrive_city_risk')), '{}')
+                                              @> array['security_invoker=true'])
 ) as m(migration, present)
 order by m.migration;
 
