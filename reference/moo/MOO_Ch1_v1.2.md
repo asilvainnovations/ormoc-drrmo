@@ -1616,6 +1616,10 @@ This foundation shall support the implementation of the succeeding modules, part
 
 The following references provide the legal and technical foundation for this chapter. The final bibliography should be consolidated with the complete MOO reference register.
 
+- City Government of Ormoc, City Disaster Risk Reduction and Management Office. (2026). *CDRRMO reference: Local policies* [Shared Drive folder of the City's DRRM policy instruments: Sangguniang Panlungsod ordinances, executive orders, CDRRMC resolutions and SP resolutions]. https://drive.google.com/drive/folders/12NWwUTAE6ub1vW31M2NSMktYlP-BP4oR
+
+- City Government of Ormoc, Sangguniang Panlungsod. (1993–2025). *SP ordinances* [Shared Drive folder, by year, including Ordinance No. 008, s. 2014 establishing the CDRRMO and Ordinance No. 011, s. 2015 amending it]. https://drive.google.com/drive/folders/132g-VeSpXkorcNCte2fpyVY3Az3baBXS
+
 - City Government of Ormoc. (2026). Ormoc CDRRMO–EOC Institutional Assessment Tool (v1-7, 11 November 2026). Unpublished assessment workbook.
 
 - City Government of Ormoc, City Disaster Risk Reduction and Management Office. (2026). CDRRMO organizational chart and internal staff papers on planning, budgeting and cluster-based barangay coordination. Unpublished working papers.

@@ -3,6 +3,9 @@ Used by generate_operational_seed.py. Summaries are factual; dates are left blan
 # key, drive id, title, doc_number, issuer, date, indicators, summary
 C='CDRRMC'; SP='Sangguniang Panlungsod'; MO='Office of the City Mayor'
 ISS = [
+ # 12 Nov 2026: SP ordinance shared by the City (certified true copy, 21 Apr 2025), read in full with the committee minutes.
+ ('sp-ord-189-2025','1TBDjosHkhf0QOpifePnffwfid8jO0Hso','Amending Section 6 of Ordinance No. 135, s. 2023 (Policy on suspending or cancelling classes and work during emergencies or disasters)','SP Ordinance No. 189, s. 2025',SP,'2025-04-08',['A1.5','A6.2','A7.1','A7.7','C4.2'],
+  'Enacted 8 Apr 2025 (145th regular session); approved by Mayor Lucy Torres-Gomez. Tertiary in-person classes are suspended when PAGASA issues a Red Rainfall Warning AND there is actual heavy rainfall in Ormoc; with a Red warning but no heavy rain, the school head may keep classes after consulting the official platform the CDRRMO provides for the local situation. Online, hybrid or asynchronous classes may continue during a suspension. The City Mayor decides when there is flooding under an Orange, Yellow or no rainfall warning. New duties: the CDRRMO holds coordination meetings with all school DRRM coordinators on school disaster and contingency plans and trains the education sector; the CDRRMC requires schools to record in enrolment forms which students live in flood-prone and other risk areas. Joint committee minutes of 2 Apr 2025 attached (CDRRMO represented).'),
  ('cdrrmc-res-01-2021','16txQX1C_LF2nZFLVkL3lQdBCWZpKjdrZ','Omnibus resolution realigning PHP 33 M for COVID-19 response','CDRRMC Res. No. 01, s. 2021',C,None,['A4.2'],'Realigns LDRRMF funds for COVID-19 response, including vaccine procurement support under the City vaccine council.'),
  ('cdrrmc-res-2a-2021','1Je1wp3uBzVbjAB7_uUmcRkujK2oOCg4Y','Adopting the Enhanced Contingency Plan for flood-affected barangays ("Oplan Lunop") with COVID-19 protocols','CDRRMC Res. No. 2-A, s. 2021',C,'2021-05-03',['A3.3'],'Adopts the flood contingency plan and sends it to the SP for approval. SP approval not on file.'),
  ('cdrrmc-res-2b-2021','1Y4J7Cdi0ozGPD24MRJi454ztt086qnO4','Adopting the Enhanced Contingency Plan for Earthquake (2020-2025) with COVID-19 protocols','CDRRMC Res. No. 2-B, s. 2021',C,'2021-05-03',['A3.3'],'Adopts the earthquake contingency plan for 2020-2025 and sends it to the SP. The plan period has ended; due for update.'),
@@ -51,6 +54,65 @@ ISS = [
  ('cdrrmc-res-04-2024','14nsymVuZg7ay4ieXOhsuGbnvNlBhv-xu','Supplemental appropriation for the additional 5% LDRRMF 2024 (PHP 3.69 M and PHP 0.52 M)','CDRRMC Res. No. 04, s. 2024',C,None,['A4.2'],'New revenue sources and share of national wealth.'),
  ('cdrrmc-res-05-2024','1YmY8fqx36yiLaa_3KRQdpwMzzX3P0VA9','Amending Supplemental Appropriation Ordinance No. 12 s. 2024 to add PHP 305,000 for QRF and capacity building','CDRRMC Res. No. 05, s. 2024',C,None,['A4.3','A2.6'],'Corrects the 5% allocation in the supplemental appropriation.'),
  ('cdrrmc-res-06-2024','1K2-rUaQKBOO-VGF-H_8Wsf1Q-o4bXlYa','Recommending a State of Calamity due to the dengue outbreak','CDRRMC Res. No. 06, s. 2024',C,None,['A1.6'],'One-year cap, liftable earlier on the Council recommendation; CHD tasks listed.'),
+]
+
+# SP ordinances 1993-2025 shared by the CDRRMO (Drive folder 132g-VeSpXkorcNCte2fpyVY3Az3baBXS), added to the documents
+# reviewed on 12 Nov 2026. Same format as ISS. Titles from the file names; scans not yet read in full.
+ISS += [
+ ('sp-ord-37-1993','1l0-g5G7_Ls1A2oj2JBsfbHREn4CVa-3v','High risk (areas) and providing penalty for violation (title as filed)','SP Ordinance No. 37, s. 1993',SP,None,[],
+  'Listed from the SP ordinance folder shared by the CDRRMO (Drive, 9-10 Nov 2026; added 12 Nov 2026). Title taken from the file name; the scan is not yet read in full, so the summary and indicator links are provisional.'),
+ ('sp-ord-003-2013','1mnPxWozcxpmEw4_oFIhKEPXqcbDsRdNU','Implementation of pre-emptive evacuation','SP Ordinance No. 003, s. 2013',SP,None,['A1.5'],
+  'Listed from the SP ordinance folder shared by the CDRRMO (Drive, 9-10 Nov 2026; added 12 Nov 2026). Title taken from the file name; the scan is not yet read in full, so the summary and indicator links are provisional.'),
+ ('sp-ord-008-2014','1ua_iaRnzVyBohdfnipMjcIKDfCnN3pjr','Establishment of the City Disaster Risk Reduction and Management Office (CDRRMO)','SP Ordinance No. 008, s. 2014',SP,None,['A1.1'],
+  'Listed from the SP ordinance folder shared by the CDRRMO (Drive, 9-10 Nov 2026; added 12 Nov 2026). Title taken from the file name; the scan is not yet read in full, so the summary and indicator links are provisional.'),
+ ('sp-ord-011-2015','162ceso_BVy4E1QrwzgoBopJO3Yizf2c6','Amending Ordinance No. 008 (establishment of the CDRRMO)','SP Ordinance No. 011, s. 2015',SP,None,['A1.1'],
+  'Listed from the SP ordinance folder shared by the CDRRMO (Drive, 9-10 Nov 2026; added 12 Nov 2026). Title taken from the file name; the scan is not yet read in full, so the summary and indicator links are provisional.'),
+ ('sp-ord-12-2015','1OTOIJDTn4wuTuKknzhv_gzPBsJwOEmQv','Arbor Day','SP Ordinance No. 12, s. 2015',SP,None,[],
+  'Listed from the SP ordinance folder shared by the CDRRMO (Drive, 9-10 Nov 2026; added 12 Nov 2026). Title taken from the file name; the scan is not yet read in full, so the summary and indicator links are provisional.'),
+ ('sp-ord-017-2017','11iT6Yy2J1AA1C707-S1WqEbz644SNXRp','Requiring drivers and passengers of motorcycles to wear helmets','SP Ordinance No. 017, s. 2017',SP,None,[],
+  'Listed from the SP ordinance folder shared by the CDRRMO (Drive, 9-10 Nov 2026; added 12 Nov 2026). Title taken from the file name; the scan is not yet read in full, so the summary and indicator links are provisional.'),
+ ('sp-ord-020-2017','1HqxpAmHMOy2TFZjZAMGjl12U1Sy0uXAM','Requiring pool or resort owners and similar businesses to provide lifeguards','SP Ordinance No. 020, s. 2017',SP,None,[],
+  'Listed from the SP ordinance folder shared by the CDRRMO (Drive, 9-10 Nov 2026; added 12 Nov 2026). Title taken from the file name; the scan is not yet read in full, so the summary and indicator links are provisional.'),
+ ('sp-aord-001-2021','1y8Jomitf_9bFQxM4zXOT9uKjcFQawjuw','2021 Annual City Budget','SP Appropriation Ordinance No. 001, s. 2021',SP,None,['A4.1'],
+  'Listed from the SP ordinance folder shared by the CDRRMO (Drive, 9-10 Nov 2026; added 12 Nov 2026). Title taken from the file name; the scan is not yet read in full, so the summary and indicator links are provisional.'),
+ ('sp-aord-002-2021','1ReRJY_OprJMZFqWue4UbyRwkVLfBKGa0','Realignment of PHP 33 M','SP Appropriation Ordinance No. 002, s. 2021',SP,None,['A4.2'],
+  'Listed from the SP ordinance folder shared by the CDRRMO (Drive, 9-10 Nov 2026; added 12 Nov 2026). Title taken from the file name; the scan is not yet read in full, so the summary and indicator links are provisional.'),
+ ('sp-aord-032-2021','1Np_0UurYnZOZyip49IsygnHoFtwhR5W3','Supplemental Budget No. 29, s. 2021: CDRRM OpCen WASAR substation, Phase II','SP Appropriation Ordinance No. 032, s. 2021',SP,None,['A4.2'],
+  'Listed from the SP ordinance folder shared by the CDRRMO (Drive, 9-10 Nov 2026; added 12 Nov 2026). Title taken from the file name; the scan is not yet read in full, so the summary and indicator links are provisional.'),
+ ('sp-ord-050-2021','1svVbEqKsS6pB4iMDadLMVXLhM7wEpCZZ','QR code system','SP Ordinance No. 050, s. 2021',SP,None,[],
+  'Listed from the SP ordinance folder shared by the CDRRMO (Drive, 9-10 Nov 2026; added 12 Nov 2026). Title taken from the file name; the scan is not yet read in full, so the summary and indicator links are provisional.'),
+ ('sp-ord-051-2021','1Jfhg0MqaIaft3fp6D2A8CqcA7Iuyi405','Single-use plastic','SP Ordinance No. 051, s. 2021',SP,None,[],
+  'Listed from the SP ordinance folder shared by the CDRRMO (Drive, 9-10 Nov 2026; added 12 Nov 2026). Title taken from the file name; the scan is not yet read in full, so the summary and indicator links are provisional.'),
+ ('sp-ord-053-2021','1obCKqw7s9izTV63BukrY4myOlfpGW4Sn','Freedom of Information Ordinance of Ormoc City','SP Ordinance No. 053, s. 2021',SP,None,[],
+  'Listed from the SP ordinance folder shared by the CDRRMO (Drive, 9-10 Nov 2026; added 12 Nov 2026). Title taken from the file name; the scan is not yet read in full, so the summary and indicator links are provisional.'),
+ ('sp-ord-056-2021','15wDlcJmhr1dIV7o8edHFbaZe-YuHiQ14','Creation of an additional Administrative Officer II position','SP Ordinance No. 056, s. 2021',SP,None,[],
+  'Listed from the SP ordinance folder shared by the CDRRMO (Drive, 9-10 Nov 2026; added 12 Nov 2026). Title taken from the file name; the scan is not yet read in full, so the summary and indicator links are provisional.'),
+ ('sp-ord-063-2021','1O3odsEI_Zewn6vDMlM9uhC8-ElGAdzRX','Ordaining the codification of the general ordinances of Ormoc City','SP Ordinance No. 063, s. 2021',SP,None,[],
+  'Listed from the SP ordinance folder shared by the CDRRMO (Drive, 9-10 Nov 2026; added 12 Nov 2026). Title taken from the file name; the scan is not yet read in full, so the summary and indicator links are provisional.'),
+ ('sp-aord-001-2022','1Gz5flleUVflNhMnEtkFoc3mIW12OwZ5o','Supplemental Budget No. 13, s. 2022: merging and renaming Barangay Districts 1-29','SP Appropriation Ordinance No. 001, s. 2022',SP,None,[],
+  'Listed from the SP ordinance folder shared by the CDRRMO (Drive, 9-10 Nov 2026; added 12 Nov 2026). Title taken from the file name; the scan is not yet read in full, so the summary and indicator links are provisional.'),
+ ('sp-aord-009-2022','1QA_oM-oJ81KEGCyhSkrguEkRPhVjRk8z','Supplemental Budget No. 08: payment of 2019-2021 unpaid obligations','SP Appropriation Ordinance No. 009, s. 2022',SP,None,[],
+  'Listed from the SP ordinance folder shared by the CDRRMO (Drive, 9-10 Nov 2026; added 12 Nov 2026). Title taken from the file name; the scan is not yet read in full, so the summary and indicator links are provisional.'),
+ ('sp-aord-016-2022','1rbaB3P4xsRo4RsaXEHbOpaCpCGT_pPrI','Supplemental Budget No. 28: realignment of PHP 3.3 M in the 5% LDRRMF 2022 (8 Nov 2022)','SP Appropriation Ordinance No. 016, s. 2022',SP,None,['A4.2'],
+  'Listed from the SP ordinance folder shared by the CDRRMO (Drive, 9-10 Nov 2026; added 12 Nov 2026). Title taken from the file name; the scan is not yet read in full, so the summary and indicator links are provisional.'),
+ ('sp-aord-017-2022','1AgoMkEIlLUoAyTAGVCDKTUM3naw5xp4c','Supplemental Budget No. 29: reversion of PHP 19 M in the 5% LDRRMF 2022 (17 Nov 2022)','SP Appropriation Ordinance No. 017, s. 2022',SP,None,['A4.2'],
+  'Listed from the SP ordinance folder shared by the CDRRMO (Drive, 9-10 Nov 2026; added 12 Nov 2026). Title taken from the file name; the scan is not yet read in full, so the summary and indicator links are provisional.'),
+ ('sp-aord-001-2023','1xPQpjheemBJXV96ypxjUtQK2dWYkgCwj','Ormoc City Annual Budget 2023','SP Appropriation Ordinance No. 001, s. 2023',SP,None,['A4.1'],
+  'Listed from the SP ordinance folder shared by the CDRRMO (Drive, 9-10 Nov 2026; added 12 Nov 2026). Title taken from the file name; the scan is not yet read in full, so the summary and indicator links are provisional.'),
+ ('sp-aord-020-2023','1OIo3nLO7E3AmrY9A16TGiWkJE87uYlpy','Supplemental Budget No. 19, s. 2023: PHP 6 M for the flood control and drainage improvement feasibility study and master plan','SP Appropriation Ordinance No. 020, s. 2023',SP,None,['A4.2'],
+  'Listed from the SP ordinance folder shared by the CDRRMO (Drive, 9-10 Nov 2026; added 12 Nov 2026). Title taken from the file name; the scan is not yet read in full, so the summary and indicator links are provisional.'),
+ ('sp-aord-041-2023','1Q51yAmWi-HSYG9Htrba0WD6TV6bo_app','Supplemental Budget No. 40, s. 2023: PHP 500,000 supplemental budget to the 5% LDRRMF 2023','SP Appropriation Ordinance No. 041, s. 2023',SP,None,['A4.2'],
+  'Listed from the SP ordinance folder shared by the CDRRMO (Drive, 9-10 Nov 2026; added 12 Nov 2026). Title taken from the file name; the scan is not yet read in full, so the summary and indicator links are provisional.'),
+ ('sp-aord-056-2023','165uzllH8cUVq_qlmCmuj8Rn6pnLvvln-','Supplemental Budget No. 55, s. 2023 (19 Dec 2023)','SP Appropriation Ordinance No. 56, s. 2023',SP,None,[],
+  'Listed from the SP ordinance folder shared by the CDRRMO (Drive, 9-10 Nov 2026; added 12 Nov 2026). Title taken from the file name; the scan is not yet read in full, so the summary and indicator links are provisional.'),
+ ('sp-ord-102-2023','19GkcyjMXlC2twcU4YGDv4fUs6VH-IjrR','SP Ordinance No. 102, s. 2023 (title to be read from the scan)','SP Ordinance No. 102, s. 2023',SP,None,[],
+  'Listed from the SP ordinance folder shared by the CDRRMO (Drive, 9-10 Nov 2026; added 12 Nov 2026). Title taken from the file name; the scan is not yet read in full, so the summary and indicator links are provisional.'),
+ ('sp-ord-135-2023','1AYxmnmsHYsc8-RydmTdRfxpSRoV0yjIW','Guidelines on the cancellation or suspension of government work and classes in disasters or natural calamities','SP Ordinance No. 135, s. 2023',SP,None,['A1.5', 'A6.2'],
+  'Listed from the SP ordinance folder shared by the CDRRMO (Drive, 9-10 Nov 2026; added 12 Nov 2026). Title taken from the file name; the scan is not yet read in full, so the summary and indicator links are provisional.'),
+ ('sp-ord-160-2024','1K8UtqgJUVkVxPBbr2cyRtIV_UCO3lDMk','SP Ordinance No. 160, s. 2024 (title to be read from the scan)','SP Ordinance No. 160, s. 2024',SP,None,[],
+  'Listed from the SP ordinance folder shared by the CDRRMO (Drive, 9-10 Nov 2026; added 12 Nov 2026). Title taken from the file name; the scan is not yet read in full, so the summary and indicator links are provisional.'),
+ ('sp-ord-171-2024','1Sx20jVxuT7kdN1-bYYtHL3r9xikJewbb','SP Ordinance No. 171, s. 2024 (title to be read from the scan)','SP Ordinance No. 171, s. 2024',SP,None,[],
+  'Listed from the SP ordinance folder shared by the CDRRMO (Drive, 9-10 Nov 2026; added 12 Nov 2026). Title taken from the file name; the scan is not yet read in full, so the summary and indicator links are provisional.'),
 ]
 
 # Issuances received as a local document bundle on 9 November 2026 (CDRRMC resolutions 2016-2025 and
@@ -197,6 +259,8 @@ ISS_UPLOADS = [
 # gap is visible instead of silent. Status stays 'draft' (the only non-assertive state) with a dated note.
 # (key, title, doc_number, issuer, date, indicators, summary)
 ISS_NOT_OBTAINED = [
+ ('missing-sp-ord-135-2023','SP Ordinance No. 135, s. 2023 (Policy on suspending or cancelling classes and work during emergencies or disasters) — NOT OBTAINED','SP Ordinance No. 135, s. 2023',SP,None,['A1.5','A6.2'],
+  'Not obtained as of 12 November 2026. The base ordinance amended by SP Ordinance No. 189, s. 2025 (Section 6(B) heavy rainfall). Request a certified copy from the Office of the SP Secretary.'),
  ('missing-cdrrmc-2017','CDRRMC resolutions for 2017 — NOT OBTAINED','CDRRMC Resolutions, s. 2017',C,None,[],
   'Not obtained as of 10 November 2026: the 2017 resolution folder arrived empty (folder only, no files). Request from the City Secretary/CDRRMO records.'),
  ('missing-cdrrmc-2018','CDRRMC resolutions for 2018 — NOT OBTAINED','CDRRMC Resolutions, s. 2018',C,None,[],
@@ -219,6 +283,7 @@ ISS_NOT_OBTAINED = [
 # marked superseded by the document (Vault records are superseded, never deleted). (old key, new key)
 ISS_SUPERSEDED = [
  ('missing-eo-2021', 'eo-2021-151'),
+ ('missing-sp-ord-135-2023', 'sp-ord-135-2023'),
  # 1.14.0: newer versions of the engagement's own workbooks (same mechanism; the older entry stays, superseded).
  ('iat-workbook-v15', 'iat-workbook-v17'),
  ('mrt', 'mrt-v1-2'),

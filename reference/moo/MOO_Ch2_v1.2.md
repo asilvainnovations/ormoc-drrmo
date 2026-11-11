@@ -1119,52 +1119,56 @@ RACI interpretation: one Accountable (A) role is assigned per activity, except w
 
 # REFERENCES
 
-9.  City Government of Ormoc. (2026). Inception report: Ormoc City CDRRMO and EOC Manual of Operations development. Unpublished project document.
+9. City Government of Ormoc, City Disaster Risk Reduction and Management Office. (2026). *CDRRMO reference: Local policies* [Shared Drive folder of the City's DRRM policy instruments: Sangguniang Panlungsod ordinances, executive orders, CDRRMC resolutions and SP resolutions]. https://drive.google.com/drive/folders/12NWwUTAE6ub1vW31M2NSMktYlP-BP4oR
 
-10. City Government of Ormoc. (2026). Ormoc CDRRMO–EOC Institutional Assessment Tool (v1-7, 11 November 2026). Unpublished assessment workbook.
+10. City Government of Ormoc, Sangguniang Panlungsod. (1993–2025). *SP ordinances* [Shared Drive folder, by year, including Ordinance No. 008, s. 2014 establishing the CDRRMO and Ordinance No. 011, s. 2015 amending it]. https://drive.google.com/drive/folders/132g-VeSpXkorcNCte2fpyVY3Az3baBXS
 
-11. City Government of Ormoc, City Disaster Risk Reduction and Management Council. (2022). Resolution Nos. 03 and 04, s. 2022: Adoption of NDRRMC Memorandum Circular No. 64, s. 2021 and risk categorization for ACDV insurance.
+11.  City Government of Ormoc. (2026). Inception report: Ormoc City CDRRMO and EOC Manual of Operations development. Unpublished project document.
 
-12. City Government of Ormoc, Office of the City Mayor. (2022). Executive Order Nos. 2022-0006 (CDRRMC reorganization) and 2022-00020 (CDRRMP Technical Working Group), and Executive Order on the City CCCM Team, s. 2022.
+12. City Government of Ormoc. (2026). Ormoc CDRRMO–EOC Institutional Assessment Tool (v1-7, 11 November 2026). Unpublished assessment workbook.
 
-13. Sangguniang Panlungsod ng Ormoc. (2023). Resolution No. 2023-347: MOA with CPR-RIMT Rapid Rescue Rider Ormoc Chapter.
+13. City Government of Ormoc, City Disaster Risk Reduction and Management Council. (2022). Resolution Nos. 03 and 04, s. 2022: Adoption of NDRRMC Memorandum Circular No. 64, s. 2021 and risk categorization for ACDV insurance.
 
-14. City Government of Ormoc, City Disaster Risk Reduction and Management Office. (2026). CDRRMO organizational chart and internal staff papers on planning, budgeting and cluster-based barangay coordination. Unpublished working papers.
+14. City Government of Ormoc, Office of the City Mayor. (2022). Executive Order Nos. 2022-0006 (CDRRMC reorganization) and 2022-00020 (CDRRMP Technical Working Group), and Executive Order on the City CCCM Team, s. 2022.
 
-15. City Government of Ormoc, Office of the City Mayor. (2023). Executive Order No. 2023-0085: BDRRMP Review Team.
+15. Sangguniang Panlungsod ng Ormoc. (2023). Resolution No. 2023-347: MOA with CPR-RIMT Rapid Rescue Rider Ormoc Chapter.
 
-16. City Government of Ormoc. (2026). Ormoc CDRRMO–EOC Institutional Assessment Standards and Policy Methodology. Unpublished project document.
+16. City Government of Ormoc, City Disaster Risk Reduction and Management Office. (2026). CDRRMO organizational chart and internal staff papers on planning, budgeting and cluster-based barangay coordination. Unpublished working papers.
 
-17. Republic Act No. 7160. (1991). Local Government Code of 1991.
+17. City Government of Ormoc, Office of the City Mayor. (2023). Executive Order No. 2023-0085: BDRRMP Review Team.
 
-18. Republic Act No. 10121. (2010). Philippine Disaster Risk Reduction and Management Act of 2010.
+18. City Government of Ormoc. (2026). Ormoc CDRRMO–EOC Institutional Assessment Standards and Policy Methodology. Unpublished project document.
 
-19. Republic Act No. 10173. (2012). Data Privacy Act of 2012.
+19. Republic Act No. 7160. (1991). Local Government Code of 1991.
 
-20. Republic Act No. 11036. (2018). Mental Health Act.
+20. Republic Act No. 10121. (2010). Philippine Disaster Risk Reduction and Management Act of 2010.
 
-21. Republic Act No. 12287. (2025). Declaration of State of Imminent Disaster Act.
+21. Republic Act No. 10173. (2012). Data Privacy Act of 2012.
 
-22. Republic Act No. 9710. (2009). Magna Carta of Women.
+22. Republic Act No. 11036. (2018). Mental Health Act.
 
-23. Republic Act No. 7277, as amended. Magna Carta for Persons with Disability.
+23. Republic Act No. 12287. (2025). Declaration of State of Imminent Disaster Act.
 
-24. Republic Act No. 9994. (2010). Expanded Senior Citizens Act of 2010.
+24. Republic Act No. 9710. (2009). Magna Carta of Women.
 
-25. Republic Act No. 10821. (2016). Children's Emergency Relief and Protection Act.
+25. Republic Act No. 7277, as amended. Magna Carta for Persons with Disability.
 
-26. National Disaster Risk Reduction and Management Council, Department of the Interior and Local Government, Department of Budget and Management, & Civil Service Commission. (2014). Joint Memorandum Circular No. 2014-1: Guidelines on the establishment of local disaster risk reduction and management offices (LDRRMOs) and staffing pattern.
+26. Republic Act No. 9994. (2010). Expanded Senior Citizens Act of 2010.
 
-27. National Disaster Risk Reduction and Management Council. (2012). Memorandum Circular No. 4, s. 2012: Institutionalization of the Incident Command System (ICS) in the Philippines. \[Verify exact title and current status\].
+27. Republic Act No. 10821. (2016). Children's Emergency Relief and Protection Act.
 
-28. Office of Civil Defense / National Disaster Risk Reduction and Management Council. (n.d.). Emergency Operations Center guidelines. \[Exact issuance number, title and current status to be verified with OCD Region VIII\].
+28. National Disaster Risk Reduction and Management Council, Department of the Interior and Local Government, Department of Budget and Management, & Civil Service Commission. (2014). Joint Memorandum Circular No. 2014-1: Guidelines on the establishment of local disaster risk reduction and management offices (LDRRMOs) and staffing pattern.
 
-29. United Nations Office for Disaster Risk Reduction. (2015). Sendai Framework for Disaster Risk Reduction 2015–2030.
+29. National Disaster Risk Reduction and Management Council. (2012). Memorandum Circular No. 4, s. 2012: Institutionalization of the Incident Command System (ICS) in the Philippines. \[Verify exact title and current status\].
 
-30. Civil Service Commission. (2026). CSC Resolution No. 2600005: Guidelines on the Development of Agency Competency-Based Human Resource Management System. https://www.csc.gov.ph/downloads/category/562-csc-reso-2600005
+30. Office of Civil Defense / National Disaster Risk Reduction and Management Council. (n.d.). Emergency Operations Center guidelines. \[Exact issuance number, title and current status to be verified with OCD Region VIII\].
 
-31. Republic Act No. 11058. (2018). An Act Strengthening Compliance with Occupational Safety and Health Standards and Providing Penalties for Violations Thereof.
+31. United Nations Office for Disaster Risk Reduction. (2015). Sendai Framework for Disaster Risk Reduction 2015–2030.
 
-32. National Disaster Risk Reduction and Management Council, Department of the Interior and Local Government, Department of Budget and Management, & Civil Service Commission. (2014). Joint Memorandum Circular No. 2014-1: Implementing guidelines for the establishment of Local Disaster Risk Reduction and Management Offices or Barangay Disaster Risk Reduction and Management Committees in Local Government Units. https://www.dbm.gov.ph/wp-content/uploads/Issuances/2014/Joint%20Memorandum%20Circular/JMC2014-1%20_LDRRMOs.pdf
+32. Civil Service Commission. (2026). CSC Resolution No. 2600005: Guidelines on the Development of Agency Competency-Based Human Resource Management System. https://www.csc.gov.ph/downloads/category/562-csc-reso-2600005
+
+33. Republic Act No. 11058. (2018). An Act Strengthening Compliance with Occupational Safety and Health Standards and Providing Penalties for Violations Thereof.
+
+34. National Disaster Risk Reduction and Management Council, Department of the Interior and Local Government, Department of Budget and Management, & Civil Service Commission. (2014). Joint Memorandum Circular No. 2014-1: Implementing guidelines for the establishment of Local Disaster Risk Reduction and Management Offices or Barangay Disaster Risk Reduction and Management Committees in Local Government Units. https://www.dbm.gov.ph/wp-content/uploads/Issuances/2014/Joint%20Memorandum%20Circular/JMC2014-1%20_LDRRMOs.pdf
 
 **Reference control note**: Exact titles, amendments, current effectivity and the official versions of administrative issuances shall be verified by the City Legal Office and OCD Region VIII before final approval. This chapter does not rely on unverified summaries as a substitute for certified legal texts.

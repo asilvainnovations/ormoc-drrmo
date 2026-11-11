@@ -277,6 +277,17 @@ VAULT = [  # key, title, category, ref_key, doc_number, issuer, date, status, in
      'MOP consultant', '2026-11-12', 'current', [], None,
      'reference/Ormoc_CDRRMO_EOC_Master_Requirements_Traceability_and_140_Indicator_Data_Dictionary_v1.2.xlsx',
      'Aligned with IAT v1.7 and the 85-barangay master list. MR-01 to MR-18, indicator-to-requirement map and data dictionary. Replaces v1.1.'),
+    ('local-policies-folder', 'CDRRMO reference: Local policies (shared Drive folder)', 'record', None, None,
+     'CDRRMO', '2026-11-05', 'current', [], 'https://drive.google.com/drive/folders/12NWwUTAE6ub1vW31M2NSMktYlP-BP4oR',
+     'Drive folder "CDRRMO REFERENCE _ LOCAL POLICIES", shared by the CDRRMO',
+     'The City\'s DRRM policy instruments for the CDRRMO and the EOC, in four folders: SP ordinances (1993-2025), executive '
+     'orders, CDRRMC resolutions and SP resolutions. Each document is also registered on its own in this Vault. Cited as a '
+     'reference in Manual Chapters 1 to 4 (12 Nov 2026).'),
+    ('sp-ordinances-folder', 'SP ordinances 1993-2025 (shared Drive folder, by year)', 'record', None, None,
+     'Sangguniang Panlungsod', '2026-11-09', 'current', [], 'https://drive.google.com/drive/folders/132g-VeSpXkorcNCte2fpyVY3Az3baBXS',
+     'Drive folder "SP Ordinance" inside "CDRRMO REFERENCE _ LOCAL POLICIES"',
+     'Year folders 1993, 2013-2015, 2017 and 2021-2025, including Ordinance No. 008, s. 2014 establishing the CDRRMO and '
+     'Ordinance No. 011, s. 2015 amending it. Each ordinance is registered on its own in this Vault.'),
     ('eoc-kml', 'EOC location placemark (KML, Google Earth)', 'record', None, 'Placemark 0A9E71EA9142E2E2B044',
      'CDRRMO', '2026-11-06', 'current', ['B2.1'], None, 'MOP project files (KML supplied 6 Nov 2026)',
      'Point 11.013896 N, 124.604287 E, used for the hazard-map overlay of the EOC site (B2.1) and as the Geo-COP reference '
