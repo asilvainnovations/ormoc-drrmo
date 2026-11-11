@@ -192,3 +192,19 @@ The integration suite found two defects that the fake client could not show, and
 - **Annex 1-C alert levels.** The draft EO uses Levels 0–3; the National Disaster Response Plan, the RDRRMC VIII SOP (Res. No. 12-006, s. 2023), SOP GOV-05 and the EOC board use White, Blue and Red. NDRRMC Memorandum No. 131, s. 2018 does not fix colours: it lets each EOC set its own codes (para. 9.2.2) and governs activation triggers and EOC functions. Settle one scheme or a crosswalk before the workshop.
 - **EOC location.** The primary EOC position comes from a Google Earth placemark (6 Nov 2026) and shows as "To be confirmed" until the CDRRMO checks it. The alternate EOC is not yet recorded (EOC Capability Checklist; MR-10). Both are edits to `src/data/eoc-site.ts` plus a KML in `public/eoc-site/` (ADR-015).
 - **Possible later modules.** Responder roster and fatigue tracking (MR-09), and a risk-map layer (MR-03).
+
+## Hazard maps and QGIS-style tools (1.14, ADR-028)
+
+`src/features/eoc/map/`: `HazardMapPage.tsx` (EOC → Hazard maps), `hazardMaps.ts` (catalogue of fitted sheets:
+corners, source, custodian, fit error, legend), `themes.ts` (DDRiVE barangay colouring and exposure summary),
+`geodesy.ts` (geodesic distance and area, UTM 51N, sheet pixel mapping), `identify.ts` (class from a sheet's pixel
+colour), `knowYourHazards.ts` (draft advice and go-bag, after the Project NOAH feature), `base.ts` (basemap set-up
+shared with the Geo-COP map). Files: `public/geo/hazard/*.webp`, `public/geo/ormoc-barangays.geojson` (OCHA COD-AB,
+PSGC-keyed), cached by the service worker on first use. Sheets are pictures: identify answers "about" a class, and
+every export carries the source and fit error.
+
+## Status colour code (1.14)
+
+`src/components/StatusBadge.tsx` is the one place that maps approval status to colour for Manual text, workflows,
+protocols and forms: Draft = warn (ochre), For validation (`in_review`) = info (blue), Approved = ok (green),
+Returned = bad, Superseded and Retired = neutral. `StatusLegend` shows the key once per list.

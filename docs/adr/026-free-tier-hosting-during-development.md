@@ -16,3 +16,9 @@ MODE is Alvin M. Silva's own initiative to place the development of the Manual o
 - Fewer builds: one project and app-only builds keep well under 100 deployments a day.
 - Before the City uses MODE for real operations or holds personal data in it, the City decides on City-owned accounts (Vercel or other government hosting; a paid Supabase plan with backups), and this ADR is superseded.
 - The privacy notice and SECURITY.md keep naming Tokyo and the transfer to Japan.
+
+## Status update (11 Nov 2026)
+
+- Done: only `ormoc-drrmo-eoc` is still connected to the repository; the other two Vercel projects were removed by Alvin.
+- The uptime check (`.github/workflows/uptime.yml`) is on by default and checks the City domain every six hours. Set the repository variable `UPTIME_ENABLED` to `false` to pause it.
+- The basemap workflow is optional: without its two secrets it skips, and the basemap is uploaded by hand (DEPLOY.md, section 6).

@@ -87,12 +87,11 @@ The SQL editor rejects long scripts, so the reference data comes in parts in `su
 2. **Reference data.** Paste and run `supabase/seed/parts/01_seed.sql`, then `02_seed.sql`, and so on to the last part. Use the parts, not `supabase/seed/seed.sql`, which is the same data in one file for `psql`.
 3. The last part ends with a check query. It should return **140 | 18 | 935 | 71 | 14 | 94 | 29 | 10 | 140 | 29** (protocols and workflows, their steps, AA items, functional areas, indicators with an area, forms).
 4. **Operational data (once).** Paste and run, in order, these files in `supabase/seed/operational/`:
-   - `01_iat_baseline_responses.sql`, `02_iat_baseline_evidence.sql`, `02b_iat_baseline_evidence.sql`, `03_iat_baseline_scores_actions.sql`: the October 2026 IAT baseline (workbook v1-5) as the cycle **2026 Baseline (IAT v1.1)**, with 140 provisional responses, their evidence notes and the action plan. Part 3 ends with the cycle results.
+   - `01_iat_baseline_responses.sql`, `02_iat_baseline_evidence.sql`, `02b_iat_baseline_evidence.sql`, `03_iat_baseline_scores_actions.sql`: the October 2026 IAT baseline (workbook v1-6, updated 11 Nov 2026) as the cycle **2026 Baseline (IAT v1.6)**, with 140 provisional responses, their evidence notes and the action plan. Part 3 ends with the cycle results.
    - `04_vault_register.sql`: Document Vault entries for the engagement's source documents and City issuances. Attach the files in the app afterwards.
    - `06_eoc_structure.sql`: response clusters, contingency plans, EOC positions, barangay clusters and the EOC reference point.
-   - Skip `05_iat_v1_5_update.sql` on a new database: it updates databases loaded from the older workbook.
 
-   These are working records the City then edits in the app. Running them again never overwrites anything, and never changes a score someone has set. 27 baseline scores are loaded below the workbook score, because the evidence on record does not support them (see the note at the top of each response's Gap / Remarks).
+   These are working records the City then edits in the app. Running them again never overwrites anything, and never changes a score someone has set. The scores equal the workbook: the evidence rule (Methodology 5.2) is already applied in workbook v1-6 to 15 items, each noted at the start of its Gap / Remarks. The cycle results match the workbook Dashboard: IMI 1.98, mandatory compliance 32.9%, 30 high-priority gaps.
 
 Each part runs as a single transaction, so a part that fails changes nothing. During setup a part can be run again on its own, and it only replaces its own rows. If a part fails or you lose your place, run that part again and carry on from there. Re-running the parts is safe after go-live: manual versions are only ever added, never rewritten, and the approval status of manual sections and protocols is kept.
 
@@ -177,7 +176,7 @@ Then, in the dashboard:
   2. **Reference data.** Delete every file in `supabase/seed/parts/`, upload the new ones, and run all **18** parts in order. Parts 12 to 14 carry Chapters 1 and 2 v1.2 in pieces (the chapters are too long for one part); run them in order. The last part's check should return **140 | 18 | 935 | 71 | 14 | 94 | 29 | 10 | 140 | 29** (protocols and workflows, steps, AA items, areas, indicators with an area, forms). Approved text and approval status are never changed; the 14 templates and 29 forms load as drafts for the Head to approve.
   3. **Operational files**, in this order:
      - `04_vault_register.sql` again: adds the IAT v1.5 workbook, the EOC placemark (KML), 48 City issuances with their Drive links, and three **restricted** entries (organisational chart and two staff papers: CDRRMO Head, assessors and validators only). It leaves existing entries alone. It needs migration 1600.
-     - `05_iat_v1_5_update.sql`: brings the "2026 Baseline" cycle from workbook v1-3 to v1-5 (71 indicators; 84 evidence notes; 27 score changes). It never changes a validated response, and changes a score only where it still equals the v1-3 import.
+     - `05_iat_v1_5_update.sql` (removed in 1.14.0; use `supabase/admin/iat_reset_to_v1_6.sql` instead): brought the "2026 Baseline" cycle from workbook v1-3 to v1-5 (71 indicators; 84 evidence notes; 27 score changes). It never changes a validated response, and changes a score only where it still equals the v1-3 import.
      - `06_eoc_structure.sql`: 10 response clusters, 7 contingency plans with their activation sets, the EOC positions, barangay clusters D1–D6 (pilots D1 and D3) and the EOC reference point (pending field validation).
      On a **new** database run `01`, `02`, `02b`, `03`, `04`, `06` instead (`02` is now in two files; `05` is not needed because `01`–`03` already carry v1-5).
   4. Run `supabase/migrations/migration_status.sql`: the four new migrations should say `applied` and every grant `ok`.
@@ -238,6 +237,29 @@ Then, in the dashboard:
        vulnerability and priority with "—" for fields not yet assessed;
      - the SQL suite (`npm run test:db`) passes its new DDRiVE checks.
 
+- **To 1.14.0** (11 November 2026), one baseline figure, Hazard maps, Library by chapter and DRRM thematic areas.
+  No migration. Apply 1.13.0 first (migration 0025).
+  1. **Baseline: one figure everywhere.** IAT workbook v1-6 (updated 11 Nov 2026) is the only baseline: the
+     evidence rule (Methodology 5.2) is applied in the workbook to 15 items (11 FGD-only items capped at 2;
+     4 items without a test set from 4 to 3). Of the 27 items first counted as FGD-only, 24 still rest on FGD
+     alone, and all 24 are at 2 or lower. **IMI 1.98 (Developing)**, Part A 2.06, Part B 1.85, mandatory compliance
+     32.9%, 30 high-priority gaps, Interface Index 1.41. Chapters 1 and 2 and Figure 1.1 now quote these figures.
+  2. **Assess shows v1.6 only.** In the SQL editor run `supabase/admin/iat_reset_to_v1_6.sql` step A (read-only), then
+     step B (removes every assessment cycle with its responses, evidence notes and actions), then
+     `supabase/seed/operational/01`, `02`, `02b`, `03`. Assess then holds one cycle, "2026 Baseline (IAT v1.6)", with the
+     workbook figures. Step B stops and removes nothing if any cycle is final or has a validated score.
+  3. **Reference data.** Re-run all seed parts in order (Chapters 1 and 2 changed). Devices reload on their next sync.
+  4. **App.** EOC → **Hazard maps** (ADR-028): eight official hazard sheets fitted to their grids, the OCHA COD-AB
+     barangay boundaries, DDRiVE colouring, identify with "Know your hazards" (nearest EOC places, what to do, go-bag),
+     distance and area, coordinates in WGS 84 and UTM 51N, and PNG export. The sheets and boundaries are static files
+     in `public/geo/`, cached on first use. **Library** lists the written chapters, each opening to its SOPs, forms
+     and annexes. **Workflows and Protocols** are grouped by the four DRRM thematic areas. One status colour code
+     throughout: Draft (ochre), For validation (blue), Approved (green).
+  5. **Hosting.** One Vercel project (`ormoc-drrmo-eoc`). The uptime check runs by default every six hours; set the
+     repository variable `UPTIME_ENABLED` to `false` to pause it. The basemap workflow skips without its secrets.
+  6. Push with git, redeploy, then check: Assess shows one cycle with IMI 1.98; EOC → Hazard maps opens with the
+     flood sheet; clicking in San Juan reads "about Very high" for flood; Library → Chapter 2 opens to 8 SOPs.
+
 - **To 1.13.0** (11 November 2026), scoring band fix, the evidence validation status and the RA 12287 IRR
   alignment. Three migrations and three seed re-runs. Apply 1.12.2 first if it is not applied.
   1. **Migrations** (safe to run again), in order:
@@ -268,12 +290,9 @@ Then, in the dashboard:
      Parts `01`, `02` and `02b` of `seed/operational` were regenerated from IAT v1-6 (A3.6 and A7.4
      evidence text; the A8.5 site evidence removed) but **do not re-run them** on production: they
      would overwrite assessor work. The A8.5 retraction is a decision for the assessor (decision list).
-  3. **Vault files.** `scripts/vault_attach.py` attaches 81 files of the 9 Nov 2026 issuance bundle
-     to their Vault entries, using `supabase/admin/vault_bundle_manifest.csv`. Run it on a City ICT
-     computer that holds the unzipped bundle: first without `--apply` (checks only), then with
-     `SUPABASE_URL` and `SERVICE_ROLE_KEY` typed in the shell for that run. It never replaces an
-     attached file. Attachments, the EO 28 s. 2016 page scans and the second version of Res. 04
-     s. 2021 are left for the records office to attach by hand.
+  3. **Vault files.** CDRRMO and EOC staff attach the 81 files of the 9 Nov 2026 issuance bundle in the app,
+     with `docs/vault-attach-checklist.md` (one line per file, grouped by year; no keys or scripts). An attached
+     file is never replaced. The bulk script was removed in 1.14.0: it needed the service-role key.
   4. **App.** Assess → an indicator → Evidence has an "Evidence check" control; the cycle overview
      shows the five counts (as on the workbook Dashboard) and the CSV export has an "Evidence check"
      column. Devices pick up the new fields on their next sync; no Dexie schema change.

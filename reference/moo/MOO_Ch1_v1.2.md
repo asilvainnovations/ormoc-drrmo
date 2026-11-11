@@ -46,7 +46,7 @@ The chapter adopts a systems-thinking perspective: disaster risk is understood a
 
 The chapter also applies Total Quality Management (TQM) principles to institutional operations. These include process ownership, evidence-based decision-making, stakeholder participation, standardization, performance measurement, corrective action and continuous improvement.
 
-The institutional provisions are informed by the **Ormoc CDRRMO–EOC Institutional Assessment Tool v1.5 (6 November 2026)**, particularly its nine assessment sheets.
+The institutional provisions are informed by the **Ormoc CDRRMO–EOC Institutional Assessment Tool v1.6 (workbook v1-6, updated 11 November 2026)**, particularly its nine assessment sheets.
 
 The assessment is treated as a diagnostic baseline, not as a substitute for legal compliance verification or formal institutional approval.
 
@@ -56,7 +56,7 @@ The October 2026 assessment identifies a significant distinction between the mat
 
 **Figure 1.1**
 
-*Institutional Maturity and Mandatory Compliance, IAT v1.5*
+*Institutional Maturity and Mandatory Compliance, IAT v1.6*
 
 ![Figure 1: 1.1 Assessment-Informed Governance Priorities](/library/ch1v12/fig-01.webp)
 
@@ -70,7 +70,7 @@ For this chapter, the most consequential findings are:
 
 **Table 1.1**
 
-*Most Consequential Assessment Findings for Governance (IAT v1.5)*
+*Most Consequential Assessment Findings for Governance (IAT v1.6)*
 
 <table>
 <colgroup>
@@ -81,7 +81,7 @@ For this chapter, the most consequential findings are:
 <thead>
 <tr class="header">
 <th><strong>Assessment reference</strong></th>
-<th><strong>Finding (IAT v1.5)</strong></th>
+<th><strong>Finding (IAT v1.6)</strong></th>
 <th><strong>Governance implication</strong></th>
 </tr>
 </thead>
@@ -156,7 +156,7 @@ The assessment also identifies broader system dependencies involving City Planni
 
 **Management implication**: The priority is not simply to create more committees or issue additional policies. It is to establish a coherent governance system in which each mandate has an accountable owner, each process has a defined workflow, each decision has a legitimate authority, and each institutional output can be verified.
 
-**Assessment interpretation**: The workbook's Dashboard (IAT v1.5) reports 2.13/4.00 as the combined Institutional Maturity Index. Part C is reported separately and is not included in that index. Unscored indicators and provisional desk assessments must not be read as proof of compliance.
+**Assessment interpretation**: The workbook's Dashboard (IAT v1.6, updated 11 Nov 2026) reports 1.98/4.00 as the combined Institutional Maturity Index, after the evidence rule (Methodology 5.2) was applied to 15 indicators. Part C is reported separately and is not included in that index. Unscored indicators and provisional desk assessments must not be read as proof of compliance.
 
 ## 1.2 Interpretation of institutional Maturity and Compliance
 
@@ -168,7 +168,7 @@ This distinction is particularly important for Ormoc:
 
 - EOC Legal Basis and Concept of Operations (B1) has a maturity index of 2.23/4.00, but only 20% mandatory compliance.
 
-- The overall mandatory compliance rate is 41.8%, against a combined maturity index of 2.13.
+- The overall mandatory compliance rate is 32.9%, against a combined maturity index of 1.98.
 
 The implication is that institutional improvements must address both capability and compliance. A procedure that is practiced informally cannot automatically be treated as an established institutional control. Similarly, the existence of an executive order, organizational chart or operational facility does not establish compliance unless the relevant requirements are documented, approved, implemented and supported by evidence.
 
@@ -234,7 +234,7 @@ During the assessment, CDRRMO staff shared written reflections on how the office
 | Alignment with national and global frameworks | The DRRM 10-Year Plan follows the NDRRMC 2022 guidebook; the CDP adopts the UNDRR Ten Essentials. No LCCAP–LDRRMP crosswalk exists.                                                                           | Prepare the crosswalk with the CPDO.                                          |
 | Link between planning and budgeting           | No written budget cycle says who formulates and who executes the investment plan.                                                                                                                             | Adopt the budget-cycle RACI (Chapter 2, 2.16.2).                              |
 
-*Note.* Records reviewed: CDRRMC resolutions 2021–2025, CDP 2024–2030, DRRM 10-Year Plan 2023–2032 and the IAT v1.5 workbook. No record reviewed raises concerns about how any section handles funds. The City's Full Disclosure postings (A10.5) and its model-LGU partnerships (EO No. 2023-0026) are strengths to build on.
+*Note.* Records reviewed: CDRRMC resolutions 2021–2025, CDP 2024–2030, DRRM 10-Year Plan 2023–2032 and the IAT v1.6 workbook. No record reviewed raises concerns about how any section handles funds. The City's Full Disclosure postings (A10.5) and its model-LGU partnerships (EO No. 2023-0026) are strengths to build on.
 
 **Figure 1.2**
 
@@ -493,7 +493,7 @@ Its composition and functions shall conform to Section 11 of the Act and its IRR
 
 The City shall maintain an updated Executive Order identifying the membership, institutional representation, designated alternates and coordination responsibilities of the Council.
 
-The assessment (IAT v1.5, A1.2) identifies the following governance requirements:
+The assessment (IAT v1.6, A1.2) identifies the following governance requirements:
 
 - Issuing an amending EO to EO 2024-032A, the current reorganization order;
 
@@ -789,7 +789,7 @@ The process shall be used for the proposed CDRRMO enabling ordinance, updated CD
 
 The City shall maintain a documented protocol consistent with Section 16 of RA 10121 and its IRR.
 
-**Practice to date (IAT v1.5, A1.6).** The SP adopted a State of Calamity for Typhoon Odette (SP Res. No. 2021-366, December 2021). The CDRRMC recommended a State of Calamity for the 2024 dengue outbreak for a period not exceeding one year, liftable earlier on the Council's recommendation (CDRRMC Res. No. 06 s.2024). These cases show the process in use. They also show the gaps this protocol closes: no written criteria, no standard recommendation package, and Quick Response Fund resolutions that do not cite the declaration relied on.
+**Practice to date (IAT v1.6, A1.6).** The SP adopted a State of Calamity for Typhoon Odette (SP Res. No. 2021-366, December 2021). The CDRRMC recommended a State of Calamity for the 2024 dengue outbreak for a period not exceeding one year, liftable earlier on the Council's recommendation (CDRRMC Res. No. 06 s.2024). These cases show the process in use. They also show the gaps this protocol closes: no written criteria, no standard recommendation package, and Quick Response Fund resolutions that do not cite the declaration relied on.
 
 A State of Calamity declaration is based on the results of damage assessment and needs analysis. It shall be distinguished from the anticipatory declaration mechanism under RA 12287.
 
@@ -1196,7 +1196,7 @@ The City shall use this alignment to ensure that institutional improvements cont
 
 The following actions are directly linked to the assessment findings and shall be included in the Institutional Improvement Action Plan.
 
-Priority is the workbook's gap-priority band: (4 − score) × weight, × 1.5 for mandatory items; High is 9 or more and Medium is 4 or more. Owners, targets and status follow the IAT v1.5 Action Plan.
+Priority is the workbook's gap-priority band: (4 − score) × weight, × 1.5 for mandatory items; High is 9 or more and Medium is 4 or more. Owners, targets and status follow the IAT v1.6 Action Plan.
 
 **Table 1.5**
 
@@ -1333,7 +1333,7 @@ Priority is the workbook's gap-priority band: (4 − score) × weight, × 1.5 fo
 </tbody>
 </table>
 
-*Note.* Owners, targets and status follow the IAT v1.5 Action Plan; confirm them at the December 2026 validation workshop.
+*Note.* Owners, targets and status follow the IAT v1.6 Action Plan; confirm them at the December 2026 validation workshop.
 
 The action plan should retain the detailed status, funding, target dates and evidence requirements in the workbook. This chapter establishes the governance requirements and ownership; it does not replace the Action Plan.
 
@@ -1554,7 +1554,7 @@ The following matters should be resolved before Chapter 1 is submitted for forma
 | EOC–ICS interface          | Confirm the relationship between EOC, IMT, Incident Commander and response clusters.                                                                                   | CDRRMO / OCD VIII            |
 | Organizational structure   | Reconcile JMC 2014-1, approved plantilla and proposed CDRRMO department structure.                                                                                     | HRMO / CDRRMO                |
 | Institutional maturity     | Validate provisional scores and resolve contradictory evidence.                                                                                                        | Assessment team / CDRRMO     |
-| Version control            | The workbook is now v1.5 (6 November 2026), while its Guide sheet still identifies the instrument as Version 1.1. Reconcile the workbook version and revision history. | Assessment team              |
+| Version control            | The workbook is now v1-6 (updated 11 November 2026), while its Guide sheet still identifies the instrument as Version 1.1. Reconcile the workbook version and revision history. | Assessment team              |
 
 Two important corrections incorporated into this revised chapter:
 
@@ -1616,7 +1616,7 @@ This foundation shall support the implementation of the succeeding modules, part
 
 The following references provide the legal and technical foundation for this chapter. The final bibliography should be consolidated with the complete MOO reference register.
 
-- City Government of Ormoc. (2026). Ormoc CDRRMO–EOC Institutional Assessment Tool (v1.5, 6 November 2026). Unpublished assessment workbook.
+- City Government of Ormoc. (2026). Ormoc CDRRMO–EOC Institutional Assessment Tool (v1-6, updated 11 November 2026). Unpublished assessment workbook.
 
 - City Government of Ormoc, City Disaster Risk Reduction and Management Office. (2026). CDRRMO organizational chart and internal staff papers on planning, budgeting and cluster-based barangay coordination. Unpublished working papers.
 

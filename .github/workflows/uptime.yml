@@ -2,8 +2,9 @@ name: Uptime check
 
 # Every 6 hours: confirm the public site and the Supabase project answer. Opens an
 # issue (one at a time) when a check fails, and closes it when the service is back.
-# Off until the City domain is live: set the repository variable UPTIME_ENABLED to true
-# (Settings -> Secrets and variables -> Actions -> Variables). SITE_URL can be overridden there too.
+# On by default (free on GitHub Actions). To pause it, set the repository variable UPTIME_ENABLED to
+# false (Settings -> Secrets and variables -> Actions -> Variables). Set SITE_URL there to check another
+# address (for example the Vercel address of the ormoc-drrmo-eoc project).
 
 on:
   schedule:
@@ -16,7 +17,7 @@ env:
 
 jobs:
   check:
-    if: vars.UPTIME_ENABLED == 'true'
+    if: vars.UPTIME_ENABLED != 'false'
     runs-on: ubuntu-latest
     steps:
       - name: Check the public site

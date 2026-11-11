@@ -12,7 +12,9 @@ import { Badge, Button, Checkbox, EmptyState, List, ListRow, Notice, Section, Te
 import { Sheet } from '@/components/Sheet';
 import { useToast } from '@/components/Toast';
 import type { FormTemplate, ProtocolCategory, ProtocolStep, ProtocolTemplate } from '@/types';
-import { CATEGORY, KIND_LABEL, templateIsWorkflow } from './labels';
+import { CATEGORY, KIND_LABEL, THEMATIC, templateIsWorkflow } from './labels';
+import { Separator } from '@/components/ui/separator';
+import { StatusBadge, StatusLegend } from '@/components/StatusBadge';
 import { RefText } from '@/components/RefText';
 import { DrrmHeader } from './DrrmHeader';
 import { startProtocol } from './actions';
@@ -74,9 +76,7 @@ export function ProtocolsPage({ kind }: { kind: 'workflows' | 'protocols' }) {
   return (
     <div className="page">
       <DrrmHeader />
-      {data?.templates.some((t) => t.status === 'draft') && (
-        <Notice tone="warn" title={kind === 'workflows' ? 'Draft workflows' : 'Draft protocols'}>These are drafts for CDRRMO validation. Use them for drills and validation sessions until the CDRRMO Head approves them.</Notice>
-      )}
+      <StatusLegend subject={kind === 'workflows' ? 'Each workflow' : 'Each protocol'} />
       {data && total > 0 && (
         <div className="mb-6 grid gap-3 sm:grid-cols-[repeat(3,minmax(0,1fr))_minmax(0,1.4fr)]">
           {[[kind === 'workflows' ? 'Workflows' : 'Protocols', total, 'In the Manual, not retired'], ['Drafts', drafts, 'Awaiting validation and approval'], ['Running now', data.running.length, 'On any device']].map(([l, n, d]) => (
@@ -102,15 +102,29 @@ export function ProtocolsPage({ kind }: { kind: 'workflows' | 'protocols' }) {
           </List>
         </Section>
       )}
-      {Array.from(groups.entries()).map(([cat, ts]) => (
-        <Section key={cat} title={CATEGORY[cat]}>
-          <List>
-            {ts.map((t) => <ListRow tip="See the steps, the process owner and the forms, then start it" key={t.id} onClick={() => setOpen(t)} title={<>{t.title}{t.sop_ref && <KitBadge variant="outline" size="sm" className="ml-2 align-middle font-data">{t.sop_ref.split(' (')[0]}</KitBadge>}</>}
-              meta={[t.process_owner && `Owner: ${t.process_owner}`, t.trigger_text].filter(Boolean).join('. ') || undefined}
-              trailing={t.status === 'draft' ? <Badge tone="warn">Draft</Badge> : <Badge tone="ok">Approved</Badge>} />)}
-          </List>
-        </Section>
-      ))}
+      {THEMATIC.map((area, i) => {
+        const cats = area.categories.filter((c) => groups.has(c));
+        if (q && cats.length === 0) return null;
+        return (
+          <div key={area.key}>
+            {i > 0 && <Separator className="my-6" />}
+            <Section title={area.label}>
+              <p className="mb-3 -mt-1 max-w-prose text-sm text-muted">{area.about}</p>
+              {cats.length === 0 && <p className="text-sm text-muted">No {kind === 'workflows' ? 'workflow' : 'protocol'} in this area yet.</p>}
+              {cats.map((cat) => (
+                <div key={cat} className="mb-4">
+                  <h3 className="mb-1 text-sm font-semibold text-muted">{CATEGORY[cat]}</h3>
+                  <List>
+                    {groups.get(cat)!.map((t) => <ListRow tip="See the steps, the process owner and the forms, then start it" key={t.id} onClick={() => setOpen(t)} title={<>{t.title}{t.sop_ref && <KitBadge variant="outline" size="sm" className="ml-2 align-middle font-data">{t.sop_ref.split(' (')[0]}</KitBadge>}</>}
+                      meta={[t.process_owner && `Owner: ${t.process_owner}`, t.trigger_text].filter(Boolean).join('. ') || undefined}
+                      trailing={<StatusBadge status={t.status} />} />)}
+                  </List>
+                </div>
+              ))}
+            </Section>
+          </div>
+        );
+      })}
       {data && data.recent.length > 0 && (
         <Section title="Recent runs">
           <List>{data.recent.map((r) => <ListRow tip="Open the record of this run" key={r.id} to={`/drrm/run/${r.id}`} title={r.title} meta={relative(r.started_at)}

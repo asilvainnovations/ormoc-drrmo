@@ -24,6 +24,19 @@ export default {
         lvl: { white: v('lvl-white'), 'white-ink': v('lvl-white-ink'), blue: v('lvl-blue'), red: v('lvl-red') },
         banner: '#022A4D',   // edge colour of the City banner artwork (letterbox behind it)
         mat: { 0: v('mat-0'), 1: v('mat-1'), 2: v('mat-2'), 3: v('mat-3'), 4: v('mat-4') },
+        // 1.14: the shadcn/ui kit in src/components/ui/ reads these names. They map onto the MODE tokens so the
+        // kit follows the design system (and dark mode) instead of rendering without colour. "accent" is not
+        // remapped: in MODE it is the orange active mark, so kit hover fills use sky-soft (see ui/*.tsx).
+        primary: { DEFAULT: v('action'), foreground: v('on-action') },
+        secondary: { DEFAULT: v('sunken'), foreground: v('ink') },
+        background: v('surface'), foreground: v('ink'),
+        border: v('line'), input: v('line'), ring: v('focus'),
+        card: { DEFAULT: v('surface'), foreground: v('ink') },
+        popover: { DEFAULT: v('surface'), foreground: v('ink') },
+        destructive: { DEFAULT: v('bad'), foreground: v('on-strong') },
+        'muted-foreground': v('muted'),
+        sidebar: { DEFAULT: v('surface'), foreground: v('ink'), accent: v('sky-soft'), 'accent-foreground': v('ink'),
+          border: v('line'), ring: v('focus'), primary: v('action'), 'primary-foreground': v('on-action') },
       },
       fontFamily: {
         // Poppins for reading and controls, Montserrat for headings, Roboto Condensed for

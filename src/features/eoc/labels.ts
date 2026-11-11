@@ -23,6 +23,7 @@ export const EOC_TABS = [
   { to: '/eoc/risk', label: 'Risk', tip: 'Risk intelligence: the DDRiVE desk-assessment picture — city scores and per-barangay hazard profiles' },
   { to: '/eoc/plans', label: 'Plans and clusters', tip: 'Contingency plans, activating a plan, and which response clusters and modules are on' },
   { to: '/eoc/roster', label: 'Roster', tip: 'EOC positions and designations, primary and two alternates (B4.2)' },
+  { to: '/eoc/hazard-maps', label: 'Hazard maps', tip: 'Official hazard sheets over the barangays: layers, identify, measure, exposure summary and export' },
   { to: '/eoc/map', label: 'Map', tip: 'Geo-COP: the City basemap, verified reference points and validated layers' },
   { to: '/eoc/aa', label: 'Anticipatory action', tip: 'PDRA, State of Imminent Disaster declarations, the action checklist and AA funds (RA 12287)' },
 ];

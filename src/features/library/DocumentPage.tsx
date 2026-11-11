@@ -13,6 +13,7 @@ import { useToast } from '@/components/Toast';
 import type { MooVersion } from '@/types';
 import { Markdown } from './Markdown';
 import { DOC_STATUS } from './labels';
+import { APPROVAL, StatusBadge } from '@/components/StatusBadge';
 
 export function DocumentPage() {
   const { id } = useParams();
@@ -58,14 +59,14 @@ export function DocumentPage() {
   return (
     <div className="page">
       <PageHeader title={`${doc.code} ${doc.title}`} back="/library"
-        subtitle={<span className="flex flex-wrap items-center gap-2"><Badge tone={doc.status === 'approved' ? 'ok' : 'neutral'}>{DOC_STATUS[doc.status]}</Badge>{doc.summary}</span>}
+        subtitle={<span className="flex flex-wrap items-center gap-2"><StatusBadge status={doc.status} />{doc.summary}</span>}
         actions={isAuthor && <Button tip="Write a new draft version of this section. Published versions stay unchanged" icon={FilePen} onClick={startEdit}>New version</Button>} />
       <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_20rem] lg:gap-10">
         <article>
           {shown ? (
             <>
               <p className="mb-4 flex flex-wrap items-center gap-2 text-sm text-muted">
-                <Badge tone={shown.status === 'approved' ? 'ok' : shown.status === 'in_review' ? 'info' : 'neutral'}>{shown.label}: {DOC_STATUS[shown.status]}</Badge>
+                <Badge tone={APPROVAL[shown.status]?.tone ?? 'neutral'}>{shown.label}: {DOC_STATUS[shown.status]}</Badge>
                 {shown.approved_at && `Approved ${fmtDateTime(shown.approved_at)}`}
               </p>
               {shown.status !== 'approved' && current && <Notice tone="info">You are reading a draft. The approved text is {current.label}.</Notice>}
@@ -84,7 +85,7 @@ export function DocumentPage() {
         <aside className="space-y-6">
           <Section title="Versions">
             <List>{versions.map((v) => <ListRow tip="Show this version" key={v.id} onClick={() => setViewId(v.id)} title={v.label} meta={v.change_note ?? undefined}
-              trailing={<Badge tone={v.status === 'approved' ? 'ok' : 'neutral'}>{DOC_STATUS[v.status]}</Badge>} />)}</List>
+              trailing={<StatusBadge status={v.status} />} />)}</List>
           </Section>
           <Section title="Indicators this section answers">
             <ul className="space-y-2">{data.indicators.map((i) => {

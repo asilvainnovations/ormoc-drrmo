@@ -782,7 +782,7 @@ Process owner: CDRRMO Head / designated warning and public information focal per
 | **Process owner (operational)** | CDRRMO Head / warning and public information focal person                                                  |
 | **Trigger**                     | A validated matrix trigger or decision need                                                                |
 | **Forms**                       | EWR-F02 (Annex 4-C register); EWR-F03 (MODE EOC-WARN-02); ER-F04                                           |
-| **IAT v1.6 indicators**         | A6.2 (score 2, High); A6.3 (score 2, High); A6.4 (score 4, Low); A6.5 (score 2, Low); A6.7 (score 0, High) |
+| **IAT v1.6 indicators**         | A6.2 (score 2, High); A6.3 (score 2, High); A6.4 (score 2, Medium); A6.5 (score 2, Low); A6.7 (score 0, High) |
 | **Functional MR links**         | A6.2: MR-06, MR-16; A6.3: MR-06; A6.4: MR-06; A6.5: MR-06; A6.7: MR-06, MR-16                              |
 | **Policy basis**                | RA 10121 Sec. 12(c); RA 11106 (Filipino Sign Language); DILG VIII Res. No. 12-006 Table 2                  |
 | **Cross-references**            | SOP 4-01, 4-06; SOP GOV-05 (public notice of a SOID)                                                       |
@@ -910,7 +910,7 @@ Process owner: CDRRMO Head; Research and Planning and Operations and Warning Div
 | **Process owner (operational)** | CDRRMO Head; Research and Planning with Operations and Warning          |
 | **Trigger**                     | An approved warning or scenario trigger                                 |
 | **Forms**                       | EWR-F04 (MODE GOV-F09)                                                  |
-| **IAT v1.6 indicators**         | A8.6 (score 3, Medium); A8.8 (score 1, High); B1.2 (score 3, Medium)    |
+| **IAT v1.6 indicators**         | A8.6 (score 2, High); A8.8 (score 1, High); B1.2 (score 3, Medium)    |
 | **Functional MR links**         | A8.6: MR-05, MR-16; A8.8: MR-05, MR-08, MR-16; B1.2: MR-05, MR-16       |
 | **Policy basis**                | RA 12287 and its IRR (2026); NDRRMC-OCD CP Guidebook (2020), Chapter IV |
 | **Cross-references**            | SOP 3-6 (contingency plans); SOP GOV-05                                 |
@@ -1411,7 +1411,7 @@ Process owner: EOC Manager / Logistics function; approval and expenditure author
 | **Process owner (operational)** | EOC Manager / Logistics                                           |
 | **Trigger**                     | A resource or service request during an activation                |
 | **Forms**                       | EOC-F06                                                           |
-| **IAT v1.6 indicators**         | B6.2 (score 1, High); A8.3 (score 3, Low); A7.5 (score 4, Low)    |
+| **IAT v1.6 indicators**         | B6.2 (score 1, High); A8.3 (score 3, Low); A7.5 (score 3, Low)    |
 | **Functional MR links**         | B6.2: MR-08; A8.3: MR-05, MR-08; A7.5: MR-04, MR-08               |
 | **Policy basis**                | RA 10121 Sec. 21; RA 12009 and its IRR                            |
 | **Cross-references**            | Chapter 5; SOP 4-05                                               |
@@ -1539,7 +1539,7 @@ Process owner: EOC Planning / situation unit; authorised reviewing/approving off
 | **Process owner (operational)** | EOC Planning / situation unit                                                            |
 | **Trigger**                     | Each reporting period under the alert status in force                                    |
 | **Forms**                       | EOC-F05 (MODE EOC-SITREP-01)                                                             |
-| **IAT v1.6 indicators**         | B5.1 (score 2, High); B5.2 (score 1, High); B1.5 (score 2, Medium); A10.3 (score 4, Low) |
+| **IAT v1.6 indicators**         | B5.1 (score 2, High); B5.2 (score 1, High); B1.5 (score 2, Medium); A10.3 (score 3, Low) |
 | **Functional MR links**         | B5.1: MR-07; B5.2: MR-07; B1.5: MR-05; A10.3: MR-02, MR-07                               |
 | **Policy basis**                | DILG VIII Memorandum R08-LGCDD-2025-02-26-008, Tables 3 and 4                            |
 | **Cross-references**            | SOP 4-05, 4-06                                                                           |
@@ -1667,7 +1667,7 @@ Process owner: Deactivation authority: official designated in EOC EO; EOC Manage
 | **Process owner (operational)** | EOC Manager coordinates handover and closeout                                                                     |
 | **Trigger**                     | Incident stabilised; IC recommends termination                                                                    |
 | **Forms**                       | EOC-F01 (MODE EOC-ACT-01); ER-F05; ER-F06                                                                         |
-| **IAT v1.6 indicators**         | B1.3 (score 2, High); B7.4 (score 2, Medium); A10.6 (score 4, Low)                                                |
+| **IAT v1.6 indicators**         | B1.3 (score 2, High); B7.4 (score 2, Medium); A10.6 (score 2, Medium)                                                |
 | **Functional MR links**         | B1.3: MR-05; B7.4: MR-04, MR-11; A10.6: MR-07, MR-11                                                              |
 | **Policy basis**                | NDRRMC Memo 131 s. 2018; CP Guidebook (2020) Chapter IV; NEDA Disaster Rehabilitation and Recovery Planning Guide |
 | **Cross-references**            | Chapter 7 (learning); Chapter 8 (recovery)                                                                        |

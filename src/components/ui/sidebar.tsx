@@ -247,8 +247,8 @@ const SidebarNavItem = React.forwardRef<
   <div
     ref={ref}
     className={cn(
-      "flex items-center px-3 py-2 rounded-md text-sm text-foreground/80 hover:text-foreground hover:bg-accent/50 transition-colors cursor-pointer",
-      active && "bg-accent/60 text-primary font-medium",
+      "flex items-center px-3 py-2 rounded-md text-sm text-foreground/80 hover:text-foreground hover:bg-sky-soft/50 transition-colors cursor-pointer",
+      active && "bg-sky-soft/60 text-primary font-medium",
       className
     )}
     {...props}

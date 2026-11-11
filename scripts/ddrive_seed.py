@@ -2,7 +2,7 @@
 """Generate supabase/seed/parts/26a_ddrive.sql, 26b_ddrive.sql ... from the DDRiVE desk-assessment workbook.
 
 DDRiVE = Data-Driven Risk and Vulnerability Estimation (renamed from QRE; historical
-file and sheet names still say QRE). Source: Ormoc-City-Barangays_Hazard-Assessment_QRE_*.xlsx
+file and sheet names still say QRE). Source: Ormoc-City-Barangays_Hazard-Assessment_*.xlsx (v1.3: _Boundaries-v1.3_2026-11-09)
 (place the current version in reference/). Run:
 
     python3 scripts/ddrive_seed.py [path/to/workbook.xlsx]
@@ -143,7 +143,7 @@ def write_parts(header: list[str], statements: list[str], check: str, out_dir: P
 
 def main() -> None:
     src = Path(sys.argv[1]) if len(sys.argv) > 1 else next(
-        (p for p in sorted((ROOT / 'reference').glob('Ormoc-City-Barangays_Hazard-Assessment_QRE_*.xlsx'))), None)
+        (p for p in sorted((ROOT / 'reference').glob('Ormoc-City-Barangays_Hazard-Assessment_*.xlsx'))), None)
     if src is None or not src.exists():
         sys.exit('Workbook not found. Pass its path: python3 scripts/ddrive_seed.py <workbook.xlsx>')
     wb = openpyxl.load_workbook(src, data_only=True)

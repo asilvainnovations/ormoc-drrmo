@@ -1,8 +1,10 @@
 name: Build City basemap
 
 # City-hosted OSM basemap for the Geo-COP map (ADR-015). Re-runs monthly and on demand.
-# Needs repository secrets: SUPABASE_URL, SERVICE_ROLE_KEY (the key stays in GitHub
-# secrets — never in the repo, never in the app bundle).
+# Optional. Needs two repository secrets (GitHub -> Settings -> Secrets and variables -> Actions ->
+# New repository secret): SUPABASE_URL = the Project URL (Supabase -> Project Settings -> Data API) and
+# SERVICE_ROLE_KEY = the secret key (Supabase -> Project Settings -> API Keys -> Secret keys). The key
+# stays in GitHub secrets: never in the repo, never in the app. Without them the job skips.
 
 on:
   workflow_dispatch:
@@ -24,4 +26,9 @@ jobs:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SERVICE_ROLE_KEY: ${{ secrets.SERVICE_ROLE_KEY }}
           BUILD: ${{ github.event.inputs.build }}
-        run: bash scripts/build_basemap.sh
+        run: |
+          if [ -z "$SERVICE_ROLE_KEY" ] || [ -z "$SUPABASE_URL" ]; then
+            echo "Secrets SUPABASE_URL and SERVICE_ROLE_KEY are not set: skipping. Upload the basemap by hand (DEPLOY.md, section 6)."
+            exit 0
+          fi
+          bash scripts/build_basemap.sh
