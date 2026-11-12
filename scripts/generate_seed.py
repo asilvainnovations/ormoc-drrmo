@@ -854,6 +854,11 @@ def main():
     out['form_templates'] = [dict(id=uid('form', c), code=c, title=t, purpose=pu, document_id=doc_home(d),
                                   schema=_json.dumps({'fields': flds}, ensure_ascii=False), status='draft', rev=1)
                              for c, t, pu, d, flds in FORMS]
+    # 1.18: a step may name a Manual form (e.g. ME-F01, PTN-F03) that has no template yet. protocol_steps.form_code
+    # is a foreign key to form_templates, so an unbuilt form falls back to STEP-RECORD (ADR-016) and is listed
+    # here; the step instruction still names the Manual form. Build the template, and the step picks it up.
+    known_forms = {c for c, *_ in FORMS}
+    unbuilt_forms = {}
     tpls, steps = [], []
     for p in PROTOCOLS + WORKFLOWS:
         tid = uid('protocol', p['code'])
@@ -868,9 +873,17 @@ def main():
         for seq, st in enumerate(p['steps'], 1):
             instr, crit, note, due = st[:4]
             form = (st[4] if len(st) > 4 else None) or STEP_FORMS.get((p['code'], seq)) or 'STEP-RECORD'
+            if form not in known_forms:
+                unbuilt_forms.setdefault(form, []).append(f"{p['code']} step {seq}")
+                form = 'STEP-RECORD'
             steps.append(dict(id=uid('pstep', p['code'], str(seq)), template_id=tid, seq=seq, instruction=instr,
                               is_critical=crit, requires_note=note, due_offset_minutes=due, form_code=form))
     out['protocol_templates'], out['protocol_steps'] = tpls, steps
+    if unbuilt_forms:
+        print(f'note: {len(unbuilt_forms)} Manual forms named on steps have no template yet; '
+              'those steps use STEP-RECORD:')
+        for c in sorted(unbuilt_forms):
+            print(f'  {c}: {", ".join(unbuilt_forms[c])}')
 
     out['aa_action_templates'] = [dict(id=uid('aa', str(i)), hazard_code=h, sector=s, title=t, irr_ref=r, lead_office=lo,
                                        timing=tm, seq=i)

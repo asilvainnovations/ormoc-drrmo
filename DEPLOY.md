@@ -276,7 +276,13 @@ Then, in the dashboard:
      (no aliases column on `protocol_templates` — platform is pre-go-live so no run data references the old codes; a
      registry migration can add alias support later); the Chapter 6 platform note's **resources-table fields** (holder
      type, commitment reference, reorder point, expiry) and Chapter 7's **event/loss tables** need schema migrations and
-     are not built in 1.18.
+     are not built in 1.18; the **18 Manual forms** that Chapters 5–8 name on steps but have no template yet
+     (`LOG-F03`, `ME-F01..F05/F07..F09`, `PTN-F01..F07`, `REC-F01`, `REC-F03`) — those 22 steps close on
+     `STEP-RECORD` until each form is built (`npm run seed:generate` lists them). The step text still names the form.
+  5. **Pre-check before step 1 (live database).** The cleanup deletes five templates, and `protocol_runs.template_id`
+     has no cascade: if any drill or run was started on `WF-SOP5-03/06/08/09/10`, the cleanup stops and rolls back as a
+     whole. Check first: `select t.code, count(*) from protocol_runs r join protocol_templates t on t.id = r.template_id
+     where t.code like 'WF-SOP5-%' group by 1;` — no rows means it is safe to run.
 
 - **To 1.17.0** (12 November 2026), platform coherence: Cebuano UI, pillar-colored Library, Pareto dashboard on
   Today, Introduction chapter with the manual cover, citation corrections (ADR-031). **No migration.** Apply 1.16.0 first.

@@ -13842,7 +13842,7 @@
    "status": "draft",
    "template_rev": 1,
    "kind": "workflow",
-   "sop_ref": "SOP 6-12 (MOO MOO Ch.6 v1.0)",
+   "sop_ref": "SOP 6-12 (MOO Ch.6 v1.1)",
    "process_owner": "CDRRMO Administration and Training (inventory custodian), with the CGSO, BDRRMCs and partners",
    "policy_refs": [
     "RA 10121",
@@ -13868,7 +13868,7 @@
    "status": "draft",
    "template_rev": 1,
    "kind": "protocol",
-   "sop_ref": "SOP 5-01 (MOO MOO Ch.5 v1.0)",
+   "sop_ref": "SOP 5-01 (MOO Ch.5 v1.0)",
    "process_owner": "CDRRMO Head; CDRRMO Research and Planning with CPDO (technical lead)",
    "policy_refs": [
     "RA 10121",
@@ -13892,7 +13892,7 @@
    "status": "draft",
    "template_rev": 1,
    "kind": "protocol",
-   "sop_ref": "SOP 5-02 (MOO MOO Ch.5 v1.0)",
+   "sop_ref": "SOP 5-02 (MOO Ch.5 v1.0)",
    "process_owner": "CDRRMO Head as PDNA lead; designated PDNA team coordinator",
    "policy_refs": [
     "RA 10121",
@@ -13916,7 +13916,7 @@
    "status": "draft",
    "template_rev": 1,
    "kind": "workflow",
-   "sop_ref": "SOP 7-01 (MOO MOO Ch.7 v1.0)",
+   "sop_ref": "SOP 7-01 (MOO Ch.7 v1.0)",
    "process_owner": "CDRRMO Research and Planning (M&E unit), with the CDRRMP Technical Working Group",
    "policy_refs": [
     "RA 10121 Sec. 11(b)",
@@ -13940,7 +13940,7 @@
    "status": "draft",
    "template_rev": 1,
    "kind": "protocol",
-   "sop_ref": "SOP 7-04 (MOO MOO Ch.7 v1.0)",
+   "sop_ref": "SOP 7-04 (MOO Ch.7 v1.0)",
    "process_owner": "CDRRMO Head, with a designated AAR facilitator",
    "policy_refs": [
     "RA 10121 Sec. 11(b)",
@@ -13965,7 +13965,7 @@
    "status": "draft",
    "template_rev": 1,
    "kind": "workflow",
-   "sop_ref": "SOP 7-05 (MOO MOO Ch.7 v1.0)",
+   "sop_ref": "SOP 7-05 (MOO Ch.7 v1.0)",
    "process_owner": "CDRRMO Research and Planning (register keeper); each accountable owner",
    "policy_refs": [
     "MOO Ch.1 Sec. 9.5 (GOV-10 CAPA register)",
@@ -13988,7 +13988,7 @@
    "status": "draft",
    "template_rev": 1,
    "kind": "workflow",
-   "sop_ref": "SOP 7-07 (MOO MOO Ch.7 v1.0)",
+   "sop_ref": "SOP 7-07 (MOO Ch.7 v1.0)",
    "process_owner": "CDRRMO Research and Planning (M&E unit)",
    "policy_refs": [
     "RA 10121 Sec. 12(c)",
@@ -14012,7 +14012,7 @@
    "status": "draft",
    "template_rev": 1,
    "kind": "workflow",
-   "sop_ref": "SOP 7-08 (MOO MOO Ch.7 v1.0)",
+   "sop_ref": "SOP 7-08 (MOO Ch.7 v1.0)",
    "process_owner": "CDRRMO Research and Planning (M&E unit); Manual custodian",
    "policy_refs": [
     "UNDRR Scorecard 6.6.1",
@@ -14036,7 +14036,7 @@
    "status": "draft",
    "template_rev": 1,
    "kind": "workflow",
-   "sop_ref": "SOP 7-09 (MOO MOO Ch.7 v1.0)",
+   "sop_ref": "SOP 7-09 (MOO Ch.7 v1.0)",
    "process_owner": "City Data Protection Officer, with the CDRRMO privacy compliance officer",
    "policy_refs": [
     "RA 10173 and its IRR",
@@ -14059,7 +14059,7 @@
    "status": "draft",
    "template_rev": 1,
    "kind": "workflow",
-   "sop_ref": "SOP 8-01 (MOO MOO Ch.8 v1.0)",
+   "sop_ref": "SOP 8-01 (MOO Ch.8 v1.0)",
    "process_owner": "CDRRMO Administration and Training Division (register keeper)",
    "policy_refs": [
     "RA 7160 Secs. 22(c), 34-36",
@@ -14082,7 +14082,7 @@
    "status": "draft",
    "template_rev": 1,
    "kind": "workflow",
-   "sop_ref": "SOP 8-02 (MOO MOO Ch.8 v1.0)",
+   "sop_ref": "SOP 8-02 (MOO Ch.8 v1.0)",
    "process_owner": "CDRRMO Head; EOC Manager",
    "policy_refs": [
     "RA 7160 Secs. 22(c), 33",
@@ -14106,7 +14106,7 @@
    "status": "draft",
    "template_rev": 1,
    "kind": "protocol",
-   "sop_ref": "SOP 8-02 (MOO MOO Ch.8 v1.0)",
+   "sop_ref": "SOP 8-02 (MOO Ch.8 v1.0)",
    "process_owner": "CDRRMO Head; EOC Manager during activation; host Incident Commander directs deployed resources",
    "policy_refs": [
     "RA 7160 Secs. 22(c), 33",
@@ -14130,7 +14130,7 @@
    "status": "draft",
    "template_rev": 1,
    "kind": "protocol",
-   "sop_ref": "SOP 8-03 (MOO MOO Ch.8 v1.0)",
+   "sop_ref": "SOP 8-03 (MOO Ch.8 v1.0)",
    "process_owner": "EOC Manager, for the CDRRMC Chair; EOC Logistics",
    "policy_refs": [
     "National Disaster Response Plan",
@@ -14156,7 +14156,7 @@
    "status": "draft",
    "template_rev": 1,
    "kind": "workflow",
-   "sop_ref": "SOP 8-04 (MOO MOO Ch.8 v1.0)",
+   "sop_ref": "SOP 8-04 (MOO Ch.8 v1.0)",
    "process_owner": "CDRRMO Research and Planning, with the Part C lead offices",
    "policy_refs": [
     "IAT v1.7 Part C",
@@ -14193,7 +14193,7 @@
    "status": "draft",
    "template_rev": 1,
    "kind": "workflow",
-   "sop_ref": "SOP 8-05 (MOO MOO Ch.8 v1.0)",
+   "sop_ref": "SOP 8-05 (MOO Ch.8 v1.0)",
    "process_owner": "CDRRMO Head; EOC Logistics",
    "policy_refs": [
     "RA 12287 IRR Rule IV Sec. 4(c)(ii)-(iv)",
@@ -14217,7 +14217,7 @@
    "status": "draft",
    "template_rev": 1,
    "kind": "workflow",
-   "sop_ref": "SOP 8-06 (MOO MOO Ch.8 v1.0)",
+   "sop_ref": "SOP 8-06 (MOO Ch.8 v1.0)",
    "process_owner": "CDRRMO Head as CDRRMC secretariat, with the SP Secretariat",
    "policy_refs": [
     "RA 10121 Sec. 11",
@@ -14240,7 +14240,7 @@
    "status": "draft",
    "template_rev": 1,
    "kind": "workflow",
-   "sop_ref": "SOP 8-07 (MOO MOO Ch.8 v1.0)",
+   "sop_ref": "SOP 8-07 (MOO Ch.8 v1.0)",
    "process_owner": "CDRRMO Administration and Training",
    "policy_refs": [
     "RA 10121 Sec. 12(c)",
@@ -14263,7 +14263,7 @@
    "status": "draft",
    "template_rev": 1,
    "kind": "workflow",
-   "sop_ref": "SOP 8-08 (MOO MOO Ch.8 v1.0)",
+   "sop_ref": "SOP 8-08 (MOO Ch.8 v1.0)",
    "process_owner": "CDRRMO Head as CDRRMC secretariat",
    "policy_refs": [
     "RA 7160 Sec. 33",
@@ -16784,7 +16784,7 @@
    "is_critical": true,
    "requires_note": false,
    "due_offset_minutes": null,
-   "form_code": "LOG-F03"
+   "form_code": "STEP-RECORD"
   },
   {
    "id": "c1bcf59a-e04a-533c-ab91-b452f112d014",
@@ -16834,7 +16834,7 @@
    "is_critical": true,
    "requires_note": true,
    "due_offset_minutes": null,
-   "form_code": "REC-F01"
+   "form_code": "STEP-RECORD"
   },
   {
    "id": "e0ca30ff-4df7-5c0b-9a7c-8154df070048",
@@ -16894,7 +16894,7 @@
    "is_critical": true,
    "requires_note": true,
    "due_offset_minutes": null,
-   "form_code": "REC-F03"
+   "form_code": "STEP-RECORD"
   },
   {
    "id": "933e6a2b-214c-590a-a48c-55fda027430c",
@@ -16964,7 +16964,7 @@
    "is_critical": true,
    "requires_note": true,
    "due_offset_minutes": null,
-   "form_code": "ME-F01"
+   "form_code": "STEP-RECORD"
   },
   {
    "id": "99cf02cf-0366-5713-b84f-58f66be104c5",
@@ -16994,7 +16994,7 @@
    "is_critical": true,
    "requires_note": true,
    "due_offset_minutes": null,
-   "form_code": "ME-F02"
+   "form_code": "STEP-RECORD"
   },
   {
    "id": "4c2f27e4-9ebd-5144-adf5-e7ba71e3fbd8",
@@ -17034,7 +17034,7 @@
    "is_critical": true,
    "requires_note": true,
    "due_offset_minutes": null,
-   "form_code": "ME-F03"
+   "form_code": "STEP-RECORD"
   },
   {
    "id": "6af9ea37-9b2b-5b2d-a66b-8137a0867839",
@@ -17054,7 +17054,7 @@
    "is_critical": true,
    "requires_note": true,
    "due_offset_minutes": null,
-   "form_code": "ME-F04"
+   "form_code": "STEP-RECORD"
   },
   {
    "id": "86b7b5e7-28a2-589a-8278-e8f24ff51536",
@@ -17064,7 +17064,7 @@
    "is_critical": false,
    "requires_note": true,
    "due_offset_minutes": null,
-   "form_code": "ME-F05"
+   "form_code": "STEP-RECORD"
   },
   {
    "id": "64db3687-6926-57a1-8f17-bc00ec3a5df7",
@@ -17104,7 +17104,7 @@
    "is_critical": true,
    "requires_note": true,
    "due_offset_minutes": null,
-   "form_code": "ME-F07"
+   "form_code": "STEP-RECORD"
   },
   {
    "id": "d5a2b439-7f0d-512c-9069-e3e4fc317891",
@@ -17144,7 +17144,7 @@
    "is_critical": false,
    "requires_note": true,
    "due_offset_minutes": null,
-   "form_code": "ME-F08"
+   "form_code": "STEP-RECORD"
   },
   {
    "id": "14d3818f-3c8c-5cf2-8c24-a0369b341d58",
@@ -17184,7 +17184,7 @@
    "is_critical": true,
    "requires_note": true,
    "due_offset_minutes": null,
-   "form_code": "ME-F09"
+   "form_code": "STEP-RECORD"
   },
   {
    "id": "1b6da2b5-1dfc-5b88-8ac9-369e03679fd6",
@@ -17234,7 +17234,7 @@
    "is_critical": true,
    "requires_note": true,
    "due_offset_minutes": null,
-   "form_code": "PTN-F02"
+   "form_code": "STEP-RECORD"
   },
   {
    "id": "9949af60-221f-5790-ac35-b1ab823d2730",
@@ -17264,7 +17264,7 @@
    "is_critical": true,
    "requires_note": true,
    "due_offset_minutes": null,
-   "form_code": "PTN-F01"
+   "form_code": "STEP-RECORD"
   },
   {
    "id": "f59dacda-c3b6-58a1-9327-64e4c3b6995b",
@@ -17294,7 +17294,7 @@
    "is_critical": false,
    "requires_note": false,
    "due_offset_minutes": null,
-   "form_code": "PTN-F01"
+   "form_code": "STEP-RECORD"
   },
   {
    "id": "f0d8ab86-58db-50e7-b5e5-433cf8a7ba44",
@@ -17314,7 +17314,7 @@
    "is_critical": true,
    "requires_note": true,
    "due_offset_minutes": null,
-   "form_code": "PTN-F03"
+   "form_code": "STEP-RECORD"
   },
   {
    "id": "3a0ec964-1958-5ac1-92f8-881b563c85fc",
@@ -17364,7 +17364,7 @@
    "is_critical": true,
    "requires_note": true,
    "due_offset_minutes": null,
-   "form_code": "PTN-F03"
+   "form_code": "STEP-RECORD"
   },
   {
    "id": "835ebc27-7adc-5646-ad2d-9bcc86f9fc43",
@@ -17404,7 +17404,7 @@
    "is_critical": true,
    "requires_note": true,
    "due_offset_minutes": null,
-   "form_code": "PTN-F04"
+   "form_code": "STEP-RECORD"
   },
   {
    "id": "2e86f516-499d-54c2-a959-0486d12cb45b",
@@ -17424,7 +17424,7 @@
    "is_critical": true,
    "requires_note": true,
    "due_offset_minutes": null,
-   "form_code": "PTN-F05"
+   "form_code": "STEP-RECORD"
   },
   {
    "id": "e106eac3-2a5f-5d09-b388-b47b877e96dc",
@@ -17434,7 +17434,7 @@
    "is_critical": true,
    "requires_note": true,
    "due_offset_minutes": null,
-   "form_code": "PTN-F06"
+   "form_code": "STEP-RECORD"
   },
   {
    "id": "303461c6-410d-5b2f-b43a-46e4174b2490",
@@ -17464,7 +17464,7 @@
    "is_critical": true,
    "requires_note": true,
    "due_offset_minutes": null,
-   "form_code": "PTN-F07"
+   "form_code": "STEP-RECORD"
   },
   {
    "id": "b9d6828a-55cd-59ad-91a2-1532114c2820",
@@ -17524,7 +17524,7 @@
    "is_critical": true,
    "requires_note": true,
    "due_offset_minutes": null,
-   "form_code": "PTN-F01"
+   "form_code": "STEP-RECORD"
   },
   {
    "id": "4969cad3-fa6d-5923-ab6a-80b03d3c75a4",
@@ -17564,7 +17564,7 @@
    "is_critical": false,
    "requires_note": false,
    "due_offset_minutes": null,
-   "form_code": "PTN-F03"
+   "form_code": "STEP-RECORD"
   }
  ],
  "aa_action_templates": [

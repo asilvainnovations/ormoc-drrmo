@@ -565,9 +565,14 @@ META['WF-BUDGET-CYCLE'] = ('SOP 6-01 and SOP 6-02 (MOO Ch.6 v1.1); formerly MOO 
 # template carries the SOP. Steps are the chapter's step tables condensed; full text in the Library.
 # No template uses personal names; owners are offices or positions (RA 10173).
 
+# Chapter version each new SOP cites (1.18): doc is already 'MOO Ch.N', so the registry reads
+# 'SOP 6-12 (MOO Ch.6 v1.1)' like the entries above, not 'MOO MOO Ch.6 v1.0'.
+_CH_VERSION = {'MOO Ch.5': 'v1.0', 'MOO Ch.6': 'v1.1', 'MOO Ch.7': 'v1.0', 'MOO Ch.8': 'v1.0'}
+
+
 def _mk(code, sop, title, category, role, doc, purpose, trigger, owner, refs, inds, steps):
     return dict(code=code, title=f'SOP {sop} {title}', category=category, owner_role=role, doc=doc, purpose=purpose,
-                trigger=trigger, steps=steps, meta=(f'SOP {sop} (MOO {doc} v1.0)', owner, refs, inds))
+                trigger=trigger, steps=steps, meta=(f'SOP {sop} ({doc} {_CH_VERSION[doc]})', owner, refs, inds))
 
 
 CH5REC_PROCEDURES = [  # MOO Ch.5 Recovery, Rehabilitation and Build Back Better (v1.0)
