@@ -24,6 +24,11 @@ export default {
         lvl: { white: v('lvl-white'), 'white-ink': v('lvl-white-ink'), blue: v('lvl-blue'), red: v('lvl-red') },
         banner: '#022A4D',   // edge colour of the City banner artwork (letterbox behind it)
         mat: { 0: v('mat-0'), 1: v('mat-1'), 2: v('mat-2'), 3: v('mat-3'), 4: v('mat-4') },
+        // 1.17 (ADR-031): the four DRRM pillar accents (Library separators only). Kept clear of the EOC alert colours.
+        'pillar-prevention': v('pillar-prevention'), 'pillar-prevention-soft': v('pillar-prevention-soft'),
+        'pillar-preparedness': v('pillar-preparedness'), 'pillar-preparedness-soft': v('pillar-preparedness-soft'),
+        'pillar-response': v('pillar-response'), 'pillar-response-soft': v('pillar-response-soft'),
+        'pillar-recovery': v('pillar-recovery'), 'pillar-recovery-soft': v('pillar-recovery-soft'),
         // 1.14: the shadcn/ui kit in src/components/ui/ reads these names. They map onto the MODE tokens so the
         // kit follows the design system (and dark mode) instead of rendering without colour. "accent" is not
         // remapped: in MODE it is the orange active mark, so kit hover fills use sky-soft (see ui/*.tsx).

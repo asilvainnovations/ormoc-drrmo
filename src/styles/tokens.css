@@ -35,6 +35,11 @@
   /* Maturity: one light-to-dark blue ramp (magnitude, not status). */
   --mat-0: 227 235 242; --mat-1: 190 218 240; --mat-2: 122 180 224; --mat-3: 47 134 200; --mat-4: 15 61 102;
   --backdrop-opacity: 0.09;
+  /* 1.17 (ADR-031): the four DRRM pillar accents for Library separators. Kept clear of the EOC alert colours. */
+  --pillar-prevention: 15 118 110; --pillar-prevention-soft: 221 242 239;
+  --pillar-preparedness: 146 100 8; --pillar-preparedness-soft: 251 240 211;
+  --pillar-response: 159 37 69; --pillar-response-soft: 251 229 235;
+  --pillar-recovery: 109 62 168; --pillar-recovery-soft: 239 230 251;
   color-scheme: light;
 }
 /* Dark: by device setting unless the person chose Light, or always when they chose Dark (ThemeProvider). */
@@ -55,6 +60,10 @@
     --lvl-blue: 46 85 224; --lvl-red: 196 42 32;
     --mat-0: 37 64 95; --mat-1: 33 82 128; --mat-2: 47 120 180; --mat-3: 92 164 225; --mat-4: 160 210 246;
     --backdrop-opacity: 0.14;
+    --pillar-prevention: 94 208 196; --pillar-prevention-soft: 16 52 48;
+    --pillar-preparedness: 242 192 96; --pillar-preparedness-soft: 61 48 16;
+    --pillar-response: 244 148 172; --pillar-response-soft: 66 24 38;
+    --pillar-recovery: 196 160 250; --pillar-recovery-soft: 43 31 66;
     color-scheme: dark;
   }
 }
@@ -74,5 +83,9 @@
     --lvl-blue: 46 85 224; --lvl-red: 196 42 32;
     --mat-0: 37 64 95; --mat-1: 33 82 128; --mat-2: 47 120 180; --mat-3: 92 164 225; --mat-4: 160 210 246;
     --backdrop-opacity: 0.14;
+    --pillar-prevention: 94 208 196; --pillar-prevention-soft: 16 52 48;
+    --pillar-preparedness: 242 192 96; --pillar-preparedness-soft: 61 48 16;
+    --pillar-response: 244 148 172; --pillar-response-soft: 66 24 38;
+    --pillar-recovery: 196 160 250; --pillar-recovery-soft: 43 31 66;
     color-scheme: dark;
   }

@@ -90,6 +90,7 @@ def read_mrt():
 
 # --------------------------------------------------------- manual sections ----
 MOO_TITLES = {
+    'MOO Ch.0': 'Introduction',
     'MOO Ch.1': 'Legal and Institutional Framework', 'MOO Ch.2': 'Office Organization',
     'MOO Ch.3': 'DRRM and Contingency Planning', 'MOO Ch.4': 'Operations, Warning and Response',
     'MOO Ch.5': 'DRRM Financing', 'MOO Ch.6': 'Capacity Development', 'MOO Ch.7': 'Knowledge Management, Reporting and M&E',
@@ -103,10 +104,14 @@ ANNEX_JD = 'MOO Annex JDs'
 
 # Drafted manual text, loaded as DRAFT versions for review and approval in the Library.
 # Seeding never overwrites a version once loaded (the Library workflow owns it after that); a new label is a new version.
+# Chapter 0 (1.17, ADR-031): Introduction with the manual's cover; states purpose, organization and the
+# assessment method once. reference/moo/MOO_Ch0_Introduction_v1.0.md; cover at public/moo-cover.webp.
+_CH0 = 'v1.0 introduction'
 # Chapter 1 v1.0: revised working draft (Drive, 2 Nov 2026) with its eight annexes 1-A to 1-H, which are now
 # separate Google Docs. reference/moo/MOO_Ch1_v1.0.md and Annex_1-*.md were exported from them.
 _CH1 = 'v1.0 revised working draft'
 LIBRARY_DRAFTS = [  # code, manual, kind, title, file, label, indicators
+    ('MOO Ch.0', 'MOO', 'chapter', None, 'MOO_Ch0_Introduction_v1.0.md', _CH0, None),
     ('MOO Ch.1', 'MOO', 'chapter', None, 'MOO_Ch1_v1.0.md', _CH1, None),
     ('MOO Annex 1-A', 'MOO', 'annex', 'Proposed ordinance institutionalizing the CDRRMO', 'Annex_1-A.md',
      _CH1, ['A1.1', 'A2.1', 'A2.2', 'A2.3', 'A2.5']),
@@ -327,11 +332,14 @@ AREA_TITLE = {a[0]: a[2] for a in MANUAL_AREAS}
 # Chapters 1-3 (same ids, new codes). The rest merge into the area outline that now carries their
 # indicators; their old code stays as an alias so links, protocols and IAT routing keep working.
 CHAPTERS = {  # legacy code -> (new code, chapter no, primary area, also areas, title)
+    # 1.17: Introduction drafted (v1.0, 12 Nov 2026, ADR-031): purpose, organization and the assessment method,
+    # stated once here so no chapter repeats it. Primary area 1 (governance); it serves all areas.
+    'MOO Ch.0': ('Chapter 0', 0, 1, [], 'Introduction'),
     'MOO Ch.1': ('Chapter 1', 1, 1, [], 'Legal Mandate, DRRM Governance and Institutional Accountability'),
     'MOO Ch.2': ('Chapter 2', 2, 1, [3, 8], 'CDRRMO Organizational Structure, Staffing and Human Resource Management'),
     'MOO Ch.3': ('Chapter 3', 3, 2, [3], 'Risk Intelligence, DRRM and Contingency Planning, and Institutional Preparedness'),
     # 1.11: Chapter 4 drafted (v1.1, 8 Nov 2026). Primary area 4; also area 5 (early warning, public information).
-    'MOO Ch.4': ('Chapter 4', 4, 4, [5], 'Early Warning, Activation, Incident Management and Emergency Response'),
+    'MOO Ch.4': ('Chapter 4', 4, 4, [5], 'Early Warning, EOC Activation, Incident Management and Emergency Response'),
     # 1.15: Chapter 5 drafted (v1.0, 12 Nov 2026). Primary area 1 (A4 indicators sit there); also area 7 (procurement).
     'MOO Ch.5': ('Chapter 5', 5, 1, [7], 'DRRM Financing, Procurement and Resource Accountability'),
 }
@@ -726,7 +734,7 @@ def main():
             assert not bad, (code, bad)
             doc_links += [dict(document_id=did, indicator_id=i) for i in inds]
         versions.append(dict(id=uid('docver', code, label), document_id=did, label=label, body_md=body,
-                             change_note=f'Loaded from reference/moo/{fname} ({"Chapter " + str(ch) if ch else "area outline"}, {label})',
+                             change_note=f'Loaded from reference/moo/{fname} ({("Chapter " + str(ch)) if ch is not None else "area outline"}, {label})',
                              status='draft'))
     for d in docs:
         if d['kind'] == 'chapter' and d['status'] != 'superseded':

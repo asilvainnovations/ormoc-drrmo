@@ -67,6 +67,6 @@ describe('PSCP and Gawad KALASAG screens', () => {
     render(<MemoryRouter><GkPage /></MemoryRouter>);
     fireEvent.click(within(screen.getByRole('radiogroup', { name: 'Rating for S1' })).getByRole('radio', { name: '3 Beyond' }));
     expect(screen.getAllByText('3.00')).toHaveLength(2);   // overall and Structure
-    expect(screen.getByText('Beyond Compliant')).toBeTruthy();
+    expect(screen.getByText('Gold')).toBeTruthy();   // CY 2026 tiers (OCD Memo 763, s. 2026): all-3 mean = 3.00
   });
 });

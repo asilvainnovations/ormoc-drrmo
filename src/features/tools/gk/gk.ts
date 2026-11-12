@@ -6,8 +6,10 @@
 //  - Six criteria, weighted: Structure 25%, Competency 35%, Management Systems 15%,
 //    Enabling Policies 5%, Knowledge Management and Advocacy 10%, Partnership and Participation 10%
 //    (9, 12, 3, 1, 2 and 2 indicators).
-//  - Indicators are rated 0 to 3; the weighted mean gives the adjectival rating:
-//    2.50-3.00 Beyond Compliant, 1.50-2.49 Fully Compliant.
+//  - Indicators are rated 0 to 3; the weighted mean gives the award tier for CY 2026 (OCD Memorandum
+//    No. 763, s. 2026, correcting the earlier guidelines under NDRRMC MC No. 3, s. 2025):
+//    Gold 2.50 and up, Silver 2.00-2.49, Bronze 1.50-1.99; below 1.50 no award. The CY 2026
+//    assessment covers CY 2025 (January to December 2025); results are due to the OCD by 30 Nov 2026.
 // The indicator wording below is this platform's, grounded in RA 10121, JMC 2014-1 and the IAT. It is
 // NOT the OCD toolkit text. Use it to prepare; score the official toolkit for the actual submission.
 export interface GkIndicator { id: string; text: string; mov: string; iat: string[] }
@@ -79,10 +81,12 @@ export function gkResult(scores: GkScores) {
   return { perCriterion, mean, complete, band: gkBand(mean) };
 }
 
-export function gkBand(mean: number | null): 'Beyond Compliant' | 'Fully Compliant' | 'Below Fully Compliant' | null {
+/** CY 2026 award tiers (OCD Memorandum No. 763, s. 2026, applying NDRRMC MC No. 3, s. 2025):
+ * Gold >= 2.50, Silver 2.00-2.49, Bronze 1.50-1.99; below 1.50 no award. */
+export function gkBand(mean: number | null): 'Gold' | 'Silver' | 'Bronze' | 'Below Bronze' | null {
   if (mean === null) return null;
   const m = Math.round(mean * 100) / 100;      // ratings are reported to two decimals
-  return m >= 2.5 ? 'Beyond Compliant' : m >= 1.5 ? 'Fully Compliant' : 'Below Fully Compliant';
+  return m >= 2.5 ? 'Gold' : m >= 2 ? 'Silver' : m >= 1.5 ? 'Bronze' : 'Below Bronze';
 }
 
 /**

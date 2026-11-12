@@ -41,7 +41,7 @@ export function GkPage() {
       <PageHeader title="Gawad KALASAG Seal readiness" back="/tools"
         subtitle="Self-check for the Seal for Local DRRM Councils and Offices: six criteria, indicators rated 0 to 3, weighted mean and adjectival rating." />
       <Notice tone="warn" title="For preparation only">
-        The six criteria, their weights (Structure 25%, Competency 35%, Management Systems 15%, Enabling Policies 5%, Knowledge Management and Advocacy 10%, Partnership and Participation 10%) and the bands (2.50–3.00 Beyond Compliant, 1.50–2.49 Fully Compliant) follow the published NDRRMC–OCD Seal. The indicator wording is this platform's, not the OCD toolkit. Score the official toolkit for the submission, with its minimum requirements and means of verification.
+        The six criteria and their weights (Structure 25%, Competency 35%, Management Systems 15%, Enabling Policies 5%, Knowledge Management and Advocacy 10%, Partnership and Participation 10%) follow the NDRRMC–OCD Seal; the award tiers for CY 2026 (Gold at 2.50 and up, Silver 2.00–2.49, Bronze 1.50–1.99) follow NDRRMC MC No. 3, s. 2025 as applied by OCD Memorandum No. 763, s. 2026, covering CY 2025 with results due 30 Nov 2026. The indicator wording is this platform's, not the OCD toolkit. Score the official toolkit for the submission, with its minimum requirements and means of verification.
       </Notice>
 
       <Section title="Result">
@@ -50,7 +50,7 @@ export function GkPage() {
             <p className="text-sm text-muted">Weighted mean</p>
             <p className="font-data text-4xl font-bold">{result.mean === null ? '—' : result.mean.toFixed(2)}</p>
           </div>
-          {result.band && <Badge tone={result.band === 'Beyond Compliant' ? 'ok' : result.band === 'Fully Compliant' ? 'info' : 'bad'}>{result.band}</Badge>}
+          {result.band && <Badge tone={result.band === 'Gold' ? 'ok' : result.band === 'Silver' ? 'info' : 'bad'}>{result.band}</Badge>}
           {!result.complete && <span className="text-sm text-muted">Not all indicators rated yet; the mean covers rated ones only.</span>}
         </div>
         <div className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
