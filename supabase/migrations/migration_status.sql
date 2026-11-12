@@ -52,6 +52,8 @@ from (values
   ('20261112002600_revoke_anon_execute',      not has_function_privilege('anon',
                                                       (select oid from pg_proc where proname = 'set_eoc_level' and pronamespace = 'public'::regnamespace limit 1), 'EXECUTE')),
   ('20261112002700_validation_workshop',      exists (select 1 from information_schema.columns
-                                                      where table_schema = 'public' and table_name = 'responses' and column_name = 'validation_decision'))
+                                                      where table_schema = 'public' and table_name = 'responses' and column_name = 'validation_decision')),
+  ('20261112002800_echo_camp_management',     exists (select 1 from information_schema.tables
+                                                      where table_schema = 'public' and table_name = 'camp_reports'))
 ) as m(migration, present)
 order by m.migration;

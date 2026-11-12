@@ -107,6 +107,22 @@ export async function updateOnline<R extends { id: string; version: number }>(ta
   return data as R;
 }
 
+/**
+ * An authority record that is a new row (for example a centre's opening or closure in ECHO): sent straight to the
+ * server, never queued, so it cannot be filed offline by someone the server would refuse later (ADR-006, ADR-030).
+ */
+export async function insertOnline<R extends object>(table: string, row: R, what: string): Promise<R> {
+  if (!navigator.onLine) throw new NeedsConnectionError(what);
+  const payload = payloadFor(table, row as Row);
+  const { data, error } = await supabase.from(table).insert(payload).select('*').single();
+  if (error) {
+    if (/fetch|network|load failed/i.test(error.message)) throw new NeedsConnectionError(what);
+    throw new Error(error.hint ? `${error.message} ${error.hint}` : error.message);
+  }
+  await dexieTable(table).put(data as Row);
+  return data as R;
+}
+
 /** Storage buckets accept these types only (migrations …_storage.sql and …_document_vault.sql). */
 export type Bucket = 'evidence' | 'vault' | 'geo';
 export const UPLOAD_TYPES: Record<Bucket, { types: string[]; maxMb: number; label: string }> = {

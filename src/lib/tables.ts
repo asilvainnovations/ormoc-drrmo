@@ -73,6 +73,10 @@ export const TABLES: TableConfig[] = [
   // Geo-COP (1.9)
   { name: 'geo_reference_points', pk: 'id', cursor: 'updated_at', write: 'upsert', omit: [...STAMPS, 'created_by', 'verified_by', 'verified_at'] },
   { name: 'geo_layers', pk: 'id', cursor: 'updated_at', write: 'upsert', omit: [...STAMPS, 'uploaded_by'] },
+  // ECHO (1.16.0, ADR-030): the inventory is maintained by EOC staff; camp reports are append-only aggregates.
+  { name: 'evacuation_centers', pk: 'id', cursor: 'updated_at', write: 'upsert', omit: [...STAMPS, 'created_by', 'verified_by', 'verified_at', 'status', 'occupancy_persons'] },
+  { name: 'camp_reports', pk: 'id', cursor: 'created_at', write: 'insert', omit: ['created_at', 'reported_by'] },
+  { name: 'camp_feedback', pk: 'id', cursor: 'updated_at', write: 'upsert', omit: [...STAMPS, 'created_by', 'closed_at'] },
   { name: 'logbook_entries', pk: 'id', cursor: 'created_at', write: 'insert', omit: ['created_at', 'author'] },
   { name: 'sitreps', pk: 'id', cursor: 'updated_at', write: 'upsert', omit: [...STAMPS, 'seq', 'prepared_by', 'submitted_at', 'approved_by', 'approved_at'] },
   { name: 'barangay_reports', pk: 'id', cursor: 'created_at', write: 'insert', omit: ['created_at', 'reported_by'] },
@@ -94,4 +98,5 @@ export const TABLE = Object.fromEntries(TABLES.map((t) => [t.name, t])) as Recor
 
 /** Tables pushed to the UI live through Supabase Realtime. */
 export const REALTIME_TABLES = ['eoc_activations', 'logbook_entries', 'sitreps', 'barangay_reports', 'resource_requests', 'declarations', 'aa_actions', 'vault_documents',
-  'activation_clusters', 'eoc_designations', 'contingency_plans', 'geo_reference_points', 'geo_layers', 'form_templates'];
+  'activation_clusters', 'eoc_designations', 'contingency_plans', 'geo_reference_points', 'geo_layers', 'form_templates',
+  'evacuation_centers', 'camp_reports', 'camp_feedback'];

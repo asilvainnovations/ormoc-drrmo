@@ -1,4 +1,6 @@
+import { lazy, Suspense } from 'react';
 import { Route, Routes } from 'react-router-dom';
+import { Loading } from '@/components/ui';
 import { CyclesPage } from './CyclesPage';
 import { CycleOverview } from './CycleOverview';
 import { DomainPage } from './DomainPage';
@@ -8,10 +10,14 @@ import { ValidationPage } from './ValidationPage';
 import { ValidationSheets } from './ValidationSheets';
 import { ResultsBoard } from './ResultsBoard';
 
+// The map library is large; it loads only when Hazard maps opens.
+const HazardMapPage = lazy(() => import('@/features/eoc/map/HazardMapPage'));
+
 export default function AssessRoutes() {
   return (
     <Routes>
       <Route index element={<CyclesPage />} />
+      <Route path="hazard-maps" element={<Suspense fallback={<Loading />}><HazardMapPage /></Suspense>} />
       <Route path=":cycleId" element={<CycleOverview />} />
       <Route path=":cycleId/d/:domain" element={<DomainPage />} />
       <Route path=":cycleId/i/:indicatorId" element={<IndicatorPage />} />

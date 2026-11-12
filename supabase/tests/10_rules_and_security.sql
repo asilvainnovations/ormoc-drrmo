@@ -1038,6 +1038,71 @@ select tests.expect_eq('progress view counts validated and revised',
 reset role;
 select tests.expect_eq('a signed-out visitor cannot read validation progress', has_table_privilege('anon', 'public.v_validation_progress', 'SELECT')::text, 'false');
 
+-- ECHO: evacuation-centre inventory, camp reports and feedback (1.16.0, ADR-030)
+select tests.login('00000000-0000-0000-0000-000000000013');  -- EOC staff
+select tests.expect_ok('EOC staff add a centre to the inventory',
+  $$insert into public.evacuation_centers (id, code, name, kind, capacity_persons, covered_area_m2, lat, lng)
+    values ('e1000000-0000-0000-0000-000000000001', 'EC-TEST-01', 'Test multipurpose hall', 'multipurpose', 400, 1400, 11.01, 124.61)$$);
+select tests.expect_error('a new centre cannot start verified',
+  $$insert into public.evacuation_centers (code, name, verification_status) values ('EC-TEST-02', 'Shortcut', 'field_verified')$$, '42501');
+select tests.expect_error('a school must be marked as last resort',
+  $$insert into public.evacuation_centers (code, name, kind, is_school) values ('EC-TEST-03', 'School', 'multipurpose', true)$$, '23514');
+select tests.expect_error('RA 12076 items are yes, no or unknown',
+  $$insert into public.evacuation_centers (code, name, ra12076) values ('EC-TEST-04', 'Bad item', '{"power":"certified"}')$$, '23514');
+select tests.expect_error('staff cannot record a field verification',
+  $$update public.evacuation_centers set verification_status = 'field_verified', version = 1 where id = 'e1000000-0000-0000-0000-000000000001'$$, '42501');
+select tests.expect_error('a centre cannot be deleted', $$delete from public.evacuation_centers where id = 'e1000000-0000-0000-0000-000000000001'$$, '42501');
+select tests.login('00000000-0000-0000-0000-00000000000d');  -- EOC Manager
+select tests.expect_ok('the EOC Manager records the field verification',
+  $$update public.evacuation_centers set verification_status = 'field_verified', version = 1 where id = 'e1000000-0000-0000-0000-000000000001'$$);
+select tests.expect_ok('changing a verified capacity is allowed',
+  $$update public.evacuation_centers set capacity_persons = 450, version = 2 where id = 'e1000000-0000-0000-0000-000000000001'$$);
+select tests.expect_eq('but sends the centre back for field validation',
+  (select verification_status || ' ' || (verified_by is null)::text from public.evacuation_centers where id = 'e1000000-0000-0000-0000-000000000001'),
+  'pending_field_validation true');
+select tests.expect_ok('verified again', $$update public.evacuation_centers set verification_status = 'field_verified', version = 3 where id = 'e1000000-0000-0000-0000-000000000001'$$);
+select tests.expect_ok('a training site is allowed for exercises',
+  $$insert into public.evacuation_centers (id, code, name, verification_status) values ('e1000000-0000-0000-0000-000000000009', 'EC-TRAIN-A', 'Training Site A', 'training')$$);
+
+select tests.login('00000000-0000-0000-0000-00000000000e');  -- duty officer
+select tests.expect_error('a duty officer cannot open a centre (authorised decision)',
+  $$insert into public.camp_reports (centre_id, phase, authority_ref) values ('e1000000-0000-0000-0000-000000000001', 'opening', 'Memo 1')$$, '42501');
+select tests.login('00000000-0000-0000-0000-00000000000d');  -- EOC Manager
+select tests.expect_error('opening needs an authority reference',
+  $$insert into public.camp_reports (centre_id, phase) values ('e1000000-0000-0000-0000-000000000001', 'opening')$$, '23514');
+select tests.expect_ok('the EOC Manager records the opening with its authority',
+  $$insert into public.camp_reports (centre_id, phase, authority_ref, persons, families) values ('e1000000-0000-0000-0000-000000000001', 'opening', 'Logbook: opening ordered by the Mayor 08:10', 0, 0)$$);
+select tests.login('00000000-0000-0000-0000-00000000000e');  -- duty officer
+select tests.expect_ok('a duty officer files an aggregate snapshot',
+  $$insert into public.camp_reports (id, centre_id, phase, families, persons, female, children, older, pwd, water_l_day, toilets_functional, services)
+    values ('e2000000-0000-0000-0000-000000000001', 'e1000000-0000-0000-0000-000000000001', 'open', 80, 320, 170, 110, 20, 6, 4000, 9, '{"cfs":"yes","wfs":"partial"}')$$);
+select tests.expect_eq('the server stamps who reported',
+  (select reported_by::text from public.camp_reports where id = 'e2000000-0000-0000-0000-000000000001'), '00000000-0000-0000-0000-00000000000e');
+select tests.expect_error('an open centre needs a persons count',
+  $$insert into public.camp_reports (centre_id, phase) values ('e1000000-0000-0000-0000-000000000001', 'open')$$, '23514');
+select tests.expect_error('a group cannot exceed persons',
+  $$insert into public.camp_reports (centre_id, phase, persons, children) values ('e1000000-0000-0000-0000-000000000001', 'open', 10, 11)$$, '23514');
+select tests.expect_error('persons cannot be fewer than families',
+  $$insert into public.camp_reports (centre_id, phase, persons, families) values ('e1000000-0000-0000-0000-000000000001', 'open', 10, 11)$$, '23514');
+select tests.expect_error('service items are yes, partial or no',
+  $$insert into public.camp_reports (centre_id, phase, persons, services) values ('e1000000-0000-0000-0000-000000000001', 'open', 10, '{"cfs":"maybe"}')$$, '23514');
+select tests.expect_error('no camp reports for a training site',
+  $$insert into public.camp_reports (centre_id, phase, persons) values ('e1000000-0000-0000-0000-000000000009', 'open', 10)$$, '23514');
+select tests.expect_error('a camp report is never edited',
+  $$update public.camp_reports set persons = 1 where id = 'e2000000-0000-0000-0000-000000000001'$$, '42501');
+select tests.expect_ok('feedback is logged as a non-identifying summary',
+  $$insert into public.camp_feedback (id, centre_id, category, summary) values ('e3000000-0000-0000-0000-000000000001', 'e1000000-0000-0000-0000-000000000001', 'wash', 'Women''s toilets have no lights at night')$$);
+select tests.expect_error('its summary is kept as logged',
+  $$update public.camp_feedback set summary = 'changed', version = 1 where id = 'e3000000-0000-0000-0000-000000000001'$$, '42501');
+select tests.expect_ok('its status moves', $$update public.camp_feedback set status = 'closed', action_office = 'CGSO', version = 1 where id = 'e3000000-0000-0000-0000-000000000001'$$);
+select tests.expect_eq('closing stamps the time', ((select closed_at from public.camp_feedback where id = 'e3000000-0000-0000-0000-000000000001') is not null)::text, 'true');
+select tests.login('00000000-0000-0000-0000-000000000010');  -- viewer
+select tests.expect_rows('a viewer reads camp reports', $$select count(*) from public.camp_reports$$, 2);
+select tests.expect_error('a viewer cannot file a camp report',
+  $$insert into public.camp_reports (centre_id, phase, persons) values ('e1000000-0000-0000-0000-000000000001', 'open', 1)$$, '42501');
+reset role;
+select tests.expect_eq('a signed-out visitor cannot read camp reports', has_table_privilege('anon', 'public.camp_reports', 'SELECT')::text, 'false');
+
 reset role;
 select tests.expect_eq('audit trail recorded', ((select count(*) from public.audit_log) > 50)::text, 'true');
 \o

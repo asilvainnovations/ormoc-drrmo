@@ -1,7 +1,7 @@
 import { NavLink, Link, Outlet } from 'react-router-dom';
 import { ScreenErrorBoundary } from '@/components/ErrorBoundary';
 import clsx from 'clsx';
-import { BookOpen, ClipboardCheck, FolderLock, House, ListChecks, RadioTower, Settings, CloudOff, RefreshCw, AlertTriangle, Check, Wrench } from 'lucide-react';
+import { BookOpen, ClipboardCheck, Map as MapIcon, FolderLock, House, ListChecks, RadioTower, Settings, CloudOff, RefreshCw, AlertTriangle, Check, Wrench } from 'lucide-react';
 import { LEVEL_INFO } from '@/domain/eoc';
 import { useActiveDeclaration, useEocStatus, useNow, usePending } from '@/lib/hooks';
 import { useSyncState } from '@/lib/sync';
@@ -16,7 +16,9 @@ import { BrandLockup } from './Brand';
 
 const NAV = [
   { to: '/today', label: 'Today', icon: House, end: true, tip: 'Your day: alerts, quick actions, running protocols and latest log' },
-  { to: '/assess', label: 'Assess', icon: ClipboardCheck, tip: 'Institutional Assessment Tool: score indicators with evidence and plan improvements' },
+  { to: '/assess', label: 'Assess', icon: ClipboardCheck, tip: 'Institutional Assessment Tool: score indicators with evidence and plan improvements',
+    // 1.16.0 (ADR-030): Hazard maps sit in Assess, just below the IAT.
+    sub: [{ to: '/assess/hazard-maps', label: 'Hazard maps', icon: MapIcon, tip: 'Official hazard sheets over the 85 barangays, full width or full screen' }] },
   { to: '/protocols', label: 'Protocols', icon: ListChecks, tip: 'Step-by-step CDRRMO procedures you can run live or as drills' },
   { to: '/eoc', label: 'EOC', icon: RadioTower, tip: 'Emergency Operations Center: level, logbook, SitReps, requests and anticipatory action' },
   { to: '/library', label: 'Library', icon: BookOpen, tip: 'The Manual of Operations and EOC Manual, with traceability to the indicators' },
@@ -86,12 +88,24 @@ export function AppShell() {
           <BrandLockup size={44} stacked product />
         </div>
         <ul className="flex-1 space-y-1 px-3 pt-3">
-          {nav.map(({ to, label, icon: Icon, end, tip: t }) => (
+          {nav.map(({ to, label, icon: Icon, end, tip: t, sub }) => (
             <li key={to}>
               <NavLink to={to} end={end} {...tip(t)} className={({ isActive }) => clsx('flex min-h-tap items-center gap-3 rounded-control border-l-4 px-3 font-semibold',
                 isActive ? 'border-accent bg-sky-soft text-ink' : 'border-transparent text-ink hover:bg-sky-soft/60')}>
                 <Icon className="h-5 w-5" aria-hidden />{label}
               </NavLink>
+              {sub && (
+                <ul className="mt-1 space-y-1">
+                  {sub.map((c) => (
+                    <li key={c.to}>
+                      <NavLink to={c.to} {...tip(c.tip)} className={({ isActive }) => clsx('flex min-h-tap items-center gap-3 rounded-control border-l-4 pl-9 pr-3 text-sm font-semibold',
+                        isActive ? 'border-accent bg-sky-soft text-ink' : 'border-transparent text-muted hover:bg-sky-soft/60 hover:text-ink')}>
+                        <c.icon className="h-4 w-4" aria-hidden />{c.label}
+                      </NavLink>
+                    </li>
+                  ))}
+                </ul>
+              )}
             </li>
           ))}
         </ul>
