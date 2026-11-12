@@ -34,6 +34,10 @@ Tokens are RGB triplets so Tailwind can apply opacity (`bg-sky-soft/70`). Each h
 | `ok`, `warn`, `bad`, `info` (+ `-soft`) | green, ochre, red, blue | Status only. Always with text, and an icon where space allows. `warn` is ochre so it is never confused with the brand orange |
 | `on-strong` | white (dark: navy) | Text on solid status fills |
 | `lvl-white`, `lvl-blue`, `lvl-red` / `on-level` | white, #1E3FC2 royal blue, #B11E16 | **EOC levels only** |
+| `pillar-prevention` (+ `-soft`) | #0F766E teal | DRRM pillar accents: prevention (areas 2, 9) |
+| `pillar-preparedness` (+ `-soft`) | #926408 ochre-amber | DRRM pillar accents: preparedness (areas 1, 3) |
+| `pillar-response` (+ `-soft`) | #9F2545 rose | DRRM pillar accents: response (areas 4–8) |
+| `pillar-recovery` (+ `-soft`) | #6D3EA8 violet | DRRM pillar accents: recovery (area 10) |
 | `mat-0` … `mat-4` | light-to-dark blue | Maturity heat and chart fills (magnitude, not status) |
 | `scrim` | navy | Dialog backdrop at 40% |
 | `banner` | #022A4D | Letterbox colour behind the banner artwork (sign-in only) |
@@ -41,6 +45,7 @@ Tokens are RGB triplets so Tailwind can apply opacity (`bg-sky-soft/70`). Each h
 Rules:
 
 - `lvl-*` appear only in the status band, the EOC board and level controls. The EOC Blue is a vivid royal blue, deliberately apart from the brand navy and light blue, and the band always names the level in words.
+- `pillar-*` appear only as Library separators: block accents, pillar chips and the legend (ADR-031). They are four mutually distinct hues so the four DRRM areas never blur, and they keep clear of `lvl-blue` and `lvl-red`. The mapping area → pillar lives in `src/features/library/pillars.ts`.
 - Orange marks what is active or focused. It is not used for status: warnings are ochre.
 - Status fills in dark mode are light, so their text is `on-strong`, which flips to dark. Do not write `text-white` on a status fill.
 
@@ -148,6 +153,8 @@ On phones it takes two lines with short labels. It is never truncated mid-word.
 ## 9. Writing
 
 - Name things in CDRRMO vocabulary: "logbook", "SitRep", "PDRA", "EO", "barangay", "LDRRMF".
+- Plain language first: short sentences, one idea per card, no buzzwords; say what the user gets ("See what needs work today", not "Access the readiness module").
+- Cebuano (Bisaya) is offered for navigation and dashboard chrome (Settings → This device → Language). The manual, legal citations, tooltips and protocols stay in English so citations remain exact (ADR-031); add a key to both languages in `src/lib/i18n.tsx` — the parity test fails the build if they drift.
 - Buttons say what happens. The toast echoes the same verb ("Submit for validation" → "A1.1 submitted for validation").
 - Errors say what happened and what to do. They do not apologise.
 - Times show in Manila time (`Asia/Manila`) as "15 Oct 2026, 14:05" and "in 3 h 20 min".

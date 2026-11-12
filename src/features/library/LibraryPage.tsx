@@ -7,8 +7,11 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/component
 import { Separator } from '@/components/ui/separator';
 import { StatusBadge, StatusLegend } from '@/components/StatusBadge';
 import { tip } from '@/components/Tooltip';
+import { useT, type StringKey } from '@/lib/i18n';
 import type { ManualArea, MooDocument } from '@/types';
 import { DOC_KIND, LIB_TABS } from './labels';
+import { PILLAR_CLASS, PILLAR_KEYS, pillarOfArea } from './pillars';
+import type { ThematicArea } from '@/features/protocols/labels';
 
 /** 1.10: find a section by code, title, old code (alias, ADR-012) or area number, e.g. "EOC Ch.2", "3-6", "area 4". */
 export function matchesSection(d: MooDocument, q: string): boolean {
@@ -25,11 +28,13 @@ const plural = (n: number, one: string, many = `${one}s`) => `${n} ${n === 1 ? o
 const chapterNo = (d: MooDocument) => d.chapter_no ?? Number(/Chapter\s+(\d+)/.exec(d.code)?.[1] ?? 99);
 
 /** One collapsible block: a header row that opens and closes, and its content. Callers re-key it on search so
- *  it opens with the results (uncontrolled, so a person can still close it). */
-function Block({ title, meta, badge, open, children, tipText }: { title: ReactNode; meta?: ReactNode; badge?: ReactNode; open?: boolean; children: ReactNode; tipText: string }) {
+ *  it opens with the results (uncontrolled, so a person can still close it).
+ *  1.17 (ADR-031): `accent` tints the block with its DRRM pillar colour — the Library's visual separator. */
+function Block({ title, meta, badge, open, children, tipText, accent }: { title: ReactNode; meta?: ReactNode; badge?: ReactNode; open?: boolean; children: ReactNode; tipText: string; accent?: ThematicArea | null }) {
+  const classes = accent ? PILLAR_CLASS[accent] : null;
   return (
-    <Collapsible defaultOpen={open} className="rounded-card border border-line bg-surface">
-      <CollapsibleTrigger className="group flex min-h-tap w-full items-start gap-3 rounded-card p-4 text-left hover:bg-sky-soft" {...tip(tipText)}>
+    <Collapsible defaultOpen={open} className={`rounded-card border border-line bg-surface${classes ? ` border-l-4 ${classes.edge}` : ''}`}>
+      <CollapsibleTrigger className={`group flex min-h-tap w-full items-start gap-3 rounded-card p-4 text-left hover:bg-sky-soft${classes ? ` ${classes.band}` : ''}`} {...tip(tipText)}>
         <span className="flex-1">
           <span className="block font-bold text-ink">{title}</span>
           {meta && <span className="mt-1 block text-sm text-muted">{meta}</span>}
@@ -39,6 +44,16 @@ function Block({ title, meta, badge, open, children, tipText }: { title: ReactNo
       </CollapsibleTrigger>
       <CollapsibleContent className="px-4 pb-4">{children}</CollapsibleContent>
     </Collapsible>
+  );
+}
+
+/** 1.17: a pillar pill (dot + translated label) used on chapters, areas and the legend. */
+function PillarChip({ pillar, t }: { pillar: ThematicArea; t: (k: StringKey) => string }) {
+  const c = PILLAR_CLASS[pillar];
+  return (
+    <span className={`inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-xs font-semibold ${c.chip}`} {...tip(`DRRM pillar: ${t(`pillar.${pillar}`)}. The Library groups chapters and files under the four pillars, from prevention to recovery.`)}>
+      <span className={`h-2 w-2 rounded-full ${c.dot}`} aria-hidden />{t(`pillar.${pillar}`)}
+    </span>
   );
 }
 
@@ -58,6 +73,7 @@ function DocRows({ docs, count, chips = true }: { docs: MooDocument[]; count: Ma
  *  then the functional areas still waiting for a chapter, superseded sections and the legacy EOC Manual.
  *  "Functional area" is the IAT's grouping of indicators (ADR-012); a chapter can cover part of an area. */
 export function LibraryPage() {
+  const t = useT();
   const [q, setQ] = useState('');
   const data = useLiveQuery(async () => {
     const docs = await db.moo_documents.orderBy('sort').toArray();
@@ -105,10 +121,17 @@ export function LibraryPage() {
         </Field>
       </div>
       <StatusLegend subject="Manual text" />
+      {/* 1.17 (ADR-031): pillar legend — the four DRRM areas the block colours and chips refer to. */}
+      <div className="mb-6 flex flex-wrap items-center gap-2" role="list" aria-label={t('library.pillars')}>
+        <span className="text-sm text-muted">{t('library.pillars')}:</span>
+        {PILLAR_KEYS.map(({ key }) => (
+          <span key={key} role="listitem"><PillarChip pillar={key} t={t} /></span>
+        ))}
+      </div>
       {data && nothing && <Notice tone="info">No section matches “{q.trim()}”. Try a shorter word or an old chapter code.</Notice>}
 
       {chapterBlocks.length > 0 && (
-        <Section title="Manual of Operations: chapters">
+        <Section title={t('library.chapters')}>
           <p className="mb-3 -mt-1 max-w-prose text-sm text-muted">Each chapter opens to show its SOPs, forms and annexes. The functional area is the IAT grouping of indicators the chapter answers; a chapter can cover part of an area.</p>
           <div className="space-y-3">
             {chapterBlocks.map(({ ch, kids, shown }) => {
@@ -116,10 +139,11 @@ export function LibraryPage() {
               const n = (k: MooDocument['kind']) => kids.filter((d) => d.kind === k).length;
               return (
                 <Block key={`${ch.id}-${searching}`} open={searching} tipText={`Show or hide the sections of ${ch.code}`}
+                  accent={pillarOfArea(ch.area_no)}
                   title={<>{ch.code} · {ch.title}</>}
                   meta={<>{area && <span {...tip(`IAT functional area ${area.no}: ${area.title}. Part ${area.part_no}: ${partTitle(area.part_no)}`)}>Functional area {area.no} · {area.title}</span>}
                     <span className="ml-2">· {plural(n('sop'), 'SOP')} · {plural(n('form'), 'form')} · {plural(n('annex'), 'annex', 'annexes')}</span></>}
-                  badge={<StatusBadge status={ch.status} className="mt-0.5" />}>
+                  badge={<span className="flex items-center gap-2"><PillarChip pillar={pillarOfArea(ch.area_no) ?? 'preparedness'} t={t} /><StatusBadge status={ch.status} className="mt-0.5" /></span>}>
                   <p className="mb-2 text-sm"><TextLink size="sm" tip="Open the chapter text, its versions and linked indicators" to={`/library/doc/${ch.id}`}>Open {ch.code}</TextLink>
                     <span className="text-muted"> · {count.get(ch.id) ?? 0} indicator gap(s) route here</span></p>
                   {GROUPS.map(({ kind, label }) => {
@@ -143,12 +167,14 @@ export function LibraryPage() {
       {areaBlocks.length > 0 && (
         <>
           <Separator className="my-6" />
-          <Section title="Functional areas without a written chapter yet">
+          <Section title={t('library.areas')}>
             <p className="mb-3 -mt-1 max-w-prose text-sm text-muted">The Manual's introduction to each remaining area, and any section already drafted for it. The chapters follow the sequence set in Chapter 1.</p>
             <div className="space-y-3">
               {areaBlocks.map(({ area, rows }) => (
                 <Block key={`${area.no}-${searching}`} open={searching} tipText={`Show or hide functional area ${area.no}`}
-                  title={<>Area {area.no} · {area.title}</>} meta={`Part ${area.part_no} · ${partTitle(area.part_no)}`}>
+                  accent={pillarOfArea(area.no)}
+                  title={<span className="flex flex-wrap items-center gap-2">Area {area.no} · {area.title}<PillarChip pillar={pillarOfArea(area.no) ?? 'preparedness'} t={t} /></span>}
+                  meta={`Part ${area.part_no} · ${partTitle(area.part_no)}`}>
                   {area.scope && <p className="mb-2 max-w-prose text-xs leading-5 text-muted">{area.scope}</p>}
                   <DocRows docs={rows} count={count} />
                 </Block>

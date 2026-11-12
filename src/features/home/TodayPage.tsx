@@ -20,18 +20,30 @@ import { tip } from '@/components/Tooltip';
 import { Seals } from '@/components/Brand';
 import { canUseVault } from '@/features/vault/access';
 import { CYCLE_STATUS } from '@/features/iat/labels';
+import { PRIORITY_INDICATORS } from '@/features/iat/priority';
+import { useT, type StringKey } from '@/lib/i18n';
+import type { Indicator, Response } from '@/types';
+import { Separator } from '@/components/ui/separator';
 
-const greeting = (h: number) => (h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening');
+// 1.17 (ADR-031): the greeting follows the device language (src/lib/i18n).
+const GREET_KEYS = ['greet.morning', 'greet.afternoon', 'greet.evening'] as const;
 
 export function TodayPage() {
+  const t = useT();
   const { profile, roles, has, offlineIdentity } = useAuth();
   const now = useNow();
   const decl = useActiveDeclaration();
   const data = useLiveQuery(async () => {
     const cycle = (await db.assessment_cycles.orderBy('cycle_year').reverse().toArray()).find((c) => c.status !== 'archived');
     const res = cycle ? cycleResults(await db.iat_indicators.toArray(), await db.iat_domains.toArray(), await db.responses.where('cycle_id').equals(cycle.id).toArray()) : null;
+    // 1.17 (ADR-031): the Pareto priority set, joined to this cycle's responses for the dashboard card.
+    const responses: Response[] = cycle ? await db.responses.where('cycle_id').equals(cycle.id).toArray() : [];
+    const byId = new Map((await db.iat_indicators.toArray()).map((i) => [i.id, i]));
+    const priority = PRIORITY_INDICATORS.map((p) => ({ ...p, indicator: byId.get(p.id) }))
+      .filter((p): p is typeof p & { indicator: Indicator } => !!p.indicator)
+      .map((p) => ({ ...p, response: responses.find((r) => r.indicator_id === p.indicator.id) }));
     return {
-      cycle, res,
+      cycle, res, priority,
       runs: await db.protocol_runs.where('status').equals('running').toArray(),
       log: await db.logbook_entries.orderBy('occurred_at').reverse().limit(5).toArray(),
       hazard: decl ? await db.hazards.get(decl.hazard_code) : undefined,
@@ -61,8 +73,8 @@ export function TodayPage() {
           <div>
             <Seals size={44} className="mb-3 lg:hidden" />
             <p className="font-data text-sm font-semibold uppercase tracking-widest text-accent-ink">{fmtLongDate(now)}</p>
-            <h1 className="mt-1 text-2xl font-extrabold lg:text-3xl">{greeting(hour)}{profile?.full_name ? `, ${profile.full_name.split(' ')[0]}` : ''}</h1>
-            <p className="mt-1 max-w-prose text-muted">Your alerts, quick actions, running procedures and the state of the Manual, in one place.</p>
+            <h1 className="mt-1 text-2xl font-extrabold lg:text-3xl">{t(GREET_KEYS[hour < 12 ? 0 : hour < 18 ? 1 : 2])}{profile?.full_name ? `, ${profile.full_name.split(' ')[0]}` : ''}</h1>
+            <p className="mt-1 max-w-prose text-muted">{t('today.hero')}</p>
           </div>
           <div className="flex shrink-0 items-center gap-1 lg:hidden">
             <ThemeToggle />
@@ -131,6 +143,55 @@ export function TodayPage() {
         </Card>
         <ManualReadiness data={data} />
       </div>
+      <ParetoCard data={data} t={t} />
+    </div>
+  );
+}
+
+/** 1.17 (ADR-031): the Pareto dashboard — the 23 priority indicators in three tiers, met counts from the
+ * current IAT cycle, and the top gaps one tap from their indicator in Assess. Stated for users in the
+ * Introduction chapter §4.4; the set lives in src/features/iat/priority.ts. */
+function ParetoCard({ data, t }: { data?: { cycle?: { id: string; name: string }; priority: { id: string; tier: 1 | 2 | 3; indicator: Pick<Indicator, 'id' | 'statement'>; response?: Response }[] }; t: (k: StringKey) => string }) {
+  const TIER_KEY = { 1: 'today.pareto.tier1', 2: 'today.pareto.tier2', 3: 'today.pareto.tier3' } as const;
+  if (!data) return <div className="mt-4"><Card><CardContent className="pt-6"><TodaySkeleton /></CardContent></Card></div>;
+  const rows = ([1, 2, 3] as const).map((tier) => {
+    const items = data.priority.filter((p) => p.tier === tier);
+    const met = items.filter((p) => (p.response?.score ?? 0) >= 3 && !p.response?.is_na).length;
+    return { tier, met, total: items.length };
+  });
+  const unmet = data.priority.filter((p) => (p.response?.score ?? 0) < 3 && !p.response?.is_na)
+    .sort((a, b) => a.tier - b.tier).slice(0, 5);
+  return (
+    <div className="mt-4">
+      <Card>
+        <CardHeader className="flex-row items-start justify-between space-y-0 pb-2">
+          <div>
+            <CardTitle className="text-lg">{t('today.pareto.title')}</CardTitle>
+            <CardDescription>{t('today.pareto.about')}</CardDescription>
+          </div>
+          {data.cycle && <TextLink tip="Open the current assessment cycle" size="sm" to={`/assess/${data.cycle.id}`}>{data.cycle.name}</TextLink>}
+        </CardHeader>
+        <CardContent className="space-y-3">
+          {!data.cycle ? <p className="text-muted">{t('today.pareto.none')}</p> : <>
+            {rows.map(({ tier, met, total }, i) => (
+              <div key={tier}>
+                {i > 0 && <Separator className="mb-3" />}
+                <div className="mb-1 flex items-baseline justify-between gap-2 text-sm">
+                  <span className="font-semibold">{'★'.repeat(4 - tier)} {t(TIER_KEY[tier])}</span>
+                  <span className="font-data text-muted">{met} of {total} {t('today.pareto.met')}</span>
+                </div>
+                <Progress value={total ? (100 * met) / total : 0} variant={met === total && total > 0 ? 'success' : 'default'} aria-label={`Priority tier ${tier} met`} />
+              </div>
+            ))}
+            {unmet.length > 0 && <>
+              <Separator />
+              <List>
+                {unmet.map((p) => <ListRow key={p.id} tip="Score this indicator in the assessment" to={data.cycle ? `/assess/${data.cycle.id}/i/${p.id}` : '/assess'} title={p.id} meta={`${p.indicator.statement} · ${t(TIER_KEY[p.tier])} · ${t('today.pareto.unmet')}`} />)}
+              </List>
+            </>}
+          </>}
+        </CardContent>
+      </Card>
     </div>
   );
 }
@@ -149,7 +210,8 @@ function ManualReadiness({ data }: { data?: { templates: { status: string; kind?
     { label: 'Workflows', to: '/drrm', total: workflows.length, approved: workflows.filter((t) => t.status === 'approved').length, tip: 'Management cycles across offices: approved out of all' },
     { label: 'Forms', to: '/drrm/forms', total: data.forms.length, approved: data.forms.filter((f) => f.status === 'approved').length, tip: 'Records that close each step: approved out of all' },
   ];
-  const chapters = new Set(data.docs.filter((d) => d.kind === 'chapter' && d.chapter_no).map((d) => d.chapter_no)).size;
+  // 1.17: chapter_no 0 is the Introduction, so the check is `!= null`, not truthy.
+  const chapters = new Set(data.docs.filter((d) => d.kind === 'chapter' && d.chapter_no != null).map((d) => d.chapter_no)).size;
   return (
     <Card>
       <CardHeader className="flex-row items-start justify-between space-y-0 pb-2">

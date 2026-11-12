@@ -65,16 +65,16 @@ describe('Gawad KALASAG Seal readiness', () => {
   it('maps only to real IAT indicators', () => {
     for (const c of GK_CRITERIA) for (const i of c.indicators) for (const id of i.iat) expect(IAT_IDS.has(id)).toBe(true);
   });
-  it('bands the weighted mean: 2.50-3.00 Beyond, 1.50-2.49 Fully', () => {
-    expect(gkBand(2.5)).toBe('Beyond Compliant'); expect(gkBand(2.495)).toBe('Beyond Compliant');
-    expect(gkBand(2.49)).toBe('Fully Compliant'); expect(gkBand(1.5)).toBe('Fully Compliant'); expect(gkBand(1.49)).toBe('Below Fully Compliant');
+  it('bands the weighted mean on the CY 2026 tiers: Gold 2.50+, Silver 2.00-2.49, Bronze 1.50-1.99', () => {
+    expect(gkBand(2.5)).toBe('Gold'); expect(gkBand(2.49)).toBe('Silver');
+    expect(gkBand(2.0)).toBe('Silver'); expect(gkBand(1.99)).toBe('Bronze'); expect(gkBand(1.49)).toBe('Below Bronze');
   });
   it('computes the weighted mean over criteria', () => {
     const all = (v: number) => Object.fromEntries(GK_CRITERIA.flatMap((c) => c.indicators.map((i) => [i.id, v])));
     expect(gkResult(all(2)).mean).toBeCloseTo(2);
     const mixed = { ...all(3), ...Object.fromEntries(GK_CRITERIA[1]!.indicators.map((i) => [i.id, 1])) };   // Competency at 1
     expect(gkResult(mixed).mean).toBeCloseTo(0.65 * 3 + 0.35 * 1);
-    expect(gkResult(mixed).band).toBe('Fully Compliant');
+    expect(gkResult(mixed).band).toBe('Silver');   // mean = 0.65*3 + 0.35*1 = 2.30
   });
   it('never suggests more than the IAT evidence supports', () => {
     expect(suggestFromIat([3])).toBe(2); expect(suggestFromIat([4])).toBe(3); expect(suggestFromIat([2])).toBe(1);

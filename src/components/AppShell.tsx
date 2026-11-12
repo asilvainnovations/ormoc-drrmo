@@ -1,30 +1,37 @@
 import { NavLink, Link, Outlet } from 'react-router-dom';
 import { ScreenErrorBoundary } from '@/components/ErrorBoundary';
 import clsx from 'clsx';
-import { BookOpen, ClipboardCheck, Map as MapIcon, FolderLock, House, ListChecks, RadioTower, Settings, CloudOff, RefreshCw, AlertTriangle, Check, Wrench } from 'lucide-react';
+import { BookOpen, ClipboardCheck, Map as MapIcon, FolderLock, House, ListChecks, RadioTower, Settings, CloudOff, RefreshCw, AlertTriangle, Check, Wrench, type LucideIcon } from 'lucide-react';
 import { LEVEL_INFO } from '@/domain/eoc';
 import { useActiveDeclaration, useEocStatus, useNow, usePending } from '@/lib/hooks';
 import { useSyncState } from '@/lib/sync';
 import { duration, fmtTime, relative } from '@/lib/time';
 import { hoursBetween } from '@/domain/aa';
 import { useAuth } from '@/lib/auth';
+// 1.17 (ADR-031): nav labels translate to Cebuano; tooltips stay English so help text stays exact.
+import { useT, type StringKey } from '@/lib/i18n';
 import { canUseVault } from '@/features/vault/access';
 import { tip } from './Tooltip';
 import { CommandPalette } from './CommandPalette';
 import { ThemeToggle } from './ThemeToggle';
 import { BrandLockup } from './Brand';
 
-const NAV = [
-  { to: '/today', label: 'Today', icon: House, end: true, tip: 'Your day: alerts, quick actions, running protocols and latest log' },
-  { to: '/assess', label: 'Assess', icon: ClipboardCheck, tip: 'Institutional Assessment Tool: score indicators with evidence and plan improvements',
+type NavItem = {
+  to: string; k: StringKey; label: string; icon: LucideIcon; end?: boolean; tip: string;
+  rail?: boolean; vault?: boolean;
+  sub?: { to: string; k: StringKey; label: string; icon: LucideIcon; tip: string }[];
+};
+const NAV: NavItem[] = [
+  { to: '/today', k: 'nav.today', label: 'Today', icon: House, end: true, tip: 'Your day: alerts, quick actions, running protocols and latest log' },
+  { to: '/assess', k: 'nav.assess', label: 'Assess', icon: ClipboardCheck, tip: 'Institutional Assessment Tool: score indicators with evidence and plan improvements',
     // 1.16.0 (ADR-030): Hazard maps sit in Assess, just below the IAT.
-    sub: [{ to: '/assess/hazard-maps', label: 'Hazard maps', icon: MapIcon, tip: 'Official hazard sheets over the 85 barangays, full width or full screen' }] },
-  { to: '/protocols', label: 'Protocols', icon: ListChecks, tip: 'Step-by-step CDRRMO procedures you can run live or as drills' },
-  { to: '/eoc', label: 'EOC', icon: RadioTower, tip: 'Emergency Operations Center: level, logbook, SitReps, requests and anticipatory action' },
-  { to: '/library', label: 'Library', icon: BookOpen, tip: 'The Manual of Operations and EOC Manual, with traceability to the indicators' },
-  { to: '/vault', label: 'Vault', icon: FolderLock, tip: 'Document Vault: laws, guidelines and documents for Document Review', vault: true },
+    sub: [{ to: '/assess/hazard-maps', k: 'nav.hazardmaps', label: 'Hazard maps', icon: MapIcon, tip: 'Official hazard sheets over the 85 barangays, full width or full screen' }] },
+  { to: '/protocols', k: 'nav.protocols', label: 'Protocols', icon: ListChecks, tip: 'Step-by-step CDRRMO procedures you can run live or as drills' },
+  { to: '/eoc', k: 'nav.eoc', label: 'EOC', icon: RadioTower, tip: 'Emergency Operations Center: level, logbook, SitReps, requests and anticipatory action' },
+  { to: '/library', k: 'nav.library', label: 'Library', icon: BookOpen, tip: 'The Manual of Operations and EOC Manual, with traceability to the indicators' },
+  { to: '/vault', k: 'nav.vault', label: 'Vault', icon: FolderLock, tip: 'Document Vault: laws, guidelines and documents for Document Review', vault: true },
   // Desktop rail only; on phones the Today screen links to Tools (the tab bar holds six).
-  { to: '/tools', label: 'Tools', icon: Wrench, tip: 'ICS exercises, continuity planning, Gawad KALASAG readiness, HazardHunterPH, GeoAnalyticsPH, Zoom Earth and DDRiVE-M', rail: true },
+  { to: '/tools', k: 'nav.tools', label: 'Tools', icon: Wrench, tip: 'ICS exercises, continuity planning, Gawad KALASAG readiness, HazardHunterPH, GeoAnalyticsPH, Zoom Earth and DDRiVE-M', rail: true },
 ];
 
 /** The signature element: activation level, any declaration in force, and data freshness. */
@@ -75,6 +82,7 @@ export function StatusBand() {
 }
 
 export function AppShell() {
+  const tNav = useT();
   const { has } = useAuth();
   const nav = NAV.filter((n) => !n.vault || canUseVault(has));
   const tabs = nav.filter((n) => !n.rail);
@@ -88,11 +96,11 @@ export function AppShell() {
           <BrandLockup size={44} stacked product />
         </div>
         <ul className="flex-1 space-y-1 px-3 pt-3">
-          {nav.map(({ to, label, icon: Icon, end, tip: t, sub }) => (
+          {nav.map(({ to, k, icon: Icon, end, tip: t, sub }) => (
             <li key={to}>
               <NavLink to={to} end={end} {...tip(t)} className={({ isActive }) => clsx('flex min-h-tap items-center gap-3 rounded-control border-l-4 px-3 font-semibold',
                 isActive ? 'border-accent bg-sky-soft text-ink' : 'border-transparent text-ink hover:bg-sky-soft/60')}>
-                <Icon className="h-5 w-5" aria-hidden />{label}
+                <Icon className="h-5 w-5" aria-hidden />{tNav(k)}
               </NavLink>
               {sub && (
                 <ul className="mt-1 space-y-1">
@@ -100,7 +108,7 @@ export function AppShell() {
                     <li key={c.to}>
                       <NavLink to={c.to} {...tip(c.tip)} className={({ isActive }) => clsx('flex min-h-tap items-center gap-3 rounded-control border-l-4 pl-9 pr-3 text-sm font-semibold',
                         isActive ? 'border-accent bg-sky-soft text-ink' : 'border-transparent text-muted hover:bg-sky-soft/60 hover:text-ink')}>
-                        <c.icon className="h-4 w-4" aria-hidden />{c.label}
+                        <c.icon className="h-4 w-4" aria-hidden />{tNav(c.k)}
                       </NavLink>
                     </li>
                   ))}
@@ -124,13 +132,13 @@ export function AppShell() {
       {/* Phone tab bar: thumb reach */}
       <nav aria-label="Main" className="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-surface pb-safe-b lg:hidden print:hidden">
         <ul className={clsx('grid', tabs.length === 6 ? 'grid-cols-6' : 'grid-cols-5')}>
-          {tabs.map(({ to, label, icon: Icon, end, tip: t }) => (
+          {tabs.map(({ to, k, icon: Icon, end, tip: t }) => (
             <li key={to}>
               <NavLink to={to} end={end} {...tip(t)} className={({ isActive }) => clsx('flex min-h-[3.5rem] flex-col items-center justify-center gap-0.5 font-data text-[0.8125rem] font-semibold',
                 isActive ? 'text-ink' : 'text-muted')}>
                 {({ isActive }) => (<>
                   <span className={clsx('flex h-7 w-11 items-center justify-center rounded-full', isActive && 'bg-sky-soft text-action ring-1 ring-accent')}><Icon className="h-5 w-5" aria-hidden /></span>
-                  {label}
+                  {tNav(k)}
                 </>)}
               </NavLink>
             </li>

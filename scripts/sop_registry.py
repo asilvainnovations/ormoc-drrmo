@@ -247,7 +247,7 @@ for w in CH3_WORKFLOWS:
     META[w['code']] = w.pop('meta')
 
 # ---------------------------------------------------------------- Chapter 4 (v1.1, 8 Nov 2026)
-# Chapter 4 "Early Warning, Activation, Incident Management and Emergency Response" holds SOPs 4-01 to 4-09.
+# Chapter 4 "Early Warning, EOC Activation, Incident Management and Emergency Response" holds SOPs 4-01 to 4-09.
 # Four existing protocols now carry SOPs 4-02, 4-03, 4-04 and 4-08 (META above); five new protocols carry the rest.
 # Chapter 4 form codes that already had a platform form keep the platform code (records exist under it):
 #   EWR-F01 = EOC-WARN-01, EWR-F03 = EOC-WARN-02, EWR-F04 = GOV-F09, EOC-F01 = EOC-ACT-01, EOC-F05 = EOC-SITREP-01.

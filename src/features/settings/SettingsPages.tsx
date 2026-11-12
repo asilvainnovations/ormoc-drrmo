@@ -1,5 +1,6 @@
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { tip } from '@/components/Tooltip';
+import { STRINGS, useLang, useT, type Lang } from '@/lib/i18n';
 import { checkBarangayList, ORMOC_BARANGAY_COUNT } from '@/domain/barangays';
 import { useEffect, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
@@ -19,6 +20,34 @@ import { useToast } from '@/components/Toast';
 import type { Barangay, Role } from '@/types';
 import { PRODUCT } from '@/lib/product';
 
+/** 1.17 (ADR-031): Cebuano (Bisaya) or English for the navigation and dashboard chrome, per device.
+ * The manual, legal texts and tooltips stay in English so citations remain exact. */
+function LanguageRow() {
+  const [lang, setLang] = useLang();
+  const t = useT();
+  const choices: { value: Lang; label: string; labelKey: 'lang.en' | 'lang.ceb' }[] = [
+    { value: 'en', label: 'English', labelKey: 'lang.en' },
+    { value: 'ceb', label: 'Cebuano (Bisaya)', labelKey: 'lang.ceb' },
+  ];
+  return (
+    <div className="mb-3 rounded-control border border-line bg-surface px-3 py-2">
+      <div className="flex items-center justify-between gap-3">
+        <span className="font-semibold">{t('settings.language')}</span>
+        <span className="flex gap-2" role="group" aria-label={t('settings.language')}>
+          {choices.map((c) => (
+            <button key={c.value} type="button" onClick={() => setLang(c.value)} aria-pressed={lang === c.value}
+              {...tip(`${STRINGS[c.value]['settings.language.about']}`)}
+              className={`min-h-tap rounded-control border px-3 text-sm font-semibold ${lang === c.value ? 'border-action bg-sky-soft text-ink' : 'border-line text-muted hover:bg-sky-soft/60 hover:text-ink'}`}>
+              {STRINGS[c.value][c.labelKey]}
+            </button>
+          ))}
+        </span>
+      </div>
+      <p className="mt-1 text-xs text-muted">{t('settings.language.about')}</p>
+    </div>
+  );
+}
+
 export function SettingsPage() {
   const { profile, email, roles, has } = useAuth();
   return (
@@ -33,6 +62,7 @@ export function SettingsPage() {
       </Section>
       <Section title="This device">
         <div className="mb-3 flex items-center justify-between gap-3 rounded-control border border-line bg-surface px-3"><span className="font-semibold">Appearance</span><ThemeToggle withLabel /></div>
+        <LanguageRow />
         <List>
           <ListRow tip="See what is waiting to send and anything the server refused" to="/settings/sync" title="Sync and offline data" meta="What is waiting to send, and anything the server refused" />
           {has('admin') && <ListRow tip="Approve new accounts, grant or remove roles, deactivate people" to="/settings/users" title="Users and roles" meta="Approve new accounts and grant roles" />}

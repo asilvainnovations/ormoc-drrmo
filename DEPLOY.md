@@ -237,6 +237,30 @@ Then, in the dashboard:
        vulnerability and priority with "—" for fields not yet assessed;
      - the SQL suite (`npm run test:db`) passes its new DDRiVE checks.
 
+- **To 1.17.0** (12 November 2026), platform coherence: Cebuano UI, pillar-colored Library, Pareto dashboard on
+  Today, Introduction chapter with the manual cover, citation corrections (ADR-031). **No migration.** Apply 1.16.0 first.
+  1. **Reference data.** Delete every file in `supabase/seed/parts/`, upload the new ones, and run all parts in order
+     (`01` to `27`, with `26a` to `26d` after `26_seed.sql`). The last part's check is unchanged:
+     **140 | 18 | 935 | 71 | 36 | 250 | 29 | 10 | 140 | 59**.
+     - **Chapter 0 "Introduction" (v1.0)** enters the Library: purpose, organization (ten-chapter roadmap, five Parts,
+       ten functional areas, four DRRM pillars), and the assessment method stated once, with the manual cover. Chapter 4
+       is retitled **"Early Warning, EOC Activation, Incident Management and Emergency Response"** (ADR-031).
+     - Citation corrections in the reference data: **NDRRMC Memorandum No. 131, s. 2018** (the issuance is a Memorandum,
+       not "MC 131" or a Memorandum Circular) in the B1.1/B1.2 indicator bases and the Chapter 1 drafts; the B1.2 basis
+       now names the National Disaster Response Plan and RDRRMC VIII Res. No. 12-006, s. 2023 alongside Memorandum 131.
+     - Existing manual versions are not rewritten by a re-seed (the Library workflow owns them once loaded); new
+       installs get the corrected texts. Indicator bases and document titles do update.
+  2. **App.** Push with git and redeploy.
+     - **Today** opens with a dashboard: the Pareto priority set (Tiers 1–3, 23 indicators) with live met counts from
+       the current IAT cycle; tapping a gap opens the indicator in Assess. Manual readiness now counts the Introduction.
+     - **Settings → This device → Language** offers Cebuano (Bisaya) for the navigation and dashboard chrome; the
+       manual, legal texts and tooltips stay in English so citations remain exact.
+     - **Library** blocks carry the four DRRM pillar colors and chips (prevention / preparedness / response / recovery)
+       as visual separators for chapters and functional-area files.
+     - Tools → Gawad KALASAG uses the **CY 2026** tiers (Gold ≥ 2.50, Silver 2.00–2.49, Bronze 1.50–1.99, per OCD
+       Memorandum No. 763, s. 2026 applying NDRRMC MC No. 3, s. 2025).
+  3. **Asset.** `public/moo-cover.webp` serves the manual cover at `/moo-cover.webp` (the Introduction renders it).
+
 - **To 1.16.0** (12 November 2026), ECHO and Hazard maps in Assess (ADR-030). One migration (0028). Apply 1.15.0 first.
   1. **Migration.** Run `supabase/migrations/20261112002800_echo_camp_management.sql`. It extends `evacuation_centers` into the
      City's evacuation-centre inventory and adds `camp_reports` (aggregate, append-only) and `camp_feedback`. Then run

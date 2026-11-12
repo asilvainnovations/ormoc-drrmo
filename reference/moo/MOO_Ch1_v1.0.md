@@ -171,7 +171,7 @@ The following administrative and operational instruments shall guide institution
 | NDRRMC-DBM-DILG JMC No. 2013-1 | LDRRMF programming and utilization. |
 | COA Circular No. 2012-002 | Accounting and reporting of the LDRRMF and Special Trust Fund. |
 | NDRRMC Memorandum Circular No. 4, s. 2012 | Institutionalization and use of the Incident Command System. |
-| NDRRMC Memorandum Circular No. 131, s. 2018, as identified in the assessment | EOC establishment, operationalization and management; issuance details require confirmation with OCD Region VIII. |
+| NDRRMC Memorandum No. 131, s. 2018, as identified in the assessment | EOC establishment, operationalization and management; issuance details require confirmation with OCD Region VIII. |
 | NDCC Memorandum Circular No. 12, s. 2008 | Cluster-based disaster response coordination. |
 | RDRRMC VIII Resolution No. 12-006 and DILG VIII memorandum dated 26 February 2025 | Harmonized pre-disaster, during-disaster, post-disaster and terminal reporting. |
 | OCD/NDRRMC Public Service Continuity Planning Guidebook | Continuity of essential functions, business impact analysis, alternate arrangements and succession. |
@@ -1176,7 +1176,7 @@ The following matters should be resolved before Chapter 1 is submitted for forma
 | State of Calamity | Validate local declaration and lifting templates against RA 10121 Section 16. | City Legal Office |
 | State of Imminent Disaster | Confirm certified IRR provisions, RDRRMC VIII request route, response timelines and local EO procedure. | OCD VIII / City Legal Office |
 | ICC coordination | Confirm applicability of provincial coordination provisions to Ormoc. | OCD VIII |
-| EOC establishment | Verify NDRRMC MC No. 131, s. 2018 and the exact issuance title and provisions. | OCD VIII |
+| EOC establishment | Verify NDRRMC Memorandum No. 131, s. 2018 and the exact issuance title and provisions. | OCD VIII |
 | EOC–ICS interface | Confirm the relationship between EOC, IMT, Incident Commander and response clusters. | CDRRMO / OCD VIII |
 | Organizational structure | Reconcile JMC 2014-1, approved plantilla and proposed CDRRMO department structure. | HRMO / CDRRMO |
 | Institutional maturity | Validate provisional scores and resolve contradictory evidence. | Assessment team / CDRRMO |

@@ -35,3 +35,4 @@ Each record states a decision, why it was made, and what it costs. Change a deci
 | [028](028-hazard-map-layers.md) | Official hazard sheets as georeferenced image overlays over the COD-AB barangays, with QGIS-style tools (layers, identify, measure, export) and GeoAnalyticsPH embedded | Accepted |
 | [029](029-validation-workshop-and-chapter5.md) | Validation workshop controls in SQL (scorer cannot validate; revision needs a reason); Chapter 5 as a written chapter | Proposed |
 | [030](030-echo-and-hazard-maps-in-assess.md) | ECHO: simulator, evacuation intelligence, camp management records (aggregates only) and EOC dashboard; standards kept distinct; Hazard maps moved to Assess | Proposed |
+| [031](031-platform-coherence-language-pillars-pareto-introduction.md) | Cebuano UI chrome, pillar-colored Library, Pareto dashboard on Today, Introduction as Chapter 0 with cover; citation corrections (Memorandum 131; GK CY 2026 tiers) | Proposed |

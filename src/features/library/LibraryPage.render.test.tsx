@@ -19,7 +19,7 @@ describe('LibraryPage organization (1.14)', () => {
     expect(await screen.findByText(/SOP HR-01/)).toBeTruthy();
     expect(screen.getAllByText(/^SOPs \(\d+\)$/).length).toBeGreaterThan(0);
     // Areas without a chapter, superseded sections and the EOC Manual follow
-    expect(screen.getByText('Functional areas without a written chapter yet')).toBeTruthy();
+    expect(screen.getByText('Functional areas')).toBeTruthy();
     expect(screen.getByText(/^Superseded sections \(\d+\)$/)).toBeTruthy();
     expect(screen.getByText(/EOC Manual \(\d+ sections\)/)).toBeTruthy();
     // One colour key for the status badges
