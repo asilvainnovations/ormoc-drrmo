@@ -398,8 +398,8 @@ export function PolicyPage() {
       {approved && (
         <Alert className="mt-6 rounded-sheet">
           <ShieldCheck className="h-5 w-5" aria-hidden />
-          <AlertTitle className="font-bold">.This policy has been developed to support compliance with the Data Privacy Act of 2012 and to safeguard the rights and personal information of users.</AlertTitle>
-          <AlertDescription>Approval snapshot of 10 November 2026; the City may re-issue the effective date or approving officer by configuration.</AlertDescription>
+          <AlertTitle className="font-bold">.Compliant with the Data Privacy Act of 2012</AlertTitle>
+          <AlertDescription>Regularly updated to maintain accuracy, relevance, and alignment with current operational requirements and approved practices.</AlertDescription>
         </Alert>
       )}
       <div className="mt-8 grid gap-6 lg:grid-cols-[14rem_1fr]">
