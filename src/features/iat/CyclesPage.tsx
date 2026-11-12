@@ -6,12 +6,12 @@ import { db } from '@/lib/db';
 import { save } from '@/lib/store';
 import { uuid } from '@/lib/ids';
 import { useAuth } from '@/lib/auth';
-import { Badge, Button, EmptyState, Field, Input, List, ListRow, PageHeader, Section, Textarea } from '@/components/ui';
+import { Badge, Button, EmptyState, Field, Input, List, ListRow, PageHeader, Section, Tabs, Textarea } from '@/components/ui';
 import { Sheet } from '@/components/Sheet';
 import { useToast } from '@/components/Toast';
 import { cycleResults } from '@/domain/scoring';
 import type { Cycle } from '@/types';
-import { CYCLE_STATUS } from './labels';
+import { ASSESS_TABS, CYCLE_STATUS } from './labels';
 
 export function CyclesPage() {
   const { has } = useAuth();
@@ -43,6 +43,7 @@ export function CyclesPage() {
     <div className="page">
       <PageHeader title="Institutional assessment" subtitle="IAT v1.7: 125 core indicators (Parts A and B) and 15 interface indicators (Part C)."
         actions={canCreate && <Button tip="Start a new assessment cycle, for example the annual reassessment" icon={Plus} onClick={() => setOpen(true)}>New cycle</Button>} />
+      <Tabs items={ASSESS_TABS} />
       <Section title="Assessment cycles">
         {rows && rows.length === 0 ? (
           <EmptyState title="No assessment cycle yet"

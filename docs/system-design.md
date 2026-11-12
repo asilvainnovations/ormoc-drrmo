@@ -67,9 +67,10 @@ There is no custom application server. The rules live in SQL so they hold for ev
 |---|---|---|---|
 | Public pages (1.10) | `/`, `/about`, `/faq`, `/support`, `/policies/*` | — | Indexable; open without an account and without the workspace. Policies from typed data and env (`src/lib/site.ts`), marked draft until approved (ADR-020) |
 | Today | `/today` | — | Greeting, active declaration with next deadline, quick actions by role, running protocols, latest log, assessment progress, Manual readiness (approved protocols, workflows and forms). Ctrl+K search palette on every workspace screen (ADR-023) |
-| Assessment | `/assess` | `assessment_cycles`, `responses`, `evidence`, `actions` | Evidence first, then score; caps by evidence strength; validator workflow; domain and maturity readouts; CSV export; action plan by priority |
+| Assessment | `/assess` | `assessment_cycles`, `responses`, `evidence`, `actions` | Evidence first, then score; caps by evidence strength; validator workflow; domain and maturity readouts; CSV export; action plan by priority. **Hazard maps** (`/assess/hazard-maps`, moved from the EOC in 1.16, ADR-030) sit just below the IAT: full-width map, full screen, panels and instructions under the map |
 | Library | `/library` | `manual_parts`, `manual_areas`, `moo_documents`, `moo_versions`, `moo_document_indicators` | One manual: 5 Parts, 10 functional areas (area outlines carry each indicator's gap by its primary area), drafted Chapters 1–3 with their annexes, SOPs and forms, as Markdown; old codes kept as aliases; draft → for review → approved (Head only), approved versions immutable; traceability, master requirements, framework crosswalk |
-| Tools | `/tools` | — (kept in the browser; exported or printed) | ICS exercise simulator, PSCP workbench, Gawad KALASAG Seal readiness; links (new tab, never framed) to official PAGASA and PHIVOLCS bulletins, Philippine hazard and risk maps, international and satellite services, and DDRiVE-M |
+| Tools | `/tools` | — (kept in the browser; exported or printed) | ECHO (below), ICS exercise simulator, PSCP workbench, Gawad KALASAG Seal readiness; links (new tab, never framed) to official PAGASA and PHIVOLCS bulletins, Philippine hazard and risk maps, international and satellite services, and DDRiVE-M |
+| Tools: ECHO (1.16) | `/tools/echo` (simulator), `/echo/intel`, `/echo/camps`, `/echo/dashboard` | `evacuation_centers`, `camp_reports` (append-only), `camp_feedback`; the exercise stays in the browser | Evacuation and Camp Handling Operations (ADR-030): eight-module training simulator; evacuation intelligence (hazard sheets, DDRiVE exposure, centre and route screening); Camp Management Information System (inventory with RA 12076 Sec. 4 items, aggregate camp reports, feedback log); EOC dashboard with SitRep text and resource requests. Aggregates only; opening and closure are authority records filed online; nothing certifies a centre as safe |
 | DRRM: workflows, protocols, forms | `/drrm` (old `/protocols` links redirect) | `protocol_templates`, `protocol_steps`, `protocol_runs`, `protocol_run_steps`, `form_templates`, `v_indicator_sops` | 28 drafts: 13 protocols and 15 workflows (197 steps, 50 forms), including the nine Chapter 3 workflows and the Chapter 4 SOPs 4-01 to 4-09 (ADR-022). Every template names its kind, controlling SOP, process owner, policy basis and IAT indicators (ADR-019). Runs work offline; every step closes on its form (ADR-016) |
 | EOC | `/eoc` | `eoc_activations`, `logbook_entries`, `sitreps`, `barangay_reports`, `resource_requests` | Level board (White / Blue / Red), append-only logbook with corrections, SitRep numbering on submit, barangay counts only (a blank count is "not reported", not 0), forward-only request flow. EOC location card (coordinates, map links that open outside the app, KML download; ADR-015). Board, barangay list and SitRep totals count only the current event: back-to-back activations (Blue → Red) are one event; at White level, the last 24 hours |
 | EOC: risk intelligence (1.12.1) | `/eoc/risk` | `ddrive_barangay_profiles`, `ddrive_flood`, `ddrive_hazards`, `ddrive_exposure`, `ddrive_vulnerability`, `ddrive_priority`, `ddrive_city_scores`, `ddrive_risk_matrix`, `ddrive_sources` (+ `v_ddrive_city_risk`) | DDRiVE (Data-Driven Risk and Vulnerability Estimation, renamed from QRE) desk-assessment base layer, read-only reference (ADR-024). City risk picture with computed bands; per-barangay profile drill-down; a missing value stays null, never 0. Decision support only — never an evacuation trigger |
@@ -195,7 +196,7 @@ The integration suite found two defects that the fake client could not show, and
 
 ## Hazard maps and QGIS-style tools (1.14, ADR-028)
 
-`src/features/eoc/map/`: `HazardMapPage.tsx` (EOC → Hazard maps), `hazardMaps.ts` (catalogue of fitted sheets:
+`src/features/eoc/map/`: `HazardMapPage.tsx` (Assess → Hazard maps since 1.16; `/eoc/hazard-maps` redirects), `hazardMaps.ts` (catalogue of fitted sheets:
 corners, source, custodian, fit error, legend), `themes.ts` (DDRiVE barangay colouring and exposure summary),
 `geodesy.ts` (geodesic distance and area, UTM 51N, sheet pixel mapping), `identify.ts` (class from a sheet's pixel
 colour), `places.ts` (nearest EOC places; the GeoAnalyticsPH address, embedded per the ADR-011 amendment), `base.ts` (basemap set-up
@@ -208,3 +209,15 @@ every export carries the source and fit error.
 `src/components/StatusBadge.tsx` is the one place that maps approval status to colour for Manual text, workflows,
 protocols and forms: Draft = warn (ochre), For validation (`in_review`) = info (blue), Approved = ok (green),
 Returned = bad, Superseded and Retired = neutral. `StatusLegend` shows the key once per list.
+
+## ECHO: Evacuation and Camp Handling Operations (1.16, ADR-030)
+
+`src/domain/echo.ts` holds every benchmark with its own source (Sphere 2018, JMC No. 02 s. 2021, RA 12076 Sec. 4,
+NDRRMC DPMS Vol. 2) and the arithmetic (water, space, toilets, movement, totals, alerts); none is merged with another.
+`src/features/tools/echo/`: `EchoSimulator.tsx` (eight modules; exercise in `localStorage` via `tools/storage.ts`, JSON
+export and import, including the standalone prototype's file), `EchoReport.tsx` (print), `EchoIntel.tsx` (map, lazy),
+`screening.ts` (severity from legend wording, route sampling about every 50 m), `EchoCamps.tsx` (inventory, camp
+reports, feedback), `EchoDashboard.tsx` (EOC picture, SitRep draft, resource request). Migration
+`20261112002800_echo_camp_management.sql`: `evacuation_centers` extended (verification is about the record, never a
+safety certificate), `camp_reports` append-only with group-size checks and an authority reference for opening and
+closure (EOC Manager or Head, inserted online through `insertOnline`), `camp_feedback` with fixed summaries.

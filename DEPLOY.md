@@ -237,6 +237,20 @@ Then, in the dashboard:
        vulnerability and priority with "—" for fields not yet assessed;
      - the SQL suite (`npm run test:db`) passes its new DDRiVE checks.
 
+- **To 1.16.0** (12 November 2026), ECHO and Hazard maps in Assess (ADR-030). One migration (0028). Apply 1.15.0 first.
+  1. **Migration.** Run `supabase/migrations/20261112002800_echo_camp_management.sql`. It extends `evacuation_centers` into the
+     City's evacuation-centre inventory and adds `camp_reports` (aggregate, append-only) and `camp_feedback`. Then run
+     `supabase/migrations/migration_status.sql`: expect 28 rows, all applied. No seed change.
+  2. **App.** Assess → **Hazard maps** (moved from the EOC; old links redirect): the map is full width with a Full screen
+     button; layers and instructions are under the map. Tools → **ECHO**: Simulator, Evacuation intelligence, Camp
+     management and EOC dashboard. The EOC board shows an "Evacuation centres (ECHO)" card; the SitRep editor has
+     "Add ECHO camp figures".
+  3. **Inventory.** EOC staff add each evacuation centre in Tools → ECHO → Camp management (capacity, covered area, WASH
+     counts, location, RA 12076 items). The CDRRMO Head or the EOC Manager records the field verification. Training sites
+     stay in exercises.
+  4. Push with git, redeploy, then check: `/eoc/hazard-maps` opens Assess → Hazard maps; Tools → ECHO opens on
+     "Simulation: training only"; a duty officer cannot choose "Opening" in a camp report.
+
 - **To 1.15.0** (12 November 2026), validation workshop kit and Chapter 5 (ADR-029). One migration (0027). Apply 1.14.0 first.
   1. **Migration.** Run `supabase/migrations/20261112002700_validation_workshop.sql`. It adds four columns to IAT responses
      (who last scored, the validation decision, the reason, the submitted score) and the view `v_validation_progress`.

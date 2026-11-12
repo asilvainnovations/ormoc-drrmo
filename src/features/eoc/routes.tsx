@@ -1,4 +1,4 @@
-import { Route, Routes } from 'react-router-dom';
+import { Navigate, Route, Routes } from 'react-router-dom';
 import { BoardPage } from './BoardPage';
 import { LogbookPage } from './LogbookPage';
 import { SitrepEditor, SitrepsPage } from './SitrepsPage';
@@ -17,7 +17,6 @@ import { Loading } from '@/components/ui';
 
 // The map library is large; it loads only when the Map tab opens.
 const MapPage = lazy(() => import('./MapPage'));
-const HazardMapPage = lazy(() => import('./map/HazardMapPage'));
 
 export default function EocRoutes() {
   return (
@@ -33,7 +32,8 @@ export default function EocRoutes() {
       <Route path="plans" element={<PlansPage />} />
       <Route path="roster" element={<RosterPage />} />
       <Route path="map" element={<Suspense fallback={<Loading />}><MapPage /></Suspense>} />
-      <Route path="hazard-maps" element={<Suspense fallback={<Loading />}><HazardMapPage /></Suspense>} />
+      {/* 1.16.0: Hazard maps moved to Assess; old links still work. */}
+      <Route path="hazard-maps" element={<Navigate to="/assess/hazard-maps" replace />} />
       <Route path="aa" element={<AaHomePage />} />
       <Route path="aa/pdra/new" element={<PdraNewPage />} />
       <Route path="aa/pdra/:id" element={<PdraViewPage />} />

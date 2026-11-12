@@ -7,6 +7,7 @@ import { save } from '@/lib/store';
 import { uuid } from '@/lib/ids';
 import { useAuth } from '@/lib/auth';
 import { canChangeLevel, canOperate, currentLevel, evacuationTotals, latestPerBarangay, sitrepReportWindow } from '@/domain/eoc';
+import { campTotals, latestPerCentre, sitrepCampText } from '@/domain/echo';
 import { fmtDateTime, fromLocalInput, toLocalInput } from '@/lib/time';
 import { Badge, Button, EmptyState, Field, Input, List, ListRow, Loading, Notice, PageHeader, Section, Tabs, Textarea } from '@/components/ui';
 import { useToast } from '@/components/Toast';
@@ -65,6 +66,16 @@ export function SitrepEditor() {
       ? `Evacuation totals filled from this event's barangay reports. ${t.notReported} barangay${t.notReported > 1 ? 's have' : ' has'} not reported counts.`
       : "Evacuation totals filled from this event's barangay reports", 'info');
   };
+  /** ECHO (1.16.0): add the inside-centre figures as text; the evacuated totals stay from the barangay reports. */
+  const pullCamps = async () => {
+    const window = sitrepReportWindow(await db.eoc_activations.toArray(), form);
+    const t = campTotals(latestPerCentre(await db.camp_reports.toArray(), window.from, window.to),
+      new Map((await db.evacuation_centers.toArray()).map((c) => [c.id, c.capacity_persons])));
+    if (t.centresOpen === 0) { toast('No open centre in ECHO for this period', 'info'); return; }
+    const text = sitrepCampText(t, []).situation;
+    setForm({ ...form, situation: form.situation ? `${form.situation}\n\n${text}` : text });
+    toast('Camp figures added to the situation overview', 'info');
+  };
   const persist = async (status?: Sitrep['status']) => {
     let seq = form.seq;
     if (status === 'submitted' && seq === null) {   // the server assigns the official number; this is the offline preview
@@ -96,7 +107,8 @@ export function SitrepEditor() {
             <Field label="Needs and gaps">{(i) => <Textarea id={i} rows={3} disabled={!editable} value={form.needs ?? ''} onChange={(e) => setForm({ ...form, needs: e.target.value })} />}</Field>
           </div>
         </Section>
-        <Section title="Figures" action={editable && <Button tip="Fill the evacuation figures from the latest barangay reports" variant="quiet" onClick={pullEvac}>Fill from barangay reports</Button>}>
+        <Section title="Figures" action={editable && <span className="flex flex-wrap gap-1"><Button tip="Fill the evacuation figures from the latest barangay reports" variant="quiet" onClick={pullEvac}>Fill from barangay reports</Button>
+          <Button tip="Add the inside-evacuation-centre figures from ECHO camp reports to the situation overview" variant="quiet" onClick={pullCamps}>Add ECHO camp figures</Button></span>}>
           <p className="mb-3 text-sm text-muted">Aggregate counts only. Leave blank if not yet known; enter 0 only when confirmed.</p>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
             {COUNTS.map(([k, label]) => (

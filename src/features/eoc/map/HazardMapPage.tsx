@@ -1,4 +1,4 @@
-// EOC → Hazard maps (ADR-028): the City's official hazard sheets over the barangays, with the QGIS tools the EOC
+// Assess → Hazard maps (ADR-028; moved from the EOC module in 1.16.0, ADR-030): the City's official hazard sheets over the barangays, with the QGIS tools the EOC
 // uses — layers, opacity and order, categorised barangay colouring, identify, measure, coordinates, exposure summary
 // and a PNG export that carries title, sources and accuracy. Barangay-level analysis is GeoAnalyticsPH, embedded. Sheets are pictures fitted to their own grid: read them
 // at barangay level, never for a site decision. Nothing here sets a hazard threshold.
@@ -7,14 +7,14 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import * as maplibregl from 'maplibre-gl';
 import type { GeoJSONSource, MapMouseEvent } from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
-import { ArrowDown, ArrowUp, ChevronDown, Crosshair, Download, ExternalLink, Info, LocateFixed, Ruler, Square } from 'lucide-react';
+import { ArrowDown, ArrowUp, ChevronDown, Crosshair, Download, ExternalLink, Info, LocateFixed, Maximize2, Minimize2, Ruler, Square } from 'lucide-react';
 import { db } from '@/lib/db';
 import { Badge, Button, ButtonAnchor, Checkbox, Notice, PageHeader, Section, Select, Tabs } from '@/components/ui';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Separator } from '@/components/ui/separator';
 import { Slider } from '@/components/ui/slider';
 import { tip } from '@/components/Tooltip';
-import { EOC_TABS } from '../labels';
+import { ASSESS_TABS } from '@/features/iat/labels';
 import { ORMOC, basemapReady, baseStyle, ensureProtocol, plainStyle, token } from './base';
 import { HAZARD_MAPS, type HazardMap } from './hazardMaps';
 import { classOf, exposureSummary, rawValue, THEMES, type ThemeData, type ThemeKey } from './themes';
@@ -48,6 +48,8 @@ export default function HazardMapPage() {
   const [found, setFound] = useState<Identified | null>(null);
   const [cursor, setCursor] = useState<LngLat | null>(null);
   const toolRef = useRef<Tool>(tool);
+  const frame = useRef<HTMLDivElement>(null);
+  const [full, setFull] = useState(false);
   toolRef.current = tool;
 
   const data = useLiveQuery(async (): Promise<ThemeData> => {
@@ -110,6 +112,29 @@ export default function HazardMapPage() {
     return () => { m.remove(); map.current = null; setReady(false); };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hasBase]);
+
+  // The map follows its box: a window resize, a rotated phone, the full-screen switch or the rail opening.
+  useEffect(() => {
+    const el = box.current;
+    if (!el || typeof ResizeObserver === 'undefined') return;
+    const ro = new ResizeObserver(() => map.current?.resize());
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [ready]);
+  useEffect(() => {
+    const onChange = () => setFull(document.fullscreenElement === frame.current);
+    document.addEventListener('fullscreenchange', onChange);
+    return () => document.removeEventListener('fullscreenchange', onChange);
+  }, []);
+  async function toggleFull() {
+    const el = frame.current;
+    if (!el) return;
+    try {
+      if (document.fullscreenElement) await document.exitFullscreen();
+      else if (el.requestFullscreen) await el.requestFullscreen();
+      else setFull((f) => !f); // no Fullscreen API (older iOS): fill the window instead
+    } catch { setFull((f) => !f); }
+  }
 
   const visible = useMemo(() => order.map((c) => HAZARD_MAPS.find((h) => h.code === c)!).filter((h) => on[h.code]), [order, on]);
   const visibleRef = useRef(visible);
@@ -198,7 +223,7 @@ export default function HazardMapPage() {
     g.fillStyle = '#ffffff'; g.fillRect(0, 0, c.width, c.height);
     g.drawImage(src, pad, head);
     g.fillStyle = '#1F2A37'; g.font = 'bold 20px sans-serif';
-    g.fillText('Ormoc City hazard map (MODE, EOC)', pad, 26);
+    g.fillText('Ormoc City hazard map (MODE, Assess)', pad, 26);
     g.font = '13px sans-serif';
     g.fillText(`Printed ${new Date().toLocaleString('en-PH', { timeZone: 'Asia/Manila' })}. Sheets are fitted pictures: for barangay-level awareness, not site decisions.`, pad, 46);
     let y = head + src.height + 20;
@@ -214,14 +239,64 @@ export default function HazardMapPage() {
   const utm = cursor ? toUtm51(cursor[0], cursor[1]) : null;
 
   return (
-    <div className="space-y-4">
-      <PageHeader title="Hazard Maps" subtitle="The City's official hazard sheets over the 85 barangays, with layer, identify, measure and export tools. Read them at barangay level: each sheet is a printed map fitted to its own grid." />
-      <Tabs items={EOC_TABS} />
+    <div className="mx-auto w-full max-w-[120rem] space-y-4 px-4 pb-28 pt-4 lg:px-6 lg:pb-12">
+      <PageHeader title="Hazard Maps" />
+      <Tabs items={ASSESS_TABS} />
       {baseProblem && <Notice tone="info" title="Plain background">{baseProblem} The sheets and boundaries still show.</Notice>}
       {bgyProblem && <Notice tone="warn">{bgyProblem}</Notice>}
 
-      <div className="grid gap-4 lg:grid-cols-[23rem_1fr]">
+      {/* The map first and wide; everything else sits under it. Full screen keeps the tools with the map. */}
+      <div ref={frame} className={full ? 'fixed inset-0 z-50 flex flex-col gap-2 bg-surface p-2 sm:p-3' : 'space-y-2'}>
+          <div className="flex flex-wrap items-center gap-2" role="toolbar" aria-label="Map tools">
+            <Button variant={tool === 'identify' ? 'primary' : 'secondary'} icon={Info} aria-pressed={tool === 'identify'} tip="Click the map to see the barangay and the class of each shown sheet there" onClick={() => setTool('identify')}>Identify</Button>
+            <Button variant={tool === 'distance' ? 'primary' : 'secondary'} icon={Ruler} aria-pressed={tool === 'distance'} tip="Click points on the map to measure a distance along the ground" onClick={() => setTool('distance')}>Distance</Button>
+            <Button variant={tool === 'area' ? 'primary' : 'secondary'} icon={Square} aria-pressed={tool === 'area'} tip="Click three or more points to measure an area" onClick={() => setTool('area')}>Area</Button>
+            <Button variant="secondary" icon={LocateFixed} tip="Show the hazards where you are now (uses this device's location; nothing is saved)" onClick={locateMe} disabled={!ready}>My location</Button>
+            {tool !== 'identify' && pts.length > 0 && <Button variant="quiet" tip="Remove the measuring points" onClick={() => setPts([])}>Clear</Button>}
+            <span className="flex-1" />
+            <Button variant="secondary" icon={Download} tip="Save the current view as a PNG with title, sources and accuracy" onClick={exportPng} disabled={!ready}>Export PNG</Button>
+            <Button variant="secondary" icon={full ? Minimize2 : Maximize2} aria-pressed={full} tip={full ? 'Leave full screen (Esc)' : 'Show the map on the whole screen'} onClick={() => void toggleFull()}>{full ? 'Exit full screen' : 'Full screen'}</Button>
+          </div>
+          <div ref={box} className={full ? 'min-h-0 w-full flex-1 overflow-hidden rounded-card border border-line' : 'h-[min(78dvh,60rem)] min-h-[22rem] w-full overflow-hidden rounded-card border border-line sm:min-h-[28rem]'}
+            role="application" aria-label="Hazard map of Ormoc City" />
+          <div className="flex flex-wrap gap-x-6 gap-y-1 text-sm text-muted" aria-live="polite">
+            <span className="inline-flex items-center gap-1"><Crosshair className="h-4 w-4" aria-hidden />
+              {cursor ? `${cursor[1].toFixed(5)}° N, ${cursor[0].toFixed(5)}° E · UTM 51N ${Math.round(utm!.e)} E, ${Math.round(utm!.n)} N` : 'Move over the map for coordinates'}</span>
+            {measured && <span className="font-semibold text-ink">{tool === 'distance' ? 'Distance' : 'Area'}: {measured}</span>}
+            {tool !== 'identify' && !measured && <span>Click the map to add points.</span>}
+          </div>
+      </div>
+
+      <div className="grid gap-4 lg:grid-cols-2 2xl:grid-cols-3">
         <div className="space-y-4">
+          {locProblem && <Notice tone="warn">{locProblem}</Notice>}
+          {found && tool === 'identify' && (
+            <Section title={found.barangay ? `Barangay ${found.barangay.name}` : 'Outside the barangay boundaries'}>
+              <p className="text-sm text-muted">{found.lngLat[1].toFixed(5)}° N, {found.lngLat[0].toFixed(5)}° E{found.barangay ? ` · PSGC ${found.barangay.psgc} · ${found.barangay.area_km2} km²` : ''}</p>
+              {found.barangay && data && theme !== 'none' && (
+                <p className="mt-1 text-sm">{THEMES.find((t) => t.key === theme)!.label}: <strong>{String(rawValue(theme, found.barangay.psgc, data) ?? 'Not assessed')}</strong></p>
+              )}
+              <ul className="mt-2 divide-y divide-line text-sm">
+                {found.sheets.map(({ map: h, value }) => (
+                  <li key={h.code} className="flex justify-between gap-3 py-1.5"><span>{h.title}</span><span className="text-right font-medium">{value === 'Not mapped here' || value === 'No class shown' || value.startsWith('Could') || value.startsWith('Not readable') ? value : `about ${value}`}</span></li>
+                ))}
+              </ul>
+              <p className="mt-2 text-xs text-muted">Read from the sheet colour at this point; good to the fit error of each sheet. Check the official map before a site decision.</p>
+              <Separator className="my-3" />
+              <h3 className="font-semibold">Nearest EOC places</h3>
+              {places && places.length ? (
+                <ul className="mt-1 divide-y divide-line text-sm">
+                  {nearest(found.lngLat, places).map((x) => (
+                    <li key={x.id} className="flex flex-wrap items-center justify-between gap-2 py-1.5">
+                      <span>{x.name} <span className="text-muted">({x.kind})</span></span>
+                      <span className="flex items-center gap-2"><Badge tone={x.status === 'Field-verified' ? 'ok' : 'warn'}>{x.status}</Badge><span className="tabular-nums">{x.km.toFixed(1)} km</span></span>
+                    </li>
+                  ))}
+                </ul>
+              ) : <p className="text-sm text-muted">No reference points yet. Add them on the Map tab.</p>}
+              <p className="mt-1 text-xs text-muted">Straight-line distance, not the road route.</p>
+            </Section>
+          )}
           <Section title="Hazard layers">
             <p className="text-sm text-muted">Tick a sheet to show it. The first in a group draws on top; use the arrows to change the order.</p>
             {families.map(({ fam, maps }) => (
@@ -261,6 +336,8 @@ export default function HazardMapPage() {
             ))}
           </Section>
 
+        </div>
+        <div className="space-y-4">
           <Section title="Barangay colouring">
             <Select value={theme} onChange={(e) => setTheme(e.target.value as ThemeKey)} aria-label="Barangay colouring" {...tip('Colour each barangay by a DDRiVE desk-assessment value')}>
               {THEMES.map((t) => <option key={t.key} value={t.key}>{t.label}</option>)}
@@ -290,53 +367,18 @@ export default function HazardMapPage() {
               {(bgy ?? []).slice().sort((a, b) => a.properties.name.localeCompare(b.properties.name)).map((f) => <option key={f.properties.psgc} value={f.properties.psgc}>{f.properties.name}</option>)}
             </Select>
           </Section>
+          <Section title="How to use this map">
+            <ul className="list-disc space-y-1 pl-5 text-sm text-muted">
+              <li>The City's official hazard sheets over the 85 barangays. Each sheet is a printed map fitted to its own grid: read it at barangay level, never for a site decision.</li>
+              <li><strong className="text-ink">Identify</strong>: click the map to see the barangay and the class of each sheet shown there, and the nearest EOC places.</li>
+              <li><strong className="text-ink">Distance</strong> and <strong className="text-ink">Area</strong>: click points on the map; Clear removes them.</li>
+              <li>Tick sheets under Hazard layers; set opacity and drawing order there. Barangay colouring adds DDRiVE desk-assessment classes (pending validation).</li>
+              <li><strong className="text-ink">Full screen</strong> fills the screen with the map and its tools; press Esc or Exit full screen to return. On a phone, use two fingers to move the map.</li>
+              <li><strong className="text-ink">Export PNG</strong> saves the current view with title, sources and fit accuracy.</li>
+            </ul>
+          </Section>
         </div>
-
-        <div className="space-y-3">
-          <div className="flex flex-wrap items-center gap-2" role="toolbar" aria-label="Map tools">
-            <Button variant={tool === 'identify' ? 'primary' : 'secondary'} icon={Info} aria-pressed={tool === 'identify'} tip="Click the map to see the barangay and the class of each shown sheet there" onClick={() => setTool('identify')}>Identify</Button>
-            <Button variant={tool === 'distance' ? 'primary' : 'secondary'} icon={Ruler} aria-pressed={tool === 'distance'} tip="Click points on the map to measure a distance along the ground" onClick={() => setTool('distance')}>Distance</Button>
-            <Button variant={tool === 'area' ? 'primary' : 'secondary'} icon={Square} aria-pressed={tool === 'area'} tip="Click three or more points to measure an area" onClick={() => setTool('area')}>Area</Button>
-            <Button variant="secondary" icon={LocateFixed} tip="Show the hazards where you are now (uses this device's location; nothing is saved)" onClick={locateMe} disabled={!ready}>My location</Button>
-            {tool !== 'identify' && pts.length > 0 && <Button variant="quiet" tip="Remove the measuring points" onClick={() => setPts([])}>Clear</Button>}
-            <span className="flex-1" />
-            <Button variant="secondary" icon={Download} tip="Save the current view as a PNG with title, sources and accuracy" onClick={exportPng} disabled={!ready}>Export PNG</Button>
-          </div>
-          <div ref={box} className="h-[65vh] min-h-[420px] w-full overflow-hidden rounded-card border border-line" role="application" aria-label="Hazard map of Ormoc City" />
-          <div className="flex flex-wrap gap-x-6 gap-y-1 text-sm text-muted" aria-live="polite">
-            <span className="inline-flex items-center gap-1"><Crosshair className="h-4 w-4" aria-hidden />
-              {cursor ? `${cursor[1].toFixed(5)}° N, ${cursor[0].toFixed(5)}° E · UTM 51N ${Math.round(utm!.e)} E, ${Math.round(utm!.n)} N` : 'Move over the map for coordinates'}</span>
-            {measured && <span className="font-semibold text-ink">{tool === 'distance' ? 'Distance' : 'Area'}: {measured}</span>}
-            {tool !== 'identify' && !measured && <span>Click the map to add points.</span>}
-          </div>
-          {locProblem && <Notice tone="warn">{locProblem}</Notice>}
-          {found && tool === 'identify' && (
-            <Section title={found.barangay ? `Barangay ${found.barangay.name}` : 'Outside the barangay boundaries'}>
-              <p className="text-sm text-muted">{found.lngLat[1].toFixed(5)}° N, {found.lngLat[0].toFixed(5)}° E{found.barangay ? ` · PSGC ${found.barangay.psgc} · ${found.barangay.area_km2} km²` : ''}</p>
-              {found.barangay && data && theme !== 'none' && (
-                <p className="mt-1 text-sm">{THEMES.find((t) => t.key === theme)!.label}: <strong>{String(rawValue(theme, found.barangay.psgc, data) ?? 'Not assessed')}</strong></p>
-              )}
-              <ul className="mt-2 divide-y divide-line text-sm">
-                {found.sheets.map(({ map: h, value }) => (
-                  <li key={h.code} className="flex justify-between gap-3 py-1.5"><span>{h.title}</span><span className="text-right font-medium">{value === 'Not mapped here' || value === 'No class shown' || value.startsWith('Could') || value.startsWith('Not readable') ? value : `about ${value}`}</span></li>
-                ))}
-              </ul>
-              <p className="mt-2 text-xs text-muted">Read from the sheet colour at this point; good to the fit error of each sheet. Check the official map before a site decision.</p>
-              <Separator className="my-3" />
-              <h3 className="font-semibold">Nearest EOC places</h3>
-              {places && places.length ? (
-                <ul className="mt-1 divide-y divide-line text-sm">
-                  {nearest(found.lngLat, places).map((x) => (
-                    <li key={x.id} className="flex flex-wrap items-center justify-between gap-2 py-1.5">
-                      <span>{x.name} <span className="text-muted">({x.kind})</span></span>
-                      <span className="flex items-center gap-2"><Badge tone={x.status === 'Field-verified' ? 'ok' : 'warn'}>{x.status}</Badge><span className="tabular-nums">{x.km.toFixed(1)} km</span></span>
-                    </li>
-                  ))}
-                </ul>
-              ) : <p className="text-sm text-muted">No reference points yet. Add them on the Map tab.</p>}
-              <p className="mt-1 text-xs text-muted">Straight-line distance, not the road route.</p>
-            </Section>
-          )}
+        <div className="space-y-4 lg:col-span-2 2xl:col-span-1">
           <Section title="Barangay hazard assessment (GeoAnalyticsPH)">
             <p className="max-w-prose text-sm text-muted">GeoAnalyticsPH, from DOST-PHIVOLCS GeoRiskPH, gives the official barangay-level analysis: population prone and safe by sex and age, affected facilities and land area for each hazard. In its map choose Region VIII (Eastern Visayas), then the province, City of Ormoc and the barangay{found?.barangay ? <> (here: <strong className="text-ink">{found.barangay.name}</strong>)</> : ''}, pick a hazard and select Submit.</p>
             <div className="mt-3 flex flex-wrap gap-2">

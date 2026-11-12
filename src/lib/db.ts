@@ -116,6 +116,9 @@ export class DrrmDB extends Dexie {
   eoc_positions!: Table<T.EocPosition, string>;
   eoc_designations!: Table<T.EocDesignation, string>;
   geo_reference_points!: Table<T.GeoReferencePoint, string>;
+  evacuation_centers!: Table<T.EvacuationCentre, string>;
+  camp_reports!: Table<T.CampReport, string>;
+  camp_feedback!: Table<T.CampFeedback, string>;
   geo_layers!: Table<T.GeoLayer, string>;
   // local only
   outbox!: Table<OutboxItem, number>;
@@ -201,6 +204,12 @@ export class DrrmDB extends Dexie {
       ddrive_city_scores: 'hazard_event, hazard_family',
       ddrive_risk_matrix: 'ranking, band',
       ddrive_sources: 'source_id',
+    });
+    // v6 (1.16.0): ECHO, the evacuation-centre inventory, camp reports and the feedback log (ADR-030). Aggregates only.
+    this.version(6).stores({
+      evacuation_centers: 'id, code, verification_status, barangay_psgc',
+      camp_reports: 'id, centre_id, activation_id, reported_at, [centre_id+reported_at]',
+      camp_feedback: 'id, activation_id, centre_id, status',
     });
   }
 }

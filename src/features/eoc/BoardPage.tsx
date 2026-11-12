@@ -12,6 +12,7 @@ import { Badge, Button, ChoiceGroup, Field, Input, List, ListRow, Notice, PageHe
 import { Sheet } from '@/components/Sheet';
 import { useToast } from '@/components/Toast';
 import type { EocLevel } from '@/types';
+import { campTotals, latestPerCentre } from '@/domain/echo';
 import { addLog, setEocLevel } from './actions';
 import { EocLocation } from './EocLocation';
 import { CONDITION, CONDITION_TONE, EOC_TABS, LOG_CATEGORY, PRIORITY, REQUEST_STATUS, SITREP_STATUS } from './labels';
@@ -37,6 +38,9 @@ export function BoardPage() {
       barangayCount: brgy.size,
       open,
       sitrep: (await db.sitreps.orderBy('period_end').reverse().first()),
+      // ECHO (1.16.0): the latest camp report per centre in this activation.
+      camps: campTotals(latestPerCentre(await db.camp_reports.toArray(), window.from),
+        new Map((await db.evacuation_centers.toArray()).map((c) => [c.id, c.capacity_persons]))),
     };
   }, []);
   const operator = canOperate(roles);
@@ -103,6 +107,15 @@ export function BoardPage() {
           {data?.open.length === 0 ? <p className="text-muted">None open.</p> : (
             <List>{data?.open.map((r) => <ListRow tip={`Open the request for ${r.item}`} key={r.id} to="/eoc/requests" title={`${r.quantity} ${r.unit} ${r.item}`} meta={`${r.requesting_party}, ${relative(r.requested_at)}`}
               trailing={<span className="flex flex-col items-end gap-1"><Badge tone={r.priority === 'life_safety' ? 'bad' : 'neutral'}>{PRIORITY[r.priority]}</Badge><Badge>{REQUEST_STATUS[r.status]}</Badge></span>} />)}</List>
+          )}
+        </Section>
+
+        <Section title="Evacuation centres (ECHO)" action={<TextLink tip="Open the ECHO evacuation and camp dashboard" size="sm" to="/tools/echo/dashboard">ECHO dashboard</TextLink>}>
+          {!data || data.camps.centresOpen === 0 ? <p className="text-muted">No centre reported open in this activation.</p> : (
+            <p>{data.camps.persons.toLocaleString('en-PH')} persons ({data.camps.families.toLocaleString('en-PH')} families) in {data.camps.centresOpen} open centre{data.camps.centresOpen > 1 ? 's' : ''}
+              {data.camps.overCapacity > 0 && <> · <Badge tone="bad">{data.camps.overCapacity} over capacity</Badge></>}
+              {data.camps.waterBelowSphere > 0 && <> · <Badge tone="warn">{data.camps.waterBelowSphere} below 15 L water</Badge></>}
+              {data.camps.personsNotReported > 0 && <span className="block text-sm text-muted">{data.camps.personsNotReported} centre(s) have not reported persons.</span>}</p>
           )}
         </Section>
 

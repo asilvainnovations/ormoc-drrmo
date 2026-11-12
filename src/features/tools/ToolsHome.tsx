@@ -18,6 +18,7 @@ import {
   Satellite,
   ShieldCheck,
   Swords,
+  Tent,
   Waves,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
@@ -195,6 +196,8 @@ export const DDRIVE_M: ExternalTool = {
 export const EXTERNAL_TOOLS: ExternalTool[] = [...PHILIPPINE_TOOLS, ...INTERNATIONAL_TOOLS, ...SPECIALIZED_TOOLS, DDRIVE_M];
 
 export const INTERNAL_TOOLS: InternalTool[] = [
+  { to: '/tools/echo', name: 'ECHO: Evacuation and Camp Handling Operations', icon: Tent, iat: 'A7.4, A7.6, A7.9, B5.1, B6.3, B6.4',
+    text: 'Simulate the whole cycle from evacuation planning to camp closure, screen centres and routes on the hazard sheets, keep the evacuation-centre inventory and aggregate camp reports, and see one EOC picture with SitRep figures.' },
   { to: '/tools/ics', name: 'ICS Exercise Simulator', icon: Swords, iat: 'A8.1, B6.1, B7.2, B7.3',
     text: 'Conduct drills, facilitated tabletops and position exercises across six Ormoc scenarios. Assess performance against Philippine ICS doctrine and generate printable after-action reviews.' },
   { to: '/tools/pscp', name: 'Public Service Continuity Plan', icon: ShieldCheck, iat: 'A3.4, B2.7',

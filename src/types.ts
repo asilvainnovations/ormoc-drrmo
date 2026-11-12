@@ -293,3 +293,31 @@ export interface VaultDocument extends Versioned {
   /** 1.9: restricted documents open only for the listed roles (and the CDRRMO Head). */
   access_class?: 'standard' | 'restricted'; allowed_roles?: Role[];
 }
+
+// ------------------------------------------------------------------ ECHO (1.16.0, migration 20261112002800, ADR-030)
+export type CentreKind = 'ligtas_pinoy_center' | 'multipurpose' | 'covered_court' | 'barangay_hall' | 'school_last_resort' | 'other';
+export type CentreVerification = 'training' | 'pending_field_validation' | 'field_verified' | 'superseded';
+/** The evacuation-centre inventory. "field_verified" = inventory data checked in the field, never a safety certificate. */
+export interface EvacuationCentre extends Versioned {
+  code: string | null; name: string; barangay_psgc: string | null; kind: CentreKind; capacity_persons: number | null; covered_area_m2: number | null;
+  toilets_male: number | null; toilets_female: number | null; toilets_accessible: number | null; bathing: number | null; water_l_day: number | null;
+  is_school: boolean; is_permanent: boolean; accessible: boolean | null; hazard_screening: string | null; structural_ref: string | null;
+  ra12076: Record<string, 'yes' | 'no' | 'unknown'>; verification_status: CentreVerification; verified_by?: string | null; verified_at?: string | null;
+  custodian_office_id: string | null; point_id: string | null; lat: number | null; lng: number | null; note: string | null;
+  created_by?: string | null; created_at?: string;
+}
+export type CampPhase = 'opening' | 'open' | 'consolidating' | 'closing' | 'closed';
+/** One aggregate snapshot of a centre (append-only). Null = not reported. */
+export interface CampReport {
+  id: string; activation_id: string | null; centre_id: string; reported_at: string; phase: CampPhase;
+  families: number | null; persons: number | null; female: number | null; male: number | null; children: number | null; older: number | null;
+  pwd: number | null; pregnant_lactating: number | null; ip: number | null; arrivals: number | null; departures: number | null;
+  water_l_day: number | null; toilets_functional: number | null; bathing_functional: number | null;
+  services: Record<string, 'yes' | 'partial' | 'no'>; referrals_cp: number | null; referrals_gbv: number | null; referrals_health: number | null;
+  unmet_needs: string | null; authority_ref: string | null; remarks: string | null; reported_by?: string | null; created_at: string;
+}
+export type FeedbackCategory = 'access_inclusion' | 'wash' | 'safety_privacy' | 'child_protection_referral' | 'gbv_referral' | 'health_mhpss' | 'food_nfi' | 'information' | 'other';
+export interface CampFeedback extends Versioned {
+  activation_id: string | null; centre_id: string | null; category: FeedbackCategory; status: 'open' | 'referred' | 'action_assigned' | 'closed';
+  summary: string; action_office: string | null; closed_at: string | null; created_by?: string | null; created_at?: string;
+}
