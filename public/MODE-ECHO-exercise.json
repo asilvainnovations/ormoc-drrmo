@@ -1,0 +1,84 @@
+{
+  "product": "MODE ECHO Simulator",
+  "exportedAt": "2026-11-11T23:02:04.844Z",
+  "timezone": "Asia/Manila",
+  "trainingOnly": true,
+  "data": {
+    "checks": {},
+    "feedback": [],
+    "decisions": [],
+    "selected": 0
+  },
+  "inputs": {
+    "hazard": "Typhoon / Flood",
+    "barangay": "Choose validated barangay list",
+    "lead": "6–24 hours",
+    "families": "300",
+    "people": "1200",
+    "children": "360",
+    "women": "620",
+    "pwd": "48",
+    "older": "72",
+    "notes": "",
+    "mode": "Mixed: walking and vehicles",
+    "route": "unverified",
+    "vehicles": "12",
+    "perTrip": "20",
+    "assembly": "To be confirmed by EOC / barangay",
+    "": "on",
+    "arrived": "0",
+    "pending": "1200",
+    "unaccounted": "0",
+    "water": "15000",
+    "toilets": "30",
+    "bathing": "20",
+    "feedbackType": "Access / inclusion barrier",
+    "feedbackStatus": "Open",
+    "feedbackNote": "",
+    "decision": "Continue camp operations",
+    "decisionReason": ""
+  },
+  "trainingSites": [
+    {
+      "name": "Training Site A — Coastal Cluster",
+      "capacity": 800,
+      "area": 2800,
+      "water": 9000,
+      "toilets": 22,
+      "bathing": 12,
+      "accessible": true,
+      "clinic": true,
+      "child": true,
+      "women": true
+    },
+    {
+      "name": "Training Site B — Upland Cluster",
+      "capacity": 700,
+      "area": 2450,
+      "water": 7000,
+      "toilets": 18,
+      "bathing": 10,
+      "accessible": false,
+      "clinic": false,
+      "child": true,
+      "women": false
+    }
+  ],
+  "alerts": [
+    [
+      "bad",
+      "Site capacity exceeded",
+      "Projected 1,200 exceeds illustrative capacity 800."
+    ],
+    [
+      "warn",
+      "Water below Sphere planning benchmark",
+      "Available 15,000 L/day; benchmark 18,000 L/day."
+    ],
+    [
+      "warn",
+      "Route not validated",
+      "Do not start movement until route and access are checked by authorized teams."
+    ]
+  ]
+}
