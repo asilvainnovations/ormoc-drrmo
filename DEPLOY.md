@@ -237,6 +237,53 @@ Then, in the dashboard:
        vulnerability and priority with "—" for fields not yet assessed;
      - the SQL suite (`npm run test:db`) passes its new DDRiVE checks.
 
+- **To 1.18.0** (12 November 2026), Chapters 5–8 published (ADR-032). No migration; one cleanup script before the
+  seed. Apply 1.17.0 first.
+  1. **Cleanup.** Run `supabase/cleanup/1.18.0_renumber.sql` in the SQL editor. It removes what the renumber
+     abandons: the legacy `MOO Ch.9` partnerships outline doc (its code now carries drafted Chapter 8), its skeleton
+     version and links, and the renamed financing templates `WF-SOP5-03/06/08/09/10` with their steps. Everything else
+     renumbers **in place by deterministic id** — doc rows keep their ids under new codes, and the old Chapter 5
+     financing v1.0 version id is reused for the Recovery v1.0 text (the financing v1.0 is superseded by Chapter 6
+     v1.1 per its revision record; recover it from git at tag `v1.17.0` if ever needed).
+  2. **Reference data.** Delete every file in `supabase/seed/parts/`, upload the new ones, and run all **40** parts in
+     order. The last part's check changes (protocols/workflows and their steps grow with the new chapters):
+     **140 | 18 | 935 | 71 | 54 | 329 | 29 | 10 | 140 | 59**.
+     - **Chapter 5 "Recovery, Rehabilitation and Build Back Better" (v1.0)** enters the Library with Annexes 5-A to
+       5-E (traceability, recovery RACI, pre-disaster recovery framework outline, REC-F06 monitoring matrix fields,
+       minimum recovery baseline data). Proposed templates: `WF-REC-FRAMEWORK` (SOP 5-01), `PR-PDNA` (SOP 5-02).
+     - **Chapter 6 "DRRM Financing, Resource Management and Accountability" (v1.1)** replaces the Chapter 5 financing
+       draft (v1.0 was seeded 12 Nov under working number 5; renumbered per the chapter's own revision record). SOPs
+       are 6-01 to 6-12; templates renumbered `WF-SOP5-xx` → `WF-SOP6-xx` (protocol codes `PR-QRF-USE`, `PR-AA-FUNDS`,
+       `PR-EMERGENCY-PROCURE` unchanged; their SOP references are 6-04/6-05/6-07). SOP 6-11 runs on `WF-BUDGET-CYCLE`
+       (with SOP 6-01); **SOP 6-12 is new** (`WF-SOP6-12`). Annexes 6-A to 6-D.
+     - **Chapter 7 "Monitoring, Evaluation, Knowledge Management and Continuous Improvement" (v1.0)** with Annexes 7-A
+       to 7-E. Proposed templates: `WF-SOP7-01`, `PR-AAR` (7-04), `WF-SOP7-05`, `WF-SOP7-07`, `WF-SOP7-08`, `WF-SOP7-09`;
+       SOPs 7-02/7-03 run on the MODE Assess module, 7-06 on `PR-LIFT-REPORT`.
+     - **Chapter 8 "Stakeholder Engagement and Institutional Partnerships" (v1.0)** with Annexes 8-A to 8-D. Proposed
+       templates: `WF-SOP8-01/02/04/05/06/07/08`, `PR-MUTUAL-AID`, `PR-AUGMENT-REQUEST`.
+     - **Introduction v1.1** (the drafting team's official draft, `00_Introduction_v1.1.docx`): purpose, city and
+       risk context, legal and policy basis, structure, the assessment-informed method and systems diagnosis
+       (§5 — §§5.1–5.3 baseline with the 32.9% Mandatory-compliance figure and §5.4–5.5 the shifting-the-burden
+       diagnosis and MR leverage points, the sections Chapters 6 and 7 cite) and §7 systems thinking/TQM.
+       Seeded without its document-control/approval machinery per the City: the Introduction is front matter,
+       not a chapter — code `Introduction`, `chapter_no` NULL (doc id unchanged; Library sorts it first).
+       All versions load as drafts; the CDRRMO Head approves.
+  3. **App.** Push with git and redeploy. UI change beyond the new Library content and templates: the Library
+     chapter sort treats `code = 'Introduction'` (chapter_no NULL) as front matter that sorts before Chapter 1.
+  4. **Deferred with this release** (recorded in ADR-032): the workbook "Feeds Manual Chapter" column still shows the
+     pre-compilation numbers (a full 140-row renumber sweep belongs to a workbook revision; the seed remaps the four
+     affected chapter codes at build time); template-code **aliases** (`WF-SOP5-xx` → `WF-SOP6-xx`) are not yet stored
+     (no aliases column on `protocol_templates` — platform is pre-go-live so no run data references the old codes; a
+     registry migration can add alias support later); the Chapter 6 platform note's **resources-table fields** (holder
+     type, commitment reference, reorder point, expiry) and Chapter 7's **event/loss tables** need schema migrations and
+     are not built in 1.18; the **18 Manual forms** that Chapters 5–8 name on steps but have no template yet
+     (`LOG-F03`, `ME-F01..F05/F07..F09`, `PTN-F01..F07`, `REC-F01`, `REC-F03`) — those 22 steps close on
+     `STEP-RECORD` until each form is built (`npm run seed:generate` lists them). The step text still names the form.
+  5. **Pre-check before step 1 (live database).** The cleanup deletes five templates, and `protocol_runs.template_id`
+     has no cascade: if any drill or run was started on `WF-SOP5-03/06/08/09/10`, the cleanup stops and rolls back as a
+     whole. Check first: `select t.code, count(*) from protocol_runs r join protocol_templates t on t.id = r.template_id
+     where t.code like 'WF-SOP5-%' group by 1;` — no rows means it is safe to run.
+
 - **To 1.17.0** (12 November 2026), platform coherence: Cebuano UI, pillar-colored Library, Pareto dashboard on
   Today, Introduction chapter with the manual cover, citation corrections (ADR-031). **No migration.** Apply 1.16.0 first.
   1. **Reference data.** Delete every file in `supabase/seed/parts/`, upload the new ones, and run all parts in order

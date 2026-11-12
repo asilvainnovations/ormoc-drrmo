@@ -938,12 +938,17 @@ select tests.expect_eq('the nine Chapter 3 workflows are loaded with their forms
   '9 19');
 select tests.expect_eq('kinds split incident protocols from management workflows',
   (select string_agg(kind || ':' || n, ' ' order by kind) from (select kind, count(*) n from public.protocol_templates group by kind) k),
-  'protocol:16 workflow:20');
-select tests.expect_eq('Chapter 5 runs on ten SOPs: eight new templates plus the budget cycle, with their FIN forms',
+  'protocol:21 workflow:33');
+-- 1.18 (ADR-032): the financing chapter is Chapter 6 v1.1 (renumbered from Ch.5); SOP 6-12 joins SOPs 6-01..6-10.
+select tests.expect_eq('Chapter 6 financing runs on ten templates (budget cycle, SOPs 6-03..6-10, 6-12) with their FIN forms',
   (select count(distinct t.code)::text || ' ' || count(*) filter (where s.form_code like 'FIN-%')::text
      from public.protocol_templates t join public.protocol_steps s on s.template_id = t.id
-    where t.sop_ref like '%MOO Ch.5%'),
-  '9 16');
+    where t.sop_ref like '%MOO Ch.6 v1.1%'),
+  '10 16');
+select tests.expect_eq('no SOP registry citation doubles the manual prefix',
+  (select count(*)::text from public.protocol_templates where sop_ref like '%MOO MOO%'), '0');
+select tests.expect_eq('the Introduction is front matter, not a numbered chapter',
+  (select status || ' ' || coalesce(chapter_no::text, '-') from public.moo_documents where code = 'Introduction'), 'draft -');
 select tests.expect_eq('Chapter 5 is a drafted chapter, not a superseded shell',
   (select status || ' ' || coalesce(chapter_no::text, '-') from public.moo_documents where code = 'Chapter 5'), 'draft 5');
 select tests.login('00000000-0000-0000-0000-000000000012');  -- author

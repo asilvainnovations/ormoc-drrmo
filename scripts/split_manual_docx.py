@@ -4,8 +4,8 @@
   python3 scripts/split_manual_docx.py reference/<Chapter>.docx --slug ch2 --prefix MOO_Ch2 --version v0.9
 
 Writes, for the Library loader in scripts/generate_seed.py (LIBRARY_DRAFTS):
-  reference/moo/<prefix>_<version>.md        the chapter body (everything before the first "# ANNEX")
-  reference/moo/<prefix>_Annex_<id>.md       one file per "# ANNEX <id> ..." heading
+  reference/moo/<prefix>_<version>.md        the chapter body (everything before the first annex heading)
+  reference/moo/<prefix>_Annex_<id>.md       one file per "# Annex <id>" heading (any case; 1.18 drafts use "# Annex 5-A.")
   public/library/<slug>/fig-NN.webp          figures, resized to 1400 px wide and compressed
 
 Figures become Markdown images that point at /library/<slug>/fig-NN.webp, with alt text taken from
@@ -59,7 +59,7 @@ def main():
     # Drop empty headings left by page breaks ("#  ").
     md = re.sub(r'^#+\s*$\n?', '', md, flags=re.M)
 
-    parts = re.split(r'(?=^# ANNEX )', md, flags=re.M)
+    parts = re.split(r'(?=^# annex )', md, flags=re.M | re.I)
     body, annexes = parts[0], parts[1:]
     moo = ROOT / 'reference' / 'moo'
     moo.mkdir(parents=True, exist_ok=True)
@@ -70,7 +70,7 @@ def main():
     (moo / f'{a.prefix}_{a.version}.md').write_text(body.rstrip() + '\n', encoding='utf-8')
     ids = []
     for part in annexes:
-        aid = re.match(r'^# ANNEX ([0-9]+-[A-Z]+)', part).group(1)
+        aid = re.match(r'^# annex ([0-9]+-[A-Z0-9]+)', part, re.I).group(1)
         # A "References" section after the last annex belongs to the chapter, not the annex.
         part, _, refs = part.partition('\n# REFERENCES')
         (moo / f'{a.prefix}_Annex_{aid}.md').write_text(part.rstrip() + '\n', encoding='utf-8')

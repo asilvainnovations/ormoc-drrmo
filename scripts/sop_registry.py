@@ -378,14 +378,14 @@ for p_ in CH4_PROTOCOLS:
 
 # ---------------------------------------------------------------- Chapter 5 v1.0 (12 Nov 2026)
 # DRRM Financing, Procurement and Resource Accountability: SOPs 5-01 to 5-10, forms FIN-F01 to FIN-F11 (section 19).
-# SOPs 5-01 and 5-02 run on the existing WF-BUDGET-CYCLE (its META and steps now follow Chapter 5);
+# SOPs 6-01 and 6-02 run on the existing WF-BUDGET-CYCLE (its META and steps follow Chapter 6 v1.1, renumbered from Chapter 5 v1.0);
 # FIN-F02 and FIN-F03 are carried by the existing BUD-F01 and BUD-F02 (records exist under those codes).
 # Expenditure, certification, procurement and award stay with the offices that hold them by law (Ch.5 sec. 3).
 CH5_FORM_ALIASES = {'FIN-F02': 'BUD-F01', 'FIN-F03': 'BUD-F02'}
 HAZ_FAMILY = ['Hydrometeorological', 'Geological', 'Slow-onset (e.g., drought)', 'Other']
 FUND = ['70% component (LDRRMFIP line)', 'AA line (within the 70%)', 'QRF (30%)', 'Special Trust Fund', 'Donation or grant', 'Other lawful source']
-CH5_FORMS = [
-    ('FIN-F01', 'LDRRMF computation and allocation sheet', 'Chapter 5 FIN-F01 (SOP 5-01 step 1). Signed by the City Budget Officer.', 'MOO Ch.5', [
+CH6_FORMS = [  # 1.18: renumbered from CH5_FORMS; the financing chapter is MOO Ch.6 (v1.1 was seeded as Ch.5 v1.0)
+    ('FIN-F01', 'LDRRMF computation and allocation sheet', 'Chapter 6 FIN-F01 (SOP 6-01 step 1). Signed by the City Budget Officer.', 'MOO Ch.6', [
         f('fiscal_year', 'Fiscal year', 'integer', True, min=2020),
         f('nta_php', 'NTA share (PHP)', 'number', True, min=0),
         f('local_regular_php', 'Regular local revenue (PHP)', 'number', True, min=0, hint='Local taxes, fees and charges, other recurring income'),
@@ -394,20 +394,20 @@ CH5_FORMS = [
         f('qrf_php', 'QRF, 30% (PHP)', 'number', True, min=0), f('seventy_php', '70% component (PHP)', 'number', True, min=0),
         f('aa_line_php', 'AA line, at most 10% of the 70% (PHP)', 'number', min=0),
         f('certified_by', 'Certified by (position)', 'text', True, hint='Position, not a personal name')]),
-    ('FIN-F04', 'Special Trust Fund ageing ledger entry', 'Chapter 5 FIN-F04 (SOP 5-03). One entry per year of origin.', 'MOO Ch.5', [
+    ('FIN-F04', 'Special Trust Fund ageing ledger entry', 'Chapter 6 FIN-F04 (SOP 6-03). One entry per year of origin.', 'MOO Ch.6', [
         f('year_of_origin', 'Year of origin', 'integer', True, min=2010),
         f('amount_php', 'Amount accrued (PHP)', 'number', True, min=0), f('used_php', 'Used to date (PHP)', 'number', True, min=0),
         f('deadline_year', 'Last year of use (origin + 5)', 'integer', True),
         f('programmed_use', 'Programmed use and approving resolution', 'textarea'),
         f('aa_available', 'Listed as an AA source', 'checkbox')]),
-    ('FIN-F05', 'QRF use request and certification', 'Chapter 5 FIN-F05 (SOP 5-04). No QRF without a State of Calamity.', 'MOO Ch.5', [
+    ('FIN-F05', 'QRF use request and certification', 'Chapter 6 FIN-F05 (SOP 6-04). No QRF without a State of Calamity.', 'MOO Ch.6', [
         f('soc_ref', 'State of Calamity (SP resolution, date, area)', 'text', True),
         f('purpose', 'Purpose', 'select', True, ['Relief', 'Recovery']), f('items', 'Items and quantities', 'textarea', True),
         f('amount_php', 'Amount (PHP)', 'number', True, min=0),
         f('procurement_mode', 'Procurement mode', 'select', True, ['Stock or framework agreement', 'Emergency procurement (FIN-F07)', 'Other mode']),
         f('certifications', 'Budget and Accounting certifications obtained', 'checkbox', True),
         f('qrf_balance_php', 'QRF balance after this request (PHP)', 'number', min=0)]),
-    ('FIN-F06', 'Anticipatory action fund release and tranche record', 'Chapter 5 FIN-F06 (SOP 5-05); RA 12287 IRR Rule V. Feeds the 45-day report.', 'MOO Ch.5', [
+    ('FIN-F06', 'Anticipatory action fund release and tranche record', 'Chapter 6 FIN-F06 (SOP 6-05); RA 12287 IRR Rule V. Feeds the 45-day report.', 'MOO Ch.6', [
         f('sid_ref', 'State of Imminent Disaster (Mayor\'s EO, date)', 'text', True),
         f('hazard_family', 'Hazard family', 'select', True, HAZ_FAMILY),
         f('impact_time', 'Forecast impact time', 'datetime', True),
@@ -418,31 +418,31 @@ CH5_FORMS = [
         f('timing', 'Intervention timing', 'select', True, ['More than 3 days before impact (cap 30%)', 'Within 3 days of impact (up to 70%)', 'Not graduated (other source or slow-onset)']),
         f('within_cap', 'Within the tranche rule after this release', 'checkbox', True),
         f('closure', 'On lifting: spent, unused to STF', 'textarea')]),
-    ('FIN-F07', 'Emergency procurement justification and record', 'Chapter 5 FIN-F07 (SOP 5-07); RA 12009 Sec. 35(b). Completed before the purchase.', 'MOO Ch.5', [
+    ('FIN-F07', 'Emergency procurement justification and record', 'Chapter 6 FIN-F07 (SOP 6-07); RA 12009 Sec. 35(b). Completed before the purchase.', 'MOO Ch.6', [
         f('ground', 'Ground', 'select', True, ['Imminent danger to life or property during a State of Calamity', 'Time is of the essence because of a calamity']),
         f('ground_detail', 'Facts showing the ground (declaration reference or calamity, why immediate action is needed)', 'textarea', True),
         f('items', 'Item, quantity and use', 'textarea', True), f('charging', 'Charging', 'select', True, FUND),
         f('amount_php', 'Amount (PHP)', 'number', True, min=0), f('supplier', 'Supplier (business name)', 'text', True),
         f('hope_approval', 'HoPE approval reference', 'text', True), f('iar', 'Inspection and acceptance report reference', 'text'),
         f('posted', 'Posted and reported as RA 12009 IRR requires', 'checkbox')]),
-    ('FIN-F08', 'Pre-arranged supplier and framework agreement register entry', 'Chapter 5 FIN-F08 (SOP 5-06).', 'MOO Ch.5', [
+    ('FIN-F08', 'Pre-arranged supplier and framework agreement register entry', 'Chapter 6 FIN-F08 (SOP 6-06).', 'MOO Ch.6', [
         f('item', 'Item or service', 'text', True), f('supplier', 'Supplier (business name)', 'text', True),
         f('agreement', 'Agreement type and reference', 'select', True, ['Framework agreement', 'Supplier list only', 'MOA with partner', 'Other']),
         f('quantity', 'Quantity range and delivery time', 'text', True), f('trigger', 'Activation trigger (incl. AA use)', 'text', True),
         f('valid_until', 'Valid until', 'date', True), f('contact', 'Contact (position and channel)', 'text', True),
         f('last_test', 'Last call-down test', 'date')]),
-    ('FIN-F09', 'Donation receipt and acknowledgement', 'Chapter 5 FIN-F09 (SOP 5-08); SP Res. 2024-102. No beneficiary names.', 'MOO Ch.5', [
+    ('FIN-F09', 'Donation receipt and acknowledgement', 'Chapter 6 FIN-F09 (SOP 6-08); SP Res. 2024-102. No beneficiary names.', 'MOO Ch.6', [
         f('donor_type', 'Donor type', 'select', True, ['Private individual', 'Business', 'NGO or CSO', 'Other LGU', 'National agency', 'International partner']),
         f('form', 'Form', 'select', True, ['Cash', 'In kind']), f('description', 'Description and quantity', 'textarea', True),
         f('value_php', 'Value (PHP)', 'number', True, min=0), f('conditions', 'Donor conditions', 'textarea'),
         f('acceptance_ref', 'Acceptance document reference', 'text', True), f('custody', 'Custodian office', 'select', True, ['City Treasurer', 'CGSO', 'CSWDO']),
         f('booked', 'Recorded by the City Accountant', 'checkbox'), f('disclosed', 'Disclosed', 'checkbox')]),
-    ('FIN-F10', 'Fund adequacy test', 'Chapter 5 FIN-F10 (SOP 5-09); UNDRR Scorecard 3.2.3-3.2.4.', 'MOO Ch.5', [
+    ('FIN-F10', 'Fund adequacy test', 'Chapter 6 FIN-F10 (SOP 6-09); UNDRR Scorecard 3.2.3-3.2.4.', 'MOO Ch.6', [
         f('scenario', 'Scenario and contingency plan', 'text', True), f('cost_php', 'Cost of response and early recovery (PHP)', 'number', True, min=0),
         f('cost_basis', 'Cost basis by item', 'textarea', True),
         f('available_php', 'Available: QRF, AA line, STF, insurance, other (PHP)', 'number', True, min=0),
         f('shortfall_php', 'Shortfall (PHP)', 'number', min=0), f('fallback', 'Fallback sources and actions', 'textarea', True)]),
-    ('FIN-F11', 'Audit observation and corrective action tracker', 'Chapter 5 FIN-F11 (SOP 5-10); feeds Chapter 7.', 'MOO Ch.5', [
+    ('FIN-F11', 'Audit observation and corrective action tracker', 'Chapter 6 FIN-F11 (SOP 6-10); feeds Chapter 7.', 'MOO Ch.6', [
         f('reference', 'AOM or AAR reference', 'text', True), f('finding', 'Finding', 'textarea', True),
         f('action', 'Corrective action', 'textarea', True), f('owner', 'Accountable office', 'text', True), f('due', 'Due date', 'date', True),
         f('status', 'Status', 'select', True, ['Open', 'Replied', 'Implemented', 'Closed by COA', 'Not implemented'])]),
@@ -450,13 +450,13 @@ CH5_FORMS = [
 
 
 def _c5(code, sop, title, category, role, purpose, trigger, owner, refs, inds, steps):
-    """A Chapter 5 workflow or protocol. Steps: (instruction, critical, needs note, minutes, form)."""
-    return dict(code=code, title=f'SOP {sop} {title}', category=category, owner_role=role, doc='MOO Ch.5', purpose=purpose,
-                trigger=trigger, steps=steps, meta=(f'SOP {sop} (MOO Ch.5 v1.0)', owner, refs, inds))
+    """A Chapter 6 workflow or protocol. Steps: (instruction, critical, needs note, minutes, form)."""
+    return dict(code=code, title=f'SOP {sop} {title}', category=category, owner_role=role, doc='MOO Ch.6', purpose=purpose,
+                trigger=trigger, steps=steps, meta=(f'SOP {sop} (MOO Ch.6 v1.1)', owner, refs, inds))
 
 
-CH5_PROCEDURES = [
-    _c5('WF-SOP5-03', '5-03', 'Special Trust Fund ledger, ageing and programming', 'budget', 'cdrrmo_head',
+CH6_PROCEDURES = [  # 1.18: renumbered from CH5_PROCEDURES (WF-SOP5-xx -> WF-SOP6-xx; protocol codes unchanged)
+    _c5('WF-SOP6-03', '6-03', 'Special Trust Fund ledger, ageing and programming', 'budget', 'cdrrmo_head',
         'Use every unexpended LDRRMF balance for DRRM within its five-year period, oldest first.',
         'Year-end closing; LDRRMFIP preparation; any STF reallocation request.',
         'City Accountant (ledger); CDRRMO Research and Planning (programming)',
@@ -467,7 +467,7 @@ CH5_PROCEDURES = [
          ('Programme STF use, oldest first, within DRRM uses; list balances available as AA sources', True, False, None, None),
          ('CDRRMC approval; SP adoption or concurrence per City Accountant advice', True, False, None, 'GOV-F03'),
          ('Report STF use every quarter in the results-and-finance report', False, False, None, 'BUD-F02')]),
-    _c5('PR-QRF-USE', '5-04', 'Quick Response Fund use under a State of Calamity', 'eoc', 'cdrrmo_head',
+    _c5('PR-QRF-USE', '6-04', 'Quick Response Fund use under a State of Calamity', 'eoc', 'cdrrmo_head',
         'Release the QRF quickly, only for relief and recovery, and only under a State of Calamity declared by the SP.',
         'SP declaration of a State of Calamity covering the City or affected barangays.',
         'CDRRMO Head; EOC Finance/Administration desk. Declaration: SP (SOP GOV-04). Expenditure: City Mayor within the appropriation',
@@ -476,10 +476,10 @@ CH5_PROCEDURES = [
          ('List relief and recovery needs with quantities from assessments (Operations, CSWDO, sector leads)', True, False, None, None),
          ('Prepare the QRF request: purpose, items, amount, charging, procurement mode', True, False, None, 'FIN-F05'),
          ('Obtain Budget and Accounting certifications; delay goes to the City Administrator', True, True, None, None),
-         ('Procure through stock or framework agreements first; otherwise emergency procurement (SOP 5-07)', True, False, None, None),
+         ('Procure through stock or framework agreements first; otherwise emergency procurement (SOP 6-07)', True, False, None, None),
          ('Inspect, accept, record and distribute (CGSO, CSWDO)', True, False, None, None),
          ('Report QRF use and balance in the SitRep finance annex and the quarterly report', True, False, None, 'BUD-F02')]),
-    _c5('PR-AA-FUNDS', '5-05', 'Anticipatory action funding and disbursement under a State of Imminent Disaster', 'anticipatory_action', 'cdrrmo_head',
+    _c5('PR-AA-FUNDS', '6-05', 'Anticipatory action funding and disbursement under a State of Imminent Disaster', 'anticipatory_action', 'cdrrmo_head',
         'Release AA funds immediately and lawfully once a State of Imminent Disaster is declared, within the 10% ceiling and the tranche rule.',
         'The Mayor\'s declaration of a State of Imminent Disaster; a revised impact forecast during the declaration.',
         'CDRRMO Head; EOC Finance/Administration desk. Declaration: City Mayor (SOP GOV-05). Certification and release: Budget, Accounting, Treasury',
@@ -489,10 +489,10 @@ CH5_PROCEDURES = [
          ('Match each AA measure (PDRA, IRR Rule IV checklist) to a source, amount and lead office', True, True, 120, None),
          ('Apply the tranche rule: more than 3 days before impact at most 30% of the AA allocation; within 3 days up to 70% (hydromet and geological only)', True, True, None, 'FIN-F06'),
          ('Budget, Accounting and Treasury certify and release the same day', True, False, None, None),
-         ('Procure through framework agreements or pre-arranged suppliers; else emergency procurement (SOP 5-07)', True, False, None, None),
+         ('Procure through framework agreements or pre-arranged suppliers; else emergency procurement (SOP 6-07)', True, False, None, None),
          ('Deliver and record; No Regrets: goods still reach intended beneficiaries if impact does not occur', True, False, None, None),
          ('On lifting, total AA spending by source and measure; unused funds to the STF; feed the 45-day report', True, True, None, 'FIN-F06')]),
-    _c5('WF-SOP5-06', '5-06', 'Pre-arranged supply: supplier list, framework agreements and specifications', 'budget', 'cdrrmo_head',
+    _c5('WF-SOP6-06', '6-06', 'Pre-arranged supply: supplier list, framework agreements and specifications', 'budget', 'cdrrmo_head',
         'Make emergency and AA purchases fast and lawful by agreeing suppliers, items and prices before the event.',
         'Each year before the typhoon season; after an event that exposed a supply gap.',
         'CDRRMO Administration and Training with CGSO and the BAC Secretariat; award by the HoPE',
@@ -503,7 +503,7 @@ CH5_PROCEDURES = [
          ('Procure and award agreements with trigger, quantity range, price basis and delivery time', True, False, None, None),
          ('Register each supplier and agreement', True, False, None, 'FIN-F08'),
          ('Call-down test before the season; replace suppliers that fail', False, True, None, 'FIN-F08')]),
-    _c5('PR-EMERGENCY-PROCURE', '5-07', 'Emergency procurement (negotiated procurement - emergency cases)', 'eoc', 'eoc_manager',
+    _c5('PR-EMERGENCY-PROCURE', '6-07', 'Emergency procurement (negotiated procurement - emergency cases)', 'eoc', 'eoc_manager',
         'Buy what an emergency requires, quickly, with its legal ground on record before the purchase.',
         'An urgent need during a State of Calamity, or where time is of the essence because of a calamity.',
         'EOC Finance/Administration desk and the requesting office; award by the HoPE on BAC recommendation',
@@ -515,7 +515,7 @@ CH5_PROCEDURES = [
          ('HoPE approves the award and contract or purchase order', True, False, None, None),
          ('Inspect and accept delivery', True, False, None, None),
          ('Post and report as the RA 12009 IRR and GPPB require', True, False, None, 'FIN-F07')]),
-    _c5('WF-SOP5-08', '5-08', 'Donations and external assistance: receipt, recording, custody, use and disclosure', 'budget', 'cdrrmo_head',
+    _c5('WF-SOP6-08', '6-08', 'Donations and external assistance: receipt, recording, custody, use and disclosure', 'budget', 'cdrrmo_head',
         'Receive donations transparently and use them as the donor and the law intend.',
         'An offer or delivery of cash or in-kind assistance.',
         'CSWDO (relief goods), CGSO (property), City Treasurer (cash); acceptance by the City Mayor (SP Res. 2024-102); CDRRMO coordinates',
@@ -526,7 +526,7 @@ CH5_PROCEDURES = [
          ('City Accountant records the receipt, kept to its purpose', True, False, None, None),
          ('Use per donor conditions; record distribution in aggregates only', True, False, None, None),
          ('Report receipts, use and balances quarterly and to donors; disclose', False, False, None, 'BUD-F02')]),
-    _c5('WF-SOP5-09', '5-09', 'Fund adequacy test and risk financing', 'budget', 'cdrrmo_head',
+    _c5('WF-SOP6-09', '6-09', 'Fund adequacy test and risk financing', 'budget', 'cdrrmo_head',
         'Know how far City funds cover a severe credible event, and close the gap with insurance and pre-arranged sources.',
         'Each year before the LDRRMFIP; after a major event or a CDRA update.',
         'CDRRMO Research and Planning with the City Budget Office, CGSO and CPDO',
@@ -536,7 +536,7 @@ CH5_PROCEDURES = [
          ('Compare with the QRF, AA line, STF, insurance and other sources; record the shortfall', True, False, None, 'FIN-F10'),
          ('Check GSIS cover of the EOC, evacuation centres and critical facilities; list uninsured priority assets', True, False, None, None),
          ('Recommend premiums, reserves, agreements, PSF proposals and fallback sources into the LDRRMFIP', True, False, None, None)]),
-    _c5('WF-SOP5-10', '5-10', 'Audit readiness, COA observations and internal control', 'budget', 'cdrrmo_head',
+    _c5('WF-SOP6-10', '6-10', 'Audit readiness, COA observations and internal control', 'budget', 'cdrrmo_head',
         'Prevent common findings and close COA observations on DRRM funds.',
         'Before year-end (pre-audit check); receipt of an AOM or the Annual Audit Report.',
         'CDRRMO Administration and Training with the City Accountant and the Internal Audit Service where constituted; the City Mayor replies to COA',
@@ -548,11 +548,238 @@ CH5_PROCEDURES = [
          ('Report open findings to the CDRRMC each quarter; overdue items to the CDRRMO Head', False, True, None, None),
          ('Record COA\'s status of implementation and close', False, False, None, 'FIN-F11')]),
 ]
-for p_ in CH5_PROCEDURES:
+for p_ in CH6_PROCEDURES:
     META[p_['code']] = p_.pop('meta')
-# SOPs 5-01 and 5-02 run on the existing budget workflow.
-META['WF-BUDGET-CYCLE'] = ('SOP 5-01 and SOP 5-02 (MOO Ch.5 v1.0); formerly MOO Ch.2 sec. 2.16.2',
+# SOPs 6-01 and 6-02 run on the existing budget workflow.
+META['WF-BUDGET-CYCLE'] = ('SOP 6-01 and SOP 6-02 (MOO Ch.6 v1.1); formerly MOO Ch.2 sec. 2.16.2 (seeded as SOPs 5-01/5-02 on 12 Nov 2026)',
                            'CDRRMO Research and Planning (formulation, reporting); Administration and Training (execution); City Budget Office (computation)',
                            ['RA 10121 Sec. 21', 'NDRRMC-DBM-DILG JMC 2013-1', 'RA 12287 IRR (2026) Rule V Sec. 1(b)',
                             'COA Circular No. 2012-002', 'DILG Full Disclosure Policy issuances'],
                            ['A3.5', 'A4.1', 'A4.2', 'A4.4', 'A4.6', 'A10.5', 'B7.5'])
+
+
+# ------------------------------------------------------------- 1.18.0 (ADR-032)
+# Chapters 5 to 8 published 12 Nov 2026. Proposed templates from each SOP's control block; all draft,
+# pending CDRRMO validation. SOPs 5-01/5-02 (recovery), 6-12 (resource inventory), 7-01 to 7-09 except
+# 7-02/7-03 (MODE Assess module) and 7-06 (PR-LIFT-REPORT), and 8-01 to 8-08 except where an existing
+# template carries the SOP. Steps are the chapter's step tables condensed; full text in the Library.
+# No template uses personal names; owners are offices or positions (RA 10173).
+
+# Chapter version each new SOP cites (1.18): doc is already 'MOO Ch.N', so the registry reads
+# 'SOP 6-12 (MOO Ch.6 v1.1)' like the entries above, not 'MOO MOO Ch.6 v1.0'.
+_CH_VERSION = {'MOO Ch.5': 'v1.0', 'MOO Ch.6': 'v1.1', 'MOO Ch.7': 'v1.0', 'MOO Ch.8': 'v1.0'}
+
+
+def _mk(code, sop, title, category, role, doc, purpose, trigger, owner, refs, inds, steps):
+    return dict(code=code, title=f'SOP {sop} {title}', category=category, owner_role=role, doc=doc, purpose=purpose,
+                trigger=trigger, steps=steps, meta=(f'SOP {sop} ({doc} {_CH_VERSION[doc]})', owner, refs, inds))
+
+
+CH5REC_PROCEDURES = [  # MOO Ch.5 Recovery, Rehabilitation and Build Back Better (v1.0)
+    _mk('WF-REC-FRAMEWORK', '5-01', 'Pre-disaster recovery framework: preparation, adoption and annual update',
+        'recovery', 'cdrrmo_head', 'MOO Ch.5',
+        'Have roles, PDNA activation, temporary shelter, debris management, scalable PPAs and recovery fund sources agreed before an event.',
+        'Annual planning cycle (aligned with LDRRMP and LDRRMFIP preparation); after an event that triggered a PDNA; after a material plan change.',
+        'CDRRMO Head; CDRRMO Research and Planning with CPDO (technical lead)',
+        ['RA 10121', 'NEDA (2020) Part 2 Sec. I', 'UNDRR Scorecard Essential 10'], ['A9.5', 'A3.4'],
+        [('Refresh the recovery baseline by barangay from CDRA, CBMS, PSA and office data (Annex 5-E); mark gaps as "not reported", not zero.', True, True, None, 'REC-F01'),
+         ('Take the most-probable and most-severe scenario per priority hazard; estimate recovery needs; record why if scenarios differ from Chapter 3.', False, False, None, None),
+         ('Confirm sub-committee leads, members and focal persons by position, not name.', False, False, None, None),
+         ('Agree temporary shelter, debris management, scalable PPAs and recovery fund sources with the sub-committees.', True, True, None, None),
+         ('Package the framework for CDRRMC adoption; Sangguniang Panlungsod acts on any appropriation or ordinance it requires.', True, True, None, None),
+         ('Update the framework after every PDNA and at each annual planning cycle; version and file it.', False, False, None, None)]),
+    _mk('PR-PDNA', '5-02', 'Damage and needs assessment: RDANA to PDNA decision and PDNA conduct',
+        'recovery', 'cdrrmo_head', 'MOO Ch.5',
+        'Decide on, carry out and approve a PDNA that gives the program a reliable account of damage, losses and recovery needs.',
+        'RDANA shows damage in two or more barangays; a State of Calamity is declared; or national assistance is needed.',
+        'CDRRMO Head as PDNA lead; designated PDNA team coordinator',
+        ['RA 10121', 'NEDA (2020) Part 2 Sec. II.A', 'OCD PDNA Guidance Notes'], ['A9.1', 'A8.7'],
+        [('Review RDANA results, SitReps and the extent of damage; state the source of every figure. Two or more barangays affected and a trigger met? Prepare a recommendation either way.', True, True, None, 'REC-F03'),
+         ('CDRRMC decides: City PDNA, a Rapid Damage Estimation first, or no PDNA with reasons recorded.', True, True, None, None),
+         ('Request OCD VIII support where needed; agree scope, team and schedule.', False, False, None, None),
+         ('Conduct the PDNA per OCD guidance notes; count damage, losses and recovery needs by sector.', True, True, None, None),
+         ('Review the draft PDNA; CDRRMC approves it; RDRRMC VIII reviews when NDRRMF funding is sought.', True, True, None, None),
+         ('File the approved PDNA with the recovery framework update and the event record (SOP 7-07).', False, False, None, None),
+         ('Use the PDNA in programming recovery PPAs and any NDRRMF request.', False, False, None, None)]),
+]
+
+CH6_PROCEDURES += [  # MOO Ch.6 v1.1 adds SOP 6-12; 6-11 runs on WF-BUDGET-CYCLE (with SOP 6-01)
+    _mk('WF-SOP6-12', '6-12', 'DRRM resource inventory and pre-arranged commitments',
+        'budget', 'cdrrmo_head', 'MOO Ch.6',
+        'Give the EOC one current view of City, barangay, partner and supplier resources and the commitments behind them.',
+        'Annual update before the typhoon season; a new agreement or equipment; a call-down test result; after each activation.',
+        'CDRRMO Administration and Training (inventory custodian), with the CGSO, BDRRMCs and partners',
+        ['RA 10121', 'NDRRMC MC No. 4, s. 2012 (ICS resource management)', 'RA 12287 IRR Rule IV'],
+        ['B6.3', 'B6.6', 'A8.3', 'A10.1'],
+        [('Copy City-owned DRRM equipment and vehicles from the property records, with serviceability and maintenance date; one item, one record.', True, False, None, 'LOG-F03'),
+         ('Collect BDRRMC equipment and stocks by template; all 85 barangays report, blank means "not reported", not zero.', False, True, None, None),
+         ('Record partner and supplier resources only with the agreement reference, item, quantity, activation trigger and contact position.', True, True, None, None),
+         ('Run a call-down test each year before the season; record what answered and what did not.', False, False, None, None),
+         ('Republish the inventory to the EOC after every update and activation.', False, False, None, None)]),
+]
+
+CH7_PROCEDURES = [  # MOO Ch.7 Monitoring, Evaluation, Knowledge Management and Continuous Improvement (v1.0)
+    _mk('WF-SOP7-01', '7-01', 'LDRRMP monitoring, annual results report and review',
+        'governance', 'cdrrmo_head', 'MOO Ch.7',
+        'Measure the LDRRMP against its indicators each year and give the CDRRMC an evidence-based results report.',
+        'Approval of a new or revised LDRRMP (indicator set); each December (data call); each January (report).',
+        'CDRRMO Research and Planning (M&E unit), with the CDRRMP Technical Working Group',
+        ['RA 10121 Sec. 11(b)', 'NDRRMP 2020-2030 RBME Plan', 'NDRRMC LDRRMP Formulation Guidebook (2022)',
+         'NDRRMC Memo No. 147, s. 2017'], ['A10.4'],
+        [('Record each indicator on ME-F01 with definition, unit, baseline, target, source, frequency, responsible office and framework codes; every indicator has a baseline or a dated plan to establish one.', True, True, None, 'ME-F01'),
+         ('Send the data call to focal offices with the ME-F01 extract for each; log the call.', False, False, None, None),
+         ('Offices submit values with means of verification; the M&E unit checks source, date and arithmetic; blank means not reported.', True, True, None, None),
+         ('Compute results against targets; draft the annual results report for CDRRMC approval; the LDC receives it.', True, True, None, 'ME-F02'),
+         ('Review the LDRRMP for consistency with the AIP and feed gaps to the CAPA register (SOP 7-05).', False, False, None, None)]),
+    _mk('PR-AAR', '7-04', 'After-action review and exercise evaluation',
+        'recovery', 'cdrrmo_head', 'MOO Ch.7',
+        'Learn from every significant event and exercise, and turn findings into tracked corrective actions.',
+        'Any AAR trigger in Ch.7 sec. 8; the hot wash and ER-F06 from Chapter 4, SOP 4-09.',
+        'CDRRMO Head, with a designated AAR facilitator',
+        ['RA 10121 Sec. 11(b)', 'NDRRMC Memo No. 131, s. 2018 (EOC management)', 'EOC Capability Assessment Checklist'],
+        ['A10.6', 'B7.4', 'B7.3'],
+        [('Record the event or exercise and the AAR due date in the AAR register; confirm the trigger.', False, True, None, None),
+         ('Name a facilitator who did not hold a command role; set participants, inviting partners and barangays where involved.', True, True, None, None),
+         ('Reconstruct the timeline from warning products, the logbook, SitReps, ER-F06 and resource requests; official product IDs cited.', True, True, None, 'ME-F03'),
+         ('Run the session: what was expected, what happened, why, what to keep and change.', False, False, None, None),
+         ('Draft the AAR report; CDRRMO Head approves it; enter each finding in the CAPA register (SOP 7-05).', True, True, None, 'ME-F04')]),
+    _mk('WF-SOP7-05', '7-05', 'Corrective and preventive action management (CAPA register)',
+        'governance', 'cdrrmo_head', 'MOO Ch.7',
+        'Track every finding from any source to verified, effective closure (operates GOV-10).',
+        'A new finding from any source in Ch.7 Figure 7.2.',
+        'CDRRMO Research and Planning (register keeper); each accountable owner',
+        ['MOO Ch.1 Sec. 9.5 (GOV-10 CAPA register)', 'RA 10121 Sec. 11(b)'], ['A10.6', 'B7.4'],
+        [('Enter source, problem statement and risk consequence; assign priority; link duplicates instead of re-opening.', False, True, None, 'ME-F05'),
+         ('State the root cause, action, responsible actors, target date and resources; mark single- or double-loop; CDRRMO Head confirms the plan.', True, True, None, None),
+         ('Carry out the action; update status at least monthly.', False, False, None, None),
+         ('Verify effectiveness with evidence, not assertion; CDRRMO Head closes; the CDRRMC closes High-priority items.', True, True, None, None)]),
+    _mk('WF-SOP7-07', '7-07', 'Disaster event and loss database maintenance',
+        'governance', 'cdrrmo_head', 'MOO Ch.7',
+        'Keep one standard, sourced record of every disaster that affected the City, for planning, risk assessment and Sendai monitoring.',
+        'Final SitRep of an event; completion of RDANA, DROMIC or PDNA; the back-loading plan; each January and July.',
+        'CDRRMO Research and Planning (M&E unit)',
+        ['RA 10121 Sec. 12(c)', 'Sendai Framework indicators', 'DesInventar methodology', 'RA 10173'], ['A5.4'],
+        [('Adopt the field list of Annex 7-E and the PSGC barangay list; fields must cover the Sendai indicators the City reports; CDRRMO Head approves the standard.', True, True, None, 'ME-F07'),
+         ('Back-load past events from the 10-Year Plan, CDRA, RDANA and PDNA reports, oldest first; each figure carries its source; flag implausible figures.', False, True, None, None),
+         ('Enter each new event from the final SitRep, DROMIC and RDANA; update after the PDNA; version history kept.', True, False, None, None),
+         ('Report aggregates only — no names of affected persons (RA 10173).', True, True, None, None)]),
+    _mk('WF-SOP7-08', '7-08', 'Lessons, peer learning and Manual revision',
+        'governance', 'cdrrmo_head', 'MOO Ch.7',
+        'Turn lessons from the City\'s own events and from other LGUs and networks into documented changes, including new versions of the Manual.',
+        'An approved AAR or IAT result; a peer exchange or network event; a change in law; the annual lessons review each February.',
+        'CDRRMO Research and Planning (M&E unit); Manual custodian',
+        ['UNDRR Scorecard 6.6.1', 'MCR2030', 'RA 10121 Sec. 12(c)'], ['A10.9', 'A10.6'],
+        [('Record each lesson with its source and the change proposed; without a proposed change it is an observation, not yet a lesson.', False, True, None, 'ME-F08'),
+         ('After an exchange or network event, record what was learned and its relevance to Ormoc.', False, False, None, None),
+         ('CDRRMO Head decides whether a plan, form, procedure, training or MODE rule changes; open a CAPA entry if so; changes beyond CDRRMO authority go to the CDRRMC or the Mayor.', True, True, None, None),
+         ('Where the Manual itself changes, prepare the new version for CDRRMO Head approval under Chapter 1 document control.', True, False, None, None)]),
+    _mk('WF-SOP7-09', '7-09', 'Protection of DRRM data: notices, sharing and breach response',
+        'governance', 'cdrrmo_head', 'MOO Ch.7',
+        'Handle personal data in DRRM lawfully and securely, and respond to breaches as the NPC requires.',
+        'A new form or data flow; a new data-sharing need; the annual review; a suspected breach.',
+        'City Data Protection Officer, with the CDRRMO privacy compliance officer',
+        ['RA 10173 and its IRR', 'NPC Circular No. 16-03', 'NPC Circular No. 2023-06'], ['A5.5'],
+        [('Map DRRM forms and systems that hold personal data, with purpose, office and retention; each item must be necessary for its purpose.', True, True, None, 'ME-F09'),
+         ('Add privacy notices to registration, evacuation and relief forms; DPO approves the text.', False, True, None, None),
+         ('Apply role-based access, logging and encryption; review access lists quarterly per NPC Circular No. 2023-06.', True, False, None, None),
+         ('Route every data-sharing need through a data-sharing agreement reviewed by the DPO.', False, True, None, None),
+         ('On a suspected breach: contain, assess, and notify the NPC and affected data subjects within 72 hours of knowledge (NPC Circular No. 16-03).', True, True, None, None)]),
+]
+
+CH8_PROCEDURES = [  # MOO Ch.8 Stakeholder Engagement and Institutional Partnerships (v1.0)
+    _mk('WF-SOP8-01', '8-01', 'Partner register and partnership lifecycle',
+        'governance', 'cdrrmo_head', 'MOO Ch.8',
+        'Bring every DRRM partnership under a written, authorised, registered and reviewed agreement.',
+        'A need identified in a contingency plan, AAR or IAT gap; a partner\'s offer; an agreement nearing its end; the annual review.',
+        'CDRRMO Administration and Training Division (register keeper)',
+        ['RA 7160 Secs. 22(c), 34-36', 'RA 10121 Secs. 12(c), 13'], ['A10.2', 'B6.6'],
+        [('State the need, the partner and the value to the City, citing the plan, AAR or IAT gap; decide whether a written agreement is needed or coordination is enough.', True, True, None, 'PTN-F02'),
+         ('Draft roles before, during and after events, resources, activation trigger, costs, liability, data and review; no term may transfer legal authority.', True, True, None, None),
+         ('City Legal Office reviews the draft; advice filed.', False, False, None, None),
+         ('Secure authorisation (SP where required; City Mayor signs; CDRRMC endorses); register on PTN-F01 and review annually.', True, True, None, 'PTN-F01')]),
+    _mk('WF-SOP8-02', '8-02', 'Inter-LGU technical mutual aid: agreement, activation and demobilisation',
+        'governance', 'cdrrmo_head', 'MOO Ch.8',
+        'Have standing, reciprocal, technical mutual aid with neighbouring LGUs and use it in order when needed.',
+        'Agreement: annual plan or a gap found in an AAR. Activation: City capacity exceeded or about to be; a request from a partner LGU.',
+        'CDRRMO Head; EOC Manager',
+        ['RA 7160 Secs. 22(c), 33', 'RA 10121 Sec. 12(c)', 'NDRRMC MC No. 4, s. 2012 (ICS)'], ['A10.1', 'C3.2'],
+        [('Propose a technical mutual aid agreement to the DRRM officers of Kananga, Albuera, Merida, Isabel and the Province, using Annex 8-B; positions, not persons, named.', False, True, None, None),
+         ('Negotiate the elements of Ch.8 Table 8.9; each sanggunian authorises its Mayor.', True, True, None, None),
+         ('Sign; register on PTN-F01 and LOG-F03; exchange contact directories.', False, False, None, 'PTN-F01'),
+         ('Exercise the agreement at least once a year; record findings in the AAR route (SOP 7-04).', False, False, None, None)]),
+    _mk('PR-MUTUAL-AID', '8-02', 'Mutual aid activation and demobilisation (point of action)',
+        'eoc', 'eoc_manager', 'MOO Ch.8',
+        'Activate standing mutual aid through the approved route when City capacity is exceeded, and stand it down in order.',
+        'City capacity exceeded or about to be; a request received from a partner LGU.',
+        'CDRRMO Head; EOC Manager during activation; host Incident Commander directs deployed resources',
+        ['RA 7160 Secs. 22(c), 33', 'RA 10121 Sec. 12(c)', 'NDRRMC MC No. 4, s. 2012 (ICS)'], ['A10.1', 'C3.2'],
+        [('Confirm the shortfall against the inventory (SOP 6-12) and the SitRep; state what is needed, where and by when.', True, True, None, 'PTN-F03'),
+         ('Send the request through the agreement route; the City Mayor approves outbound aid; log time and recipient.', True, True, None, None),
+         ('Receive inbound teams and resources: brief on the incident, assign under the host IC, record on EOC-F06.', True, False, None, 'EOC-F06'),
+         ('Demobilise in reverse order; thank and debrief; log costs and findings for the AAR.', False, True, None, None)]),
+    _mk('PR-AUGMENT-REQUEST', '8-03', 'Requesting augmentation from the Province, region and national agencies',
+        'eoc', 'eoc_manager', 'MOO Ch.8',
+        'Request outside help early, through the right route, and absorb it in order.',
+        'City and mutual aid resources exceeded or about to be; an agency offers assistance.',
+        'EOC Manager, for the CDRRMC Chair; EOC Logistics',
+        ['National Disaster Response Plan', 'RA 10121', 'NDRRMC MC No. 4, s. 2012 (ICS)', 'Regional SOPs'],
+        ['A10.1', 'A8.5', 'A10.3'],
+        [('Compare needs with City stocks, pre-arranged supply and mutual aid each operational period; confirm the shortfall with sourced figures.', True, True, None, None),
+         ('State resource, quantity, location, time needed and City resources already committed; specific enough to act on.', True, True, None, 'PTN-F03'),
+         ('City Mayor approves and sends to the Province (PDRRMO), copying OCD VIII where national assets are needed; log time and recipient.', True, False, None, None),
+         ('Track the request to delivery; receive and task inbound support under the EOC structure; report it in the SitRep.', False, False, None, None)]),
+    _mk('WF-SOP8-04', '8-04', 'Interface agreements and annual interface review with Part C lead offices',
+        'governance', 'cdrrmo_head', 'MOO Ch.8',
+        'Give every Part C interface an owner, a plan and a yearly review, and report the Interface Index.',
+        'Adoption of this chapter; change of a lead office; the annual review before the IAT cycle.',
+        'CDRRMO Research and Planning, with the Part C lead offices',
+        ['IAT v1.7 Part C', 'RA 12287 IRR Rule IV', 'UNDRR Scorecard'],
+        ['C1.1', 'C1.2', 'C1.3', 'C1.4', 'C2.1', 'C2.2', 'C2.3', 'C3.1', 'C3.2', 'C3.3', 'C4.1', 'C4.2', 'C4.3', 'C4.4', 'C5.1'],
+        [('Confirm each Part C lead office and focal person by position; update the platform indicator_lead_offices; written acceptance by each office.', True, True, None, None),
+         ('Sign PTN-F04 with each lead office: indicators owned, actions for the year, information exchanged, reporting; approved by the City Administrator.', True, True, None, 'PTN-F04'),
+         ('Supply hazard maps, scenarios and event data; invite lead offices to PDRAs and exercises.', False, False, None, None),
+         ('Run the annual interface review before the IAT cycle; report the Interface Index to the CDRRMC.', True, True, None, 'PTN-F05')]),
+    _mk('WF-SOP8-05', '8-05', 'Restoration-priority and continuity arrangements with utilities',
+        'continuity', 'cdrrmo_head', 'MOO Ch.8',
+        'Agree before events which facilities are restored first, how utilities and the EOC exchange status, and what backup each will provide.',
+        'Annual review before the typhoon season; change in critical facilities; an AAR finding on restoration.',
+        'CDRRMO Head; EOC Logistics',
+        ['RA 12287 IRR Rule IV Sec. 4(c)(ii)-(iv)', 'UNDRR Scorecard Essential 8', 'RA 10639'], ['C2.1', 'C2.2'],
+        [('List facilities by restoration priority — hospitals and health centres, EOC and alternate EOC, evacuation centres, water pumps, communications sites — agreed by the offices concerned.', True, True, None, 'PTN-F06'),
+         ('Agree priority, contact points, status reporting, standby generation, cell-on-wheels and water tankers with each utility; SP authorises, City Mayor signs where a MOA is used.', True, True, None, None),
+         ('Exchange 24-hour contacts and test them before the season.', False, False, None, None)]),
+    _mk('WF-SOP8-06', '8-06', 'Partner seats on the CDRRMC: CSOs, private sector and academe',
+        'council', 'cdrrmo_head', 'MOO Ch.8',
+        'Keep every partner seat of the CDRRMC filled by an eligible, accredited and active organisation.',
+        'Expiry of CSO accreditation; a vacant or inactive seat; a CDRRMC recommendation.',
+        'CDRRMO Head as CDRRMC secretariat, with the SP Secretariat',
+        ['RA 10121 Sec. 11', 'RA 7160 Secs. 34-36 and DILG rules on CSO accreditation'], ['A1.2', 'A10.2'],
+        [('Compare the CDRRMC EO with RA 10121 Sec. 11; list vacant, inactive or unaccredited seats; attendance in the last year checked.', True, True, None, 'PTN-F07'),
+         ('Invite eligible CSOs, private firms and academic institutions to nominate, including sectoral and faith-based groups; open invitation recorded.', False, False, None, None),
+         ('SP Secretariat confirms accreditation of nominated CSOs; copies filed.', False, False, None, None),
+         ('Seat the organisation; update the Chapter 1 roster annex; record the term and review date.', False, True, None, None)]),
+    _mk('WF-SOP8-07', '8-07', 'Annual partner forum and pre-season coordination',
+        'governance', 'cdrrmo_head', 'MOO Ch.8',
+        'Meet all partners at least once a year before the typhoon season to confirm roles, contacts and commitments, and to learn from the last season.',
+        'Each year before the typhoon season (proposed: April or May).',
+        'CDRRMO Administration and Training',
+        ['RA 10121 Sec. 12(c)', 'UNDRR Scorecard 6.1.2, 6.1.4'], ['A10.2', 'B6.6'],
+        [('Prepare the register summary, last season\'s AAR findings, the contact directory and the season outlook; circulate the pack in advance.', False, False, None, None),
+         ('Convene: CDRRMC Chair invites all registered partners, Part C lead offices, barangay representatives, sectoral and faith-based groups; attendance recorded by organisation.', False, True, None, None),
+         ('Confirm roles, contacts and commitments; update PTN-F01 and the resource inventory (LOG-F03); changes dated.', True, True, None, 'PTN-F01')]),
+    _mk('WF-SOP8-08', '8-08', 'Assistance to other LGUs',
+        'governance', 'cdrrmo_head', 'MOO Ch.8',
+        'Give help to other LGUs through a lawful, documented route that does not weaken the City\'s own readiness.',
+        'A request from, or a disaster in, another LGU.',
+        'CDRRMO Head as CDRRMC secretariat',
+        ['RA 7160 Sec. 33', 'RA 10121', 'JMC 2013-1 and the applicable proclamation or rule on LDRRMF use for other LGUs'],
+        ['A10.1'],
+        [('Assess the request and the City\'s own risk within 24 hours: is any hazard threatening Ormoc in the same period? Own stocks not drawn below Chapter 6 levels without a decision.', True, True, None, None),
+         ('City Legal Office and City Budget Officer confirm the fund source and its legal basis (a mutual aid agreement or a proclamation allowing LDRRMF use for other LGUs); basis cited in the resolution.', True, True, None, None),
+         ('CDRRMC recommends by resolution; the SP authorises; the City Mayor approves; funds and procurement follow Chapter 6 (SOPs 6-02, 6-04).', True, True, None, None),
+         ('Send and log the outbound PTN-F03; record costs; review the impact on City stocks at the next cycle.', False, False, None, 'PTN-F03')]),
+]
+
+META.update({p['code']: p['meta'] for p in CH5REC_PROCEDURES + CH7_PROCEDURES + CH8_PROCEDURES})
+for p_ in [p for p in CH6_PROCEDURES if 'meta' in p]:  # 1.18: SOP 6-12 appended after the CH6 META loop
+    META[p_['code']] = p_.pop('meta')
