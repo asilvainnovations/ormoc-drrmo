@@ -93,8 +93,9 @@ MOO_TITLES = {
     'MOO Ch.0': 'Introduction',
     'MOO Ch.1': 'Legal and Institutional Framework', 'MOO Ch.2': 'Office Organization',
     'MOO Ch.3': 'DRRM and Contingency Planning', 'MOO Ch.4': 'Operations, Warning and Response',
-    'MOO Ch.5': 'DRRM Financing', 'MOO Ch.6': 'Capacity Development', 'MOO Ch.7': 'Knowledge Management, Reporting and M&E',
-    'MOO Ch.8': 'Rehabilitation and Recovery', 'MOO Ch.9': 'Partnerships',
+    'MOO Ch.5': 'Recovery, Rehabilitation and Build Back Better', 'MOO Ch.6': 'DRRM Financing, Resource Management and Accountability',
+    'MOO Ch.7': 'Monitoring, Evaluation, Knowledge Management and Continuous Improvement',
+    'MOO Ch.8': 'Stakeholder Engagement and Institutional Partnerships',
     'EOC Ch.1': 'Legal Basis', 'EOC Ch.2': 'Concept of Operations and Activation', 'EOC Ch.3': 'Facility, Site and Continuity',
     'EOC Ch.4': 'Communications and Sector Coordination', 'EOC Ch.5': 'Organization, Staffing and Public Information',
     'EOC Ch.6': 'Information Management and Reporting', 'EOC Ch.7': 'Coordination and Resource Management',
@@ -112,6 +113,13 @@ _CH0 = 'v1.0 introduction'
 _CH1 = 'v1.0 revised working draft'
 LIBRARY_DRAFTS = [  # code, manual, kind, title, file, label, indicators
     ('MOO Ch.0', 'MOO', 'chapter', None, 'MOO_Ch0_Introduction_v1.0.md', _CH0, None),
+    # 1.18 (ADR-032 addendum): the drafting team's official Introduction v1.1 (00_Introduction_v1.1.docx,
+    # 12 Nov 2026) replaces the interim v1.1: purpose, city context, legal basis, structure, assessment-informed
+    # method and systems diagnosis (§5, the baseline Chapters 6-7 cite), design principles, systems
+    # thinking/TQM (§7), invariants, conventions and abbreviations. Approval/validation machinery stripped
+    # per the City: the Introduction reads as seamless front matter, not a controlled chapter draft.
+    ('MOO Ch.0', 'MOO', 'chapter', None, 'MOO_Ch0_Introduction_v1.1.md',
+     'v1.1 official working draft (assessment-informed method and systems diagnosis)', None),
     ('MOO Ch.1', 'MOO', 'chapter', None, 'MOO_Ch1_v1.0.md', _CH1, None),
     ('MOO Annex 1-A', 'MOO', 'annex', 'Proposed ordinance institutionalizing the CDRRMO', 'Annex_1-A.md',
      _CH1, ['A1.1', 'A2.1', 'A2.2', 'A2.3', 'A2.5']),
@@ -246,17 +254,67 @@ LIBRARY_DRAFTS += [('MOO Ch.4', 'MOO', 'chapter', None, 'MOO_Ch4v1_v1.1.md', _CH
     ]
 ]
 
-# Chapter 5 v1.0 (12 Nov 2026): DRRM Financing, Procurement and Resource Accountability. Written in markdown
-# (reference/moo/MOO_Ch5v1_*.md). Its SOPs 5-01 to 5-10 run as workflows and protocols (sop_registry.py, CH5_*).
-_CH5V1 = 'v1.0 working draft (IAT v1.7)'
-_CH5_INDS = ['A3.5', 'A4.1', 'A4.2', 'A4.3', 'A4.4', 'A4.5', 'A4.6', 'A4.7', 'A4.8', 'A4.9', 'A10.5',
-             'A1.7', 'A2.7', 'A10.8', 'B6.4', 'B6.6', 'B7.5', 'C1.2']
-LIBRARY_DRAFTS += [('MOO Ch.5', 'MOO', 'chapter', None, 'MOO_Ch5v1_v1.0.md', _CH5V1, None)] + [
-    (f'Annex {aid}', 'MOO', kind, title, f'MOO_Ch5v1_Annex_{aid}.md', _CH5V1, inds)
+# 1.18.0 (ADR-032): Chapters 5-8 published 12 Nov 2026. The financing draft seeded in 1.15 as 'MOO Ch.5'
+# v1.0 is renumbered to 'MOO Ch.6' v1.1 (content unchanged; its source files MOO_Ch5v1_* now hold the
+# Recovery chapter v1.0 — see DEPLOY.md 1.18.0). Its SOPs are 6-01 to 6-12 (sop_registry.py, CH6_*).
+_CH6V1 = 'v1.1 working draft (IAT v1.7); renumbered from Chapter 5 Draft 1.0'
+_CH6_INDS = ['A10.5', 'A10.8', 'A3.5', 'A4.1', 'A4.2', 'A4.3', 'A4.4', 'A4.5', 'A4.6', 'A4.7', 'A4.8', 'A4.9',
+             'A7.5', 'A8.3', 'B6.3', 'B6.4', 'B6.6', 'B7.5', 'C1.2']  # from Annex 6-A traceability register
+LIBRARY_DRAFTS += [('MOO Ch.6', 'MOO', 'chapter', None, 'MOO_Ch6v1_v1.1.md', _CH6V1, None)] + [
+    (f'Annex {aid}', 'MOO', kind, title, f'MOO_Ch6v1_Annex_{aid}.md', _CH6V1, inds)
     for aid, kind, title, inds in [
-        ('5-A', 'annex', 'IAT and master requirements traceability for DRRM financing', _CH5_INDS),
-        ('5-B', 'form', 'Pre-audit checklist for DRRM transactions', ['A4.8', 'A4.4', 'A10.5']),
-        ('5-C', 'annex', 'Anticipatory action funding pathway and tranche worksheet', ['A4.6', 'A10.8']),
+        ('6-A', 'annex', 'IAT and master requirements traceability for DRRM financing, resources and accountability', _CH6_INDS),
+        ('6-B', 'form', 'Pre-audit checklist for DRRM transactions', ['A4.8', 'A4.4', 'A10.5']),
+        ('6-C', 'annex', 'Anticipatory action funding pathway and tranche worksheet', ['A4.6', 'A10.8']),
+        ('6-D', 'annex', 'Prepositioned stock planning worksheet', ['A7.5']),
+    ]
+]
+
+# Chapter 5 v1.0 (12 Nov 2026): Recovery, Rehabilitation and Build Back Better (uploaded as
+# Ch5_..._BBB_v1.1.docx; its document control states Draft 1.0, which governs the seeded version).
+# SOPs 5-01/5-02 proposed templates in sop_registry.py (CH5REC_PROCEDURES).
+_CH5REC = 'v1.0 working draft (IAT v1.7)'
+_CH5REC_INDS = ['A10.6', 'A3.4', 'A5.4', 'A8.7', 'A9.1', 'A9.2', 'A9.3', 'A9.4', 'A9.5',
+                'C1.3', 'C1.4', 'C2.1', 'C2.2', 'C2.3', 'C3.3']  # from Annex 5-A traceability register
+LIBRARY_DRAFTS += [('MOO Ch.5', 'MOO', 'chapter', None, 'MOO_Ch5v1_v1.0.md', _CH5REC, None)] + [
+    (f'Annex {aid}', 'MOO', kind, title, f'MOO_Ch5v1_Annex_{aid}.md', _CH5REC, inds)
+    for aid, kind, title, inds in [
+        ('5-A', 'annex', 'IAT and master requirements traceability for recovery, rehabilitation and build back better', _CH5REC_INDS),
+        ('5-B', 'annex', 'Recovery RACI with legal decision authority', []),
+        ('5-C', 'annex', 'Pre-disaster recovery framework outline', []),
+        ('5-D', 'form', 'Recovery monitoring matrix fields (REC-F06)', ['A10.6']),
+        ('5-E', 'annex', 'Minimum data for the recovery baseline', []),
+    ]
+]
+
+# Chapter 7 v1.0 (12 Nov 2026): Monitoring, Evaluation, Knowledge Management and Continuous Improvement.
+# SOPs 7-01/7-04/7-05/7-07/7-08/7-09 proposed templates in sop_registry.py (CH7_PROCEDURES); 7-02/7-03 run
+# on the MODE Assess module; 7-06 runs on PR-LIFT-REPORT.
+_CH7V1 = 'v1.0 working draft (IAT v1.7)'
+_CH7_INDS = ['A10.3', 'A10.4', 'A10.6', 'A10.8', 'A10.9', 'A5.4', 'A5.5', 'B7.3', 'B7.4']  # Annex 7-A register
+LIBRARY_DRAFTS += [('MOO Ch.7', 'MOO', 'chapter', None, 'MOO_Ch7v1_v1.0.md', _CH7V1, None)] + [
+    (f'Annex {aid}', 'MOO', kind, title, f'MOO_Ch7v1_Annex_{aid}.md', _CH7V1, inds)
+    for aid, kind, title, inds in [
+        ('7-A', 'annex', 'IAT and master requirements traceability for monitoring, evaluation and knowledge management', _CH7_INDS),
+        ('7-B', 'form', 'LDRRMP M&E matrix template', ['A10.4']),
+        ('7-C', 'form', 'After-action review report outline', ['A10.6', 'B7.4']),
+        ('7-D', 'form', 'Post-declaration (45-day) report outline', ['A10.8']),
+        ('7-E', 'annex', 'Disaster event and loss database fields', ['A5.4']),
+    ]
+]
+
+# Chapter 8 v1.0 (12 Nov 2026): Stakeholder Engagement and Institutional Partnerships. SOPs 8-01 to 8-08
+# proposed templates in sop_registry.py (CH8_PROCEDURES).
+_CH8V1 = 'v1.0 working draft (IAT v1.7)'
+_CH8_INDS = ['A1.2', 'A10.1', 'A10.2', 'A8.5', 'B6.6', 'C1.1', 'C1.2', 'C1.3', 'C1.4',
+             'C2.1', 'C2.2', 'C2.3', 'C3.1', 'C3.2', 'C3.3', 'C4.1', 'C4.2', 'C4.3', 'C4.4', 'C5.1']  # Annex 8-A
+LIBRARY_DRAFTS += [('MOO Ch.8', 'MOO', 'chapter', None, 'MOO_Ch8v1_v1.0.md', _CH8V1, None)] + [
+    (f'Annex {aid}', 'MOO', kind, title, f'MOO_Ch8v1_Annex_{aid}.md', _CH8V1, inds)
+    for aid, kind, title, inds in [
+        ('8-A', 'annex', 'IAT and master requirements traceability for stakeholder engagement and institutional partnerships', _CH8_INDS),
+        ('8-B', 'annex', 'Model outline of a technical mutual aid agreement', ['B6.6']),
+        ('8-C', 'annex', 'Model outline of a Part C interface agreement', ['C1.1']),
+        ('8-D', 'annex', 'Agenda of the annual partner forum', ['A10.1']),
     ]
 ]
 
@@ -265,6 +323,13 @@ AREA_ONLY_DRAFTS = {'SOP 6-GIS-01': 6}  # code -> functional area (Area 6: situa
 # exists. Chapter 6 (EOC operations and information management) adopts it when drafted.
 LIBRARY_DRAFTS += [('SOP 6-GIS-01', 'EOC', 'sop', 'Establishment, updating and operational use of the EOC Geospatial Common Operating Picture',
                     'SOP_6-GIS-01_proposed.md', 'v0.1 proposed (EOC Module note, 6 Nov 2026)', ['A5.6', 'A5.7', 'B5.3'])]
+
+
+# 1.18 (ADR-032): the IAT workbook's "Feeds Manual Chapter" column still uses the pre-compilation numbering
+# (a full 140-row renumber sweep belongs to a workbook revision). Until then, workbook chapter tags are
+# remapped here: financing rows (old Ch.5) -> drafted Ch.6; capacity rows (old Ch.6) -> Ch.3; recovery rows
+# (old Ch.8) -> drafted Ch.5; partnership rows (old Ch.9) -> drafted Ch.8. M&E rows (Ch.7) keep their code.
+CHAPTER_RENUMBER = {'MOO Ch.5': 'MOO Ch.6', 'MOO Ch.6': 'MOO Ch.3', 'MOO Ch.8': 'MOO Ch.5', 'MOO Ch.9': 'MOO Ch.8'}
 
 
 def chapters_of(tag: str) -> list[str]:
@@ -281,7 +346,7 @@ def chapters_of(tag: str) -> list[str]:
             out.append(f'{prefix} Ch.{m.group(1)}'); continue
         if part.startswith('Annex JDs'):
             out.append(ANNEX_JD)
-    return list(dict.fromkeys(out))
+    return list(dict.fromkeys(CHAPTER_RENUMBER.get(c, c) for c in out))
 
 
 # ------------------------------------------------------- one manual (v1.6) ---
@@ -334,17 +399,26 @@ AREA_TITLE = {a[0]: a[2] for a in MANUAL_AREAS}
 CHAPTERS = {  # legacy code -> (new code, chapter no, primary area, also areas, title)
     # 1.17: Introduction drafted (v1.0, 12 Nov 2026, ADR-031): purpose, organization and the assessment method,
     # stated once here so no chapter repeats it. Primary area 1 (governance); it serves all areas.
-    'MOO Ch.0': ('Chapter 0', 0, 1, [], 'Introduction'),
+    # 1.18 (ADR-032 addendum): the Introduction is front matter, not a chapter — code 'Introduction',
+    # chapter_no NULL. The deterministic doc id is unchanged (keyed by the legacy 'MOO Ch.0' code).
+    'MOO Ch.0': ('Introduction', None, 1, [], 'Introduction to the Manual'),
     'MOO Ch.1': ('Chapter 1', 1, 1, [], 'Legal Mandate, DRRM Governance and Institutional Accountability'),
     'MOO Ch.2': ('Chapter 2', 2, 1, [3, 8], 'CDRRMO Organizational Structure, Staffing and Human Resource Management'),
     'MOO Ch.3': ('Chapter 3', 3, 2, [3], 'Risk Intelligence, DRRM and Contingency Planning, and Institutional Preparedness'),
     # 1.11: Chapter 4 drafted (v1.1, 8 Nov 2026). Primary area 4; also area 5 (early warning, public information).
     'MOO Ch.4': ('Chapter 4', 4, 4, [5], 'Early Warning, EOC Activation, Incident Management and Emergency Response'),
-    # 1.15: Chapter 5 drafted (v1.0, 12 Nov 2026). Primary area 1 (A4 indicators sit there); also area 7 (procurement).
-    'MOO Ch.5': ('Chapter 5', 5, 1, [7], 'DRRM Financing, Procurement and Resource Accountability'),
+    # 1.18 (ADR-032): the keys below are the workbook chapter codes as remapped by CHAPTER_RENUMBER.
+    # 'MOO Ch.5' rows are now Recovery (drafted v1.0, primary area 10); 'MOO Ch.6' rows are Financing
+    # (drafted v1.1, renumbered from the 1.15 'MOO Ch.5' seed; primary area 1, also 7 for procurement);
+    # 'MOO Ch.7' rows are M&E (v1.0, area 10, also 3); 'MOO Ch.8' rows are Stakeholder (v1.0, area 1, also 3, 7).
+    'MOO Ch.5': ('Chapter 5', 5, 10, [], 'Recovery, Rehabilitation and Build Back Better'),
+    'MOO Ch.6': ('Chapter 6', 6, 1, [7], 'DRRM Financing, Resource Management and Accountability'),
+    'MOO Ch.7': ('Chapter 7', 7, 10, [3], 'Monitoring, Evaluation, Knowledge Management and Continuous Improvement'),
+    'MOO Ch.8': ('Chapter 8', 8, 1, [3, 7], 'Stakeholder Engagement and Institutional Partnerships'),
 }
+# 1.18 (ADR-032): the four MOO shells (old Ch.6 capacity, Ch.7 M&E, Ch.8 recovery, Ch.9 partnerships) are
+# gone — their codes now carry the drafted Chapters 5-8 (CHAPTERS above), so only the EOC merges remain.
 MERGED = {  # legacy shell -> functional area
-    'MOO Ch.6': 3, 'MOO Ch.7': 10, 'MOO Ch.8': 10, 'MOO Ch.9': 1,
     'EOC Ch.1': 1, 'EOC Ch.2': 4, 'EOC Ch.3': 9, 'EOC Ch.4': 5, 'EOC Ch.5': 4, 'EOC Ch.6': 6,
     'EOC Ch.7': 7, 'EOC Ch.8': 3, 'EOC Ch.9': 10,
 }
@@ -687,7 +761,8 @@ def main():
                              summary=None, status='draft', sort=sort, current_version_id=None, area_no=fa,
                              chapter_no=no, aliases=[code] + [k for k, v in RETIRED.items() if v == code and k == ANNEX_JD],
                              also_areas=also))
-            extra = {'MOO Ch.3': _CH3_INDS, 'MOO Ch.5': _CH5_INDS}.get(code, [])
+            extra = {'MOO Ch.3': _CH3_INDS, 'MOO Ch.5': _CH5REC_INDS, 'MOO Ch.6': _CH6_INDS,
+                     'MOO Ch.7': _CH7_INDS, 'MOO Ch.8': _CH8_INDS}.get(code, [])
             doc_links += [dict(document_id=did, indicator_id=i) for i in dict.fromkeys([i['id'] for i in inds] + extra)]
         else:
             parent = uid('doc', RETIRED[code]) if code in RETIRED else area_id[MERGED[code]]
@@ -717,6 +792,10 @@ def main():
         did = uid('doc', code)
         ch = chapter_of(code) or chapter_of(fname)
         chap_legacy = f'MOO Ch.{ch}'
+        if code == 'MOO Ch.0':  # front matter, not a chapter (ADR-032 addendum)
+            where, chapter_no = 'Introduction', None
+        else:
+            where, chapter_no = f'Chapter {ch}', ch
         if did not in known:
             sort += 1
             nc = new_code(code)
@@ -724,7 +803,7 @@ def main():
                 area = AREA_ONLY_DRAFTS[code]
                 parent, where, chapter_no = uid('doc', f'Area {area}'), f'Area {area}', None
             else:
-                area, parent, where, chapter_no = CHAPTERS[chap_legacy][2], uid('doc', chap_legacy), f'Chapter {ch}', ch
+                area = CHAPTERS[chap_legacy][2]
             docs.append(dict(id=did, manual='MOO', kind=kind, code=nc, title=title, parent_id=parent,
                              summary=f'{where} draft ({label}). {len(inds)} IAT indicator(s) linked.',
                              status='draft', sort=sort, current_version_id=None, area_no=area,
@@ -734,12 +813,16 @@ def main():
             assert not bad, (code, bad)
             doc_links += [dict(document_id=did, indicator_id=i) for i in inds]
         versions.append(dict(id=uid('docver', code, label), document_id=did, label=label, body_md=body,
-                             change_note=f'Loaded from reference/moo/{fname} ({("Chapter " + str(ch)) if ch is not None else "area outline"}, {label})',
+                             change_note=f'Loaded from reference/moo/{fname} ({where}, {label})',
                              status='draft'))
     for d in docs:
-        if d['kind'] == 'chapter' and d['status'] != 'superseded':
+        if d['kind'] == 'chapter' and d['status'] != 'superseded' and d['id'] != uid('doc', 'MOO Ch.0'):
             n = sum(1 for x in docs if x['parent_id'] == d['id'] and x['status'] != 'superseded')
             d['summary'] = f'Area {d["area_no"]}. Drafted chapter with {n} annex(es), SOP(s) and form(s).'
+        if d['id'] == uid('doc', 'MOO Ch.0'):
+            d['summary'] = ('Front matter, not a chapter (ADR-032 addendum). Purpose, city context, legal basis, '
+                            'structure, the assessment-informed method and systems diagnosis, design principles, '
+                            'invariants, conventions and abbreviations shared by all ten chapters.')
 
     # Links inside drafted text: (doc:<code or alias>) -> /library/doc/<id>
     by_code = {}
@@ -762,9 +845,11 @@ def main():
     from forms_seed import FORMS, STEP_FORMS, WORKFLOWS
     from sop_registry import META, CH3_FORMS, CH3_WORKFLOWS, PROTOCOL_CATEGORIES  # 1.10.0 (ADR-019)
     from sop_registry import CH4_FORMS, CH4_PROTOCOLS  # 1.11.0: Chapter 4 v1.1
-    from sop_registry import CH5_FORMS, CH5_PROCEDURES  # 1.15.0: Chapter 5 v1.0
-    FORMS = FORMS + CH3_FORMS + CH4_FORMS + CH5_FORMS
-    WORKFLOWS = WORKFLOWS + CH3_WORKFLOWS + CH4_PROTOCOLS + CH5_PROCEDURES
+    from sop_registry import CH6_FORMS, CH6_PROCEDURES  # 1.18: Chapter 6 v1.1 (renumbered from Ch.5 v1.0)
+    from sop_registry import CH5REC_PROCEDURES, CH7_PROCEDURES, CH8_PROCEDURES  # 1.18: Chapters 5 (recovery), 7 and 8
+    FORMS = FORMS + CH3_FORMS + CH4_FORMS + CH6_FORMS
+    WORKFLOWS = (WORKFLOWS + CH3_WORKFLOWS + CH4_PROTOCOLS + CH6_PROCEDURES
+                 + CH5REC_PROCEDURES + CH7_PROCEDURES + CH8_PROCEDURES)
     known_inds = {i['id'] for i in out['indicators']}
     out['form_templates'] = [dict(id=uid('form', c), code=c, title=t, purpose=pu, document_id=doc_home(d),
                                   schema=_json.dumps({'fields': flds}, ensure_ascii=False), status='draft', rev=1)

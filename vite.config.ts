@@ -77,6 +77,9 @@ export default defineConfig(({ command, mode }) => {
       workbox: {
         // kml: the EOC placemark (ADR-015) downloads offline.
         globPatterns: ['**/*.{js,mjs,css,html,svg,png,webp,woff2,kml}'],
+        // 1.18: the bundled reference data (chapters 0-8 with annexes) is 2.4 MB and must precache —
+        // the manual text is the offline core of the app (ADR-003).
+        maximumFileSizeToCacheInBytes: 4 * 1024 * 1024,
         // The original logo and banner files are kept for print and reuse, but are too large to
         // ship to every phone; the app uses the compressed copies in /brand.
         globIgnores: ['App_Banner.png', 'Ormoc_City_Logo.png', 'Ormoc_CDRRMO_Logo.png', 'brand/*.jpg',

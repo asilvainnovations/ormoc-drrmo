@@ -205,8 +205,8 @@ STEP_FORMS = {
 
 # New DRRM workflows (normal operations and cluster activation). Steps: (instruction, critical, note, minutes, form).
 WORKFLOWS = [
-    dict(code='WF-BUDGET-CYCLE', title='LDRRMF budget cycle (SOPs 5-01 and 5-02: computation to quarterly report)', category='budget', owner_role='cdrrmo_head',
-         doc='MOO Ch.5', purpose='Compute the LDRRMF on the correct base, plan it through an approved LDRRMFIP, execute it, and report and disclose its use every quarter (Chapter 5, SOPs 5-01 and 5-02).',
+    dict(code='WF-BUDGET-CYCLE', title='LDRRMF budget cycle (SOPs 6-01 and 6-02: computation to quarterly report)', category='budget', owner_role='cdrrmo_head',
+         doc='MOO Ch.6', purpose='Compute the LDRRMF on the correct base, plan it through an approved LDRRMFIP, execute it, and report and disclose its use every quarter (Chapter 6, SOPs 6-01 and 6-02).',
          trigger='Each budget call, a supplemental budget or realignment, and the end of every quarter.',
          steps=[('Compute 5% of estimated revenue from regular sources, the 70/30 split and the AA ceiling (City Budget Officer)', True, True, None, 'FIN-F01'),
                 ('Review LDRRMP results, utilisation, STF ageing, adequacy test and COA observations (Research and Planning)', True, False, None, None),
