@@ -9,7 +9,7 @@
 # (https://github.com/protomaps/go-pmtiles/releases). Upload needs the project's service_role key; keep it on
 # this workstation only and never put it in the app's settings.
 #
-#   SUPABASE_URL=https://jmctsspadywjcbbqwweh.supabase.co SERVICE_ROLE_KEY=... bash scripts/build_basemap.sh
+#   SUPABASE_URL=https://jmctsspadywjcbbqwweh.supabase.co SERVICE_ROLE_KEY=sb_secret_... bash scripts/build_basemap.sh
 #
 # Options (environment):
 #   BUILD    a Protomaps daily build date, YYYYMMDD (default: yesterday). See https://maps.protomaps.com/builds/
@@ -69,6 +69,14 @@ if [ "$size" -gt 52428800 ]; then
 fi
 if [ "${SKIP_UPLOAD:-}" = "1" ]; then echo "Built in $OUT/upload (upload skipped)."; exit 0; fi
 : "${SUPABASE_URL:?Set SUPABASE_URL}"; : "${SERVICE_ROLE_KEY:?Set SERVICE_ROLE_KEY}"
+# Works with the new secret key (sb_secret_…) and the legacy service_role JWT. New keys go on the apikey header
+# and are not JWTs, so they must not be sent as a Bearer token; the legacy JWT also goes on Authorization.
+AUTH=(-H "apikey: $SERVICE_ROLE_KEY")
+case "$SERVICE_ROLE_KEY" in
+  sb_secret_*) ;;
+  sb_publishable_*) echo "SERVICE_ROLE_KEY is a publishable key; uploads need the secret key (sb_secret_…)." >&2; exit 1 ;;
+  *) AUTH+=(-H "Authorization: Bearer $SERVICE_ROLE_KEY") ;;
+esac
 
 echo "3/3 Uploading to the public 'basemap' bucket…"
 type_of() { case "$1" in *.pmtiles) echo application/vnd.pmtiles;; *.pbf) echo application/x-protobuf;; *.json) echo application/json;; *.png) echo image/png;; *) echo application/octet-stream;; esac; }
@@ -77,7 +85,7 @@ while IFS= read -r -d '' file; do
   rel=${file#"$OUT/upload/"}
   enc=$(printf '%s' "$rel" | sed 's/ /%20/g')
   curl -fsS -X POST "$SUPABASE_URL/storage/v1/object/basemap/$enc" \
-    -H "Authorization: Bearer $SERVICE_ROLE_KEY" -H "x-upsert: true" -H "Content-Type: $(type_of "$file")" \
+    "${AUTH[@]}" -H "x-upsert: true" -H "Content-Type: $(type_of "$file")" \
     -H "Cache-Control: max-age=604800" --data-binary @"$file" >/dev/null
   n=$((n + 1)); [ $((n % 100)) -eq 0 ] && echo "  $n files…"
 done < <(find "$OUT/upload" -type f -print0)
