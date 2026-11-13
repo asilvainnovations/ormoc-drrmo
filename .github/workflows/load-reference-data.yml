@@ -1,7 +1,8 @@
 # Load reference data (ADR-034): one click instead of pasting 40+ seed files into the SQL editor.
-# Actions -> "Load reference data" -> Run workflow. Runs scripts/load_reference_data.sh against the chosen
-# Supabase project: preflight (all migrations applied), cleanup scripts, every seed part in order, the IAT
-# baseline update, then a check that every reference row is in the database. Stops at the first error.
+# Actions -> "Load reference data" -> Run workflow. Runs scripts/apply_db.sh against the chosen Supabase
+# project: migration status (and, if ticked, the missing migrations), cleanup scripts, every seed part in
+# order, the IAT baseline update, then a check that every reference row is in the database. Stops at the
+# first error.
 #
 # Repository secrets (Settings -> Secrets and variables -> Actions), one per project, each the
 # "Session pooler" connection string from Supabase Dashboard -> Connect, password filled in:
@@ -30,6 +31,10 @@ on:
         description: Also run the IAT v1.7 baseline update (safe to run again)
         type: boolean
         default: true
+      apply_migrations:
+        description: Also apply missing migrations (off if the Supabase GitHub integration applies them)
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -70,18 +75,20 @@ jobs:
 
       - name: Load
         env:
-          DATABASE_URL: ${{ inputs.target == 'production' && secrets.SUPABASE_DB_URL_PRODUCTION || secrets.SUPABASE_DB_URL_TRAINING }}
+          SUPABASE_DB_URL: ${{ inputs.target == 'production' && secrets.SUPABASE_DB_URL_PRODUCTION || secrets.SUPABASE_DB_URL_TRAINING }}
           SECRET_NAME: ${{ inputs.target == 'production' && 'SUPABASE_DB_URL_PRODUCTION' || 'SUPABASE_DB_URL_TRAINING' }}
           CHECK_ONLY: ${{ inputs.check_only }}
           IAT_UPDATE: ${{ inputs.iat_update }}
+          APPLY_MIGRATIONS: ${{ inputs.apply_migrations }}
           PGSSLMODE: require
           PGCONNECT_TIMEOUT: '20'
         run: |
-          if [ -z "$DATABASE_URL" ]; then
+          if [ -z "$SUPABASE_DB_URL" ]; then
             echo "::error::Repository secret $SECRET_NAME is not set (Settings -> Secrets and variables -> Actions)."
             exit 1
           fi
           args=()
           [ "$CHECK_ONLY" = true ] && args+=(--check-only)
           [ "$IAT_UPDATE" = true ] || args+=(--no-iat-update)
-          bash scripts/load_reference_data.sh "${args[@]}"
+          [ "$APPLY_MIGRATIONS" = true ] || args+=(--no-migrations)
+          bash scripts/apply_db.sh "${args[@]}"
