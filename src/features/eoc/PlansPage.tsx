@@ -79,6 +79,30 @@ export function PlansPage() {
               ))}
             </List>
           ) : <p className="text-sm text-muted">No clusters or modules are open on this activation.</p>}
+          {/* 1.21.0 (ADR-036): the desk of each activated response cluster is its lead agency's
+              seat in the EOC (WF-CP-ACTIVATION, B4.4). */}
+          {(() => {
+            const desks = data.active
+              .filter((c) => c.item_kind === 'cluster' && (c.state === 'lead' || c.state === 'on'))
+              .map((c) => {
+                const cluster = data.clusters.find((x) => x.code === c.item_code);
+                return { id: c.id, name: itemName(c.item_kind, c.item_code), lead: cluster?.lead_office_id ? data.offices.get(cluster.lead_office_id)?.name : null };
+              })
+              .filter((d) => d.lead);
+            return desks.length > 0 && (
+              <div className="mt-3 rounded-control border border-line bg-sky-soft/40 p-3">
+                <p className="mb-1.5 text-sm font-semibold">Agency desks in this activation</p>
+                <ul className="space-y-1 text-sm">
+                  {desks.map((d) => (
+                    <li key={d.id} className="flex items-baseline justify-between gap-3">
+                      <span className="font-semibold">{d.name}</span>
+                      <span className="text-right text-muted">{d.lead}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            );
+          })()}
         </>}
       </Section>
 

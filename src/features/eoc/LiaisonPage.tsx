@@ -15,7 +15,9 @@ export function LiaisonPage() {
     const clusters = await db.barangay_clusters.toArray();
     const barangays = await db.barangays.toArray();
     const reports = activation ? await db.barangay_reports.toArray() : [];
-    return { activation, rows: clusterStatus(clusters, barangays, reports, activation?.id ?? null), barangays, unassigned: barangays.filter((b) => !b.cluster_id).length };
+    // 1.21.0 (ADR-039): DDRiVE priority ranks, so the desk calls the high-risk silent barangays first.
+    const priority = new Map((await db.ddrive_priority.toArray()).map((p) => [p.psgc, p.priority_rank]));
+    return { activation, rows: clusterStatus(clusters, barangays, reports, activation?.id ?? null), barangays, priority, unassigned: barangays.filter((b) => !b.cluster_id).length };
   }, []);
   if (!data) return null;
   const totalSilent = data.rows.reduce((s, r) => s + r.silent, 0);
@@ -46,15 +48,25 @@ export function LiaisonPage() {
       )}
       {openCode && (() => {
         const r = data.rows.find((x) => x.cluster.code === openCode)!;
-        const members = data.barangays.filter((b) => b.cluster_id === r.cluster.id).sort((a, b) => a.name.localeCompare(b.name));
+        // Silent barangays first, highest DDRiVE priority first (decision support, never a trigger);
+        // reporting barangays follow alphabetically.
+        const members = data.barangays.filter((b) => b.cluster_id === r.cluster.id).sort((a, b) => {
+          const sa = data.activation && r.silentNames.includes(a.name) ? 0 : 1;
+          const sb = data.activation && r.silentNames.includes(b.name) ? 0 : 1;
+          if (sa !== sb) return sa - sb;
+          if (sa === 0) return (data.priority.get(a.psgc) ?? Infinity) - (data.priority.get(b.psgc) ?? Infinity) || a.name.localeCompare(b.name);
+          return a.name.localeCompare(b.name);
+        });
         return (
           <Section title={`${r.cluster.code} barangays`} action={<Button tip="Hide this list" variant="quiet" onClick={() => setOpenCode(null)}>Close</Button>}>
             {r.cluster.note && <p className="mb-2 text-sm text-muted">{r.cluster.note}</p>}
+            {data.activation && r.silent > 0 && <p className="mb-2 text-sm text-muted">Silent barangays are listed in DDRiVE priority order: call the high-risk ones first (B5.2, B3.2).</p>}
             <ul className="grid gap-2 sm:grid-cols-2">
               {members.map((b) => (
                 <li key={b.psgc} className="rounded-control border border-line bg-surface px-3 py-2">
                   <span className="font-semibold">{b.name}</span>
                   {data.activation && r.silentNames.includes(b.name) && <Badge tone="warn" className="ml-2">Silent</Badge>}
+                  {data.activation && r.silentNames.includes(b.name) && data.priority.get(b.psgc) != null && <Badge tone="info" className="ml-2">DDRiVE #{data.priority.get(b.psgc)}</Badge>}
                   {(b.hazard_tags ?? []).length > 0 && <span className="mt-1 block text-xs text-muted">{(b.hazard_tags ?? []).map((t) => HAZARD_TAG[t] ?? t).join(' · ')}</span>}
                 </li>
               ))}

@@ -1,7 +1,16 @@
-import type { BarangayCondition, LogCategory, RequestStatus } from '@/types';
+import type { BarangayCondition, LogCategory, RequestStatus, ResourceCategory, SitrepReportType } from '@/types';
+/** DILG VIII harmonized report types (1.21.0, ADR-038). */
+export const SITREP_REPORT_TYPE: Record<SitrepReportType, string> = {
+  pre_disaster: 'Pre-disaster', during_disaster: 'During disaster', post_disaster: 'Post-disaster', terminal: 'Terminal',
+};
 export const LOG_CATEGORY: Record<LogCategory, string> = {
   general: 'General', decision: 'Decision', warning: 'Warning', request: 'Request', resource: 'Resource', report: 'Report',
   level_change: 'Level change', correction: 'Correction',
+};
+/** Resource inventory kinds (1.21.0, ADR-039). */
+export const RESOURCE_CATEGORY: Record<ResourceCategory, string> = {
+  vehicle: 'Vehicle', heavy_equipment: 'Heavy equipment', rescue: 'Rescue', medical: 'Medical',
+  relief: 'Relief goods', communications: 'Communications', power: 'Power', other: 'Other',
 };
 export const CONDITION: Record<BarangayCondition, string> = {
   normal: 'Normal', monitoring: 'Monitoring', affected: 'Affected', isolated: 'Isolated', evacuating: 'Evacuating',
@@ -18,8 +27,9 @@ export const EOC_TABS = [
   { to: '/eoc/log', label: 'Logbook', tip: 'Time-stamped record of everything that happens. Entries cannot be edited, only corrected' },
   { to: '/eoc/sitreps', label: 'SitReps', tip: 'Draft, submit and approve situation reports for OCD VIII and the Province' },
   { to: '/eoc/requests', label: 'Requests', tip: 'Track resource requests from request to demobilization' },
+  { to: '/eoc/resources', label: 'Resources', tip: 'Resource inventory: what the EOC has, where it is and whether it is serviceable (B6.3, B2.5, B6.6)' },
   { to: '/eoc/barangays', label: 'Barangays', tip: 'Latest status reported by each barangay (counts only, no names)' },
-  { to: '/eoc/liaison', label: 'Liaison desk', tip: 'Barangay Liaison Desk: reporting and silent barangays by cluster in this activation' },
+  { to: '/eoc/liaison', label: 'Barangay liaison', tip: 'Barangay Liaison Desk: reporting and silent barangays by cluster in this activation, ranked by DDRiVE priority' },
   { to: '/eoc/risk', label: 'Risk', tip: 'Risk intelligence: the DDRiVE desk-assessment picture — city scores and per-barangay hazard profiles' },
   { to: '/eoc/plans', label: 'Plans and clusters', tip: 'Contingency plans, activating a plan, and which response clusters and modules are on' },
   { to: '/eoc/roster', label: 'Roster', tip: 'EOC positions and designations, primary and two alternates (B4.2)' },

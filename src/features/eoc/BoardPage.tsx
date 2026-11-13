@@ -42,6 +42,13 @@ export function BoardPage() {
       // ECHO (1.16.0): the latest camp report per centre in this activation.
       camps: campTotals(latestPerCentre(await db.camp_reports.toArray(), window.from),
         new Map((await db.evacuation_centers.toArray()).map((c) => [c.id, c.capacity_persons]))),
+      // 1.21.0 (ADR-039): the five highest DDRiVE-priority barangays and whether each has reported
+      // in this activation — decision support for the board, never a trigger.
+      priority: (await db.ddrive_priority.toArray())
+        .filter((p) => p.priority_rank != null)
+        .sort((a, b) => a.priority_rank! - b.priority_rank!)
+        .slice(0, 5)
+        .map((p) => ({ psgc: p.psgc, rank: p.priority_rank!, name: brgy.get(p.psgc)?.name ?? p.psgc, reported: latest.some((r) => r.barangay_psgc === p.psgc) })),
     };
   }, []);
   const operator = canOperate(roles);
@@ -126,6 +133,22 @@ export function BoardPage() {
               meta={`Period to ${fmtDateTime(data.sitrep.period_end)}`} trailing={<Badge tone={data.sitrep.status === 'approved' ? 'ok' : data.sitrep.status === 'submitted' ? 'info' : 'neutral'}>{SITREP_STATUS[data.sitrep.status]}</Badge>} /></List>
           ) : <p className="text-muted">No SitRep yet.</p>}
         </Section>
+
+        {/* 1.21 (ADR-039): DDRiVE inside the decision — the five highest-priority barangays for the
+            active hazard and whether each has reported. Decision support, never a trigger. */}
+        {data && data.priority.length > 0 && (
+          <Section title="Priority barangays (DDRiVE)" action={<TextLink tip="Open the DDRiVE risk dashboard" size="sm" to="/eoc/risk">Risk</TextLink>}>
+            <p className="mb-2 text-sm text-muted">
+              Highest DDRiVE priority{activation?.hazard_code ? ` · active hazard: ${activation.hazard_code}` : ''}. Check these first when consolidating.
+            </p>
+            <List>
+              {data.priority.map((p) => (
+                <ListRow key={p.psgc} title={p.name} meta={`DDRiVE priority rank ${p.rank}`}
+                  trailing={<Badge tone={p.reported ? 'ok' : 'warn'}>{p.reported ? 'Reported' : 'Silent'}</Badge>} />
+              ))}
+            </List>
+          </Section>
+        )}
 
         <Section title="EOC capability" action={<TextLink tip="Open the EOC capability assessment board" size="sm" to="/eoc-assessment">Capability board</TextLink>}>
           {/* 1.20 (ADR-035): cross-link only — the capability board lives at /eoc-assessment. */}

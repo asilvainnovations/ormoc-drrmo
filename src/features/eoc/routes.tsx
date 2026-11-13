@@ -3,6 +3,7 @@ import { BoardPage } from './BoardPage';
 import { LogbookPage } from './LogbookPage';
 import { SitrepEditor, SitrepsPage } from './SitrepsPage';
 import { RequestsPage } from './RequestsPage';
+import { ResourcesPage } from './ResourcesPage';
 import { BarangaysPage } from './BarangaysPage';
 import { AaHomePage } from './aa/AaHomePage';
 import { PdraNewPage, PdraViewPage } from './aa/PdraPage';
@@ -26,6 +27,7 @@ export default function EocRoutes() {
       <Route path="sitreps" element={<SitrepsPage />} />
       <Route path="sitreps/:id" element={<SitrepEditor />} />
       <Route path="requests" element={<RequestsPage />} />
+      <Route path="resources" element={<ResourcesPage />} />
       <Route path="barangays" element={<BarangaysPage />} />
       <Route path="liaison" element={<LiaisonPage />} />
       <Route path="risk" element={<RiskPage />} />

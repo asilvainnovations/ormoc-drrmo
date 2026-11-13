@@ -4,7 +4,7 @@ import { db } from '@/lib/db';
 import { save } from '@/lib/store';
 import { uuid } from '@/lib/ids';
 import { useAuth } from '@/lib/auth';
-import { barangayReportProblem, canOperate, currentLevel, currentReportWindow, latestPerBarangay, parseCount } from '@/domain/eoc';
+import { barangayReportProblem, canOperate, currentLevel, currentReportWindow, cutoffForLevel, latestPerBarangay, parseCount, reportLate } from '@/domain/eoc';
 import { fmtDateTime, relative } from '@/lib/time';
 import { Badge, Button, ChoiceGroup, EmptyState, Field, Input, List, ListRow, Notice, PageHeader, Select, Tabs, Textarea } from '@/components/ui';
 import { Sheet } from '@/components/Sheet';
@@ -25,7 +25,10 @@ export function BarangaysPage() {
     // Only reports from the current event (or the last 24 hours at White level) count (#16).
     const window = currentReportWindow(await db.eoc_activations.toArray());
     const latest = new Map<string, BarangayReport>(latestPerBarangay(await db.barangay_reports.toArray(), window).map((r) => [r.barangay_psgc, r]));
-    return { brgys, latest, window };
+    // 1.21.0 (ADR-038): the barangay reporting cut-offs for the current alert level (DILG VIII SOP Table 3).
+    const { level } = currentLevel(await db.eoc_activations.toArray());
+    const cutoff = cutoffForLevel(await db.sitrep_cutoffs.toArray(), level);
+    return { brgys, latest, window, cutoff };
   }, []);
 
   /** Each report starts from a blank form: nothing is carried over from the previous barangay (#17). */
@@ -67,9 +70,13 @@ export function BarangaysPage() {
           <List>
             {list.map((b) => {
               const r = data!.latest.get(b.psgc);
+              const late = r ? reportLate(r.reported_at, data!.cutoff) : null;
               return <ListRow tip={canOperate(roles) ? `Record a new status report for ${b.name}` : undefined} key={b.psgc} onClick={canOperate(roles) ? () => openFor(b) : undefined} title={b.name}
                 meta={r ? `${relative(r.reported_at)}${evacText(r)}${r.remarks ? `. ${r.remarks}` : ''}` : 'No report in this period'}
-                trailing={r ? <Badge tone={CONDITION_TONE[r.condition]}>{CONDITION[r.condition]}</Badge> : undefined} />;
+                trailing={<span className="flex items-center gap-1.5">
+                  {late?.late && <Badge tone="warn">Late · due {late.cutoffTime}</Badge>}
+                  {r && <Badge tone={CONDITION_TONE[r.condition]}>{CONDITION[r.condition]}</Badge>}
+                </span>} />;
             })}
           </List>
         </>
