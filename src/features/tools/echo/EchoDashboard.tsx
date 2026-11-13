@@ -72,7 +72,9 @@ export function EchoDashboard() {
     const s: Sitrep & { _new: true } = { _new: true, id: uuid(), activation_id: data.activation?.id ?? null, seq: null,
       period_start: new Date(Date.now() - 6 * 3600_000).toISOString(), period_end: new Date().toISOString(), status: 'draft',
       situation: t.situation, actions_taken: null, needs: t.needs || null, affected_families: null, affected_persons: null,
-      evacuated_families: data.brgy.families, evacuated_persons: data.brgy.persons, dead: null, injured: null, missing: null, submitted_at: null, approved_at: null, version: 1 };
+      evacuated_families: data.brgy.families, evacuated_persons: data.brgy.persons, dead: null, injured: null, missing: null, submitted_at: null, approved_at: null,
+      report_type: 'during_disaster', incident_type: null, affected_barangays: null, damaged_houses_totally: null, damaged_houses_partially: null,
+      lifelines_status: null, assistance_provided: null, cost_of_assistance: null, version: 1 };
     await save('sitreps', s, 'New SitRep draft from ECHO');
     toast('SitRep draft started with the ECHO camp figures', 'info');
     nav(`/eoc/sitreps/${s.id}`);

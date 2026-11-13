@@ -6,6 +6,7 @@ import { Badge, Button, PageHeader, Section } from '@/components/ui';
 import { exerciseAlerts, exercisePhase, fmt, movement, scenarioPopulation, selectedSite, spaceCheck, toiletCheck, waterCheck } from '@/domain/echo';
 import { CLOSURE_CHECKS, EVAC_CHECKS, MONITOR_CHECKS, PROTECT_CHECKS, SERVICE_CHECKS } from './EchoSimulator';
 import { useExercise } from './useExercise';
+import { RunFiling } from '../RunFiling';
 
 const when = (iso: string) => new Date(iso).toLocaleString('en-PH', { timeZone: 'Asia/Manila', dateStyle: 'medium', timeStyle: 'short' });
 
@@ -24,6 +25,18 @@ export function EchoReport() {
     <div className="page max-w-4xl">
       <PageHeader title={ex.title} back="/tools/echo" subtitle={`ECHO exercise report. Started ${when(ex.started_at)}; last change ${when(ex.updated_at)} (Asia/Manila).`}
         actions={<Button icon={Printer} tip="Print or save as PDF" onClick={() => window.print()}>Print</Button>} />
+      {/* 1.21.0 (ADR-037): server-side training record + file as evidence (B7.3). Positions and counts only. */}
+      <div className="mb-6 print:hidden">
+        <RunFiling tool="echo_simulator" runAt={ex.updated_at}
+          title={`ECHO exercise: ${ex.title}`}
+          summary={`Evacuation and camp exercise "${ex.title}" (${ex.scenario.hazard}, ${ex.scenario.lead} lead time): ${exercisePhase(ex).label} reached with ${exerciseAlerts(ex).length} open alert${exerciseAlerts(ex).length === 1 ? '' : 's'} at the end; centre ${site?.name ?? 'not selected'}.`}
+          counts={{
+            phase: exercisePhase(ex).label, hazard: ex.scenario.hazard, lead_time: ex.scenario.lead,
+            barangays: ex.scenario.barangays.length, families: ex.scenario.families, persons: ex.scenario.persons,
+            open_alerts: exerciseAlerts(ex).length, site: site?.name ?? 'none selected',
+            checks_done: Object.values(ex.checks).filter(Boolean).length,
+          }} />
+      </div>
       <p className="mb-6 rounded-control border border-line p-3 text-sm"><strong>Training only.</strong> Figures are exercise inputs, not real evacuees. ECHO does not order evacuations, certify centres as safe or replace the City DRRMC, the City Government, DSWD or other agencies.</p>
       <Section title="Scenario">
         <dl className="grid gap-2 text-sm sm:grid-cols-2">
