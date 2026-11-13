@@ -1108,6 +1108,35 @@ select tests.expect_error('a viewer cannot file a camp report',
 reset role;
 select tests.expect_eq('a signed-out visitor cannot read camp reports', has_table_privilege('anon', 'public.camp_reports', 'SELECT')::text, 'false');
 
+-- =============================================================== RACI board (1.19.0, ADR-033)
+select tests.login('00000000-0000-0000-0000-000000000010');  -- viewer
+select tests.expect_rows('any active user reads the RACI matrices', $$select count(*) from public.raci_matrices$$, 6);
+select tests.expect_ok('the board view reads for any active user', $$select count(*) from public.v_raci_board$$);
+select tests.expect_error('a viewer cannot add an assignment',
+  $$insert into public.raci_assignments (activity_id, actor, duty) values ((select id from public.raci_activities limit 1), 'EOC', 'I')$$, '42501');
+select tests.expect_error('a viewer cannot change an assignment',
+  $$update public.raci_assignments set actor = 'EOC', version = 1 where id = (select id from public.raci_assignments limit 1)$$, '42501');
+select tests.expect_error('a viewer cannot remove an assignment',
+  $$delete from public.raci_assignments where id = (select id from public.raci_assignments limit 1)$$, '42501');
+select tests.login('00000000-0000-0000-0000-000000000012');  -- author
+select tests.expect_error('an author cannot adjust assignments either',
+  $$insert into public.raci_assignments (activity_id, actor, duty) values ((select id from public.raci_activities limit 1), 'EOC', 'I')$$, '42501');
+select tests.login('00000000-0000-0000-0000-000000000011');  -- CDRRMO Head
+select tests.expect_ok('the CDRRMO Head adds an assignment',
+  $$insert into public.raci_assignments (activity_id, actor, duty, qualifier) values ((select id from public.raci_activities where activity = 'Routine risk monitoring'), 'PAGASA', 'C', 'forecast advice')$$);
+select tests.expect_ok('and changes it',
+  $$update public.raci_assignments set qualifier = 'forecast and flood advice', version = 1
+     where activity_id = (select id from public.raci_activities where activity = 'Routine risk monitoring') and actor = 'PAGASA'$$);
+select tests.expect_error('the same actor cannot hold the same duty twice on one activity',
+  $$insert into public.raci_assignments (activity_id, actor, duty) values ((select id from public.raci_activities where activity = 'Routine risk monitoring'), 'PAGASA', 'C')$$, '23505');
+select tests.expect_error('the duty is one of R, A, C, I',
+  $$insert into public.raci_assignments (activity_id, actor, duty) values ((select id from public.raci_activities where activity = 'Routine risk monitoring'), 'EOC', 'X')$$, '23514');
+select tests.expect_ok('and removes it again',
+  $$delete from public.raci_assignments where activity_id = (select id from public.raci_activities where activity = 'Routine risk monitoring') and actor = 'PAGASA'$$);
+select tests.expect_eq('linked activities point at real templates',
+  (select count(*)::text from public.raci_activities a where a.template_id is not null
+     and not exists (select 1 from public.protocol_templates t where t.id = a.template_id)), '0');
+
 reset role;
 select tests.expect_eq('audit trail recorded', ((select count(*) from public.audit_log) > 50)::text, 'true');
 \o

@@ -76,6 +76,7 @@ There is no custom application server. The rules live in SQL so they hold for ev
 | EOC: risk intelligence (1.12.1) | `/eoc/risk` | `ddrive_barangay_profiles`, `ddrive_flood`, `ddrive_hazards`, `ddrive_exposure`, `ddrive_vulnerability`, `ddrive_priority`, `ddrive_city_scores`, `ddrive_risk_matrix`, `ddrive_sources` (+ `v_ddrive_city_risk`) | DDRiVE (Data-Driven Risk and Vulnerability Estimation, renamed from QRE) desk-assessment base layer, read-only reference (ADR-024). City risk picture with computed bands; per-barangay profile drill-down; a missing value stays null, never 0. Decision support only — never an evacuation trigger |
 | Anticipatory action | `/eoc/aa` | `pdra_sessions`, `declarations`, `aa_actions`, `aa_fund_years`, `aa_disbursements`, `aa_rules` | PDRA decision; declaration timeline per IRR; 29-item MODE checklist derived from the ten sections of IRR Rule IV (the IRR sets no count); fund cap and tranche guard |
 | Document Vault | `/vault` | `vault_documents` (+ private `vault` bucket) | Register of laws, guidelines, City issuances, plans and records; each linked to indicators; Document Review checklist with request list download; reference catalogue. Assessors, validators, admin and CDRRMO staff only. Documents are superseded, never deleted |
+| RACI board (1.19) | `/raci` | `raci_matrices`, `raci_activities`, `raci_assignments` (+ `v_raci_board`) | Interactive RACI board from MOO Annex 1-F (ADR-033): search by activity, actor, protocol code or SOP; colour-coded duties (R navy, A dark green, C gold, I white); activities without exactly one Accountable carry a warning (Annex 1-F says "normally one", so it is a flag, not a rule). Sixteen activities link to their protocol or workflow; the protocol detail and the Library document page link back. The CDRRMO Head adjusts assignments online (ADR-006); reads stay offline |
 | Settings | `/settings` | `profiles`, `user_roles`, `barangays`, `client_errors` | Sync status and conflict review; appearance; users and roles (admin, online); barangay list import (PSGC CSV); error reports (admin, online); interface components gallery; about and privacy |
 
 ## 5. Data model (summary)
@@ -223,3 +224,16 @@ reports, feedback), `EchoDashboard.tsx` (EOC picture, SitRep draft, resource req
 `20261112002800_echo_camp_management.sql`: `evacuation_centers` extended (verification is about the record, never a
 safety certificate), `camp_reports` append-only with group-size checks and an authority reference for opening and
 closure (EOC Manager or Head, inserted online through `insertOnline`), `camp_feedback` with fixed summaries.
+
+## RACI board (1.19, ADR-033)
+
+`raci_matrices` / `raci_activities` / `raci_assignments` (migration `20261113002900_raci_board.sql`) store MOO Annex
+1-F matrices 6.1–6.5 verbatim (qualifiers and footnote caveats included) plus the `DOC` matrix for the manual
+review cycle, which mirrors the enforced draft → in_review → approved guards rather than creating a parallel
+permission system. One Accountable per activity is the Manual's "normally", so the board warns instead of
+constraining; five seeded activities warn by design. Actors are positions, offices and bodies, never personal
+names (RA 10173). `src/features/raci/raci.ts` assembles and searches the board from Dexie (display logic only);
+`actions.ts` sends the CDRRMO Head's add/edit/remove online (ADR-006), with PT409 handling. The board links to
+protocols (`raci_activities.template_id`) and is linked back from the protocol SOP-control tab, the Library
+document page and the Today dashboard card. Seed: `scripts/raci_seed.py` → `supabase/seed/parts/37_raci.sql`
+(deterministic uuid5 ids; re-runs upsert the same rows).

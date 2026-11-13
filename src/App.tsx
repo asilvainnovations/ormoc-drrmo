@@ -28,6 +28,7 @@ const LibraryRoutes = lazy(() => import('@/features/library/routes'));
 const SettingsRoutes = lazy(() => import('@/features/settings/routes'));
 const VaultRoutes = lazy(() => import('@/features/vault/routes'));
 const ToolsRoutes = lazy(() => import('@/features/tools/routes'));
+const RaciRoutes = lazy(() => import('@/features/raci/routes'));
 
 
 /** /protocols and /protocols/run/:id (before 1.9) open the same place in the DRRM module. */
@@ -105,6 +106,8 @@ export function App() {
               <Route path="settings/*" element={<Suspense fallback={<Loading />}><SettingsRoutes /></Suspense>} />
               <Route path="vault/*" element={<Suspense fallback={<Loading />}><VaultRoutes /></Suspense>} />
               <Route path="tools/*" element={<Suspense fallback={<Loading />}><ToolsRoutes /></Suspense>} />
+              {/* 1.19 (ADR-033): the interactive RACI board. */}
+              <Route path="raci/*" element={<Suspense fallback={<Loading />}><RaciRoutes /></Suspense>} />
             </Route>
             <Route path="*" element={<PublicNotFound />} />
           </Routes>

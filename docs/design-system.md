@@ -38,6 +38,7 @@ Tokens are RGB triplets so Tailwind can apply opacity (`bg-sky-soft/70`). Each h
 | `pillar-preparedness` (+ `-soft`) | #926408 ochre-amber | DRRM pillar accents: preparedness (areas 1, 3) |
 | `pillar-response` (+ `-soft`) | #9F2545 rose | DRRM pillar accents: response (areas 4–8) |
 | `pillar-recovery` (+ `-soft`) | #6D3EA8 violet | DRRM pillar accents: recovery (area 10) |
+| `raci-r`, `raci-a`, `raci-c`, `raci-i` | #1D4E89 navy blue, #0F5A3C dark green, #8A6D00 gold, white | **RACI duty chips only** (ADR-033): Responsible, Accountable, Consulted, Informed. Text is `raci-on-strong` on R/A/C and `raci-i-ink` with a `line` border on I |
 | `mat-0` … `mat-4` | light-to-dark blue | Maturity heat and chart fills (magnitude, not status) |
 | `scrim` | navy | Dialog backdrop at 40% |
 | `banner` | #022A4D | Letterbox colour behind the banner artwork (sign-in only) |
@@ -46,6 +47,7 @@ Rules:
 
 - `lvl-*` appear only in the status band, the EOC board and level controls. The EOC Blue is a vivid royal blue, deliberately apart from the brand navy and light blue, and the band always names the level in words.
 - `pillar-*` appear only as Library separators: block accents, pillar chips and the legend (ADR-031). They are four mutually distinct hues so the four DRRM areas never blur, and they keep clear of `lvl-blue` and `lvl-red`. The mapping area → pillar lives in `src/features/library/pillars.ts`.
+- `raci-*` appear only on the RACI board and the Today RACI card (ADR-033). The combination navy/green/gold/white always means R/A/C/I; chips always show the duty letter and the actor, and the white I chip keeps a visible border in both colour schemes.
 - Orange marks what is active or focused. It is not used for status: warnings are ochre.
 - Status fills in dark mode are light, so their text is `on-strong`, which flips to dark. Do not write `text-white` on a status fill.
 

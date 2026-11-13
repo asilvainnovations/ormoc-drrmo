@@ -152,6 +152,8 @@ export function ProtocolsPage({ kind }: { kind: 'workflows' | 'protocols' }) {
             <TabsContent value="control">
               <SopControl t={open} />
               {doc && <p className="mt-2 text-sm">Procedure source: <TextLink tip="Open the manual section this protocol comes from" to={`/library/doc/${doc.id}`}>{doc.code} {doc.title}</TextLink></p>}
+              {/* 1.19 (ADR-033): jump to this protocol's RACI assignments on the board. */}
+              <p className="mt-2 text-sm">Who does what: <TextLink tip="See who is Responsible, Accountable, Consulted and Informed for this protocol" to={`/raci?template=${encodeURIComponent(open.code)}`}>RACI for {open.code}</TextLink></p>
             </TabsContent>
             <TabsContent value="when" className="space-y-2">
               <p className="text-sm text-muted"><span className="font-semibold text-ink">When: </span>{open.trigger_text}</p>

@@ -101,6 +101,16 @@ export function DocumentPage() {
               <ul className="space-y-1">{data.protocols.map((p) => <li key={p.id}><TextLink tip={`Open ${p.title} in the DRRM module`} to="/drrm/protocols">{p.title}</TextLink></li>)}</ul>
             </Section>
           )}
+          {/* 1.19 (ADR-033): the document-governance RACI, mirroring the review/approve guards (migrations 0003/0014). */}
+          <Section title="Review and approval (RACI)">
+            <ul className="space-y-1.5 text-sm text-muted">
+              <li><span className="font-semibold text-ink">R</span> — the author drafts and edits this section.</li>
+              <li><span className="font-semibold text-ink">C</span> — the lead office focal is consulted on its content.</li>
+              <li><span className="font-semibold text-ink">A</span> — the CDRRMO Head reviews and approves publication.</li>
+              <li><span className="font-semibold text-ink">I</span> — validators and viewers are informed of the outcome.</li>
+            </ul>
+            <p className="mt-2"><TextLink tip="Open the full RACI board, including the manual review cycle" to="/raci?q=manual%20document">Full RACI board</TextLink></p>
+          </Section>
         </aside>
       </div>
       <Sheet open={!!edit} onClose={() => setEdit(null)} title={`New version of ${doc.code}`}

@@ -32,6 +32,15 @@
   --lvl-blue: 30 63 194;     /* #1E3FC2 EOC Blue */
   --lvl-red: 177 30 22;      /* #B11E16 EOC Red */
 
+  /* RACI board (1.19, ADR-033): R navy blue, A dark green, C gold, I white. Reserved for RACI duty chips.
+     Text on R/A/C fills is --raci-on-strong; the I chip uses --raci-i-ink and a --line border. All pairs pass WCAG 2.1 AA. */
+  --raci-r: 29 78 137;       /* #1D4E89 navy blue - Responsible */
+  --raci-a: 15 90 60;        /* #0F5A3C dark green - Accountable */
+  --raci-c: 138 109 0;       /* #8A6D00 gold - Consulted */
+  --raci-i: 255 255 255;     /* white - Informed */
+  --raci-on-strong: 255 255 255;
+  --raci-i-ink: 19 40 61;
+
   /* Maturity: one light-to-dark blue ramp (magnitude, not status). */
   --mat-0: 227 235 242; --mat-1: 190 218 240; --mat-2: 122 180 224; --mat-3: 47 134 200; --mat-4: 15 61 102;
   --backdrop-opacity: 0.09;
@@ -58,6 +67,8 @@
     --info: 141 190 245; --info-soft: 22 48 79;
     --lvl-white: 17 34 58; --lvl-white-ink: 230 238 246;
     --lvl-blue: 46 85 224; --lvl-red: 196 42 32;
+    --raci-r: 127 168 224; --raci-a: 95 191 149; --raci-c: 227 185 78; --raci-i: 230 238 246;
+    --raci-on-strong: 10 22 34; --raci-i-ink: 10 22 34;
     --mat-0: 37 64 95; --mat-1: 33 82 128; --mat-2: 47 120 180; --mat-3: 92 164 225; --mat-4: 160 210 246;
     --backdrop-opacity: 0.14;
     --pillar-prevention: 94 208 196; --pillar-prevention-soft: 16 52 48;
@@ -81,6 +92,8 @@
     --info: 141 190 245; --info-soft: 22 48 79;
     --lvl-white: 17 34 58; --lvl-white-ink: 230 238 246;
     --lvl-blue: 46 85 224; --lvl-red: 196 42 32;
+    --raci-r: 127 168 224; --raci-a: 95 191 149; --raci-c: 227 185 78; --raci-i: 230 238 246;
+    --raci-on-strong: 10 22 34; --raci-i-ink: 10 22 34;
     --mat-0: 37 64 95; --mat-1: 33 82 128; --mat-2: 47 120 180; --mat-3: 92 164 225; --mat-4: 160 210 246;
     --backdrop-opacity: 0.14;
     --pillar-prevention: 94 208 196; --pillar-prevention-soft: 16 52 48;
