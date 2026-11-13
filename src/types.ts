@@ -58,6 +58,23 @@ export interface Action extends Versioned {
   target_date: string | null; budget_source: string | null; status: 'not_started' | 'ongoing' | 'done' | 'dropped';
 }
 
+// ------------------------------------------------------------------ EOC capability checklist (1.20.0, ADR-035)
+export type EocCapStatus = 'not_assessed' | 'met' | 'partially_met' | 'largely_unmet' | 'not_met' | 'not_applicable';
+export type EocCapSite = 'primary' | 'alternate';
+export interface EocCapItem extends Versioned {
+  section_group: string; section: string; item_no: number; item: string; iat_indicators: string[]; assess_locally: boolean; sort: number;
+  source_ref: string;
+}
+export interface EocCapResponse extends Versioned {
+  cycle_id: string; item_id: string; site: EocCapSite; status: EocCapStatus;
+  /** Server-set: 'prefilled_iat' (copied from the IAT crosswalk, not observed) until a person edits or confirms it. */
+  provenance?: 'prefilled_iat' | 'observed';
+  evidence_observed: string | null; gap_remarks: string | null; recommended_action: string | null; vault_document_id: string | null;
+  /** Changed only by the CDRRMO Head, online. */
+  state?: 'draft' | 'validated';
+  assessed_by?: string | null; assessed_at?: string | null; validated_by?: string | null; validated_at?: string | null;
+}
+
 // ------------------------------------------------------------------ Library & protocols
 /** One manual since v1.6 (ADR-012): five Parts, ten functional areas. */
 export interface ManualPart { no: number; title: string; summary: string | null; sort: number }

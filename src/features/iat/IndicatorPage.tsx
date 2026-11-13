@@ -41,6 +41,8 @@ export function IndicatorPage() {
     mrs: await db.indicator_requirements.where('indicator_id').equals(indicatorId).toArray(),
     docs: await Promise.all((await db.moo_document_indicators.where('indicator_id').equals(indicatorId).toArray()).map((l) => db.moo_documents.get(l.document_id))),
     leads: await db.indicator_lead_offices.where('indicator_id').equals(indicatorId).toArray(),
+    // 1.20.0 (ADR-035): EOC capability checklist items mapped to this Part B indicator.
+    capItems: (await db.eoc_cap_items.toArray()).filter((i) => i.iat_indicators.includes(indicatorId)).length,
   }), [indicatorId]);
 
   const ind = data?.indicators.find((i) => i.id === indicatorId);
@@ -213,6 +215,11 @@ export function IndicatorPage() {
             <ul className="mt-1 space-y-1">{links?.docs.filter(Boolean).map((d) => (
               <li key={d!.id}><TextLink tip="Open the manual section this indicator feeds" to={`/library/doc/${d!.id}`}>{d!.code} {d!.title}</TextLink></li>
             ))}</ul>
+            {Boolean(links?.capItems) && <>
+              <p className="mt-3 text-sm text-muted">EOC capability checklist</p>
+              <p className="mt-1"><TextLink tip="Open the EOC Capability Assessment Checklist items that map to this indicator"
+                to={`/assess/${data.cycle.id}/eoc-capability`}>{links!.capItems} checklist item{links!.capItems === 1 ? '' : 's'} map here</TextLink></p>
+            </>}
           </div>
         </aside>
       </div>
