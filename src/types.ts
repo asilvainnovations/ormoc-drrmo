@@ -52,27 +52,12 @@ export interface ValidationProgress { cycle_id: string; part: 'A' | 'B' | 'C'; d
 export interface Evidence extends Versioned {
   response_id: string; kind: EvidenceKind; strength: EvidenceStrength; title: string; doc_date: string | null;
   source: string | null; storage_path: string | null; note: string | null;
+  /** The Tool run this evidence was filed from (1.21.0, ADR-037). Navigation only. */
+  training_run_id?: string | null;
 }
 export interface Action extends Versioned {
   cycle_id: string; indicator_id: string; action: string; responsible_office_id: string | null; responsible_person: string | null;
   target_date: string | null; budget_source: string | null; status: 'not_started' | 'ongoing' | 'done' | 'dropped';
-}
-
-// ------------------------------------------------------------------ EOC capability checklist (1.20.0, ADR-035)
-export type EocCapStatus = 'not_assessed' | 'met' | 'partially_met' | 'largely_unmet' | 'not_met' | 'not_applicable';
-export type EocCapSite = 'primary' | 'alternate';
-export interface EocCapItem extends Versioned {
-  section_group: string; section: string; item_no: number; item: string; iat_indicators: string[]; assess_locally: boolean; sort: number;
-  source_ref: string;
-}
-export interface EocCapResponse extends Versioned {
-  cycle_id: string; item_id: string; site: EocCapSite; status: EocCapStatus;
-  /** Server-set: 'prefilled_iat' (copied from the IAT crosswalk, not observed) until a person edits or confirms it. */
-  provenance?: 'prefilled_iat' | 'observed';
-  evidence_observed: string | null; gap_remarks: string | null; recommended_action: string | null; vault_document_id: string | null;
-  /** Changed only by the CDRRMO Head, online. */
-  state?: 'draft' | 'validated';
-  assessed_by?: string | null; assessed_at?: string | null; validated_by?: string | null; validated_at?: string | null;
 }
 
 // ------------------------------------------------------------------ Library & protocols
@@ -197,6 +182,10 @@ export interface Sitrep extends Versioned {
   status: 'draft' | 'submitted' | 'approved'; situation: string | null; actions_taken: string | null; needs: string | null;
   affected_families: number | null; affected_persons: number | null; evacuated_families: number | null; evacuated_persons: number | null;
   dead: number | null; injured: number | null; missing: number | null; submitted_at: string | null; approved_at: string | null;
+  /** DILG VIII harmonized template fields (1.21.0, ADR-038). */
+  report_type: SitrepReportType; incident_type: string | null; affected_barangays: number | null;
+  damaged_houses_totally: number | null; damaged_houses_partially: number | null;
+  lifelines_status: string | null; assistance_provided: string | null; cost_of_assistance: number | null;
 }
 export interface Barangay {
   psgc: string; name: string; classification: string[]; population: number | null; lat: number | null; lng: number | null; version?: number;
@@ -265,6 +254,12 @@ export interface ResourceRequest extends Versioned {
   priority: 'life_safety' | 'urgent' | 'routine'; needed_by: string | null; status: RequestStatus; decision_note: string | null;
   requested_at: string; approved_at: string | null; mobilized_at: string | null; delivered_at: string | null; demobilized_at: string | null;
 }
+/** EOC resource inventory item (1.21.0 screen, ADR-039). Mirrors the table as-is — Ch.6 fields are deferred (ADR-032). */
+export type ResourceCategory = 'vehicle' | 'heavy_equipment' | 'rescue' | 'medical' | 'relief' | 'communications' | 'power' | 'other';
+export interface Resource extends Versioned {
+  name: string; category: ResourceCategory; unit: string; quantity: number;
+  owner_office_id: string | null; location_text: string | null; is_serviceable: boolean;
+}
 
 // ------------------------------------------------------------------ Anticipatory action
 export type ImpactClass = 'severe' | 'moderate' | 'minor' | 'uncertain';
@@ -321,8 +316,7 @@ export interface RaciAssignment extends Versioned {
 
 // ---------------------------------------------------- EOC capability assessment (1.20.0, ADR-035)
 /** Item status from the weakest mapped IAT B_EOC indicator score (app.eoc_assessment_status). */
-export type EocAssessmentStatus = 'met' | 'partially_met' | 'largely_unmet' | 'not_met' | 'not_applicable' | 'not_assessed' | 'no_direct_indicator';
-export type EocAssessmentSite = 'primary' | 'alternate';
+export type EocAssessmentStatus = 'met' | 'partially_met' | 'largely_unmet' | 'not_met' | 'no_direct_indicator';
 export interface EocAssessmentItem extends Versioned {
   section: string; section_sort: number; item_no: number; item_text: string;
   /** The item was assessed for the primary EOC. */
@@ -340,14 +334,41 @@ export interface EocAssessmentRun extends Versioned {
 /** A display link to the SOP, Protocol, Workflow or Form record that closes the gap (controlled vocabulary). */
 export interface EocAssessmentToolLink { code: string; title: string }
 export interface EocAssessmentResponse extends Versioned {
-  run_id: string; item_id: string; site: EocAssessmentSite; status: EocAssessmentStatus;
-  /** Server-set (review fix): 'prefilled_iat' = copied from the IAT crosswalk, not observed; 'observed' once a person saves it. */
-  provenance: 'prefilled_iat' | 'observed';
-  /** 'validated' only by the CDRRMO Head (or admin), online, and only for an observed answer. */
-  state: 'draft' | 'validated'; validated_by: string | null; validated_at: string | null;
+  run_id: string; item_id: string; status: EocAssessmentStatus;
   /** Workbook columns, kept verbatim: Evidence Observed / Gap or Remarks / Recommended Action. */
   evidence: string | null; gap: string | null; recommended_action: string | null;
   tool_links: EocAssessmentToolLink[]; updated_by: string | null;
+}
+
+// ---------------------------------------------------- Indicator links, flags, training runs (1.21.0, ADR-036/037)
+/** "Where this is done in MODE": navigation and evidence only — never changes a score. */
+export type IatLinkKind = 'screen' | 'tool' | 'protocol' | 'workflow';
+export interface IatIndicatorLink extends Versioned {
+  indicator_id: string;
+  /** Route for screen/tool; protocol_templates code for protocol/workflow. */
+  target_kind: IatLinkKind; target: string; label: string; sort: number;
+}
+/** The workbook flag to settle at the validation workshop. Content only; no score logic. Keyed by indicator. */
+export interface IatWorkshopFlag { indicator_id: string; flag: string; version: number; updated_at?: string }
+export type TrainingTool = 'ics_tool' | 'echo_simulator' | 'pscp' | 'gk';
+export interface TrainingRun extends Versioned {
+  tool: TrainingTool; title: string; run_at: string; summary: string | null;
+  /** Aggregate counts and positions ONLY — never personal names (RA 10173). */
+  counts: Record<string, string | number | boolean | null>;
+  filed_evidence: boolean; filed_to_indicator: string | null; filed_by: string | null; filed_at: string | null;
+  created_by: string | null;
+}
+
+// ---------------------------------------------------- SitRep DILG VIII + cut-offs (1.21.0, ADR-038)
+export type SitrepReportType = 'pre_disaster' | 'during_disaster' | 'post_disaster' | 'terminal';
+/** Reporting times by alert level (DILG VIII SOP Table 3): barangay reports due before city submission. */
+export interface SitrepCutoff extends Versioned {
+  alert_level: 'white' | 'blue' | 'red';
+  /** "HH:MM" — barangay report due at the EOC, morning / afternoon window. */
+  barangay_am: string; barangay_pm: string;
+  /** "HH:MM" — city submission to the Province/Region. */
+  submission_am: string; submission_pm: string;
+  updated_by: string | null;
 }
 
 export type VaultCategory = 'law' | 'irr' | 'issuance' | 'framework' | 'city_issuance' | 'plan' | 'report' | 'record' | 'other';
