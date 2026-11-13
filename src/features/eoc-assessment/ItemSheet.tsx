@@ -1,30 +1,25 @@
 // One checklist item: its status, evidence, gap, recommended action and tool links (ADR-035).
-// The assessment team records or confirms the answer online; saving makes a pre-filled answer observed.
-// The CDRRMO Head validates or reopens an observed answer; a validated run locks them all.
+// The assessment team edits the text and links online; the CDRRMO Head's validated run locks them.
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ListChecks, Plus, RotateCcw, ShieldCheck, Trash2 } from 'lucide-react';
+import { ListChecks, Plus, Trash2 } from 'lucide-react';
 import { Sheet } from '@/components/Sheet';
-import { Badge, Button, ChoiceGroup, Field, Notice, Textarea, Input } from '@/components/ui';
+import { Badge, Button, Field, Textarea, Input } from '@/components/ui';
 import { useToast } from '@/components/Toast';
 import { tip } from '@/components/Tooltip';
 import { NeedsConnectionError } from '@/lib/store';
-import type { EocAssessmentItem, EocAssessmentResponse, EocAssessmentSite, EocAssessmentStatus, EocAssessmentToolLink } from '@/types';
-import { OBSERVED_STATUSES } from '@/domain/eoc_assessment';
-import { SITE_LABEL, STATUS, TOOL_LINK_HINT } from './labels';
-import { createResponse, saveResponse, setResponseState } from './actions';
+import { ModeLinks } from '@/components/ModeLinks';
+import type { EocAssessmentItem, EocAssessmentResponse, EocAssessmentToolLink } from '@/types';
+import { STATUS, TOOL_LINK_HINT } from './labels';
+import { saveResponse } from './actions';
 
 export interface ItemDraft {
   item: EocAssessmentItem;
-  /** Undefined when this site has no answer yet (e.g. the alternate EOC). */
-  response?: EocAssessmentResponse;
-  runId: string;
-  site: EocAssessmentSite;
+  response: EocAssessmentResponse;
 }
 
-export function ItemSheet({ draft, canEdit, canValidate, onClose }: { draft: ItemDraft | null; canEdit: boolean; canValidate: boolean; onClose: () => void }) {
+export function ItemSheet({ draft, canEdit, onClose }: { draft: ItemDraft | null; canEdit: boolean; onClose: () => void }) {
   const toast = useToast();
-  const [statusV, setStatusV] = useState<EocAssessmentStatus>('not_assessed');
   const [evidence, setEvidence] = useState('');
   const [gap, setGap] = useState('');
   const [action, setAction] = useState('');
@@ -34,24 +29,19 @@ export function ItemSheet({ draft, canEdit, canValidate, onClose }: { draft: Ite
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
-    const st = draft?.response?.status;
-    setStatusV(st && st !== 'no_direct_indicator' ? st : 'not_assessed');
-    setEvidence(draft?.response?.evidence ?? '');
-    setGap(draft?.response?.gap ?? '');
-    setAction(draft?.response?.recommended_action ?? '');
-    setLinks(draft?.response?.tool_links ?? []);
+    setEvidence(draft?.response.evidence ?? '');
+    setGap(draft?.response.gap ?? '');
+    setAction(draft?.response.recommended_action ?? '');
+    setLinks(draft?.response.tool_links ?? []);
     setCode('');
     setTitle('');
   }, [draft]);
 
   if (!draft) return null;
-  const { item, response, runId, site } = draft;
-  const status = STATUS[response?.status ?? 'not_assessed'];
-  const prefilled = response?.provenance === 'prefilled_iat';
-  const validated = response?.state === 'validated';
-  const editable = canEdit && !validated;
+  const { item, response } = draft;
+  const status = STATUS[response.status];
 
-  const dirty = !response || prefilled || statusV !== response.status || evidence !== (response.evidence ?? '') || gap !== (response.gap ?? '')
+  const dirty = evidence !== (response.evidence ?? '') || gap !== (response.gap ?? '')
     || action !== (response.recommended_action ?? '')
     || JSON.stringify(links) !== JSON.stringify(response.tool_links ?? []);
 
@@ -71,44 +61,24 @@ export function ItemSheet({ draft, canEdit, canValidate, onClose }: { draft: Ite
   };
 
   const save = async () => {
-    if (statusV === 'not_applicable' && !gap.trim()) { toast('Give the reason it does not apply in Gap / remarks.'); return; }
-    setBusy(true);
-    const values = { status: statusV, evidence: evidence.trim() || null, gap: gap.trim() || null,
-      recommended_action: action.trim() || null, tool_links: links };
-    try {
-      if (response) await saveResponse(response, values); else await createResponse(runId, item.id, site, values);
-      toast(prefilled ? 'Answer confirmed on site.' : 'Answer saved.');
-      onClose();
-    } catch (e) { showError(e); } finally { setBusy(false); }
-  };
-  const changeState = async (state: 'validated' | 'draft') => {
-    if (!response) return;
     setBusy(true);
     try {
-      await setResponseState(response, state);
-      toast(state === 'validated' ? 'Answer validated.' : 'Answer reopened.');
+      await saveResponse(response, {
+        evidence: evidence.trim() || null,
+        gap: gap.trim() || null,
+        recommended_action: action.trim() || null,
+        tool_links: links,
+      });
+      toast('Response updated.');
       onClose();
     } catch (e) { showError(e); } finally { setBusy(false); }
   };
 
   return (
     <Sheet open={!!draft} onClose={onClose} title={`Item ${item.item_no} — ${item.section}`}
-      footer={(editable || canValidate) ? <>
+      footer={canEdit ? <>
         <Button variant="secondary" disabled={busy} onClick={onClose} tip="Close without saving">Cancel</Button>
-        {canValidate && response && !validated && (
-          <Button variant="secondary" icon={ShieldCheck} busy={busy} disabled={prefilled} onClick={() => changeState('validated')}
-            tip={prefilled ? 'Confirm this pre-filled answer on site first: only observed answers can be validated' : 'Validate this answer (CDRRMO Head; needs a connection)'}>Validate</Button>
-        )}
-        {canValidate && validated && (
-          <Button variant="secondary" icon={RotateCcw} busy={busy} onClick={() => changeState('draft')}
-            tip="Reopen this answer so the team can change it (CDRRMO Head; needs a connection)">Reopen</Button>
-        )}
-        {editable && (
-          <Button variant="primary" busy={busy} disabled={!dirty} onClick={save}
-            tip={prefilled ? 'Confirm this answer as observed on site, with any changes (needs a connection)' : 'Save this answer (needs a connection)'}>
-            {prefilled ? 'Confirm' : 'Save'}
-          </Button>
-        )}
+        <Button variant="primary" busy={busy} disabled={!dirty} onClick={save} tip="Save this checklist response (needs a connection)">Save</Button>
       </> : undefined}>
       <p className="font-semibold">{item.item_text}</p>
       <div className="flex flex-wrap items-center gap-2">
@@ -118,19 +88,11 @@ export function ItemSheet({ draft, canEdit, canValidate, onClose }: { draft: Ite
         {item.iat_links.length > 0
           ? item.iat_links.map((l) => <Badge key={l} tone="info">{l}</Badge>)
           : <Badge tone="neutral">No IAT link</Badge>}
-        <Badge tone="neutral">{SITE_LABEL[site]}</Badge>
-        {validated && <Badge tone="ok">Validated</Badge>}
+        {item.applies_primary && <Badge tone="neutral">Primary EOC</Badge>}
+        {item.applies_alternate && <Badge tone="neutral">Alternate EOC</Badge>}
       </div>
-      {prefilled && (
-        <Notice tone="warn" title="Pre-filled from IAT v1-7, not observed">
-          The status and text were copied from the IAT crosswalk (the weakest mapped indicator score). Check them on site, change what differs, and confirm.
-        </Notice>
-      )}
-      {validated && <Notice tone="ok" title="Validated">Validated by the CDRRMO Head. Ask the Head to reopen it to make changes.</Notice>}
 
-      {editable ? (<>
-        <ChoiceGroup legend="Status on site" value={statusV} onChange={setStatusV} columns={2}
-          options={OBSERVED_STATUSES.map((st) => ({ value: st, label: STATUS[st].label, tip: `Mark this item ${STATUS[st].label.toLowerCase()} for the ${SITE_LABEL[site].toLowerCase()}` }))} />
+      {canEdit ? (<>
         <Field label="Evidence observed" optional tip="What the assessor saw, read or heard (workbook column, verbatim)">
           {(fid) => <Textarea id={fid} rows={5} value={evidence} onChange={(e) => setEvidence(e.target.value)} />}
         </Field>
@@ -167,9 +129,9 @@ export function ItemSheet({ draft, canEdit, canValidate, onClose }: { draft: Ite
         </Field>
       </>) : (<>
         {[
-          ['Evidence observed', response?.evidence ?? null],
-          ['Gap / remarks', response?.gap ?? null],
-          ['Recommended action', response?.recommended_action ?? null],
+          ['Evidence observed', response.evidence],
+          ['Gap / remarks', response.gap],
+          ['Recommended action', response.recommended_action],
         ].map(([label, text]) => (
           <div key={label as string}>
             <p className="text-sm font-semibold text-muted">{label}</p>
@@ -186,9 +148,11 @@ export function ItemSheet({ draft, canEdit, canValidate, onClose }: { draft: Ite
         )}
       </>)}
       <p className="text-sm text-muted">
-        This checklist does not change any IAT score: scores stay in <Link to="/assess" {...tip('Open the institutional assessment')} className="font-semibold text-info underline">Assess</Link>.
-        Record positions and offices only, never personal names.
+        The status derives from the mapped IAT scores — change it in <Link to="/assess" {...tip('Open the institutional assessment')} className="font-semibold text-info underline">Assess</Link>, never here.
       </p>
+      {/* 1.21.0 (ADR-036): the seeded map from this item's indicators to the screen, Tool or
+          protocol where the work is done, plus any workshop flag. Navigation only. */}
+      {item.iat_links.length > 0 && <ModeLinks indicatorIds={item.iat_links} />}
     </Sheet>
   );
 }

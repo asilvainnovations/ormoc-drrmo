@@ -6,15 +6,15 @@ import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
 import clsx from 'clsx';
-import { CheckCheck, ChevronDown, ChevronRight } from 'lucide-react';
+import { CheckCheck, ChevronDown, ChevronRight, Flag } from 'lucide-react';
 import { db } from '@/lib/db';
 import { useAuth } from '@/lib/auth';
 import { useOnline } from '@/lib/hooks';
 import { useToast } from '@/components/Toast';
 import { tip } from '@/components/Tooltip';
-import { Badge, Button, ChoiceGroup, EmptyState, Loading, Notice, PageHeader, Select, TextLink } from '@/components/ui';
-import type { EocAssessmentSite, EocAssessmentStatus } from '@/types';
-import { DERIVATION_NOTE, RUN_STATUS, SITE_LABEL, STATUS, VALIDATE_ROLES, WRITE_ROLES } from './labels';
+import { Badge, Button, EmptyState, Loading, Notice, PageHeader, Select, TextLink } from '@/components/ui';
+import type { EocAssessmentStatus } from '@/types';
+import { DERIVATION_NOTE, RUN_STATUS, STATUS, VALIDATE_ROLES, WRITE_ROLES } from './labels';
 import { buildBoard, type BoardSection } from './assessment';
 import { validateRun } from './actions';
 import { ItemSheet, type ItemDraft } from './ItemSheet';
@@ -28,9 +28,8 @@ function StatusChip({ status, count }: { status: EocAssessmentStatus; count?: nu
   );
 }
 
-function SectionGroup({ sec, open, onToggle, onOpen, runId, site, canAnswer }: {
-  sec: BoardSection; open: boolean; onToggle: () => void; onOpen: (d: ItemDraft) => void;
-  runId: string; site: EocAssessmentSite; canAnswer: boolean;
+function SectionGroup({ sec, open, onToggle, onOpen, flags }: {
+  sec: BoardSection; open: boolean; onToggle: () => void; onOpen: (d: ItemDraft) => void; flags: Map<string, string>;
 }) {
   return (
     <section className="rounded-card border border-line bg-surface">
@@ -48,21 +47,20 @@ function SectionGroup({ sec, open, onToggle, onOpen, runId, site, canAnswer }: {
       </button>
       {open && (
         <ul className="divide-y divide-line border-t border-line">
-          {sec.items.map(({ item, response }) => (
+          {sec.items.map(({ item, response }) => {
+            const flag = item.iat_links.map((l) => flags.get(l)).find(Boolean);
+            return (
             <li key={item.id}>
-              {response || canAnswer ? (
-                <button type="button" onClick={() => onOpen({ item, response, runId, site })} {...tip('Open this item: status on site, evidence, gap, recommended action and tool links')}
+              {response ? (
+                <button type="button" onClick={() => onOpen({ item, response })} {...tip('Open this item: evidence, gap, recommended action and tool links')}
                   className="flex min-h-[3.25rem] w-full items-start gap-3 px-3 py-3 text-left hover:bg-sky-soft/70">
                   <span className="w-8 shrink-0 pt-0.5 text-right font-data text-sm font-semibold text-muted">{item.item_no}</span>
                   <span className="min-w-0 flex-1">
                     <span className="block font-semibold leading-snug">{item.item_text}</span>
-                    <span className="mt-0.5 block text-xs text-muted">
-                      {item.iat_links.length > 0 ? `IAT ${item.iat_links.join(', ')}` : 'No IAT counterpart'}
-                      {response?.provenance === 'prefilled_iat' && ' · pre-filled from IAT, to confirm'}
-                      {response?.state === 'validated' && ' · validated'}
-                    </span>
+                    {item.iat_links.length > 0 && <span className="mt-0.5 block text-xs text-muted">IAT {item.iat_links.join(', ')}</span>}
+                    {flag && <span className="mt-1 inline-flex items-center gap-1 rounded-full bg-warn-soft px-2 py-0.5 text-xs font-semibold text-warn"><Flag className="h-3 w-3" aria-hidden /> {flag}</span>}
                   </span>
-                  <StatusChip status={response?.status ?? 'not_assessed'} />
+                  <StatusChip status={response.status} />
                 </button>
               ) : (
                 <div className="flex min-h-[3.25rem] items-start gap-3 px-3 py-3 opacity-70">
@@ -72,7 +70,7 @@ function SectionGroup({ sec, open, onToggle, onOpen, runId, site, canAnswer }: {
                 </div>
               )}
             </li>
-          ))}
+          );})}
         </ul>
       )}
     </section>
@@ -84,7 +82,6 @@ export function EocAssessmentBoardPage() {
   const toast = useToast();
   const online = useOnline();
   const [runId, setRunId] = useState<string | null>(null);
-  const [site, setSite] = useState<EocAssessmentSite>('primary');
   const [collapsed, setCollapsed] = useState<Set<string>>(new Set());
   const [draft, setDraft] = useState<ItemDraft | null>(null);
   const [busy, setBusy] = useState(false);
@@ -95,6 +92,8 @@ export function EocAssessmentBoardPage() {
       runs,
       items: await db.eoc_assessment_items.toArray(),
       responses: await db.eoc_assessment_responses.toArray(),
+      // 1.21.0 (ADR-036): workbook flags keyed by indicator, for the items' iat_links.
+      flags: new Map((await db.iat_workshop_flags.toArray()).map((f) => [f.indicator_id, f.flag])),
     };
   }, []);
 
@@ -102,9 +101,7 @@ export function EocAssessmentBoardPage() {
     if (!data || data.runs.length === 0) return null;
     return data.runs.find((r) => r.id === runId) ?? data.runs[0]!;
   }, [data, runId]);
-  const board = useMemo(() => (data && run ? buildBoard(run, data.items, data.responses, site) : null), [data, run, site]);
-  // A run is validated only when no answer (either site) is still pre-filled from the IAT; the SQL guard enforces it.
-  const prefilledInRun = useMemo(() => (data && run ? data.responses.filter((r) => r.run_id === run.id && r.provenance === 'prefilled_iat').length : 0), [data, run]);
+  const board = useMemo(() => (data && run ? buildBoard(run, data.items, data.responses) : null), [data, run]);
 
   if (!data) return <Loading />;
   const canWrite = has(...WRITE_ROLES);
@@ -134,10 +131,8 @@ export function EocAssessmentBoardPage() {
       <PageHeader title="EOC capability assessment" back="/today"
         subtitle="The 154-item EOC Capability Assessment Checklist (OCD/NDRRMC TWG, Dec 2017) in 15 sections, answered from the IAT v1-7 B_EOC evidence."
         actions={board && canValidate && board.run.status === 'draft' ? (
-          <Button variant="primary" icon={CheckCheck} busy={busy} disabled={!online || prefilledInRun > 0} onClick={validate}
-            tip={prefilledInRun > 0
-              ? `${prefilledInRun} answers are still pre-filled from the IAT. Confirm them on site before validating the run`
-              : 'Validate this run: locks it and its answers for the record (CDRRMO Head; needs a connection)'}>
+          <Button variant="primary" icon={CheckCheck} busy={busy} disabled={!online} onClick={validate}
+            tip="Validate this run: locks it and its responses for the record (CDRRMO Head; needs a connection)">
             Validate run
           </Button>
         ) : undefined} />
@@ -156,13 +151,7 @@ export function EocAssessmentBoardPage() {
             ) : (
               <span className="font-semibold">{board.run.title}</span>
             )}
-            <span className="text-sm text-muted">{board.answered} of {board.sections.reduce((n, s) => n + s.items.length, 0)} items answered for the {SITE_LABEL[site].toLowerCase()}:
-              {' '}{board.observed} observed · {board.prefilled} pre-filled from the IAT · {board.validated} validated</span>
-          </div>
-          <div className="mb-4 max-w-xl">
-            <ChoiceGroup legend="Site" value={site} onChange={setSite} columns={2}
-              options={(['primary', 'alternate'] as EocAssessmentSite[]).map((st) => ({ value: st, label: SITE_LABEL[st],
-                tip: st === 'alternate' ? 'The alternate EOC (IAT B2.7). Not assessed until one is designated' : 'The primary EOC at the CDRRM Office' }))} />
+            <span className="text-sm text-muted">{board.answered} of {board.sections.reduce((n, s) => n + s.items.length, 0)} items answered</span>
           </div>
           <div className="mb-4 flex flex-wrap gap-2" aria-label="Status summary">
             {(Object.keys(STATUS) as EocAssessmentStatus[]).map((k) => <StatusChip key={k} status={k} count={board.counts[k]} />)}
@@ -172,8 +161,7 @@ export function EocAssessmentBoardPage() {
           {!online && editable && <Notice tone="warn" title="You are offline">Reading works offline; saving evidence, gaps, actions and tool links needs a connection.</Notice>}
           <div className="space-y-3">
             {board.sections.map((sec) => (
-              <SectionGroup key={sec.section} sec={sec} open={!collapsed.has(sec.section)} onToggle={() => toggle(sec.section)} onOpen={setDraft}
-                runId={board.run.id} site={site} canAnswer={!!editable} />
+              <SectionGroup key={sec.section} sec={sec} open={!collapsed.has(sec.section)} onToggle={() => toggle(sec.section)} onOpen={setDraft} flags={data.flags} />
             ))}
           </div>
           <p className="mt-6 text-sm text-muted">
@@ -188,7 +176,7 @@ export function EocAssessmentBoardPage() {
           action={<Link to="/today" {...tip('Back to Today')} className="font-semibold text-info underline">Back to Today</Link>} />
       )}
 
-      <ItemSheet draft={draft} canEdit={!!editable} canValidate={canValidate && board?.run.status === 'draft'} onClose={() => setDraft(null)} />
+      <ItemSheet draft={draft} canEdit={!!editable} onClose={() => setDraft(null)} />
     </div>
   );
 }
