@@ -103,6 +103,11 @@ export const TABLES: TableConfig[] = [
   { name: 'eoc_assessment_runs', pk: 'id', cursor: 'updated_at', write: 'none' },
   { name: 'eoc_assessment_responses', pk: 'id', cursor: 'updated_at', write: 'none',
     omit: [...STAMPS, 'provenance', 'state', 'validated_by', 'validated_at', 'updated_by'] },
+  // 1.20.0 (ADR-035): EOC capability checklist. Items are reference data; answers are captured offline by the
+  // assessment team. Provenance, state and who/when are set by the server; validation is online (Head only).
+  { name: 'eoc_cap_items', pk: 'id', cursor: 'updated_at', write: 'none' },
+  { name: 'eoc_cap_responses', pk: 'id', cursor: 'updated_at', write: 'upsert',
+    omit: [...STAMPS, 'provenance', 'state', 'assessed_by', 'assessed_at', 'validated_by', 'validated_at'] },
 ];
 
 export const TABLE = Object.fromEntries(TABLES.map((t) => [t.name, t])) as Record<string, TableConfig>;

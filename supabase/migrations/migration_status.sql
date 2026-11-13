@@ -62,5 +62,7 @@ from (values
   -- checks a column added in review, so a database that ran the pre-review copy shows false until it is re-run
   ('20261114003000_eoc_assessment',           exists (select 1 from information_schema.columns
                                                       where table_schema = 'public' and table_name = 'eoc_assessment_responses' and column_name = 'provenance'))
+  ('20261114003000_eoc_capability',           exists (select 1 from pg_proc
+                                                      where proname = 'guard_eoc_cap_response' and pronamespace = 'app'::regnamespace))
 ) as m(migration, present)
 order by m.migration;

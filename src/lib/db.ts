@@ -230,6 +230,10 @@ export class DrrmDB extends Dexie {
       eoc_assessment_items: 'id, section, [section_sort+item_no]',
       eoc_assessment_runs: 'id, status, created_at',
       eoc_assessment_responses: 'id, run_id, item_id, [run_id+item_id], [run_id+site], status',
+    // v8 (1.20.0): EOC capability checklist mapped to IAT Part B (ADR-035).
+    this.version(8).stores({
+      eoc_cap_items: 'id, section, sort',
+      eoc_cap_responses: 'id, cycle_id, item_id, [cycle_id+site]',
     });
   }
 }

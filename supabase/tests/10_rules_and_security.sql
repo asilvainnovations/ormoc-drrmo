@@ -1248,6 +1248,58 @@ select tests.expect_error('a validated run is never removed',
 reset role;
 select tests.expect_eq('a signed-out visitor cannot read checklist items', has_table_privilege('anon', 'public.eoc_assessment_items', 'SELECT')::text, 'false');
 select tests.expect_eq('a signed-out visitor cannot read the board', has_table_privilege('anon', 'public.v_eoc_assessment_board', 'SELECT')::text, 'false');
+-- ===================================================== EOC capability checklist (1.20.0, ADR-035)
+reset role;
+select tests.expect_eq('the checklist has 154 items, 6 assessed locally',
+  (select count(*)::text || ' ' || count(*) filter (where assess_locally)::text from public.eoc_cap_items), '154 6');
+select tests.expect_eq('every mapped indicator is a Part B indicator',
+  (select count(*)::text from public.eoc_cap_items i, unnest(i.iat_indicators) x
+    where not exists (select 1 from public.iat_indicators t where t.id = x and t.id like 'B%')), '0');
+select tests.expect_eq('the baseline primary EOC is pre-filled from the IAT, not observed',
+  (select count(*) filter (where provenance = 'prefilled_iat')::text || ' ' || count(*) filter (where provenance = 'observed')::text
+     from public.eoc_cap_responses where cycle_id = '8911a053-1b14-587f-b906-c0fb2adaf7f3' and site = 'primary'), '154 0');
+create temp table cap_ids as
+  select (select r.id from public.eoc_cap_responses r join public.eoc_cap_items i on i.id = r.item_id
+           where r.cycle_id = '8911a053-1b14-587f-b906-c0fb2adaf7f3' and i.section = 'Site Selection' and i.item_no = 2) as a,
+         (select r.id from public.eoc_cap_responses r join public.eoc_cap_items i on i.id = r.item_id
+           where r.cycle_id = '8911a053-1b14-587f-b906-c0fb2adaf7f3' and i.section = 'Site Selection' and i.item_no = 3) as b;
+grant select on cap_ids to authenticated;
+select tests.login('00000000-0000-0000-0000-000000000010');  -- viewer
+select tests.expect_rows('a viewer reads the checklist roll-up',
+  $$select count(*) from public.v_eoc_cap_domains where cycle_id = '8911a053-1b14-587f-b906-c0fb2adaf7f3' and site = 'primary'$$, 8);
+select tests.expect_error('a viewer cannot answer the checklist',
+  $$update public.eoc_cap_responses set status = 'met', version = 1 where id = (select a from cap_ids)$$, '42501');
+select tests.login('00000000-0000-0000-0000-00000000000b');  -- assessor
+select tests.expect_ok('an assessor confirms a pre-filled answer on site',
+  $$update public.eoc_cap_responses set evidence_observed = 'OBS 14 Nov 2026: confirmed on site.', version = 1 where id = (select a from cap_ids)$$);
+select tests.expect_eq('confirming makes the answer observed and records who assessed it',
+  (select provenance || ' ' || (assessed_by = '00000000-0000-0000-0000-00000000000b')::text from public.eoc_cap_responses where id = (select a from cap_ids)),
+  'observed true');
+select tests.expect_error('an assessor cannot validate',
+  $$update public.eoc_cap_responses set state = 'validated', version = 2 where id = (select a from cap_ids)$$, '42501');
+select tests.expect_error('not applicable needs a reason',
+  $$update public.eoc_cap_responses set status = 'not_applicable', gap_remarks = null, version = 2 where id = (select a from cap_ids)$$, '23514');
+select tests.expect_error('answers are never deleted',
+  $$delete from public.eoc_cap_responses where id = (select a from cap_ids)$$, '42501');
+select tests.login('00000000-0000-0000-0000-000000000011');  -- CDRRMO Head
+select tests.expect_error('a pre-filled answer cannot be validated before it is confirmed',
+  $$update public.eoc_cap_responses set state = 'validated', version = 1 where id = (select b from cap_ids)$$, '23514');
+select tests.expect_ok('the CDRRMO Head validates an observed answer',
+  $$update public.eoc_cap_responses set state = 'validated', version = 2 where id = (select a from cap_ids)$$);
+select tests.login('00000000-0000-0000-0000-00000000000b');  -- assessor
+select tests.expect_error('a validated answer is fixed',
+  $$update public.eoc_cap_responses set status = 'not_met', version = 3 where id = (select a from cap_ids)$$, '42501');
+reset role;
+-- The pre-fill seed refreshes only pre-filled drafts: the confirmed, validated answer keeps its text.
+insert into public.eoc_cap_responses (cycle_id, item_id, site, status, provenance, evidence_observed)
+select cycle_id, item_id, site, 'not_met', 'prefilled_iat', 'seed text' from public.eoc_cap_responses where id in ((select a from cap_ids), (select b from cap_ids))
+on conflict (cycle_id, item_id, site) do update set status = excluded.status, evidence_observed = excluded.evidence_observed
+  where eoc_cap_responses.provenance = 'prefilled_iat' and eoc_cap_responses.state = 'draft';
+select tests.expect_eq('a re-run pre-fill leaves observed answers alone and refreshes pre-filled ones',
+  (select string_agg(provenance || ':' || left(evidence_observed, 9), ' ' order by provenance) from public.eoc_cap_responses where id in ((select a from cap_ids), (select b from cap_ids))),
+  'observed:OBS 14 No prefilled_iat:seed text');
+select tests.expect_eq('the roll-up counts the observed answer under its domain',
+  (select sum(observed)::text from public.v_eoc_cap_domains where cycle_id = '8911a053-1b14-587f-b906-c0fb2adaf7f3' and site = 'primary' and domain = 'B2'), '1');
 
 reset role;
 select tests.expect_eq('audit trail recorded', ((select count(*) from public.audit_log) > 50)::text, 'true');
