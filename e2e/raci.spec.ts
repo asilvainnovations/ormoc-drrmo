@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
 
 // RACI board (1.19, ADR-033): search, colour-coded duties, deep links, and the CDRRMO Head's
-// online edits. Runs against the seeded Annex 1-F data (seed part 37_raci.sql).
+// online edits. Runs against the seeded Manual data (seed part 37_raci.sql: Annex 1-F and Chapters 1-10).
 
 test.describe('as a viewer', () => {
   test.use({ storageState: 'e2e/.auth/viewer.json' });
@@ -9,8 +9,9 @@ test.describe('as a viewer', () => {
   test('raci: search shows the colour-coded board; a viewer cannot edit', async ({ page }) => {
     await page.goto('/raci');
     await expect(page.getByRole('heading', { name: 'RACI board' })).toBeVisible();
-    // The six seeded matrices render with their activities.
+    // The twenty-one seeded matrices render with their activities.
     await expect(page.getByText('6.4 · State of Imminent Disaster RACI')).toBeVisible();
+    await expect(page.getByText(/CH4-EOC · Chapter 4/)).toBeVisible();
     await expect(page.getByText('DOC · Manual document review and approval')).toBeVisible();
 
     // Search by protocol code finds the activity and its duty chips.

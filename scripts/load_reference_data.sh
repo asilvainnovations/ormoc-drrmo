@@ -6,7 +6,7 @@
 #   2. cleanup     supabase/cleanup/*.sql (release cleanup scripts; each is safe to run again)
 #   3. seed        supabase/seed/parts/*.sql in file-name order (01..26, 26a..26d, 27.., 37_raci)
 #   4. IAT update  supabase/seed/operational/07_iat_v1_7_update.sql (safe to run again; skip with --no-iat-update)
-#   5. verify      every reference row in src/data/reference.json is in the database; RACI board loaded
+#   5. verify      every reference row in src/data/reference.json and every RACI matrix/activity in part 37 is in the database
 #
 # Each seed file is its own transaction: a failure rolls that file back and stops the run; files
 # before it stay applied, and re-running the whole script is safe (rows are upserted by fixed ids).
@@ -101,10 +101,16 @@ for key, table, required in tables:
                  f"(select count(*) from public.{table}) as in_db, "
                  f"(select count(*) from (values {ids}) v(id) where not exists "
                  f"(select 1 from public.{table} t where t.id::text = v.id)) as missing, {str(required).lower()} as required")
-parts.append("select 'raci_matrices', 6, (select count(*) from public.raci_matrices), "
-             "greatest(0, 6 - (select count(*) from public.raci_matrices)), true")
-parts.append("select 'raci_activities', 63, (select count(*) from public.raci_activities), "
-             "greatest(0, 63 - (select count(*) from public.raci_activities)), true")
+# RACI board: matrix and activity ids come from seed part 37 (scripts/raci_seed.py), one row per tuple.
+import re
+raci = open('supabase/seed/parts/37_raci.sql', encoding='utf-8').read()
+for table in ('raci_matrices', 'raci_activities'):
+    block = re.search(r'insert into public\.' + table + r' \(id,[^)]*\) values\n(.*?)\non conflict', raci, re.S).group(1)
+    ids = sorted(set(re.findall(r"\('([0-9a-f-]{36})'::uuid", block)))
+    vals = ','.join(f'({q(i)})' for i in ids)
+    parts.append(f"select {q(table)}, {len(ids)}, (select count(*) from public.{table}), "
+                 f"(select count(*) from (values {vals}) v(id) where not exists "
+                 f"(select 1 from public.{table} t where t.id::text = v.id)), true")
 open(sys.argv[1], 'w').write('\nunion all\n'.join(parts) + ';\n')
 PY
 "${PSQL[@]}" -At -F '|' -f "$TMP/verify.sql" >"$TMP/verify"

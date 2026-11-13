@@ -1110,7 +1110,8 @@ select tests.expect_eq('a signed-out visitor cannot read camp reports', has_tabl
 
 -- =============================================================== RACI board (1.19.0, ADR-033)
 select tests.login('00000000-0000-0000-0000-000000000010');  -- viewer
-select tests.expect_rows('any active user reads the RACI matrices', $$select count(*) from public.raci_matrices$$, 6);
+select tests.expect_rows('any active user reads the RACI matrices', $$select count(*) from public.raci_matrices$$, 21);
+select tests.expect_rows('the chapter matrices are seeded (Annex 1-F + DOC + Chapters 1-10)', $$select count(*) from public.raci_activities$$, 228);
 select tests.expect_ok('the board view reads for any active user', $$select count(*) from public.v_raci_board$$);
 select tests.expect_error('a viewer cannot add an assignment',
   $$insert into public.raci_assignments (activity_id, actor, duty) values ((select id from public.raci_activities limit 1), 'EOC', 'I')$$, '42501');

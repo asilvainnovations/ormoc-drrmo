@@ -249,23 +249,28 @@ Then, in the dashboard:
      `raci_activities` and `raci_assignments` (reads for every active user; writes only for the CDRRMO Head and
      admin) and the `v_raci_board` view. Then run `supabase/migrations/migration_status.sql`: expect 29 rows, all applied.
   2. **Reference data.** Run the new part `supabase/seed/parts/37_raci.sql` after part 36 (the `26a–26d` DDRiVE
-     parts stay where they are). It seeds MOO Annex 1-F matrices 6.1–6.5 verbatim and the manual document review
-     matrix (DOC): 6 matrices, 63 activities, 340 assignments, 16 activities linked to their protocol or workflow.
-     Re-running it is safe: it updates matrix titles only, adds activities new to Annex 1-F, and seeds assignments
-     only for an activity that has none, so the CDRRMO Head's edits and removals stay as they are. (Exception: if the
-     Head removes **every** assignment of an activity, a re-run seeds that activity's Annex 1-F assignments again.)
+     parts stay where they are). It seeds every RACI matrix of the consolidated Manual Draft 1.0 verbatim —
+     Annex 1-F matrices 6.1–6.5, the chapter matrices of Chapters 1–10 (Ch.1 §8.3/§8.4; Ch.2 §16, Table 2.5 and
+     §22.1; Ch.3 §18; Ch.4 Table 4.34 and Annex 4-B; Ch.5 Table 5.33 and Annex 5-B; Ch.6 Table 6.36; Ch.7
+     Table 7.34; Ch.8 Table 8.28; Ch.9 Table 9.25; Ch.10 Table 10.20) and the manual document review matrix
+     (DOC): 21 matrices, 228 activities, 1,445 assignments, 60 activities linked to their protocol or workflow.
+     Re-running it is safe: it updates matrix titles only, adds activities new to the Manual,
+     and seeds assignments only for an activity that has none, so the CDRRMO Head's edits and removals stay as
+     they are. (Exception: if the Head removes **every** assignment of an activity, a re-run seeds that
+     activity's Manual assignments again.)
      If the pre-review copy of the migration was already run, run the migration again: it adds `app.guard_raci`,
      and `migration_status.sql` shows `raci_board` as missing until it is there.
   3. **App.** Push with git and redeploy.
      - **Today** shows a RACI board card (activities mapped, Accountable checks outstanding) and a quick action.
      - **/raci** is the board: search by activity, actor, protocol code or SOP; duties are colour-coded
        (R navy blue, A dark green, C gold, I white); activities without exactly one Accountable carry a warning —
-       five seeded activities warn by design, faithful to Annex 1-F, for the CDRRMO to resolve at the workshop.
+       the seeded zero- or multi-Accountable rows warn by design, faithful to the Manual's draft matrices
+       (Annex 1-F and the chapter drafts), for the CDRRMO to resolve at the validation workshop.
      - **Protocol detail → SOP control** links to the protocol's RACI; **Library → document** shows its review and
        approval RACI and links to the board.
      - The **CDRRMO Head** (or admin) adds, edits and removes assignments on the board; these are authority actions
        and need a connection (ADR-006).
-  4. Check: `/raci` opens with six matrices; searching `PR-PDRA` shows "Convene PDRA" with CDRRMO A/R; a viewer
+  4. Check: `/raci` opens with twenty-one matrices (Annex 1-F, Chapters 1-10, DOC); searching `PR-PDRA` shows "Convene PDRA" with CDRRMO A/R; a viewer
      sees no Add or edit controls; the Head's edit appears after redeploy only when online.
 
 - **To 1.18.0** (12 November 2026), Chapters 5–8 published (ADR-032). No migration; one cleanup script before the

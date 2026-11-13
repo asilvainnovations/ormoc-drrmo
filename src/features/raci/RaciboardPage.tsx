@@ -1,5 +1,5 @@
-// The interactive RACI board (ADR-033): search the Annex 1-F matrices and the manual
-// document-governance matrix, see who is Responsible / Accountable / Consulted / Informed
+// The interactive RACI board (ADR-033): search the Manual's RACI matrices (Annex 1-F and
+// Chapters 1-10) and the manual document-governance matrix, see who is Responsible / Accountable / Consulted / Informed
 // colour-coded, and — for the CDRRMO Head — adjust assignments online.
 import { useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
@@ -104,7 +104,7 @@ export function RaciboardPage() {
   return (
     <div className="page">
       <PageHeader title="RACI board" back="/today"
-        subtitle="Who is Responsible, Accountable, Consulted and Informed — from MOO Annex 1-F and the manual review cycle." />
+        subtitle="Who is Responsible, Accountable, Consulted and Informed — from the Manual’s RACI matrices (Annex 1-F and Chapters 1-10) and the manual review cycle." />
       <div className="mb-4 max-w-xl">
         <Input type="search" value={q} onChange={(e) => setParams(e.target.value ? { q: e.target.value } : {}, { replace: true })}
           placeholder="Search an activity, protocol code, office or role…" aria-label="Search the RACI board" {...tip('Type an activity, a protocol code like PR-PDRA, or an office')} />
