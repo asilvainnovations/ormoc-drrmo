@@ -18,6 +18,7 @@
   --accent: 214 104 18;      /* #D66812 orange accent for active marks (3:1+ on white) */
   --accent-bright: 240 122 26; /* #F07A1A decorative orange (rings, stripes; never text) */
   --accent-ink: 168 74 5;    /* #A84A05 orange text, when orange must be read */
+  --accent-soft: 252 232 216;  /* #FCE8D8 soft orange fill (EOC capability 'largely unmet' chip, ADR-035) */
   --on-strong: 255 255 255;  /* text on ok / warn / bad / info fills */
   --on-level: 255 255 255;   /* text on the Blue and Red level bands */
   --scrim: 7 22 38;          /* dialog backdrop (navy) */
@@ -58,7 +59,7 @@
     --ink: 230 238 246; --muted: 162 179 196; --line: 37 64 95;
     --action: 140 200 242; --on-action: 10 22 34;
     --sky: 120 186 238; --sky-soft: 22 52 84;
-    --accent: 255 148 70; --accent-bright: 255 148 70; --accent-ink: 255 168 104;
+    --accent: 255 148 70; --accent-bright: 255 148 70; --accent-ink: 255 168 104; --accent-soft: 74 42 14;
     --focus: 255 148 70; --scrim: 0 0 0;
     --on-strong: 10 22 34;   /* status fills are light in dark mode, so their text is dark */
     --ok: 95 207 151;  --ok-soft: 18 58 42;
@@ -83,7 +84,7 @@
     --ink: 230 238 246; --muted: 162 179 196; --line: 37 64 95;
     --action: 140 200 242; --on-action: 10 22 34;
     --sky: 120 186 238; --sky-soft: 22 52 84;
-    --accent: 255 148 70; --accent-bright: 255 148 70; --accent-ink: 255 168 104;
+    --accent: 255 148 70; --accent-bright: 255 148 70; --accent-ink: 255 168 104; --accent-soft: 74 42 14;
     --focus: 255 148 70; --scrim: 0 0 0;
     --on-strong: 10 22 34;   /* status fills are light in dark mode, so their text is dark */
     --ok: 95 207 151;  --ok-soft: 18 58 42;

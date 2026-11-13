@@ -5,6 +5,7 @@ import { db } from '@/lib/db';
 import { useAuth } from '@/lib/auth';
 import { useActiveDeclaration, useNow } from '@/lib/hooks';
 import { cycleResults } from '@/domain/scoring';
+import { statusCounts } from '@/domain/eoc_assessment';
 import { nextDeadline } from '@/domain/aa';
 import { canOperate } from '@/domain/eoc';
 import { duration, fmtDateTime, fmtLongDate, fmtTime, manilaHour, relative } from '@/lib/time';
@@ -55,6 +56,8 @@ export function TodayPage() {
       // 1.19 (ADR-033): RACI board at a glance — activities and any without exactly one Accountable.
       raciIssues: countAccountableIssues(await db.raci_activities.toArray(), await db.raci_assignments.toArray()),
       raciActivities: await db.raci_activities.count(),
+      // 1.20 (ADR-035): EOC capability at a glance — latest run and its status counts.
+      eocCap: await eocCapabilitySummary(),
     };
   }, [decl?.id]);
   const hour = manilaHour(now);
@@ -164,6 +167,24 @@ export function TodayPage() {
             )}
           </CardContent>
         </Card>
+        <Card>
+          <CardHeader className="flex-row items-start justify-between space-y-0 pb-2">
+            <div><CardTitle className="text-lg">EOC capability</CardTitle><CardDescription>The 154-item OCD/NDRRMC checklist against the IAT B_EOC evidence.</CardDescription></div>
+            <TextLink tip="Open the EOC capability assessment board" size="sm" to="/eoc-assessment">Open</TextLink>
+          </CardHeader>
+          <CardContent>
+            {!data ? <TodaySkeleton /> : !data.eocCap ? <p className="text-muted">Arrives with the next reference-data sync.</p> : (
+              <Link to="/eoc-assessment" {...tip('Open the capability board by section')} className="block rounded-control p-1 hover:bg-sky-soft/60">
+                <p className="font-semibold">{data.eocCap.run.title} <Badge className="ml-1">{data.eocCap.run.status === 'validated' ? 'Validated' : 'Draft'}</Badge></p>
+                <p className="mb-3 text-sm text-muted">
+                  {data.eocCap.counts.met} met · {data.eocCap.counts.partially_met} partially · {data.eocCap.counts.largely_unmet} largely unmet · {data.eocCap.counts.not_met} not met
+                  {data.eocCap.counts.no_direct_indicator > 0 && ` · ${data.eocCap.counts.no_direct_indicator} no direct indicator`}
+                </p>
+                <Progress value={data.eocCap.total ? (100 * data.eocCap.counts.met) / data.eocCap.total : 0} variant={data.eocCap.counts.met === data.eocCap.total && data.eocCap.total ? 'success' : 'default'} aria-label="Checklist items met" />
+              </Link>
+            )}
+          </CardContent>
+        </Card>
       </div>
       <ParetoCard data={data} t={t} />
     </div>
@@ -175,6 +196,16 @@ function countAccountableIssues(activities: { id: string }[], assignments: { act
   const aCount = new Map<string, number>();
   for (const s of assignments) if (s.duty === 'A') aCount.set(s.activity_id, (aCount.get(s.activity_id) ?? 0) + 1);
   return activities.filter((a) => (aCount.get(a.id) ?? 0) !== 1).length;
+}
+
+/** 1.20 (ADR-035): the latest capability run and how its 154 items stand. */
+async function eocCapabilitySummary() {
+  const runs = (await db.eoc_assessment_runs.toArray()).sort((a, b) => (b.created_at ?? '').localeCompare(a.created_at ?? ''));
+  const run = runs[0];
+  if (!run) return null;
+  const responses = await db.eoc_assessment_responses.where('run_id').equals(run.id).toArray();
+  const counts = statusCounts(responses.map((r) => r.status));
+  return { run, answered: responses.length, total: await db.eoc_assessment_items.count(), counts };
 }
 
 /** 1.17 (ADR-031): the Pareto dashboard — the 23 priority indicators in three tiers, met counts from the

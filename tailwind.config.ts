@@ -17,7 +17,7 @@ export default {
         paper: v('paper'), surface: v('surface'), sunken: v('sunken'),
         ink: v('ink'), muted: v('muted'), line: v('line'),
         action: v('action'), 'on-action': v('on-action'), sky: v('sky'), 'sky-soft': v('sky-soft'),
-        accent: v('accent'), 'accent-bright': v('accent-bright'), 'accent-ink': v('accent-ink'), 'on-strong': v('on-strong'), 'on-level': v('on-level'), scrim: v('scrim'),
+        accent: v('accent'), 'accent-bright': v('accent-bright'), 'accent-ink': v('accent-ink'), 'accent-soft': v('accent-soft'), 'on-strong': v('on-strong'), 'on-level': v('on-level'), scrim: v('scrim'),
         focus: v('focus'),
         ok: v('ok'), warn: v('warn'), bad: v('bad'), info: v('info'),
         'ok-soft': v('ok-soft'), 'warn-soft': v('warn-soft'), 'bad-soft': v('bad-soft'), 'info-soft': v('info-soft'),

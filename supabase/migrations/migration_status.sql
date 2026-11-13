@@ -14,7 +14,7 @@ select t.tbl,
 from unnest(array['public.declarations', 'public.aa_disbursements', 'public.pdra_sessions', 'public.aa_fund_years',
                   'public.logbook_entries', 'public.sitreps', 'public.vault_documents', 'public.audit_log',
                   'public.connected_apps', 'public.form_templates', 'public.eoc_designations', 'public.activation_clusters',
-                  'public.geo_reference_points', 'public.geo_layers']) as t(tbl);
+                  'public.geo_reference_points', 'public.geo_layers', 'public.eoc_assessment_items']) as t(tbl);
 
 select m.migration, case when m.present then 'applied' else 'MISSING' end as status
 from (values
@@ -57,6 +57,9 @@ from (values
                                                       where table_schema = 'public' and table_name = 'camp_reports')),
   -- 1.19.0: checks the guard, not just the tables, so a database that ran the pre-review copy shows false.
   ('20261113002900_raci_board',               exists (select 1 from pg_proc
-                                                      where proname = 'guard_raci' and pronamespace = 'app'::regnamespace))
+                                                      where proname = 'guard_raci' and pronamespace = 'app'::regnamespace)),
+  -- 1.20.0: checks the guard, not just the tables.
+  ('20261114003000_eoc_assessment',           exists (select 1 from pg_proc
+                                                      where proname = 'guard_eoc_assessment' and pronamespace = 'app'::regnamespace))
 ) as m(migration, present)
 order by m.migration;

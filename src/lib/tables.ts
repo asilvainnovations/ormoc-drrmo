@@ -97,6 +97,11 @@ export const TABLES: TableConfig[] = [
   { name: 'raci_matrices', pk: 'id', cursor: 'updated_at', write: 'none' },
   { name: 'raci_activities', pk: 'id', cursor: 'updated_at', write: 'none' },
   { name: 'raci_assignments', pk: 'id', cursor: 'updated_at', write: 'none' },
+  // EOC capability assessment (1.20.0, ADR-035): reads stay offline; response edits and run
+  // validation are authority actions sent online only (updateOnline in features/eoc-assessment).
+  { name: 'eoc_assessment_items', pk: 'id', cursor: 'updated_at', write: 'none' },
+  { name: 'eoc_assessment_runs', pk: 'id', cursor: 'updated_at', write: 'none' },
+  { name: 'eoc_assessment_responses', pk: 'id', cursor: 'updated_at', write: 'none' },
 ];
 
 export const TABLE = Object.fromEntries(TABLES.map((t) => [t.name, t])) as Record<string, TableConfig>;
