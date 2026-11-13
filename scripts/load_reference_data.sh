@@ -4,11 +4,10 @@
 # Replaces pasting 40+ files into the Supabase SQL editor. In order, and stopping at the first error:
 #   1. preflight   connect; every migration in migration_status.sql must show "applied"
 #   2. cleanup     supabase/cleanup/*.sql (release cleanup scripts; each is safe to run again)
-#   3. seed        supabase/seed/parts/*.sql in file-name order (01..26, 26a..26d, 27.., 37_raci, 38a-38c_eoc_assessment)
+#   3. seed        supabase/seed/parts/*.sql in file-name order (01..26, 26a..26d, 27.., 37_raci, 38_eoc_assessment, 39_indicator_links)
 #   4. IAT update  supabase/seed/operational/07_iat_v1_7_update.sql (safe to run again; skip with --no-iat-update)
-#                  and the EOC capability pre-fill 08*_eoc_capability_prefill.sql (1.20.0; refreshes only answers that
-#                  are still pre-filled drafts, never an observed or validated one)
-#   5. verify      every reference row in src/data/reference.json and every RACI matrix/activity in part 37 is in the database
+#   5. verify      every reference row in src/data/reference.json, every RACI matrix/activity in part 37,
+#                  EOC capability item in part 38 and indicator link in part 39 is in the database
 #
 # Each seed file is its own transaction: a failure rolls that file back and stops the run; files
 # before it stay applied, and re-running the whole script is safe (rows are upserted by fixed ids).
@@ -79,11 +78,6 @@ if [ "$CHECK_ONLY" = 0 ]; then
     say "4. IAT baseline update"
     run_file "$IAT_UPDATE_FILE"
   fi
-  prefill=(supabase/seed/operational/08*_eoc_capability_prefill.sql)
-  if [ "${#prefill[@]}" -gt 0 ]; then
-    say "4b. EOC capability pre-fill (labelled pre-filled; never overwrites an observed answer)"
-    for f in "${prefill[@]}"; do run_file "$f"; done
-  fi
 else
   say "Check only: nothing is changed."
 fi
@@ -120,21 +114,21 @@ for table in ('raci_matrices', 'raci_activities'):
                  f"(select 1 from public.{table} t where t.id::text = v.id)), true")
 # EOC capability assessment: item ids come from seed part 38 (scripts/eoc_assessment_seed.py);
 # each tuple starts with its id, and every seeded item must be in the database.
-eoc = open('supabase/seed/parts/38a_eoc_assessment.sql', encoding='utf-8').read()
+eoc = open('supabase/seed/parts/38_eoc_assessment.sql', encoding='utf-8').read()
 block = re.search(r'insert into public\.eoc_assessment_items \(id,[^)]*\) values\n(.*?)\non conflict', eoc, re.S).group(1)
 ids = sorted(set(re.findall(r"\('([0-9a-f-]{36})'::uuid", block)))
 vals = ','.join(f'({q(i)})' for i in ids)
 parts.append(f"select 'eoc_assessment_items', {len(ids)}, (select count(*) from public.eoc_assessment_items), "
              f"(select count(*) from (values {vals}) v(id) where not exists "
              f"(select 1 from public.eoc_assessment_items t where t.id::text = v.id)), true")
-# EOC capability checklist items come from seed part 38 (scripts/eoc_capability_seed.py).
-cap = open('supabase/seed/parts/38_eoc_capability.sql', encoding='utf-8').read()
-block = re.search(r'insert into public\.eoc_cap_items \(id,[^)]*\) values\n(.*?)\non conflict', cap, re.S).group(1)
-ids = sorted(set(re.findall(r"\(E'([0-9a-f-]{36})'::uuid", block)))
+# Indicator links map: link ids come from seed part 39 (scripts/indicator_links_seed.py).
+links = open('supabase/seed/parts/39_indicator_links.sql', encoding='utf-8').read()
+block = re.search(r'insert into public\.iat_indicator_links \(id,[^)]*\) values\n(.*?)\non conflict', links, re.S).group(1)
+ids = sorted(set(re.findall(r"\('([0-9a-f-]{36})'::uuid", block)))
 vals = ','.join(f'({q(i)})' for i in ids)
-parts.append(f"select 'eoc_cap_items', {len(ids)}, (select count(*) from public.eoc_cap_items), "
+parts.append(f"select 'iat_indicator_links', {len(ids)}, (select count(*) from public.iat_indicator_links), "
              f"(select count(*) from (values {vals}) v(id) where not exists "
-             f"(select 1 from public.eoc_cap_items t where t.id::text = v.id)), true")
+             f"(select 1 from public.iat_indicator_links t where t.id::text = v.id)), true")
 open(sys.argv[1], 'w').write('\nunion all\n'.join(parts) + ';\n')
 PY
 "${PSQL[@]}" -At -F '|' -f "$TMP/verify.sql" >"$TMP/verify"
