@@ -77,3 +77,37 @@ describe('barangay report form (#17)', () => {
     expect(barangayReportProblem({ condition: 'affected', families: 'x', persons: '5' })).toMatch(/whole numbers/);
   });
 });
+
+// ---------------------------------------------------- reporting cut-offs (1.21.0, ADR-038)
+import { cutoffForLevel, manilaTime, reportLate } from './eoc';
+import type { SitrepCutoff } from '@/types';
+
+const cutoff = (level: 'white' | 'blue' | 'red', barangay_am: string, barangay_pm: string): SitrepCutoff =>
+  ({ id: level, alert_level: level, barangay_am, barangay_pm, submission_am: '06:00', submission_pm: '18:00', updated_by: null, version: 1 });
+const CUTS = [cutoff('white', '05:00', '17:00'), cutoff('blue', '08:00', '18:00'), cutoff('red', '08:00', '18:00')];
+
+describe('reporting cut-offs (ADR-038)', () => {
+  it('picks the cut-off for the alert level', () => {
+    expect(cutoffForLevel(CUTS, 'blue')?.barangay_am).toBe('08:00');
+    expect(cutoffForLevel(CUTS, 'white')?.barangay_pm).toBe('17:00');
+    expect(cutoffForLevel([], 'red')).toBeUndefined();
+  });
+
+  it('reads Manila time-of-day regardless of the running device', () => {
+    expect(manilaTime('2026-11-14T05:30:00+08:00')).toBe('05:30');
+    expect(manilaTime('2026-11-13T21:30:00Z')).toBe('05:30');   // same instant
+  });
+
+  it('flags a report late when it arrives after its window cut-off', () => {
+    const white = cutoffForLevel(CUTS, 'white');
+    expect(reportLate('2026-11-14T04:59:00+08:00', white)).toEqual({ late: false, cutoffTime: '05:00', window: 'am' });
+    expect(reportLate('2026-11-14T05:01:00+08:00', white)).toEqual({ late: true, cutoffTime: '05:00', window: 'am' });
+    expect(reportLate('2026-11-14T16:59:00+08:00', white)).toEqual({ late: false, cutoffTime: '17:00', window: 'pm' });
+    expect(reportLate('2026-11-14T17:30:00+08:00', white)).toEqual({ late: true, cutoffTime: '17:00', window: 'pm' });
+  });
+
+  it('uses the seeded defaults when no cut-off is on the device', () => {
+    expect(reportLate('2026-11-14T06:00:00+08:00', undefined).late).toBe(true);
+    expect(reportLate('2026-11-14T04:00:00+08:00', undefined).late).toBe(false);
+  });
+});

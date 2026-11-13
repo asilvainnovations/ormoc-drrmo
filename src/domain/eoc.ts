@@ -1,5 +1,5 @@
 // EOC rules. Mirrors supabase/migrations/20261015000400_eoc.sql.
-import type { Activation, BarangayCondition, BarangayReport, EocLevel, RequestStatus, Role } from '@/types';
+import type { Activation, BarangayCondition, BarangayReport, EocLevel, RequestStatus, Role, SitrepCutoff } from '@/types';
 
 // Alert levels: National Disaster Response Plan, as restated in the RDRRMC VIII SOP (Res. No. 12-006, s. 2023).
 // NDRRMC Memorandum No. 131, s. 2018 governs EOC activation and functions; it lets each EOC set its own
@@ -137,4 +137,28 @@ export function barangayReportProblem(f: { condition: BarangayCondition; familie
   if (f.condition === 'evacuating' && (fam === null || per === null)) return 'An evacuating barangay needs both counts. Enter 0 if no one has arrived yet.';
   if (fam !== null && per !== null && per < fam) return 'Persons evacuated cannot be fewer than families evacuated.';
   return null;
+}
+
+// ---------------------------------------------------- reporting cut-offs (1.21.0, ADR-038)
+// The times are data, seeded in SQL (sitrep_cutoffs); the DILG VIII SOP Table 3 sets the submission
+// times (White 6 AM/6 PM, Blue and Red 9 AM/7 PM) and the seeded barangay cut-offs are one hour
+// earlier. The late flag is decision support for the liaison desk, never a sanction.
+
+/** The reporting cut-offs in force for an alert level. */
+export function cutoffForLevel(cutoffs: SitrepCutoff[], level: EocLevel): SitrepCutoff | undefined {
+  return cutoffs.find((c) => c.alert_level === level);
+}
+
+/** Manila time-of-day ("HH:MM", 24-hour) for an instant. */
+export function manilaTime(iso: string): string {
+  return new Intl.DateTimeFormat('en-GB', { timeZone: 'Asia/Manila', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).format(new Date(iso));
+}
+
+/** A report is late when it reached the EOC after the barangay cut-off for its window: the morning
+ *  window ends at noon Manila time, the afternoon window runs from noon. */
+export function reportLate(reportedAt: string, cutoff: SitrepCutoff | undefined): { late: boolean; cutoffTime: string; window: 'am' | 'pm' } {
+  const tod = manilaTime(reportedAt);
+  const window = tod < '12:00' ? 'am' : 'pm';
+  const cutoffTime = (window === 'am' ? cutoff?.barangay_am : cutoff?.barangay_pm) ?? (window === 'am' ? '05:00' : '17:00');
+  return { late: tod > cutoffTime, cutoffTime, window };
 }
