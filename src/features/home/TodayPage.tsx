@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { ClipboardCheck, FolderLock, ListChecks, NotebookPen, Settings, Siren, Users, Wrench } from 'lucide-react';
+import { ClipboardCheck, FolderLock, ListChecks, NotebookPen, Settings, Siren, Users, Workflow, Wrench } from 'lucide-react';
 import { db } from '@/lib/db';
 import { useAuth } from '@/lib/auth';
 import { useActiveDeclaration, useNow } from '@/lib/hooks';
@@ -52,6 +52,9 @@ export function TodayPage() {
       templates: (await db.protocol_templates.toArray()).filter((t) => t.status !== 'retired'),
       forms: (await db.form_templates.toArray()).filter((f) => f.status !== 'retired'),
       docs: await db.moo_documents.where('manual').equals('MOO').toArray(),
+      // 1.19 (ADR-033): RACI board at a glance — activities and any without exactly one Accountable.
+      raciIssues: countAccountableIssues(await db.raci_activities.toArray(), await db.raci_assignments.toArray()),
+      raciActivities: await db.raci_activities.count(),
     };
   }, [decl?.id]);
   const hour = manilaHour(now);
@@ -63,6 +66,7 @@ export function TodayPage() {
     has('cdrrmo_head', 'eoc_manager', 'eoc_staff') && { to: '/eoc/aa/pdra/new', label: 'New PDRA', icon: Siren, tip: 'Assess a forecast hazard and decide: monitor, act early or request a declaration' },
     has('assessor', 'validator', 'lead_office_focal') && { to: data?.cycle ? `/assess/${data.cycle.id}` : '/assess', label: 'Continue assessment', icon: ClipboardCheck, tip: 'Go back to the indicators you are scoring' },
     canUseVault(has) && { to: '/vault', label: 'Document Vault', icon: FolderLock, tip: 'Laws, guidelines and documents for Document Review' },
+    { to: '/raci', label: 'RACI board', icon: Workflow, tip: 'Who is Responsible, Accountable, Consulted and Informed for each protocol, workflow and manual review step' },
     { to: '/tools', label: 'Tools and hazard maps', icon: Wrench, tip: 'ICS exercises, continuity plan, Gawad KALASAG readiness, HazardHunterPH, GeoAnalyticsPH, Zoom Earth, DDRiVE-M' },
   ].filter(Boolean) as { to: string; label: string; icon: typeof NotebookPen; tip: string }[];
 
@@ -142,10 +146,35 @@ export function TodayPage() {
           </CardContent>
         </Card>
         <ManualReadiness data={data} />
+        <Card>
+          <CardHeader className="flex-row items-start justify-between space-y-0 pb-2">
+            <div><CardTitle className="text-lg">RACI board</CardTitle><CardDescription>Who does what, from MOO Annex 1-F.</CardDescription></div>
+            <TextLink tip="Open the interactive RACI board" size="sm" to="/raci">Open</TextLink>
+          </CardHeader>
+          <CardContent>
+            {!data ? <TodaySkeleton /> : (
+              <Link to="/raci" {...tip('Search a protocol or activity and see its colour-coded RACI')} className="block rounded-control p-1 hover:bg-sky-soft/60">
+                <p className="font-semibold">{data.raciActivities} activities mapped</p>
+                <p className="text-sm text-muted">
+                  {data.raciIssues === 0
+                    ? 'Every activity has exactly one Accountable.'
+                    : `${data.raciIssues} ${data.raciIssues === 1 ? 'activity needs' : 'activities need'} an Accountable check.`}
+                </p>
+              </Link>
+            )}
+          </CardContent>
+        </Card>
       </div>
       <ParetoCard data={data} t={t} />
     </div>
   );
+}
+
+/** 1.19 (ADR-033): activities whose Accountable count is not the normal one (Annex 1-F: "normally one"). */
+function countAccountableIssues(activities: { id: string }[], assignments: { activity_id: string; duty: string }[]): number {
+  const aCount = new Map<string, number>();
+  for (const s of assignments) if (s.duty === 'A') aCount.set(s.activity_id, (aCount.get(s.activity_id) ?? 0) + 1);
+  return activities.filter((a) => (aCount.get(a.id) ?? 0) !== 1).length;
 }
 
 /** 1.17 (ADR-031): the Pareto dashboard — the 23 priority indicators in three tiers, met counts from the

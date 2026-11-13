@@ -126,6 +126,10 @@ export class DrrmDB extends Dexie {
   conflicts!: Table<ConflictItem, number>;
   files!: Table<StoredFile, string>;
   meta!: Table<Meta, string>;
+  // RACI board (1.19.0, ADR-033)
+  raci_matrices!: Table<T.RaciMatrix, string>;
+  raci_activities!: Table<T.RaciActivity, string>;
+  raci_assignments!: Table<T.RaciAssignment, string>;
 
   constructor(name = 'ormoc-drrm-ops') {
     super(name);
@@ -210,6 +214,12 @@ export class DrrmDB extends Dexie {
       evacuation_centers: 'id, code, verification_status, barangay_psgc',
       camp_reports: 'id, centre_id, activation_id, reported_at, [centre_id+reported_at]',
       camp_feedback: 'id, activation_id, centre_id, status',
+    });
+    // v7 (1.19.0): RACI board (ADR-033).
+    this.version(7).stores({
+      raci_matrices: 'id, code, sort',
+      raci_activities: 'id, matrix_id, template_id, [matrix_id+sort]',
+      raci_assignments: 'id, activity_id, duty',
     });
   }
 }

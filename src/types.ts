@@ -284,6 +284,24 @@ export interface AaDisbursement extends Versioned {
 
 export interface Profile { id: string; full_name: string; position: string | null; office_id: string | null; is_active: boolean; version?: number }
 
+// ------------------------------------------------------------------ RACI board (1.19.0, ADR-033)
+export type RaciDuty = 'R' | 'A' | 'C' | 'I';
+export interface RaciMatrix extends Versioned {
+  code: string; title: string; source_ref: string; sort: number;
+}
+export interface RaciActivity extends Versioned {
+  matrix_id: string; activity: string; note: string | null;
+  /** The protocol or workflow that carries out this activity, when one exists. */
+  template_id: string | null; sop_ref: string | null; sort: number;
+}
+export interface RaciAssignment extends Versioned {
+  activity_id: string;
+  /** Position, office or body — never a personal name (RA 10173). */
+  actor: string; duty: RaciDuty;
+  /** Scope note from the Manual cell, e.g. "documentation", "within mandate". */
+  qualifier: string | null;
+}
+
 export type VaultCategory = 'law' | 'irr' | 'issuance' | 'framework' | 'city_issuance' | 'plan' | 'report' | 'record' | 'other';
 export interface VaultDocument extends Versioned {
   title: string; category: VaultCategory; ref_key: string | null; doc_number: string | null; issuer: string | null;

@@ -237,6 +237,27 @@ Then, in the dashboard:
        vulnerability and priority with "—" for fields not yet assessed;
      - the SQL suite (`npm run test:db`) passes its new DDRiVE checks.
 
+- **To 1.19.0** (13 November 2026), interactive RACI board (ADR-033). One migration (0029), one new seed part.
+  Apply 1.18.0 first.
+  1. **Migration.** Run `supabase/migrations/20261113002900_raci_board.sql`. It adds `raci_matrices`,
+     `raci_activities` and `raci_assignments` (reads for every active user; writes only for the CDRRMO Head and
+     admin) and the `v_raci_board` view. Then run `supabase/migrations/migration_status.sql`: expect 29 rows, all applied.
+  2. **Reference data.** Run the new part `supabase/seed/parts/37_raci.sql` after part 36 (the `26a–26d` DDRiVE
+     parts stay where they are). It seeds MOO Annex 1-F matrices 6.1–6.5 verbatim and the manual document review
+     matrix (DOC): 6 matrices, 63 activities, 340 assignments, 16 activities linked to their protocol or workflow.
+     Re-running it is safe and never touches a CDRRMO Head's later edits to other rows.
+  3. **App.** Push with git and redeploy.
+     - **Today** shows a RACI board card (activities mapped, Accountable checks outstanding) and a quick action.
+     - **/raci** is the board: search by activity, actor, protocol code or SOP; duties are colour-coded
+       (R navy blue, A dark green, C gold, I white); activities without exactly one Accountable carry a warning —
+       five seeded activities warn by design, faithful to Annex 1-F, for the CDRRMO to resolve at the workshop.
+     - **Protocol detail → SOP control** links to the protocol's RACI; **Library → document** shows its review and
+       approval RACI and links to the board.
+     - The **CDRRMO Head** (or admin) adds, edits and removes assignments on the board; these are authority actions
+       and need a connection (ADR-006).
+  4. Check: `/raci` opens with six matrices; searching `PR-PDRA` shows "Convene PDRA" with CDRRMO A/R; a viewer
+     sees no Add or edit controls; the Head's edit appears after redeploy only when online.
+
 - **To 1.18.0** (12 November 2026), Chapters 5–8 published (ADR-032). No migration; one cleanup script before the
   seed. Apply 1.17.0 first.
   1. **Cleanup.** Run `supabase/cleanup/1.18.0_renumber.sql` in the SQL editor. It removes what the renumber

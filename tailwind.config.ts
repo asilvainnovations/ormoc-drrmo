@@ -22,6 +22,8 @@ export default {
         ok: v('ok'), warn: v('warn'), bad: v('bad'), info: v('info'),
         'ok-soft': v('ok-soft'), 'warn-soft': v('warn-soft'), 'bad-soft': v('bad-soft'), 'info-soft': v('info-soft'),
         lvl: { white: v('lvl-white'), 'white-ink': v('lvl-white-ink'), blue: v('lvl-blue'), red: v('lvl-red') },
+        // 1.19 (ADR-033): RACI duty chips (R navy, A dark green, C gold, I white). Reserved for the RACI board.
+        raci: { r: v('raci-r'), a: v('raci-a'), c: v('raci-c'), i: v('raci-i'), 'on-strong': v('raci-on-strong'), 'i-ink': v('raci-i-ink') },
         banner: '#022A4D',   // edge colour of the City banner artwork (letterbox behind it)
         mat: { 0: v('mat-0'), 1: v('mat-1'), 2: v('mat-2'), 3: v('mat-3'), 4: v('mat-4') },
         // 1.17 (ADR-031): the four DRRM pillar accents (Library separators only). Kept clear of the EOC alert colours.

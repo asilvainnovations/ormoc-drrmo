@@ -92,6 +92,11 @@ export const TABLES: TableConfig[] = [
   // document vault (rows only reach vault roles; RLS returns nothing to others)
   { name: 'vault_documents', pk: 'id', cursor: 'updated_at', write: 'upsert', omit: [...STAMPS, 'uploaded_by'] },
   { name: 'aa_disbursements', pk: 'id', cursor: 'updated_at', write: 'upsert', omit: [...STAMPS, 'created_by', 'lead_hours', 'tranche'] },
+  // RACI board (1.19.0, ADR-033): reference reads stay offline; edits are authority actions sent
+  // online only by the CDRRMO Head (updateOnline/direct writes in features/raci), never queued.
+  { name: 'raci_matrices', pk: 'id', cursor: 'updated_at', write: 'none' },
+  { name: 'raci_activities', pk: 'id', cursor: 'updated_at', write: 'none' },
+  { name: 'raci_assignments', pk: 'id', cursor: 'updated_at', write: 'none' },
 ];
 
 export const TABLE = Object.fromEntries(TABLES.map((t) => [t.name, t])) as Record<string, TableConfig>;
