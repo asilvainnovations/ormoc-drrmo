@@ -1,0 +1,30 @@
+MODE 1.21.0 — EOC indicator links, training records, SitRep DILG VIII,
+resources screen, DDRiVE decision support — handover
+=====================================================
+Base: 1.20.0 tree = main @ df7ebd4 + the MODE-1.20.0 handover APPLIED FIRST.
+Do not apply this zip to bare main — it overwrites files that 1.20.0 created.
+
+1. Apply the MODE-1.20.0-eoc-assessment handover first (its APPLY_STEPS.txt),
+   then copy every file in this zip into the repo at its repo-relative path.
+2. npm ci   (package.json adds the fflate dependency)
+   npm run typecheck && npx vitest run && npm run build
+3. Database (Tokyo production project) — either:
+   a. scripts/apply_db.sh (picks up migrations 03100/03200 + seed part 39), or
+   b. GitHub → Actions → Load reference data → Run workflow, or
+   c. psql -f supabase/migrations/20261114003100_indicator_links_training.sql
+      psql -f supabase/migrations/20261114003200_sitrep_dilg8.sql
+      psql -f supabase/seed/parts/39_indicator_links.sql
+   All idempotent; the seed never validates anything.
+4. Commit and push with git (never GitHub web upload), then tag:
+     git add -A && git commit -m "feat: indicator links, training runs, DILG VIII SitReps, resources, DDRiVE decisions (1.21.0, ADR-036..039)"
+     git push origin main && git tag v1.21.0 && git push origin v1.21.0
+5. Post-deploy checks:
+   - migration_status shows 32/32 applied
+   - iat_indicator_links = 81 rows over 42 indicators; iat_workshop_flags = 7
+   - run supabase/tests/10_rules_and_security.sql (29 new checks; 437 total)
+   - test:db / test:it / test:e2e in your environment (not runnable in sandbox)
+6. At the 1–4 Dec workshop: settle the flagged items (B2.6, B3.1 score-vs-evidence;
+   B1.2, B2.1–B2.4 Vault filings) — the flags show in-app; settling them is a
+   records action, not a code change.
+
+No DELETE.txt: this handover deletes nothing.
