@@ -1,0 +1,87 @@
+# Load reference data (ADR-034): one click instead of pasting 40+ seed files into the SQL editor.
+# Actions -> "Load reference data" -> Run workflow. Runs scripts/load_reference_data.sh against the chosen
+# Supabase project: preflight (all migrations applied), cleanup scripts, every seed part in order, the IAT
+# baseline update, then a check that every reference row is in the database. Stops at the first error.
+#
+# Repository secrets (Settings -> Secrets and variables -> Actions), one per project, each the
+# "Session pooler" connection string from Supabase Dashboard -> Connect, password filled in:
+#   SUPABASE_DB_URL_PRODUCTION   City production project (jmctsspadywjcbbqwweh, Tokyo)
+#   SUPABASE_DB_URL_TRAINING     training project (workshops and drills)
+# The pooler works over IPv4, which GitHub runners need; no paid add-on is required.
+name: Load reference data
+
+on:
+  workflow_dispatch:
+    inputs:
+      target:
+        description: Supabase project to load
+        type: choice
+        options: [training, production]
+        default: training
+      confirm:
+        description: "For production only: type the word production"
+        required: false
+        default: ''
+      check_only:
+        description: Check only (change nothing; report what is missing)
+        type: boolean
+        default: false
+      iat_update:
+        description: Also run the IAT v1.7 baseline update (safe to run again)
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: load-reference-data-${{ inputs.target }}
+  cancel-in-progress: false
+
+jobs:
+  load:
+    name: Load reference data (${{ inputs.target }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Guard
+        env:
+          TARGET: ${{ inputs.target }}
+          CONFIRM: ${{ inputs.confirm }}
+          CHECK_ONLY: ${{ inputs.check_only }}
+          REF: ${{ github.ref }}
+        run: |
+          if [ "$TARGET" = production ] && [ "$CHECK_ONLY" != true ]; then
+            if [ "$REF" != refs/heads/main ]; then
+              echo "::error::Production is loaded only from main (this run is on $REF). Merge the PR first."
+              exit 1
+            fi
+            if [ "$CONFIRM" != production ]; then
+              echo "::error::To load production, type the word production in the confirm box."
+              exit 1
+            fi
+          fi
+          echo "Target: $TARGET; ref: $REF; check only: $CHECK_ONLY"
+
+      - uses: actions/checkout@v4
+
+      - name: Postgres client
+        run: command -v psql >/dev/null || { sudo apt-get update -q && sudo apt-get install -y -q postgresql-client; }
+
+      - name: Load
+        env:
+          DATABASE_URL: ${{ inputs.target == 'production' && secrets.SUPABASE_DB_URL_PRODUCTION || secrets.SUPABASE_DB_URL_TRAINING }}
+          SECRET_NAME: ${{ inputs.target == 'production' && 'SUPABASE_DB_URL_PRODUCTION' || 'SUPABASE_DB_URL_TRAINING' }}
+          CHECK_ONLY: ${{ inputs.check_only }}
+          IAT_UPDATE: ${{ inputs.iat_update }}
+          PGSSLMODE: require
+          PGCONNECT_TIMEOUT: '20'
+        run: |
+          if [ -z "$DATABASE_URL" ]; then
+            echo "::error::Repository secret $SECRET_NAME is not set (Settings -> Secrets and variables -> Actions)."
+            exit 1
+          fi
+          args=()
+          [ "$CHECK_ONLY" = true ] && args+=(--check-only)
+          [ "$IAT_UPDATE" = true ] || args+=(--no-iat-update)
+          bash scripts/load_reference_data.sh "${args[@]}"
