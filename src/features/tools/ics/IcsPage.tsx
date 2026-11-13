@@ -6,6 +6,7 @@ import { useAuth } from '@/lib/auth';
 import { Badge, Button, ChoiceGroup, Field, Input, Notice, PageHeader, Section, Select } from '@/components/ui';
 import { tip } from '@/components/Tooltip';
 import { download, loadTool, saveTool } from '../storage';
+import { RunFiling } from '../RunFiling';
 import {
   band, difficultyOf, doctrineFor, ICS, metrics, roleOf, scenarioOf, scoreDecision, shuffled, spotlight,
   TIMEOUT_OPTION, VERDICT, type Difficulty, type Option, type Pick, type RunRecord, type Scenario,
@@ -301,6 +302,18 @@ function Results({ run, onAgain, onHome }: { run: RunRecord; onAgain: () => void
         <Button variant="secondary" onClick={exportRun} icon={Download} tip="Download the full record as a JSON file">Export</Button>
         <Button variant="secondary" onClick={onAgain} icon={RotateCcw} tip="Run another exercise">Run again</Button>
         <Button variant="secondary" onClick={onHome} tip="Back to the exercise list">Done</Button>
+      </div>
+      {/* 1.21.0 (ADR-037): server-side training record + file as evidence (B7.2/B7.3). Positions and counts only. */}
+      <div className="mb-4 print:hidden">
+        <RunFiling tool="ics_tool" runAt={run.at}
+          title={`ICS exercise: ${run.scenarioName} (${difficultyOf(run.difficulty).name})`}
+          summary={`${run.mode === 'multi' ? 'Team tabletop' : `${roleOf(run.role).name} drill`} on "${run.scenarioName}" at ${difficultyOf(run.difficulty).name} level: overall ${run.scores.total}% (${band(run.scores.total)}) across ${run.picks.length} operational-period decisions.`}
+          counts={{
+            mode: run.mode, role: run.role, office: run.office, difficulty: run.difficulty, duration_seconds: run.seconds,
+            decisions: run.picks.length, overall_pct: run.scores.total, band: band(run.scores.total),
+            best: run.picks.filter((p) => p.verdict === 'best').length, acceptable: run.picks.filter((p) => p.verdict === 'good').length,
+            weak: run.picks.filter((p) => p.verdict === 'weak').length, unsafe: run.picks.filter((p) => p.verdict === 'unsafe').length,
+          }} />
       </div>
       <Section title={`Overall: ${run.scores.total}%, ${band(run.scores.total)}`}>
         <div className="space-y-3">
