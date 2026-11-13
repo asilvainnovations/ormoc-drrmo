@@ -138,6 +138,14 @@ Then, in the dashboard:
 
 ### Updating an existing database
 
+**Moving to the new API keys (Supabase deprecates `anon` and `service_role` by the end of 2026).** The app and scripts already accept the new keys; only settings change. In Supabase → Project Settings → API Keys → *Publishable and secret API keys*, create the keys, then:
+1. **App (Vercel/Netlify):** set `VITE_SUPABASE_PUBLISHABLE_KEY` to the `sb_publishable_…` key, remove `VITE_SUPABASE_ANON_KEY`, and redeploy. Sign-in and RLS behave the same. The app refuses a secret key at build time.
+2. **GitHub → Settings → Secrets and variables → Actions:** secret `SERVICE_ROLE_KEY` = the `sb_secret_…` key (basemap uploads; `scripts/build_basemap.sh` sends it on the `apikey` header); variable `SUPABASE_PUBLISHABLE_KEY` = the publishable key (uptime check).
+3. Not affected: `SUPABASE_DB_URL_*` (a database password, not an API key) and users' own sign-in tokens.
+4. When the site, the uptime check and a basemap run all work on the new keys, turn the legacy keys off on the same page (reversible).
+
+**Supabase's Migrations page (Database → Migrations)** lists only what is recorded in `supabase_migrations.schema_migrations`. Migrations applied in the SQL editor are not recorded there, so the page can look empty while every migration is in place (check with `migration_status.sql`). `scripts/apply_db.sh` and the "Load reference data" workflow record them on every run that is not check-only.
+
 **One-click loading (1.19.0+, ADR-034).** Instead of pasting the seed files, use GitHub → **Actions → Load reference data → Run workflow**. It checks that every migration is applied, runs the cleanup scripts, every part in `supabase/seed/parts/` in order (including the DDRiVE `26a`–`26d` parts and `37_raci.sql`) and the IAT update, then verifies that every reference row is in the database and shows a table of the results. It stops at the first error; running it again is always safe.
 - **Set up once:** add two repository secrets (Settings → Secrets and variables → Actions): `SUPABASE_DB_URL_PRODUCTION` and `SUPABASE_DB_URL_TRAINING`, each the **Session pooler** connection string from Supabase Dashboard → Connect, with the database password filled in. The pooler works over IPv4 and is free; no add-on is needed. Only the City's repository administrators should hold these.
 - **Each release:** apply the release's migration first (the loader refuses to run until every migration shows "applied"). Run the workflow on **training**, check it, then on **production**: production runs only from `main` and only when you type `production` in the confirm box. Tick **Check only** to see what is missing without changing anything.
