@@ -54,6 +54,9 @@ from (values
   ('20261112002700_validation_workshop',      exists (select 1 from information_schema.columns
                                                       where table_schema = 'public' and table_name = 'responses' and column_name = 'validation_decision')),
   ('20261112002800_echo_camp_management',     exists (select 1 from information_schema.tables
-                                                      where table_schema = 'public' and table_name = 'camp_reports'))
+                                                      where table_schema = 'public' and table_name = 'camp_reports')),
+  -- 1.19.0: checks the guard, not just the tables, so a database that ran the pre-review copy shows false.
+  ('20261113002900_raci_board',               exists (select 1 from pg_proc
+                                                      where proname = 'guard_raci' and pronamespace = 'app'::regnamespace))
 ) as m(migration, present)
 order by m.migration;

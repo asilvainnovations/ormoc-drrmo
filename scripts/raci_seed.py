@@ -5,8 +5,9 @@ Transcribes MOO Annex 1-F (Integrated RACI Accountability Framework, matrices 6.
 verbatim — including cell qualifiers and footnote caveats — plus the DOC matrix for the
 manual document review cycle, which mirrors the platform's enforced review/approve guards.
 
-Ids are deterministic uuid5 against the same namespace as generate_seed.py, so a re-run
-upserts the same rows and never resets a CDRRMO Head's local edits beyond the seeded text.
+Ids are deterministic uuid5 against the same namespace as generate_seed.py. A re-run updates
+matrix titles only; activities are insert-only, and assignments are seeded only for activities
+that have none, so the CDRRMO Head's edits and removals are never reset.
 Template links point at protocol/workflow ids as uuid5(NS, 'protocol/<CODE>').
 """
 import re
@@ -200,13 +201,22 @@ insert into public.raci_matrices (id,code,title,source_ref,sort) values
 {','.join(mats)}
 on conflict (id) do update set code = excluded.code, title = excluded.title, source_ref = excluded.source_ref, sort = excluded.sort;
 
+-- Activities: insert-only. A re-run adds activities new to Annex 1-F and leaves existing rows,
+-- including any the CDRRMO Head has edited, as they are.
 insert into public.raci_activities (id,matrix_id,activity,note,template_id,sop_ref,sort) values
 {','.join(acts)}
-on conflict (id) do update set matrix_id = excluded.matrix_id, activity = excluded.activity, note = excluded.note, template_id = excluded.template_id, sop_ref = excluded.sop_ref, sort = excluded.sort;
+on conflict do nothing;
 
-insert into public.raci_assignments (id,activity_id,actor,duty,qualifier) values
+-- Assignments: seeded only for an activity that has none yet (a new activity, or a fresh board).
+-- Once an activity has assignments the CDRRMO Head owns them: a re-run neither resets an edited
+-- assignment nor brings back one the Head removed.
+insert into public.raci_assignments (id,activity_id,actor,duty,qualifier)
+select v.id, v.activity_id, v.actor, v.duty, v.qualifier
+  from (values
 {','.join(rows)}
-on conflict (id) do update set activity_id = excluded.activity_id, actor = excluded.actor, duty = excluded.duty, qualifier = excluded.qualifier;
+  ) as v (id, activity_id, actor, duty, qualifier)
+ where not exists (select 1 from public.raci_assignments x where x.activity_id = v.activity_id)
+on conflict do nothing;
 
 commit;
 """

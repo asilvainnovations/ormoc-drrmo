@@ -245,7 +245,11 @@ Then, in the dashboard:
   2. **Reference data.** Run the new part `supabase/seed/parts/37_raci.sql` after part 36 (the `26a–26d` DDRiVE
      parts stay where they are). It seeds MOO Annex 1-F matrices 6.1–6.5 verbatim and the manual document review
      matrix (DOC): 6 matrices, 63 activities, 340 assignments, 16 activities linked to their protocol or workflow.
-     Re-running it is safe and never touches a CDRRMO Head's later edits to other rows.
+     Re-running it is safe: it updates matrix titles only, adds activities new to Annex 1-F, and seeds assignments
+     only for an activity that has none, so the CDRRMO Head's edits and removals stay as they are. (Exception: if the
+     Head removes **every** assignment of an activity, a re-run seeds that activity's Annex 1-F assignments again.)
+     If the pre-review copy of the migration was already run, run the migration again: it adds `app.guard_raci`,
+     and `migration_status.sql` shows `raci_board` as missing until it is there.
   3. **App.** Push with git and redeploy.
      - **Today** shows a RACI board card (activities mapped, Accountable checks outstanding) and a quick action.
      - **/raci** is the board: search by activity, actor, protocol code or SOP; duties are colour-coded

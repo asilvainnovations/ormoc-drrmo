@@ -116,6 +116,58 @@ create policy raci_assignments_delete on public.raci_assignments for delete to a
 grant select on public.raci_assignments to authenticated;
 grant insert, update, delete on public.raci_assignments to authenticated;
 
+-- Refusals in plain words (errcode 42501). An RLS USING clause alone hides the row from a viewer, so an
+-- update or delete "succeeds" on zero rows and the client never hears why. The update/delete policies
+-- therefore admit any active user to the row, and this guard refuses everyone except the CDRRMO Head
+-- or admin (admin only for matrices). WITH CHECK above still holds the role line for updates.
+-- Seeds and the SQL editor run as the table owner and pass, as in app.guard_protocol_template.
+create or replace function app.guard_raci() returns trigger
+language plpgsql security invoker set search_path = public, pg_temp as $$
+begin
+  if current_user not in ('authenticated', 'anon') then
+    return case when tg_op = 'DELETE' then old else new end;
+  end if;
+  if tg_table_name = 'raci_matrices' and tg_op = 'DELETE' then
+    if not app.has_role('admin') then
+      raise exception 'Only an administrator can remove a RACI matrix.' using errcode = '42501';
+    end if;
+  elsif not app.has_any_role(array['cdrrmo_head','admin']::public.app_role[]) then
+    raise exception 'Only the CDRRMO Head changes the RACI board.' using errcode = '42501';
+  end if;
+  return case when tg_op = 'DELETE' then old else new end;
+end $$;
+
+drop policy if exists raci_matrices_update on public.raci_matrices;
+drop policy if exists raci_matrices_delete on public.raci_matrices;
+create policy raci_matrices_update on public.raci_matrices for update to authenticated
+  using (app.is_active_user())
+  with check (app.has_any_role(array['cdrrmo_head','admin']::public.app_role[]));
+create policy raci_matrices_delete on public.raci_matrices for delete to authenticated using (app.is_active_user());
+
+drop policy if exists raci_activities_update on public.raci_activities;
+drop policy if exists raci_activities_delete on public.raci_activities;
+create policy raci_activities_update on public.raci_activities for update to authenticated
+  using (app.is_active_user())
+  with check (app.has_any_role(array['cdrrmo_head','admin']::public.app_role[]));
+create policy raci_activities_delete on public.raci_activities for delete to authenticated using (app.is_active_user());
+
+drop policy if exists raci_assignments_update on public.raci_assignments;
+drop policy if exists raci_assignments_delete on public.raci_assignments;
+create policy raci_assignments_update on public.raci_assignments for update to authenticated
+  using (app.is_active_user())
+  with check (app.has_any_role(array['cdrrmo_head','admin']::public.app_role[]));
+create policy raci_assignments_delete on public.raci_assignments for delete to authenticated using (app.is_active_user());
+
+drop trigger if exists guard_raci on public.raci_matrices;
+create trigger guard_raci before update or delete on public.raci_matrices
+  for each row execute function app.guard_raci();
+drop trigger if exists guard_raci on public.raci_activities;
+create trigger guard_raci before update or delete on public.raci_activities
+  for each row execute function app.guard_raci();
+drop trigger if exists guard_raci on public.raci_assignments;
+create trigger guard_raci before update or delete on public.raci_assignments
+  for each row execute function app.guard_raci();
+
 -- Board view: one denormalized row set for the RACI screen and the protocol/library links.
 drop view if exists public.v_raci_board;
 create view public.v_raci_board with (security_invoker = true) as
