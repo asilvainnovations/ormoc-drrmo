@@ -1,6 +1,6 @@
 # Design system
 
-The platform is used at 2 a.m. in a dark EOC, in sunlight at an evacuation centre, and on low-cost Android phones. Every choice here serves reading speed and the avoidance of mistakes. Decision records: [ADR-007](adr/007-design-system.md) (system) and [ADR-008](adr/008-city-identity.md) (City identity, v1.1).
+Every choice here serves reading speed and the avoidance of mistakes. Decision records: [ADR-007](adr/007-design-system.md) (system) and [ADR-008](adr/008-city-identity.md) (City identity, v1.1).
 
 Sources of truth: `src/styles/tokens.css` (values), `tailwind.config.ts` (names), `src/components/ui.tsx` (primitives). Screens use these. They do not add hex values, arbitrary sizes or local copies of a primitive.
 
