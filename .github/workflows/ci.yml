@@ -79,3 +79,17 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: npm run test:db
+      # ADR-034: the "Load reference data" workflow's script loads the seed over the test database and
+      # verifies it, then repeats the check, so the one-click loader cannot drift from the seed.
+      - name: Reference-data loader runs and is safe to repeat
+        env:
+          PGDATABASE: drrm_test
+        run: bash scripts/load_reference_data.sh && bash scripts/load_reference_data.sh --check-only
+      # scripts/apply_db.sh builds a new database end to end (stub stands in for the Supabase platform here).
+      - name: apply_db.sh builds a new database that passes the SQL suite
+        run: |
+          psql -X -q -d postgres -c "create database apply_db_fresh"
+          psql -X -q -v ON_ERROR_STOP=1 -d apply_db_fresh -f supabase/tests/00_supabase_stub.sql
+          SUPABASE_DB_URL="postgresql://postgres:postgres@localhost:5432/apply_db_fresh" bash scripts/apply_db.sh --operational
+          psql -X -q -v ON_ERROR_STOP=1 -d apply_db_fresh -f supabase/tests/10_rules_and_security.sql
+          SUPABASE_DB_URL="postgresql://postgres:postgres@localhost:5432/apply_db_fresh" bash scripts/apply_db.sh --check-only

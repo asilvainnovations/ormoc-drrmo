@@ -1,0 +1,27 @@
+# ADR-034: One-command database apply — `scripts/apply_db.sh` and the "Load reference data" workflow
+
+Status: Proposed, 13 Nov 2026, by the lead assessor (Alvin M. Silva). For the CDRRMO Head and City IT.
+
+## Context
+
+Reference data (indicators, Manual chapters and annexes, forms, protocols, RACI board) reaches a Supabase project as seed files run in the SQL editor. The editor rejects long scripts, so `scripts/generate_seed.py` splits the 2.7 MB seed into parts of at most about 100 KB and 400 lines. By 1.19.0 that is 41 files to paste in order (parts 01–36, the DDRiVE parts 26a–26d, the RACI part 37), plus a cleanup script and an IAT update. The limit is size, not rows: the Manual text alone is most of the 2.7 MB, so no row-packing would bring it under a few dozen pastes.
+
+The cost showed on 13 Nov 2026. All 29 migrations were applied to production, but its reference data was still at about 1.14.0 (79 documents, 28 templates, 50 forms). Pasting single parts out of order produced foreign-key errors in parts 35, 36 and 37 that looked like defects but were missing earlier parts. On the same day, web uploads put back pre-review copies of parts 35 and 36, which would have failed again on load.
+
+The Supabase CLI cannot run in Bolt (a browser WebContainer cannot start its native binary). The dedicated IPv4 add-on would allow a direct connection but is a paid Pro-plan feature, and MODE stays on free tiers.
+
+## Decision
+
+1. **`scripts/load_reference_data.sh`** loads a project in one run with `psql`: preflight (every migration in `migration_status.sql` must show "applied", or it stops before changing anything), every `supabase/cleanup/*.sql`, every `supabase/seed/parts/*.sql` in file-name order, then `operational/07_iat_v1_7_update.sql` (optional). It ends by checking that every row id in `src/data/reference.json` is in the database (and the RACI board's 6 matrices and 63 activities), and prints a table. It stops at the first error with the SQL error; each file is its own transaction and every file is safe to run again, so the fix is always "correct the cause and run it again". The one-time operational files (baseline responses, evidence, Vault register) are not run.
+2. **`scripts/apply_db.sh`** is the single entry point, from a terminal or from the workflow. It reads `SUPABASE_DB_URL` from the environment or a `SUPABASE_DB_URL=` line in `.env` (git-ignored; read, never executed), refuses the transaction pooler (port 6543) and an unfilled password placeholder, and warns that the direct string is IPv6-only on Free. It applies **only the migrations `migration_status.sql` reports as missing**, in file order: not every migration is safe to run twice (the first creates the `app_role` type), so "run them all again" is not an option. On a new database (no `app` schema) it applies all of them. It then records every applied migration in `supabase_migrations.schema_migrations`, the history the Supabase GitHub integration reads, so the integration and the script never apply the same migration twice; prints the status; and runs the loader. `--operational` adds the one-time operational seeds for a new database, in order, with the IAT update after the baseline it updates. `--check-only` changes nothing; `--no-migrations` loads reference data only. It never runs `supabase/tests/` (the local stub must never touch a Supabase project). It needs `psql`, so it runs from a normal terminal or GitHub Actions, not from Bolt (a browser WebContainer cannot run native programs).
+3. **`.github/workflows/load-reference-data.yml`** runs `apply_db.sh` from the Actions tab (`workflow_dispatch`): target `training` or `production`, a check-only mode that changes nothing, and the IAT update switch. Production loads only from `main` and only when the word `production` is typed in the confirm box; runs on the same target never overlap.
+4. **Connection:** one repository secret per project, `SUPABASE_DB_URL_PRODUCTION` and `SUPABASE_DB_URL_TRAINING`, each the Supabase *Session pooler* connection string. The shared pooler works over IPv4, which GitHub runners need, at no cost. The script connects as the database owner, exactly like the SQL editor, so seed writes pass the `app.guard_*` triggers as they always have.
+5. **CI keeps it working:** the SQL suite job runs the loader over the test database after `test:db` (then `--check-only`), and builds a new database with `apply_db.sh --operational` that must pass the full SQL suite, so the script, the seed and the verification cannot drift apart.
+6. **Migrations in the workflow are opt-in** (the "Also apply missing migrations" box, off by default), because the Supabase GitHub integration may apply them on merge once its history is recorded. Either way the loader refuses to load reference data until every migration is applied.
+
+## Consequences
+
+- A release's database step becomes: apply the migration (if any), then run "Load reference data" on training, check it, then on production. The SQL-editor route in DEPLOY.md §3 still works and stays documented as the fallback.
+- The repository secrets give full database access to anyone who can edit workflows on `main`. Only the City's repository administrators hold them; rotate the database password at turnover (DEPLOY.md §8) and update the secrets.
+- GitHub Actions minutes are free for this use (a run takes about a minute).
+- The check-only mode doubles as an audit: it shows, without changing anything, whether a project's reference data matches the release on `main`.
