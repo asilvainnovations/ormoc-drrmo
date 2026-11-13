@@ -130,6 +130,8 @@ export class DrrmDB extends Dexie {
   raci_matrices!: Table<T.RaciMatrix, string>;
   raci_activities!: Table<T.RaciActivity, string>;
   raci_assignments!: Table<T.RaciAssignment, string>;
+  eoc_cap_items!: Table<T.EocCapItem, string>;
+  eoc_cap_responses!: Table<T.EocCapResponse, string>;
 
   constructor(name = 'ormoc-drrm-ops') {
     super(name);
@@ -220,6 +222,11 @@ export class DrrmDB extends Dexie {
       raci_matrices: 'id, code, sort',
       raci_activities: 'id, matrix_id, template_id, [matrix_id+sort]',
       raci_assignments: 'id, activity_id, duty',
+    });
+    // v8 (1.20.0): EOC capability checklist mapped to IAT Part B (ADR-035).
+    this.version(8).stores({
+      eoc_cap_items: 'id, section, sort',
+      eoc_cap_responses: 'id, cycle_id, item_id, [cycle_id+site]',
     });
   }
 }

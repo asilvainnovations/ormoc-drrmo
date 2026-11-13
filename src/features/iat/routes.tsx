@@ -9,6 +9,7 @@ import { ActionPlanPage } from './ActionPlanPage';
 import { ValidationPage } from './ValidationPage';
 import { ValidationSheets } from './ValidationSheets';
 import { ResultsBoard } from './ResultsBoard';
+import { EocCapabilityPage } from './EocCapabilityPage';
 
 // The map library is large; it loads only when Hazard maps opens.
 const HazardMapPage = lazy(() => import('@/features/eoc/map/HazardMapPage'));
@@ -25,6 +26,7 @@ export default function AssessRoutes() {
       <Route path=":cycleId/validate" element={<ValidationPage />} />
       <Route path=":cycleId/validate/sheets" element={<ValidationSheets />} />
       <Route path=":cycleId/validate/board" element={<ResultsBoard />} />
+      <Route path=":cycleId/eoc-capability" element={<EocCapabilityPage />} />
     </Routes>
   );
 }

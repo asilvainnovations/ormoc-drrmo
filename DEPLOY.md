@@ -251,6 +251,23 @@ Then, in the dashboard:
        vulnerability and priority with "—" for fields not yet assessed;
      - the SQL suite (`npm run test:db`) passes its new DDRiVE checks.
 
+- **To 1.20.0** (14 November 2026), EOC capability checklist mapped to IAT Part B (ADR-035). One migration (0030), one new
+  seed part, one new operational pre-fill. Apply 1.19.0 first.
+  1. **Migration.** Run `supabase/migrations/20261114003000_eoc_capability.sql` (or let `scripts/apply_db.sh` / the Supabase
+     GitHub integration apply it). It adds `eoc_cap_items`, `eoc_cap_responses`, the guard `app.guard_eoc_cap_response`
+     and the view `v_eoc_cap_domains`. `migration_status.sql` should then show 30 rows, all applied.
+  2. **Reference data and pre-fill.** Run `supabase/seed/parts/38_eoc_capability.sql` (the 154 checklist items), then
+     `supabase/seed/operational/08a_eoc_capability_prefill.sql` and `08b_…` (the primary-EOC answers for the 2026
+     baseline cycle, **labelled pre-filled from IAT v1-7, not observed**). The "Load reference data" workflow and
+     `scripts/apply_db.sh` run all three. Re-running is safe: the pre-fill refreshes only answers that are still
+     pre-filled drafts and never touches an observed or validated one.
+  3. **App.** Push and redeploy. Check: Assess → the 2026 cycle → **EOC capability checklist** shows 154 items, the
+     B1–B7 table reads "pre-filled 148, observed 0" for the primary EOC (6 items have no IAT counterpart and start
+     Not assessed), and the alternate EOC is all Not assessed. An assessor saving an item turns it to observed;
+     the CDRRMO Head can then validate it (online).
+  4. **Workshop use.** Walk the EOC with the checklist and confirm or change each pre-filled answer on site, linking
+     the Vault document where there is one. Pre-filled answers are a crosswalk from the IAT, not evidence.
+
 - **To 1.19.0** (13 November 2026), interactive RACI board (ADR-033). One migration (0029), one new seed part.
   Apply 1.18.0 first.
   1. **Migration.** Run `supabase/migrations/20261113002900_raci_board.sql`. It adds `raci_matrices`,

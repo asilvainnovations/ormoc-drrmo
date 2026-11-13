@@ -1,5 +1,5 @@
 import { useParams } from 'react-router-dom';
-import { Download, ListTodo, ShieldCheck } from 'lucide-react';
+import { Download, ListTodo, ShieldCheck, Building2 } from 'lucide-react';
 import { useAuth } from '@/lib/auth';
 import { save } from '@/lib/store';
 import { Badge, Button, ButtonLink, Loading, Meter, Notice, PageHeader, Section } from '@/components/ui';
@@ -77,6 +77,7 @@ export function CycleOverview() {
         actions={<>
           <ButtonLink tip="The validation workshop: the queue of scores to confirm or revise, printable sheets and the results board" to={`/assess/${cycle.id}/validate`} icon={ShieldCheck}>Validation workshop</ButtonLink>
           <ButtonLink tip="The improvement plan: every gap ranked by priority, with owners and dates" to={`/assess/${cycle.id}/actions`} icon={ListTodo}>Action plan</ButtonLink>
+          <ButtonLink tip="The OCD EOC Capability Assessment Checklist for the primary and alternate EOC, mapped to IAT Part B" to={`/assess/${cycle.id}/eoc-capability`} icon={Building2}>EOC capability checklist</ButtonLink>
           <Button tip="Download all scores, evidence counts and gaps as a spreadsheet file" variant="secondary" icon={Download} onClick={exportCsv}>Export CSV</Button>
           {canAdvance && <Button tip="Move the cycle to its next stage" onClick={advance}>{CYCLE_NEXT_LABEL[cycle.status]}</Button>}
         </>} />

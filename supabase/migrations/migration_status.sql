@@ -57,6 +57,8 @@ from (values
                                                       where table_schema = 'public' and table_name = 'camp_reports')),
   -- 1.19.0: checks the guard, not just the tables, so a database that ran the pre-review copy shows false.
   ('20261113002900_raci_board',               exists (select 1 from pg_proc
-                                                      where proname = 'guard_raci' and pronamespace = 'app'::regnamespace))
+                                                      where proname = 'guard_raci' and pronamespace = 'app'::regnamespace)),
+  ('20261114003000_eoc_capability',           exists (select 1 from pg_proc
+                                                      where proname = 'guard_eoc_cap_response' and pronamespace = 'app'::regnamespace))
 ) as m(migration, present)
 order by m.migration;
