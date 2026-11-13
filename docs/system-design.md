@@ -78,6 +78,9 @@ There is no custom application server. The rules live in SQL so they hold for ev
 | Document Vault | `/vault` | `vault_documents` (+ private `vault` bucket) | Register of laws, guidelines, City issuances, plans and records; each linked to indicators; Document Review checklist with request list download; reference catalogue. Assessors, validators, admin and CDRRMO staff only. Documents are superseded, never deleted |
 | RACI board (1.19) | `/raci` | `raci_matrices`, `raci_activities`, `raci_assignments` (+ `v_raci_board`) | Interactive RACI board from the Manual's RACI matrices — Annex 1-F and Chapters 1-10 (ADR-033): search by activity, actor, protocol code or SOP; colour-coded duties (R navy, A dark green, C gold, I white); activities without exactly one Accountable carry a warning (Annex 1-F says "normally one", so it is a flag, not a rule). Sixty activities link to their protocol or workflow; the protocol detail and the Library document page link back. The CDRRMO Head adjusts assignments online (ADR-006); reads stay offline |
 | EOC capability assessment (1.20) | `/eoc-assessment` | `eoc_assessment_items`, `eoc_assessment_runs`, `eoc_assessment_responses` (+ `v_eoc_assessment_board`) | The 154-item EOC Capability Assessment Checklist (OCD/NDRRMC TWG Dec 2017) in 15 sections, answered from the IAT v1-7 B_EOC evidence (ADR-035): the item status derives in SQL from the weakest mapped indicator score (`app.eoc_assessment_status`, mirrored in `src/domain/eoc_assessment.ts` under a parity test); summary counts; item drawer with evidence, gap, recommended action and tool links (SOP/Protocol/Workflow/Form) edited online by the assessment team; the CDRRMO Head validates and locks each run (ADR-006). Links out to DDRiVE for risk — never re-scores |
+| Indicator links and training runs (1.21) | indicator pages, `/eoc-assessment`, Tools | `iat_indicator_links`, `iat_workshop_flags`, `training_runs` (+ `evidence.training_run_id`) | "Where this is done in MODE": a seeded, Head-maintained map from each B indicator to its screen, Tool, protocol or workflow (ADR-036), plus the workbook's workshop flags as content-only chips. Tool runs save as server-side training records (positions and counts only, RA 10173) and file as IAT evidence for B7.2–B7.4 and B2.7 — never changing a score (ADR-037) |
+| SitRep DILG VIII (1.21) | `/eoc/sitreps`, `/eoc/barangays` | `sitreps` (harmonized fields), `sitrep_cutoffs` | DILG VIII report types and fields, Head-editable reporting times by alert level with a late flag on the barangay view, and client-side Excel export in the DILG VIII layout; numbering and locking unchanged (ADR-038) |
+| Resource inventory and DDRiVE decisions (1.21) | `/eoc/resources`, `/eoc/liaison`, `/eoc` | `resources` (existing), `ddrive_*` | Read-first inventory with online edits by the operations team as the table's RLS already allows; DDRiVE ranks silent barangays on the liaison desk and shows the five priority barangays on the Board — decision support, never a trigger (ADR-039) |
 | Settings | `/settings` | `profiles`, `user_roles`, `barangays`, `client_errors` | Sync status and conflict review; appearance; users and roles (admin, online); barangay list import (PSGC CSV); error reports (admin, online); interface components gallery; about and privacy |
 
 ## 5. Data model (summary)
@@ -257,3 +260,21 @@ and validation go online only through `updateOnline` with PT409 conflict handlin
 module links out to DDRiVE for risk and never re-scores. Seed: `scripts/eoc_assessment_seed.py` →
 `supabase/seed/parts/38_eoc_assessment.sql` (reads the accomplished workbook at generation time
 only; deterministic uuid5 ids; insert-only; the one baseline run `IAT v1-7 (Oct 2026)` stays a draft).
+
+## Indicator links, training runs, SitRep DILG VIII, resources and DDRiVE (1.21, ADR-036..039)
+
+From the assessor's EOC-module review (14 Nov 2026, for the 1-4 December validation workshop).
+`iat_indicator_links` is the seeded "Where this is done in MODE" map (81 links over 42 B indicators;
+B3.3 has none because the platform itself, working offline, is the evidence), shown on the Assess
+indicator pages and on the capability board via the items' `iat_links`; `iat_workshop_flags` carries
+the workbook's seven workshop flags as content-only chips. `training_runs` records a Tool run
+(positions and counts ONLY — never personal names, RA 10173) and the assessment team files it as
+evidence (`evidence.training_run_id`) for B7.2-B7.4 and B2.7 through the normal evidence flow —
+never a score. `sitreps` gains the DILG VIII harmonized fields (report type, incident type, damaged
+houses, lifelines, assistance) and `sitrep_cutoffs` the Head-editable reporting times by alert level
+(DILG VIII SOP Table 3); the Barangays page flags late reports and the editor exports the DILG VIII
+layout to Excel (`src/lib/xlsx.ts`, built on fflate). The resource inventory screen
+(`/eoc/resources`) is read-first over the existing table with online edits as its RLS allows. DDRiVE
+ranks silent barangays on the Barangay liaison desk and shows the five priority barangays on the
+EOC Board — decision support, never a trigger. Seed: `scripts/indicator_links_seed.py` →
+`supabase/seed/parts/39_indicator_links.sql` (deterministic uuid5 ids; insert-only).
