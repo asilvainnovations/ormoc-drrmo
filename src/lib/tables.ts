@@ -101,13 +101,13 @@ export const TABLES: TableConfig[] = [
   // validation are authority actions sent online only (updateOnline in features/eoc-assessment).
   { name: 'eoc_assessment_items', pk: 'id', cursor: 'updated_at', write: 'none' },
   { name: 'eoc_assessment_runs', pk: 'id', cursor: 'updated_at', write: 'none' },
-  { name: 'eoc_assessment_responses', pk: 'id', cursor: 'updated_at', write: 'none',
-    omit: [...STAMPS, 'provenance', 'state', 'validated_by', 'validated_at', 'updated_by'] },
-  // 1.20.0 (ADR-035): EOC capability checklist. Items are reference data; answers are captured offline by the
-  // assessment team. Provenance, state and who/when are set by the server; validation is online (Head only).
-  { name: 'eoc_cap_items', pk: 'id', cursor: 'updated_at', write: 'none' },
-  { name: 'eoc_cap_responses', pk: 'id', cursor: 'updated_at', write: 'upsert',
-    omit: [...STAMPS, 'provenance', 'state', 'assessed_by', 'assessed_at', 'validated_by', 'validated_at'] },
+  { name: 'eoc_assessment_responses', pk: 'id', cursor: 'updated_at', write: 'none' },
+  // 1.21.0 (ADR-036/037/038/039): reference reads offline; writes are authority actions online only.
+  { name: 'iat_indicator_links', pk: 'id', cursor: 'updated_at', write: 'none' },
+  { name: 'iat_workshop_flags', pk: 'indicator_id', cursor: 'updated_at', write: 'none' },
+  { name: 'training_runs', pk: 'id', cursor: 'updated_at', write: 'none' },
+  { name: 'resources', pk: 'id', cursor: 'updated_at', write: 'none' },
+  { name: 'sitrep_cutoffs', pk: 'id', cursor: 'updated_at', write: 'none' },
 ];
 
 export const TABLE = Object.fromEntries(TABLES.map((t) => [t.name, t])) as Record<string, TableConfig>;

@@ -134,6 +134,12 @@ export class DrrmDB extends Dexie {
   eoc_assessment_items!: Table<T.EocAssessmentItem, string>;
   eoc_assessment_runs!: Table<T.EocAssessmentRun, string>;
   eoc_assessment_responses!: Table<T.EocAssessmentResponse, string>;
+  // 1.21.0: indicator links, workshop flags, training runs (ADR-036/037); resources + cut-offs (ADR-038/039)
+  iat_indicator_links!: Table<T.IatIndicatorLink, string>;
+  iat_workshop_flags!: Table<T.IatWorkshopFlag, string>;
+  training_runs!: Table<T.TrainingRun, string>;
+  resources!: Table<T.Resource, string>;
+  sitrep_cutoffs!: Table<T.SitrepCutoff, string>;
 
   constructor(name = 'ormoc-drrm-ops') {
     super(name);
@@ -229,11 +235,15 @@ export class DrrmDB extends Dexie {
     this.version(8).stores({
       eoc_assessment_items: 'id, section, [section_sort+item_no]',
       eoc_assessment_runs: 'id, status, created_at',
-      eoc_assessment_responses: 'id, run_id, item_id, [run_id+item_id], [run_id+site], status',
-    // v8 (1.20.0): EOC capability checklist mapped to IAT Part B (ADR-035).
-    this.version(8).stores({
-      eoc_cap_items: 'id, section, sort',
-      eoc_cap_responses: 'id, cycle_id, item_id, [cycle_id+site]',
+      eoc_assessment_responses: 'id, run_id, item_id, [run_id+item_id], status',
+    });
+    // v9 (1.21.0): indicator links, workshop flags, training runs (ADR-036/037), resources and cut-offs (ADR-038/039).
+    this.version(9).stores({
+      iat_indicator_links: 'id, indicator_id, target_kind',
+      iat_workshop_flags: 'indicator_id',
+      training_runs: 'id, tool, run_at, filed_to_indicator',
+      resources: 'id, category, owner_office_id',
+      sitrep_cutoffs: 'id, alert_level',
     });
   }
 }
