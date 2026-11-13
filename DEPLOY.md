@@ -81,7 +81,7 @@ There are two ways to do this. Both give the same result.
 
 ### Option A: Supabase SQL editor (no tools to install)
 
-The SQL editor rejects long scripts, so the reference data comes in parts in `supabase/seed/parts/` (eighteen at present). Each part is under 400 lines; long manual text is written on a single line.
+The SQL editor rejects long scripts, so the reference data comes in parts in `supabase/seed/parts/` (forty-two at present). Each part is under 400 lines; long manual text is written on a single line.
 
 1. **Migrations.** In SQL Editor → New query, paste and run each file in `supabase/migrations/` in name order, one at a time (`…000100_core.sql` first, `20261106001900_geo_cop.sql` last). Wait for "Success" before the next. Run each migration once only.
 2. **Reference data.** Paste and run `supabase/seed/parts/01_seed.sql`, then `02_seed.sql`, and so on to the last part. Use the parts, not `supabase/seed/seed.sql`, which is the same data in one file for `psql`.
@@ -146,7 +146,7 @@ Then, in the dashboard:
 
 **Supabase's Migrations page (Database → Migrations)** lists only what is recorded in `supabase_migrations.schema_migrations`. Migrations applied in the SQL editor are not recorded there, so the page can look empty while every migration is in place (check with `migration_status.sql`). `scripts/apply_db.sh` and the "Load reference data" workflow record them on every run that is not check-only.
 
-**One-click loading (1.19.0+, ADR-034).** Instead of pasting the seed files, use GitHub → **Actions → Load reference data → Run workflow**. It checks that every migration is applied, runs the cleanup scripts, every part in `supabase/seed/parts/` in order (including the DDRiVE `26a`–`26d` parts and `37_raci.sql`) and the IAT update, then verifies that every reference row is in the database and shows a table of the results. It stops at the first error; running it again is always safe.
+**One-click loading (1.19.0+, ADR-034).** Instead of pasting the seed files, use GitHub → **Actions → Load reference data → Run workflow**. It checks that every migration is applied, runs the cleanup scripts, every part in `supabase/seed/parts/` in order (including the DDRiVE `26a`–`26d` parts, `37_raci.sql` and `38_eoc_assessment.sql`) and the IAT update, then verifies that every reference row is in the database and shows a table of the results. It stops at the first error; running it again is always safe.
 - **Set up once:** add two repository secrets (Settings → Secrets and variables → Actions): `SUPABASE_DB_URL_PRODUCTION` and `SUPABASE_DB_URL_TRAINING`, each the **Session pooler** connection string from Supabase Dashboard → Connect, with the database password filled in. The pooler works over IPv4 and is free; no add-on is needed. Only the City's repository administrators should hold these.
 - **Each release:** apply the release's migration first (the loader refuses to run until every migration shows "applied"). Run the workflow on **training**, check it, then on **production**: production runs only from `main` and only when you type `production` in the confirm box. Tick **Check only** to see what is missing without changing anything.
 - **From a terminal instead** (Windows, macOS or Linux with `psql`; not Bolt, which cannot run native programs): `export SUPABASE_DB_URL='<Session pooler string>'` (or put a `SUPABASE_DB_URL=` line in `.env`, which git ignores), then `scripts/apply_db.sh`. It applies only the missing migrations (applied ones are never re-run), records them in Supabase's migration history, then loads and verifies the reference data. `--check-only` changes nothing; `--operational` adds the one-time operational seeds for a **new** database. It refuses the transaction pooler (port 6543).
@@ -297,6 +297,36 @@ Then, in the dashboard:
        and need a connection (ADR-006).
   4. Check: `/raci` opens with twenty-one matrices (Annex 1-F, Chapters 1-10, DOC); searching `PR-PDRA` shows "Convene PDRA" with CDRRMO A/R; a viewer
      sees no Add or edit controls; the Head's edit appears after redeploy only when online.
+
+- **To 1.20.0** (14 November 2026), EOC Capability Assessment board (ADR-035). One migration (0030), one new seed
+  part. Apply 1.19.0 first.
+  1. **Migration.** Run `supabase/migrations/20261114003000_eoc_assessment.sql`. It adds `eoc_assessment_items`,
+     `eoc_assessment_runs` and `eoc_assessment_responses`, the `app.eoc_assessment_status` derivation rule, the
+     `app.guard_eoc_assessment` guard (assessment team edits responses; only the CDRRMO Head or admin validates a
+     run; validated runs and their responses are locked; responses are corrected, never removed) and the
+     `v_eoc_assessment_board` view. Then run `supabase/migrations/migration_status.sql`: expect 30 rows, all applied.
+  2. **Reference data.** Run the new parts `supabase/seed/parts/38a_eoc_assessment.sql`, `38b_…` and `38c_…` after
+     part 37, in order (each is under the SQL editor's ~100 KB limit; the one-click loader and `scripts/apply_db.sh`
+     pick them up and verify all 154 items). They seed the accomplished EOC Capability Assessment Checklist
+     (OCD/NDRRMC TWG, Dec 2017): 154 items in 15 sections, one baseline run `IAT v1-7 (Oct 2026)` — always a draft —
+     and 154 primary-EOC answers **pre-filled from the IAT v1-7 crosswalk** (59 Met, 45 Partially met, 36 Largely
+     unmet, 8 Not met, 6 No direct IAT indicator), stored as `prefilled_iat`, not as observations. Re-running is
+     safe: answers are seeded only where none exists, so the assessment team's work stays.
+     If the pre-review copy of this migration and its single part `38_eoc_assessment.sql` were already run,
+     `migration_status.sql` shows the migration as missing: run the migration again (it upgrades in place and labels
+     untouched seeded answers as pre-filled), then delete the old `38_eoc_assessment.sql` from your parts folder.
+  3. **App.** Push with git and redeploy.
+     - **Today** shows an EOC capability card (run, status counts, share met) and **/eoc-assessment** is the board:
+       the 15 sections collapsible, status chips (Met green, Partially met amber, Largely unmet orange, Not met red,
+       No direct IAT indicator grey), an item drawer for evidence / gap / recommended action and tool links.
+     - A **Site** switch shows the primary or the alternate EOC. The **assessment team** (assessor, validator, EOC
+       Manager, EOC staff, CDRRMO Head, admin) confirms or changes each pre-filled answer on site, online; saving
+       makes it observed. The **CDRRMO Head** (or admin) validates or reopens observed answers one by one, and the
+       **Validate run** action works only when no answer is still pre-filled; a validated run is locked for the
+       record. The board links out to DDRiVE Risk and never re-scores; nothing here changes an IAT score.
+  4. Check: `/eoc-assessment` opens with fifteen sections and 154 items; the summary reads 59 / 45 / 36 / 8 / 6 and
+     "0 observed · 154 pre-filled from the IAT"; the alternate EOC reads all Not assessed; a viewer sees no edit or
+     validate controls; **Validate run** stays disabled until every answer is confirmed on site.
 
 - **To 1.18.0** (12 November 2026), Chapters 5–8 published (ADR-032). No migration; one cleanup script before the
   seed. Apply 1.17.0 first.

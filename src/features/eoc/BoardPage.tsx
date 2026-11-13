@@ -1,5 +1,6 @@
 import { tip } from '@/components/Tooltip';
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
 import clsx from 'clsx';
 import { Send } from 'lucide-react';
@@ -124,6 +125,14 @@ export function BoardPage() {
             <List><ListRow tip="Open the latest situation report" to={`/eoc/sitreps/${data.sitrep.id}`} title={data.sitrep.seq ? `SitRep No. ${data.sitrep.seq}` : 'Draft SitRep'}
               meta={`Period to ${fmtDateTime(data.sitrep.period_end)}`} trailing={<Badge tone={data.sitrep.status === 'approved' ? 'ok' : data.sitrep.status === 'submitted' ? 'info' : 'neutral'}>{SITREP_STATUS[data.sitrep.status]}</Badge>} /></List>
           ) : <p className="text-muted">No SitRep yet.</p>}
+        </Section>
+
+        <Section title="EOC capability" action={<TextLink tip="Open the EOC capability assessment board" size="sm" to="/eoc-assessment">Capability board</TextLink>}>
+          {/* 1.20 (ADR-035): cross-link only — the capability board lives at /eoc-assessment. */}
+          <p className="text-sm text-muted">
+            How capable is this EOC itself? The <Link to="/eoc-assessment" {...tip('Open the 154-item capability checklist')} className="font-semibold text-info underline">EOC capability assessment</Link> tracks
+            the 154-item OCD/NDRRMC checklist against the IAT B_EOC evidence. The risk picture stays with DDRiVE on the Risk tab.
+          </p>
         </Section>
 
         <EocLocation />

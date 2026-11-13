@@ -130,8 +130,10 @@ export class DrrmDB extends Dexie {
   raci_matrices!: Table<T.RaciMatrix, string>;
   raci_activities!: Table<T.RaciActivity, string>;
   raci_assignments!: Table<T.RaciAssignment, string>;
-  eoc_cap_items!: Table<T.EocCapItem, string>;
-  eoc_cap_responses!: Table<T.EocCapResponse, string>;
+  // EOC capability assessment (1.20.0, ADR-035)
+  eoc_assessment_items!: Table<T.EocAssessmentItem, string>;
+  eoc_assessment_runs!: Table<T.EocAssessmentRun, string>;
+  eoc_assessment_responses!: Table<T.EocAssessmentResponse, string>;
 
   constructor(name = 'ormoc-drrm-ops') {
     super(name);
@@ -223,6 +225,11 @@ export class DrrmDB extends Dexie {
       raci_activities: 'id, matrix_id, template_id, [matrix_id+sort]',
       raci_assignments: 'id, activity_id, duty',
     });
+    // v8 (1.20.0): EOC capability assessment board (ADR-035).
+    this.version(8).stores({
+      eoc_assessment_items: 'id, section, [section_sort+item_no]',
+      eoc_assessment_runs: 'id, status, created_at',
+      eoc_assessment_responses: 'id, run_id, item_id, [run_id+item_id], [run_id+site], status',
     // v8 (1.20.0): EOC capability checklist mapped to IAT Part B (ADR-035).
     this.version(8).stores({
       eoc_cap_items: 'id, section, sort',

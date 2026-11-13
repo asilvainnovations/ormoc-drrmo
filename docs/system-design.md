@@ -77,6 +77,7 @@ There is no custom application server. The rules live in SQL so they hold for ev
 | Anticipatory action | `/eoc/aa` | `pdra_sessions`, `declarations`, `aa_actions`, `aa_fund_years`, `aa_disbursements`, `aa_rules` | PDRA decision; declaration timeline per IRR; 29-item MODE checklist derived from the ten sections of IRR Rule IV (the IRR sets no count); fund cap and tranche guard |
 | Document Vault | `/vault` | `vault_documents` (+ private `vault` bucket) | Register of laws, guidelines, City issuances, plans and records; each linked to indicators; Document Review checklist with request list download; reference catalogue. Assessors, validators, admin and CDRRMO staff only. Documents are superseded, never deleted |
 | RACI board (1.19) | `/raci` | `raci_matrices`, `raci_activities`, `raci_assignments` (+ `v_raci_board`) | Interactive RACI board from the Manual's RACI matrices — Annex 1-F and Chapters 1-10 (ADR-033): search by activity, actor, protocol code or SOP; colour-coded duties (R navy, A dark green, C gold, I white); activities without exactly one Accountable carry a warning (Annex 1-F says "normally one", so it is a flag, not a rule). Sixty activities link to their protocol or workflow; the protocol detail and the Library document page link back. The CDRRMO Head adjusts assignments online (ADR-006); reads stay offline |
+| EOC capability assessment (1.20) | `/eoc-assessment` | `eoc_assessment_items`, `eoc_assessment_runs`, `eoc_assessment_responses` (+ `v_eoc_assessment_board`) | The 154-item EOC Capability Assessment Checklist (OCD/NDRRMC TWG Dec 2017) in 15 sections, answered from the IAT v1-7 B_EOC evidence (ADR-035): the item status derives in SQL from the weakest mapped indicator score (`app.eoc_assessment_status`, mirrored in `src/domain/eoc_assessment.ts` under a parity test); summary counts; item drawer with evidence, gap, recommended action and tool links (SOP/Protocol/Workflow/Form) edited online by the assessment team; the CDRRMO Head validates and locks each run (ADR-006). Links out to DDRiVE for risk — never re-scores |
 | Settings | `/settings` | `profiles`, `user_roles`, `barangays`, `client_errors` | Sync status and conflict review; appearance; users and roles (admin, online); barangay list import (PSGC CSV); error reports (admin, online); interface components gallery; about and privacy |
 
 ## 5. Data model (summary)
@@ -238,3 +239,21 @@ names (RA 10173). `src/features/raci/raci.ts` assembles and searches the board f
 protocols (`raci_activities.template_id`) and is linked back from the protocol SOP-control tab, the Library
 document page and the Today dashboard card. Seed: `scripts/raci_seed.py` → `supabase/seed/parts/37_raci.sql`
 (deterministic uuid5 ids; re-runs upsert the same rows).
+
+## EOC capability assessment (1.20, ADR-035)
+
+`eoc_assessment_items` / `eoc_assessment_runs` / `eoc_assessment_responses` (migration
+`20261114003000_eoc_assessment.sql`) store the 154-item EOC Capability Assessment Checklist
+(OCD/NDRRMC TWG Dec 2017, FEMA-derived) and the accomplished baseline: each item maps to the IAT v1-7
+B_EOC indicators (`iat_links`), and its status derives from the weakest mapped indicator score —
+the rule lives in SQL (`app.eoc_assessment_status`), is mirrored in `src/domain/eoc_assessment.ts`
+and locked by a parity test (ADR-005). Runs are drafts until the CDRRMO Head validates them; the
+guard `app.guard_eoc_assessment` stamps and locks validated runs and their responses (approved
+records are immutable), refuses non-team writes in plain words (42501), and refuses deletes —
+responses are corrected, never removed. `tool_links` is a JSON array of `{code,title}` display
+links to the SOP, Protocol, Workflow or Form that closes the gap (controlled vocabulary), like the
+RACI template links. The board (`src/features/eoc-assessment/`) reads from Dexie (ADR-003); edits
+and validation go online only through `updateOnline` with PT409 conflict handling (ADR-006). The
+module links out to DDRiVE for risk and never re-scores. Seed: `scripts/eoc_assessment_seed.py` →
+`supabase/seed/parts/38_eoc_assessment.sql` (reads the accomplished workbook at generation time
+only; deterministic uuid5 ids; insert-only; the one baseline run `IAT v1-7 (Oct 2026)` stays a draft).

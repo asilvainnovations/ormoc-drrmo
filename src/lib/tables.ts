@@ -97,6 +97,12 @@ export const TABLES: TableConfig[] = [
   { name: 'raci_matrices', pk: 'id', cursor: 'updated_at', write: 'none' },
   { name: 'raci_activities', pk: 'id', cursor: 'updated_at', write: 'none' },
   { name: 'raci_assignments', pk: 'id', cursor: 'updated_at', write: 'none' },
+  // EOC capability assessment (1.20.0, ADR-035): reads stay offline; response edits and run
+  // validation are authority actions sent online only (updateOnline in features/eoc-assessment).
+  { name: 'eoc_assessment_items', pk: 'id', cursor: 'updated_at', write: 'none' },
+  { name: 'eoc_assessment_runs', pk: 'id', cursor: 'updated_at', write: 'none' },
+  { name: 'eoc_assessment_responses', pk: 'id', cursor: 'updated_at', write: 'none',
+    omit: [...STAMPS, 'provenance', 'state', 'validated_by', 'validated_at', 'updated_by'] },
   // 1.20.0 (ADR-035): EOC capability checklist. Items are reference data; answers are captured offline by the
   // assessment team. Provenance, state and who/when are set by the server; validation is online (Head only).
   { name: 'eoc_cap_items', pk: 'id', cursor: 'updated_at', write: 'none' },

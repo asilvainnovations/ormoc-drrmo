@@ -4,7 +4,7 @@
 # Replaces pasting 40+ files into the Supabase SQL editor. In order, and stopping at the first error:
 #   1. preflight   connect; every migration in migration_status.sql must show "applied"
 #   2. cleanup     supabase/cleanup/*.sql (release cleanup scripts; each is safe to run again)
-#   3. seed        supabase/seed/parts/*.sql in file-name order (01..26, 26a..26d, 27.., 37_raci)
+#   3. seed        supabase/seed/parts/*.sql in file-name order (01..26, 26a..26d, 27.., 37_raci, 38a-38c_eoc_assessment)
 #   4. IAT update  supabase/seed/operational/07_iat_v1_7_update.sql (safe to run again; skip with --no-iat-update)
 #                  and the EOC capability pre-fill 08*_eoc_capability_prefill.sql (1.20.0; refreshes only answers that
 #                  are still pre-filled drafts, never an observed or validated one)
@@ -118,6 +118,15 @@ for table in ('raci_matrices', 'raci_activities'):
     parts.append(f"select {q(table)}, {len(ids)}, (select count(*) from public.{table}), "
                  f"(select count(*) from (values {vals}) v(id) where not exists "
                  f"(select 1 from public.{table} t where t.id::text = v.id)), true")
+# EOC capability assessment: item ids come from seed part 38 (scripts/eoc_assessment_seed.py);
+# each tuple starts with its id, and every seeded item must be in the database.
+eoc = open('supabase/seed/parts/38a_eoc_assessment.sql', encoding='utf-8').read()
+block = re.search(r'insert into public\.eoc_assessment_items \(id,[^)]*\) values\n(.*?)\non conflict', eoc, re.S).group(1)
+ids = sorted(set(re.findall(r"\('([0-9a-f-]{36})'::uuid", block)))
+vals = ','.join(f'({q(i)})' for i in ids)
+parts.append(f"select 'eoc_assessment_items', {len(ids)}, (select count(*) from public.eoc_assessment_items), "
+             f"(select count(*) from (values {vals}) v(id) where not exists "
+             f"(select 1 from public.eoc_assessment_items t where t.id::text = v.id)), true")
 # EOC capability checklist items come from seed part 38 (scripts/eoc_capability_seed.py).
 cap = open('supabase/seed/parts/38_eoc_capability.sql', encoding='utf-8').read()
 block = re.search(r'insert into public\.eoc_cap_items \(id,[^)]*\) values\n(.*?)\non conflict', cap, re.S).group(1)
