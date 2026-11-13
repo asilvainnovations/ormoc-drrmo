@@ -21,11 +21,13 @@ export function deriveStatus(scores: ReadonlyArray<number | null | undefined>): 
 }
 
 /** Statuses in severity order (best first), for summary counts and legends. */
-export const STATUS_ORDER: EocAssessmentStatus[] = ['met', 'partially_met', 'largely_unmet', 'not_met', 'no_direct_indicator'];
+export const STATUS_ORDER: EocAssessmentStatus[] = ['met', 'partially_met', 'largely_unmet', 'not_met', 'not_applicable', 'not_assessed', 'no_direct_indicator'];
+/** Statuses a person can record on site (no_direct_indicator is a pre-fill value only). */
+export const OBSERVED_STATUSES: EocAssessmentStatus[] = ['met', 'partially_met', 'largely_unmet', 'not_met', 'not_applicable', 'not_assessed'];
 
 /** Count responses per status, in STATUS_ORDER, including the zeros. */
 export function statusCounts(statuses: ReadonlyArray<EocAssessmentStatus>): Record<EocAssessmentStatus, number> {
-  const counts: Record<EocAssessmentStatus, number> = { met: 0, partially_met: 0, largely_unmet: 0, not_met: 0, no_direct_indicator: 0 };
+  const counts: Record<EocAssessmentStatus, number> = { met: 0, partially_met: 0, largely_unmet: 0, not_met: 0, not_applicable: 0, not_assessed: 0, no_direct_indicator: 0 };
   for (const s of statuses) counts[s] += 1;
   return counts;
 }

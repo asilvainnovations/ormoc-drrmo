@@ -101,7 +101,8 @@ export const TABLES: TableConfig[] = [
   // validation are authority actions sent online only (updateOnline in features/eoc-assessment).
   { name: 'eoc_assessment_items', pk: 'id', cursor: 'updated_at', write: 'none' },
   { name: 'eoc_assessment_runs', pk: 'id', cursor: 'updated_at', write: 'none' },
-  { name: 'eoc_assessment_responses', pk: 'id', cursor: 'updated_at', write: 'none' },
+  { name: 'eoc_assessment_responses', pk: 'id', cursor: 'updated_at', write: 'none',
+    omit: [...STAMPS, 'provenance', 'state', 'validated_by', 'validated_at', 'updated_by'] },
 ];
 
 export const TABLE = Object.fromEntries(TABLES.map((t) => [t.name, t])) as Record<string, TableConfig>;

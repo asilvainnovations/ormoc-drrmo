@@ -229,7 +229,7 @@ export class DrrmDB extends Dexie {
     this.version(8).stores({
       eoc_assessment_items: 'id, section, [section_sort+item_no]',
       eoc_assessment_runs: 'id, status, created_at',
-      eoc_assessment_responses: 'id, run_id, item_id, [run_id+item_id], status',
+      eoc_assessment_responses: 'id, run_id, item_id, [run_id+item_id], [run_id+site], status',
     });
   }
 }

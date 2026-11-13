@@ -304,7 +304,8 @@ export interface RaciAssignment extends Versioned {
 
 // ---------------------------------------------------- EOC capability assessment (1.20.0, ADR-035)
 /** Item status from the weakest mapped IAT B_EOC indicator score (app.eoc_assessment_status). */
-export type EocAssessmentStatus = 'met' | 'partially_met' | 'largely_unmet' | 'not_met' | 'no_direct_indicator';
+export type EocAssessmentStatus = 'met' | 'partially_met' | 'largely_unmet' | 'not_met' | 'not_applicable' | 'not_assessed' | 'no_direct_indicator';
+export type EocAssessmentSite = 'primary' | 'alternate';
 export interface EocAssessmentItem extends Versioned {
   section: string; section_sort: number; item_no: number; item_text: string;
   /** The item was assessed for the primary EOC. */
@@ -322,7 +323,11 @@ export interface EocAssessmentRun extends Versioned {
 /** A display link to the SOP, Protocol, Workflow or Form record that closes the gap (controlled vocabulary). */
 export interface EocAssessmentToolLink { code: string; title: string }
 export interface EocAssessmentResponse extends Versioned {
-  run_id: string; item_id: string; status: EocAssessmentStatus;
+  run_id: string; item_id: string; site: EocAssessmentSite; status: EocAssessmentStatus;
+  /** Server-set (review fix): 'prefilled_iat' = copied from the IAT crosswalk, not observed; 'observed' once a person saves it. */
+  provenance: 'prefilled_iat' | 'observed';
+  /** 'validated' only by the CDRRMO Head (or admin), online, and only for an observed answer. */
+  state: 'draft' | 'validated'; validated_by: string | null; validated_at: string | null;
   /** Workbook columns, kept verbatim: Evidence Observed / Gap or Remarks / Recommended Action. */
   evidence: string | null; gap: string | null; recommended_action: string | null;
   tool_links: EocAssessmentToolLink[]; updated_by: string | null;

@@ -288,22 +288,28 @@ Then, in the dashboard:
      `app.guard_eoc_assessment` guard (assessment team edits responses; only the CDRRMO Head or admin validates a
      run; validated runs and their responses are locked; responses are corrected, never removed) and the
      `v_eoc_assessment_board` view. Then run `supabase/migrations/migration_status.sql`: expect 30 rows, all applied.
-  2. **Reference data.** Run the new part `supabase/seed/parts/38_eoc_assessment.sql` after part 37 (the one-click
-     loader picks it up automatically and verifies all 154 items). It seeds the accomplished EOC Capability
-     Assessment Checklist (OCD/NDRRMC TWG, Dec 2017): 154 items in 15 sections, one baseline run
-     `IAT v1-7 (Oct 2026)` — always a draft, seeds never validate — and the 154 responses with the workbook's
-     status, evidence, gap and recommended action verbatim (59 Met, 45 Partially met, 36 Largely unmet, 8 Not met,
-     6 No direct IAT indicator). Re-running is safe: everything is insert-only, so the assessment team's edits stay.
+  2. **Reference data.** Run the new parts `supabase/seed/parts/38a_eoc_assessment.sql`, `38b_…` and `38c_…` after
+     part 37, in order (each is under the SQL editor's ~100 KB limit; the one-click loader and `scripts/apply_db.sh`
+     pick them up and verify all 154 items). They seed the accomplished EOC Capability Assessment Checklist
+     (OCD/NDRRMC TWG, Dec 2017): 154 items in 15 sections, one baseline run `IAT v1-7 (Oct 2026)` — always a draft —
+     and 154 primary-EOC answers **pre-filled from the IAT v1-7 crosswalk** (59 Met, 45 Partially met, 36 Largely
+     unmet, 8 Not met, 6 No direct IAT indicator), stored as `prefilled_iat`, not as observations. Re-running is
+     safe: answers are seeded only where none exists, so the assessment team's work stays.
+     If the pre-review copy of this migration and its single part `38_eoc_assessment.sql` were already run,
+     `migration_status.sql` shows the migration as missing: run the migration again (it upgrades in place and labels
+     untouched seeded answers as pre-filled), then delete the old `38_eoc_assessment.sql` from your parts folder.
   3. **App.** Push with git and redeploy.
      - **Today** shows an EOC capability card (run, status counts, share met) and **/eoc-assessment** is the board:
        the 15 sections collapsible, status chips (Met green, Partially met amber, Largely unmet orange, Not met red,
        No direct IAT indicator grey), an item drawer for evidence / gap / recommended action and tool links.
-     - The **assessment team** (assessor, validator, EOC Manager, EOC staff, CDRRMO Head, admin) edits responses
-       online while the run is a draft; the **CDRRMO Head** (or admin) sees the **Validate run** action, which locks
-       the run for the record. The board links out to DDRiVE Risk and never re-scores.
-  4. Check: `/eoc-assessment` opens with fifteen sections and 154 items; the summary reads 59 / 45 / 36 / 8 / 6; a
-     viewer sees no edit or validate controls; the Head validates the run online and the board then reads Validated
-     and refuses further edits.
+     - A **Site** switch shows the primary or the alternate EOC. The **assessment team** (assessor, validator, EOC
+       Manager, EOC staff, CDRRMO Head, admin) confirms or changes each pre-filled answer on site, online; saving
+       makes it observed. The **CDRRMO Head** (or admin) validates or reopens observed answers one by one, and the
+       **Validate run** action works only when no answer is still pre-filled; a validated run is locked for the
+       record. The board links out to DDRiVE Risk and never re-scores; nothing here changes an IAT score.
+  4. Check: `/eoc-assessment` opens with fifteen sections and 154 items; the summary reads 59 / 45 / 36 / 8 / 6 and
+     "0 observed · 154 pre-filled from the IAT"; the alternate EOC reads all Not assessed; a viewer sees no edit or
+     validate controls; **Validate run** stays disabled until every answer is confirmed on site.
 
 - **To 1.18.0** (12 November 2026), Chapters 5–8 published (ADR-032). No migration; one cleanup script before the
   seed. Apply 1.17.0 first.

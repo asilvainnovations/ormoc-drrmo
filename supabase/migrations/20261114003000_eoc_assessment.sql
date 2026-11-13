@@ -22,8 +22,18 @@
 -- (approved records are immutable). Responses are corrected, never removed. The module never
 -- re-scores risk: DDRiVE stays the risk-intelligence source and the board links out to it.
 --
+-- Review fixes (14 Nov 2026, before first release):
+--   * provenance: the seeded answers are a crosswalk from the IAT scores, not an observation, and are
+--     stored as 'prefilled_iat'. Any edit or confirmation by a person makes an answer 'observed'.
+--   * per-answer validation: only the CDRRMO Head (or admin) validates an answer, online, and only an
+--     observed one; a validated answer is fixed until reopened. A run can be validated only when none of
+--     its answers is still pre-filled, so a single click never turns the IAT crosswalk into findings.
+--   * site: each answer is for the primary or the alternate EOC (unique per run, item and site).
+--   * statuses: not_assessed and not_applicable added (not applicable needs a reason in Gap / remarks);
+--     no_direct_indicator stays for pre-filled items with no IAT counterpart.
+--
 -- Supports MR-14 (traceability). Indicators B2.1, B2.7, B4.1, B6.3, B7.1.
--- Safe to run again.
+-- Safe to run again, including on a database that ran the pre-review copy of this migration.
 -- =============================================================================
 
 -- The derivation rule, kept in SQL so the seed, the database tests and the TypeScript mirror
@@ -88,19 +98,53 @@ create table if not exists public.eoc_assessment_responses (
   id                  uuid primary key default gen_random_uuid(),
   run_id              uuid not null references public.eoc_assessment_runs(id) on delete cascade,
   item_id             uuid not null references public.eoc_assessment_items(id),
-  status              text not null check (status in ('met','partially_met','largely_unmet','not_met','no_direct_indicator')),
+  site                text not null default 'primary',
+  status              text not null,
+  provenance          text not null default 'observed',
+  state               text not null default 'draft',
   evidence            text,
   gap                 text,
   recommended_action  text,
   tool_links          jsonb not null default '[]' check (jsonb_typeof(tool_links) = 'array'),
   updated_by          uuid default auth.uid() references public.profiles(id),
+  validated_by        uuid references public.profiles(id),
+  validated_at        timestamptz,
   created_at          timestamptz not null default now(),
   updated_at          timestamptz not null default now(),
-  version             integer not null default 1,
-  unique (run_id, item_id)
+  version             integer not null default 1
 );
-comment on table public.eoc_assessment_responses is 'One answer per (run, checklist item): status from the weakest mapped IAT score, evidence observed, gap and recommended action kept verbatim from the workbook (ADR-035).';
-comment on column public.eoc_assessment_responses.status is 'met / partially_met / largely_unmet / not_met from the weakest mapped IAT indicator score (app.eoc_assessment_status); no_direct_indicator when the item maps to no B_EOC indicator.';
+-- Columns and constraints added in review; written as alters so a database that ran the pre-review copy
+-- (which had no site, provenance or per-answer validation) upgrades in place.
+alter table public.eoc_assessment_responses add column if not exists site text not null default 'primary';
+alter table public.eoc_assessment_responses add column if not exists provenance text not null default 'observed';
+alter table public.eoc_assessment_responses add column if not exists state text not null default 'draft';
+alter table public.eoc_assessment_responses add column if not exists validated_by uuid references public.profiles(id);
+alter table public.eoc_assessment_responses add column if not exists validated_at timestamptz;
+alter table public.eoc_assessment_responses drop constraint if exists eoc_assessment_responses_run_id_item_id_key;
+alter table public.eoc_assessment_responses drop constraint if exists eoc_assessment_responses_status_check;
+alter table public.eoc_assessment_responses drop constraint if exists eoc_assessment_responses_site_check;
+alter table public.eoc_assessment_responses drop constraint if exists eoc_assessment_responses_provenance_check;
+alter table public.eoc_assessment_responses drop constraint if exists eoc_assessment_responses_state_check;
+alter table public.eoc_assessment_responses drop constraint if exists eoc_assessment_responses_na_reason_check;
+alter table public.eoc_assessment_responses add constraint eoc_assessment_responses_status_check
+  check (status in ('met','partially_met','largely_unmet','not_met','not_applicable','not_assessed','no_direct_indicator'));
+alter table public.eoc_assessment_responses add constraint eoc_assessment_responses_site_check check (site in ('primary','alternate'));
+alter table public.eoc_assessment_responses add constraint eoc_assessment_responses_provenance_check check (provenance in ('prefilled_iat','observed'));
+alter table public.eoc_assessment_responses add constraint eoc_assessment_responses_state_check
+  check (state in ('draft','validated') and (state = 'draft' or (validated_by is not null and validated_at is not null)));
+alter table public.eoc_assessment_responses add constraint eoc_assessment_responses_na_reason_check
+  check (status <> 'not_applicable' or length(btrim(coalesce(gap, ''))) > 0);
+create unique index if not exists eoc_assessment_responses_run_item_site_key on public.eoc_assessment_responses (run_id, item_id, site);
+-- A database that ran the pre-review copy holds the seeded baseline answers as if observed: they are the IAT
+-- crosswalk, never edited since (version 1, no editor), so label them pre-filled. Edited answers stay observed.
+update public.eoc_assessment_responses set provenance = 'prefilled_iat'
+ where version = 1 and updated_by is null and provenance <> 'prefilled_iat'
+   and run_id = 'ecbd6f03-43b8-5b88-a400-52c17755d9dd'::uuid;
+comment on column public.eoc_assessment_responses.site is 'primary or alternate EOC. All seeded answers are for the primary EOC (no alternate is designated yet, IAT B2.7).';
+comment on column public.eoc_assessment_responses.provenance is 'prefilled_iat: copied from the IAT v1-7 crosswalk (weakest mapped score), not observed. observed: set or confirmed by a person (server-set).';
+comment on column public.eoc_assessment_responses.state is 'draft, or validated by the CDRRMO Head (only an observed answer can be validated).';
+comment on table public.eoc_assessment_responses is 'One answer per (run, checklist item, site): status, evidence observed, gap, recommended action and tool links. Seeded answers are pre-filled from the IAT crosswalk (provenance prefilled_iat) until confirmed on site (ADR-035).';
+comment on column public.eoc_assessment_responses.status is 'Pre-filled: from the weakest mapped IAT indicator score (app.eoc_assessment_status). Observed: the assessment team''s finding on site. not_applicable needs a reason in gap.';
 comment on column public.eoc_assessment_responses.tool_links is 'Array of {code,title} pointing at the SOP, Protocol, Workflow or Form records that close the gap (controlled vocabulary). Display links, not foreign keys, like the RACI template links.';
 create index if not exists eoc_assessment_responses_run_idx on public.eoc_assessment_responses (run_id);
 create index if not exists eoc_assessment_responses_item_idx on public.eoc_assessment_responses (item_id);
@@ -150,6 +194,7 @@ language plpgsql security invoker set search_path = public, pg_temp as $$
 declare
   v_write constant public.app_role[] := array['assessor','validator','eoc_manager','eoc_staff','cdrrmo_head','admin']::public.app_role[];
   v_head  constant public.app_role[] := array['cdrrmo_head','admin']::public.app_role[];
+  v_prefilled integer;
 begin
   if current_user not in ('authenticated', 'anon') then
     return case when tg_op = 'DELETE' then old else new end;
@@ -176,6 +221,11 @@ begin
         if not app.has_any_role(v_head) then
           raise exception 'Only the CDRRMO Head validates an EOC capability run.' using errcode = '42501';
         end if;
+        select count(*) into v_prefilled from public.eoc_assessment_responses p where p.run_id = new.id and p.provenance = 'prefilled_iat';
+        if v_prefilled > 0 then
+          raise exception '% answers in this run are still pre-filled from the IAT. Confirm them on site before validating the run.', v_prefilled
+            using errcode = '23514';
+        end if;
         new.validated_by := auth.uid();
         new.validated_at := now();
       elsif new.status is distinct from old.status then
@@ -195,8 +245,36 @@ begin
     if (select r.status from public.eoc_assessment_runs r where r.id = new.run_id) = 'validated' then
       raise exception 'This run is validated and locked. Open a new run to reassess.' using errcode = '42501';
     end if;
-    if tg_op = 'UPDATE' then
+    if tg_op = 'INSERT' then
+      new.provenance := 'observed'; new.state := 'draft'; new.validated_by := null; new.validated_at := null;
       new.updated_by := auth.uid();
+    elsif new.state is distinct from old.state then
+      -- Validating or reopening one answer: the CDRRMO Head (or admin) only, and it carries no other edit.
+      if not app.has_any_role(v_head) then
+        raise exception 'Only the CDRRMO Head validates or reopens a checklist answer.' using errcode = '42501';
+      end if;
+      if new.state = 'validated' then
+        if old.provenance <> 'observed' then
+          raise exception 'This answer is pre-filled from the IAT. Confirm it on site before validating it.' using errcode = '23514';
+        end if;
+        new.validated_by := auth.uid(); new.validated_at := now();
+      else
+        new.validated_by := null; new.validated_at := null;
+      end if;
+      new.status := old.status; new.evidence := old.evidence; new.gap := old.gap; new.recommended_action := old.recommended_action;
+      new.tool_links := old.tool_links; new.provenance := old.provenance; new.updated_by := old.updated_by;
+      new.run_id := old.run_id; new.item_id := old.item_id; new.site := old.site;
+      return new;
+    elsif old.state = 'validated' then
+      raise exception 'This answer is validated. Ask the CDRRMO Head to reopen it.' using errcode = '42501';
+    else
+      -- Any edit or confirmation by a person makes the answer observed.
+      new.provenance := 'observed'; new.updated_by := auth.uid();
+      new.validated_by := null; new.validated_at := null;
+      new.run_id := old.run_id; new.item_id := old.item_id; new.site := old.site;
+    end if;
+    if new.status = 'no_direct_indicator' then
+      raise exception 'Choose a status for this item (Met to Not met, Not applicable or Not assessed).' using errcode = '23514';
     end if;
     return new;
   end if;
@@ -214,13 +292,16 @@ create trigger guard_eoc_assessment before insert or update or delete on public.
 drop view if exists public.v_eoc_assessment_board;
 create view public.v_eoc_assessment_board with (security_invoker = true) as
 select r.id as run_id, r.title as run_title, r.status as run_status, r.created_at as run_created_at,
-       r.validated_by, r.validated_at,
+       r.validated_by, r.validated_at, s.site,
        i.id as item_id, i.section, i.section_sort, i.item_no, i.item_text,
        i.applies_primary, i.applies_alternate, i.iat_links,
-       p.id as response_id, p.status, p.evidence, p.gap, p.recommended_action, p.tool_links,
-       p.updated_by, p.updated_at, p.version as response_version
+       p.id as response_id, coalesce(p.status, 'not_assessed') as status, p.provenance, p.state,
+       p.evidence, p.gap, p.recommended_action, p.tool_links,
+       p.updated_by, p.updated_at, p.validated_by as response_validated_by, p.validated_at as response_validated_at,
+       p.version as response_version
   from public.eoc_assessment_runs r
+  cross join (values ('primary'), ('alternate')) s(site)
   cross join public.eoc_assessment_items i
-  left join public.eoc_assessment_responses p on p.run_id = r.id and p.item_id = i.id
- order by r.created_at, i.section_sort, i.item_no;
+  left join public.eoc_assessment_responses p on p.run_id = r.id and p.item_id = i.id and p.site = s.site
+ order by r.created_at, s.site desc, i.section_sort, i.item_no;
 grant select on public.v_eoc_assessment_board to authenticated;

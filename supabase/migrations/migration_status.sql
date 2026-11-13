@@ -59,7 +59,8 @@ from (values
   ('20261113002900_raci_board',               exists (select 1 from pg_proc
                                                       where proname = 'guard_raci' and pronamespace = 'app'::regnamespace)),
   -- 1.20.0: checks the guard, not just the tables.
-  ('20261114003000_eoc_assessment',           exists (select 1 from pg_proc
-                                                      where proname = 'guard_eoc_assessment' and pronamespace = 'app'::regnamespace))
+  -- checks a column added in review, so a database that ran the pre-review copy shows false until it is re-run
+  ('20261114003000_eoc_assessment',           exists (select 1 from information_schema.columns
+                                                      where table_schema = 'public' and table_name = 'eoc_assessment_responses' and column_name = 'provenance'))
 ) as m(migration, present)
 order by m.migration;

@@ -179,6 +179,7 @@ export function TodayPage() {
                 <p className="mb-3 text-sm text-muted">
                   {data.eocCap.counts.met} met · {data.eocCap.counts.partially_met} partially · {data.eocCap.counts.largely_unmet} largely unmet · {data.eocCap.counts.not_met} not met
                   {data.eocCap.counts.no_direct_indicator > 0 && ` · ${data.eocCap.counts.no_direct_indicator} no direct indicator`}
+                  {data.eocCap.prefilled > 0 && ` · ${data.eocCap.prefilled} pre-filled from the IAT, to confirm on site`}
                 </p>
                 <Progress value={data.eocCap.total ? (100 * data.eocCap.counts.met) / data.eocCap.total : 0} variant={data.eocCap.counts.met === data.eocCap.total && data.eocCap.total ? 'success' : 'default'} aria-label="Checklist items met" />
               </Link>
@@ -203,9 +204,10 @@ async function eocCapabilitySummary() {
   const runs = (await db.eoc_assessment_runs.toArray()).sort((a, b) => (b.created_at ?? '').localeCompare(a.created_at ?? ''));
   const run = runs[0];
   if (!run) return null;
-  const responses = await db.eoc_assessment_responses.where('run_id').equals(run.id).toArray();
+  const responses = (await db.eoc_assessment_responses.where('run_id').equals(run.id).toArray()).filter((r) => (r.site ?? 'primary') === 'primary');
   const counts = statusCounts(responses.map((r) => r.status));
-  return { run, answered: responses.length, total: await db.eoc_assessment_items.count(), counts };
+  const prefilled = responses.filter((r) => r.provenance === 'prefilled_iat').length;
+  return { run, answered: responses.length, total: await db.eoc_assessment_items.count(), counts, prefilled };
 }
 
 /** 1.17 (ADR-031): the Pareto dashboard — the 23 priority indicators in three tiers, met counts from the

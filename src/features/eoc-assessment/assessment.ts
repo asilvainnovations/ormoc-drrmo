@@ -2,7 +2,7 @@
 // the three tables from Dexie and passes them here. The status rule itself lives in
 // src/domain/eoc_assessment.ts (the SQL mirror); this file only groups and counts.
 import { statusCounts } from '@/domain/eoc_assessment';
-import type { EocAssessmentItem, EocAssessmentResponse, EocAssessmentRun, EocAssessmentStatus } from '@/types';
+import type { EocAssessmentItem, EocAssessmentResponse, EocAssessmentRun, EocAssessmentSite, EocAssessmentStatus } from '@/types';
 
 export interface BoardItem {
   item: EocAssessmentItem;
@@ -19,12 +19,17 @@ export interface Board {
   run: EocAssessmentRun;
   sections: BoardSection[];
   counts: Record<EocAssessmentStatus, number>;
-  /** Responses the run holds (of 154 seeded items). */
+  /** Responses the run holds for this site (of 154 seeded items). */
   answered: number;
+  site: EocAssessmentSite;
+  /** Answers still pre-filled from the IAT crosswalk, observed by a person, and validated. */
+  prefilled: number; observed: number; validated: number;
 }
 
-export function buildBoard(run: EocAssessmentRun, items: EocAssessmentItem[], responses: EocAssessmentResponse[]): Board {
-  const byItem = new Map(responses.filter((r) => r.run_id === run.id).map((r) => [r.item_id, r]));
+export function buildBoard(run: EocAssessmentRun, items: EocAssessmentItem[], responses: EocAssessmentResponse[],
+  site: EocAssessmentSite = 'primary'): Board {
+  const mine = responses.filter((r) => r.run_id === run.id && (r.site ?? 'primary') === site);
+  const byItem = new Map(mine.map((r) => [r.item_id, r]));
   const sections: BoardSection[] = [];
   for (const item of items.slice().sort((a, b) => a.section_sort - b.section_sort || a.item_no - b.item_no)) {
     let sec = sections[sections.length - 1];
@@ -36,6 +41,8 @@ export function buildBoard(run: EocAssessmentRun, items: EocAssessmentItem[], re
     sec.items.push({ item, response });
     if (response) sec.counts[response.status] += 1;
   }
-  const runResponses = responses.filter((r) => r.run_id === run.id);
-  return { run, sections, counts: statusCounts(runResponses.map((r) => r.status)), answered: runResponses.length };
+  return { run, sections, counts: statusCounts(mine.map((r) => r.status)), answered: mine.length, site,
+    prefilled: mine.filter((r) => r.provenance === 'prefilled_iat').length,
+    observed: mine.filter((r) => r.provenance !== 'prefilled_iat').length,
+    validated: mine.filter((r) => r.state === 'validated').length };
 }

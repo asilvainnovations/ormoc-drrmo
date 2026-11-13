@@ -1158,6 +1158,8 @@ select tests.expect_eq('the workbook status distribution is kept',
   'largely_unmet:36,met:59,no_direct_indicator:6,not_met:8,partially_met:45');
 select tests.expect_eq('six items carry no direct IAT indicator',
   (select count(*)::text from public.eoc_assessment_items where iat_links = '{}'), '6');
+select tests.expect_eq('every seeded answer is a pre-filled primary-EOC draft, not an observation',
+  (select count(*) filter (where provenance = 'prefilled_iat' and site = 'primary' and state = 'draft')::text from public.eoc_assessment_responses), '154');
 select tests.expect_ok('the board view reads for any active user', $$select count(*) from public.v_eoc_assessment_board$$);
 select tests.expect_error('a viewer cannot record a response',
   $$insert into public.eoc_assessment_responses (run_id, item_id, status)
@@ -1172,9 +1174,27 @@ select tests.expect_error('a viewer cannot remove a response',
   $$delete from public.eoc_assessment_responses where id = (select id from public.eoc_assessment_responses limit 1)$$, '42501');
 
 select tests.login('00000000-0000-0000-0000-000000000013');  -- EOC staff
+create temp table eoc_ids as
+  select (select id from public.eoc_assessment_responses order by id limit 1) as a,
+         (select id from public.eoc_assessment_responses order by id offset 1 limit 1) as b;
+grant select on eoc_ids to authenticated;
 select tests.expect_ok('EOC staff record evidence on a response',
-  $$update public.eoc_assessment_responses set evidence = evidence || ' [checked]', version = (select version from public.eoc_assessment_responses limit 1)
-     where id = (select id from public.eoc_assessment_responses limit 1)$$);
+  $$update public.eoc_assessment_responses set evidence = evidence || ' [checked]', version = (select version from public.eoc_assessment_responses where id = (select a from eoc_ids))
+     where id = (select a from eoc_ids)$$);
+select tests.expect_eq('saving makes a pre-filled answer observed',
+  (select provenance from public.eoc_assessment_responses where id = (select a from eoc_ids)), 'observed');
+select tests.expect_error('not applicable needs a reason',
+  $$update public.eoc_assessment_responses set status = 'not_applicable', gap = null, version = (select version from public.eoc_assessment_responses where id = (select a from eoc_ids))
+     where id = (select a from eoc_ids)$$, '23514');
+select tests.expect_error('an observed answer needs a real status, not the pre-fill marker',
+  $$update public.eoc_assessment_responses set status = 'no_direct_indicator', version = (select version from public.eoc_assessment_responses where id = (select a from eoc_ids))
+     where id = (select a from eoc_ids)$$, '23514');
+select tests.expect_error('EOC staff cannot validate an answer',
+  $$update public.eoc_assessment_responses set state = 'validated', version = (select version from public.eoc_assessment_responses where id = (select a from eoc_ids))
+     where id = (select a from eoc_ids)$$, '42501');
+select tests.expect_ok('the alternate EOC gets its own answer for the same item',
+  $$insert into public.eoc_assessment_responses (run_id, item_id, site, status, gap)
+    values ((select id from public.eoc_assessment_runs), (select item_id from public.eoc_assessment_responses where id = (select a from eoc_ids)), 'alternate', 'not_assessed', 'No alternate EOC designated yet (B2.7).')$$);
 select tests.expect_error('a stale version conflicts (PT409)',
   $$update public.eoc_assessment_responses set gap = 'stale', version = 999 where id = (select id from public.eoc_assessment_responses limit 1)$$, 'PT409');
 select tests.expect_error('the status stays in the checklist vocabulary',
@@ -1194,7 +1214,24 @@ select tests.expect_error('an assessor cannot validate the run either',
   $$update public.eoc_assessment_runs set status = 'validated', version = 1 where status = 'draft'$$, '42501');
 
 select tests.login('00000000-0000-0000-0000-000000000011');  -- CDRRMO Head
-select tests.expect_ok('the CDRRMO Head validates the run',
+select tests.expect_error('a pre-filled answer cannot be validated before it is confirmed',
+  $$update public.eoc_assessment_responses set state = 'validated', version = (select version from public.eoc_assessment_responses where id = (select b from eoc_ids))
+     where id = (select b from eoc_ids)$$, '23514');
+select tests.expect_ok('the CDRRMO Head validates an observed answer',
+  $$update public.eoc_assessment_responses set state = 'validated', version = (select version from public.eoc_assessment_responses where id = (select a from eoc_ids))
+     where id = (select a from eoc_ids)$$);
+select tests.login('00000000-0000-0000-0000-000000000013');  -- EOC staff
+select tests.expect_error('a validated answer is fixed until the Head reopens it',
+  $$update public.eoc_assessment_responses set gap = 'late', version = (select version from public.eoc_assessment_responses where id = (select a from eoc_ids))
+     where id = (select a from eoc_ids)$$, '42501');
+select tests.login('00000000-0000-0000-0000-000000000011');  -- CDRRMO Head
+select tests.expect_error('a run with pre-filled answers cannot be validated',
+  $$update public.eoc_assessment_runs set status = 'validated', version = 1 where status = 'draft'$$, '23514');
+reset role;
+-- Simulate the workshop: every answer confirmed on site (as the owner, so the guard's role check is not the subject here).
+update public.eoc_assessment_responses set provenance = 'observed' where provenance = 'prefilled_iat';
+select tests.login('00000000-0000-0000-0000-000000000011');  -- CDRRMO Head
+select tests.expect_ok('the CDRRMO Head validates the run once every answer is observed',
   $$update public.eoc_assessment_runs set status = 'validated', version = 1 where status = 'draft'$$);
 select tests.expect_eq('validation stamps the validator and the time',
   (select (validated_by = '00000000-0000-0000-0000-000000000011' and validated_at is not null)::text from public.eoc_assessment_runs), 'true');
