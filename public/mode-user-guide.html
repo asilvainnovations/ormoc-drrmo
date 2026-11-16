@@ -1,0 +1,1374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>MODE User Guide · City of Ormoc CDRRMO</title>
+<style>
+  /* =========================================================
+     Design tokens (from design-system.md)
+     ========================================================= */
+  :root {
+    --paper: #EEF5FB;
+    --surface: #FFFFFF;
+    --sunken: #E3EBF2;
+    --ink: #13283D;
+    --muted: #51606E;
+    --line: #C9D5E0;
+    --action: #0F3D66;
+    --on-action: #FFFFFF;
+    --sky: #2F86C8;
+    --sky-soft: #DCEEFB;
+    --accent: #D66812;
+    --accent-bright: #F07A1A;
+    --accent-ink: #A84A05;
+    --focus: #D1600C;
+
+    --ok: #0F7A3C;
+    --ok-soft: #DFF3E6;
+    --warn: #B8860B;
+    --warn-soft: #F6E9C9;
+    --bad: #B11E16;
+    --bad-soft: #F7D9D6;
+    --info: #2F86C8;
+    --info-soft: #DCEEFB;
+
+    --lvl-white: #FFFFFF;
+    --lvl-blue: #1E3FC2;
+    --lvl-red: #B11E16;
+    --on-level: #FFFFFF;
+
+    --pillar-prevention: #0F766E;
+    --pillar-preparedness: #926408;
+    --pillar-response: #9F2545;
+    --pillar-recovery: #6D3EA8;
+
+    --raci-r: #1D4E89;
+    --raci-a: #0F5A3C;
+    --raci-c: #8A6D00;
+    --raci-i: #FFFFFF;
+    --raci-i-ink: #13283D;
+
+    --scrim: rgba(19, 40, 61, 0.4);
+    --banner: #022A4D;
+
+    --radius-control: 8px;
+    --radius-sheet: 16px;
+
+    --shadow-sheet: 0 1px 2px rgba(19,40,61,.04), 0 8px 24px rgba(19,40,61,.08);
+    --shadow-raised: 0 2px 8px rgba(19,40,61,.12), 0 12px 32px rgba(19,40,61,.18);
+
+    --font-display: "Montserrat", system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+    --font-sans: "Poppins", system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+    --font-data: "Roboto Condensed", ui-sans-serif, system-ui, sans-serif;
+
+    /* Liquid Glass layer */
+    --glass-bg: rgba(255,255,255,0.62);
+    --glass-border: rgba(255,255,255,0.55);
+    --glass-blur: 18px;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #0A1628;
+      --surface: #13283D;
+      --sunken: #0E1E30;
+      --ink: #E8EEF5;
+      --muted: #9AA7B6;
+      --line: #2A3B52;
+      --action: #3B82F6;
+      --on-action: #0A1628;
+      --sky: #5AA7E0;
+      --sky-soft: #1A3552;
+      --accent: #F07A1A;
+      --accent-ink: #FFB074;
+      --focus: #F07A1A;
+
+      --ok: #4ADE80;
+      --ok-soft: #0F3A24;
+      --warn: #FBBF24;
+      --warn-soft: #3A2E0F;
+      --bad: #F87171;
+      --bad-soft: #3A1412;
+      --info: #60A5FA;
+      --info-soft: #0F2A44;
+
+      --lvl-white: #E8EEF5;
+      --lvl-blue: #60A5FA;
+      --lvl-red: #F87171;
+      --on-level: #0A1628;
+
+      --glass-bg: rgba(19,40,61,0.55);
+      --glass-border: rgba(255,255,255,0.08);
+    }
+  }
+
+  /* =========================================================
+     Base
+     ========================================================= */
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: var(--font-sans);
+    font-size: 16px;
+    line-height: 1.5;
+    color: var(--ink);
+    background:
+      radial-gradient(1200px 600px at 85% -10%, rgba(47,134,200,.18), transparent 60%),
+      radial-gradient(900px 500px at -10% 20%, rgba(214,104,18,.12), transparent 60%),
+      var(--paper);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+    margin: 0 0 .5em;
+  }
+  h1 { font-size: 33px; line-height: 38px; }
+  h2 { font-size: 23px; line-height: 30px; margin-top: 1.5em; }
+  h3 { font-size: 19px; line-height: 26px; margin-top: 1.25em; }
+  h4 { font-size: 16px; line-height: 24px; margin-top: 1em; }
+
+  p { margin: 0 0 1em; max-width: 68ch; }
+  a { color: var(--action); text-decoration: underline; text-underline-offset: 2px; }
+  a:hover { color: var(--accent); }
+  code, pre { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 14px; }
+  code {
+    background: var(--sunken);
+    padding: 1px 6px;
+    border-radius: 4px;
+    color: var(--ink);
+  }
+  hr { border: 0; border-top: 1px solid var(--line); margin: 2em 0; }
+  table { border-collapse: collapse; width: 100%; font-size: 15px; line-height: 22px; }
+  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { font-weight: 600; background: var(--sunken); font-family: var(--font-data); text-transform: none; letter-spacing: 0; }
+  tbody tr:hover { background: var(--sky-soft); }
+
+  /* =========================================================
+     Status band (signature element)
+     ========================================================= */
+  .status-band {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 10px 20px;
+    background: linear-gradient(180deg, rgba(255,255,255,.85), rgba(255,255,255,.65));
+    backdrop-filter: blur(var(--glass-blur)) saturate(1.4);
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(1.4);
+    border-bottom: 1px solid var(--line);
+    font-family: var(--font-data);
+    font-size: 13px;
+    color: var(--muted);
+  }
+  @media (prefers-color-scheme: dark) {
+    .status-band { background: linear-gradient(180deg, rgba(19,40,61,.85), rgba(19,40,61,.65)); }
+  }
+  .level-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    background: var(--lvl-white);
+    color: var(--ink);
+    border: 1px solid var(--line);
+  }
+  .level-chip .dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--ok);
+    box-shadow: 0 0 0 3px rgba(15,122,60,.18);
+  }
+  .band-sep { width: 1px; height: 18px; background: var(--line); }
+  .band-item { display: inline-flex; align-items: center; gap: 6px; }
+  .band-item a { color: var(--ink); text-decoration: none; }
+  .band-item a:hover { color: var(--accent); }
+
+  /* =========================================================
+     App shell
+     ========================================================= */
+  .app {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 24px;
+    gap: 24px;
+  }
+
+  /* Sidebar */
+  .sidebar {
+    position: sticky;
+    top: 72px;
+    align-self: start;
+    max-height: calc(100vh - 96px);
+    overflow-y: auto;
+    padding: 16px;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-sheet);
+    backdrop-filter: blur(var(--glass-blur)) saturate(1.4);
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(1.4);
+    box-shadow: var(--shadow-sheet);
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 4px 4px 14px;
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 12px;
+  }
+  .seal {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, #fff, #e8eeef 60%, #c9d5e0);
+    box-shadow: 0 0 0 2px var(--accent) inset, 0 2px 6px rgba(0,0,0,.08);
+    display: grid; place-items: center;
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 11px;
+    color: var(--accent-ink);
+  }
+  .brand-text { line-height: 1.15; }
+  .brand-text .t1 { font-family: var(--font-display); font-weight: 800; font-size: 15px; color: var(--ink); }
+  .brand-text .t2 { font-family: var(--font-data); font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+
+  .nav-title {
+    font-family: var(--font-data);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    color: var(--muted);
+    margin: 12px 6px 6px;
+  }
+  .nav a {
+    display: block;
+    padding: 8px 10px;
+    border-radius: var(--radius-control);
+    color: var(--ink);
+    text-decoration: none;
+    font-size: 14px;
+    line-height: 20px;
+    border-left: 2px solid transparent;
+    min-height: 36px;
+  }
+  .nav a:hover { background: var(--sky-soft); }
+  .nav a.active {
+    background: var(--sky-soft);
+    border-left-color: var(--accent);
+    color: var(--accent-ink);
+    font-weight: 600;
+  }
+  .nav .part-num {
+    display: inline-block;
+    min-width: 28px;
+    font-family: var(--font-data);
+    color: var(--muted);
+    font-weight: 600;
+  }
+
+  /* Main */
+  main { min-width: 0; }
+
+  .page-header {
+    padding: 20px 24px;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-sheet);
+    backdrop-filter: blur(var(--glass-blur)) saturate(1.4);
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(1.4);
+    box-shadow: var(--shadow-sheet);
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .page-header h1 { margin: 0; }
+  .page-header .subtitle {
+    font-family: var(--font-data);
+    color: var(--muted);
+    font-size: 13px;
+    margin-top: 4px;
+  }
+  .search {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-control);
+    min-width: 260px;
+    min-height: 44px;
+  }
+  .search input {
+    border: 0; outline: 0; background: transparent;
+    font: inherit; color: var(--ink); flex: 1; min-width: 0;
+  }
+  .search kbd {
+    font-family: var(--font-data);
+    font-size: 11px;
+    padding: 2px 6px;
+    background: var(--sunken);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    color: var(--muted);
+  }
+
+  /* Content cards */
+  .card {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-sheet);
+    backdrop-filter: blur(var(--glass-blur)) saturate(1.4);
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(1.4);
+    box-shadow: var(--shadow-sheet);
+    padding: 24px;
+    margin-bottom: 20px;
+  }
+  .card h2:first-child { margin-top: 0; }
+
+  /* Callouts */
+  .notice {
+    display: flex;
+    gap: 12px;
+    padding: 14px 16px;
+    border-radius: var(--radius-control);
+    margin: 16px 0;
+    border-left: 3px solid var(--line);
+    background: var(--surface);
+  }
+  .notice .icon {
+    width: 22px; height: 22px; flex: none;
+    border-radius: 50%;
+    display: grid; place-items: center;
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 12px;
+    color: #fff;
+  }
+  .notice.info    { border-color: var(--info); background: var(--info-soft); }
+  .notice.info .icon { background: var(--info); }
+  .notice.warn    { border-color: var(--warn); background: var(--warn-soft); }
+  .notice.warn .icon { background: var(--warn); }
+  .notice.bad     { border-color: var(--bad);  background: var(--bad-soft); }
+  .notice.bad .icon  { background: var(--bad); }
+  .notice.ok      { border-color: var(--ok);   background: var(--ok-soft); }
+  .notice.ok .icon   { background: var(--ok); }
+  .notice.tip     { border-color: var(--accent); background: var(--sunken); }
+  .notice.tip .icon  { background: var(--accent); }
+  .notice strong { display: block; font-family: var(--font-display); margin-bottom: 2px; }
+
+  /* Badges */
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-family: var(--font-data);
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 18px;
+    vertical-align: middle;
+  }
+  .badge.draft     { background: var(--warn-soft); color: var(--warn); border: 1px solid var(--warn); }
+  .badge.review    { background: var(--info-soft); color: var(--info); border: 1px solid var(--info); }
+  .badge.approved  { background: var(--ok-soft);   color: var(--ok);   border: 1px solid var(--ok); }
+  .badge.retired   { background: var(--sunken);    color: var(--muted); border: 1px solid var(--line); }
+
+  /* RACI chips */
+  .raci {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 26px; height: 26px; border-radius: 50%;
+    font-family: var(--font-display); font-weight: 800; font-size: 13px;
+    margin-right: 4px;
+  }
+  .raci.R { background: var(--raci-r); color: #fff; }
+  .raci.A { background: var(--raci-a); color: #fff; }
+  .raci.C { background: var(--raci-c); color: #fff; }
+  .raci.I { background: var(--raci-i); color: var(--raci-i-ink); border: 1px solid var(--line); }
+
+  /* Pillar chips */
+  .pillar {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 999px;
+    font-family: var(--font-data);
+    font-size: 12px;
+    font-weight: 600;
+    color: #fff;
+  }
+  .pillar.prev { background: var(--pillar-prevention); }
+  .pillar.prep { background: var(--pillar-preparedness); }
+  .pillar.resp { background: var(--pillar-response); }
+  .pillar.rec  { background: var(--pillar-recovery); }
+
+  /* Buttons */
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    min-height: 44px;
+    padding: 0 18px;
+    border-radius: var(--radius-control);
+    border: 1px solid transparent;
+    font: 600 15px/1 var(--font-sans);
+    cursor: pointer;
+    text-decoration: none;
+    transition: transform .08s ease, box-shadow .15s ease, background .15s ease;
+  }
+  .btn:active { transform: translateY(1px); }
+  .btn.primary {
+    background: var(--action);
+    color: var(--on-action);
+    box-shadow: 0 1px 0 rgba(255,255,255,.2) inset, 0 6px 16px rgba(15,61,102,.25);
+  }
+  .btn.primary:hover { background: var(--accent); }
+  .btn.secondary {
+    background: var(--surface);
+    color: var(--ink);
+    border-color: var(--line);
+  }
+  .btn.secondary:hover { background: var(--sky-soft); }
+  .btn:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+
+  /* Quick action grid */
+  .tiles {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 12px;
+    margin: 16px 0;
+  }
+  .tile {
+    padding: 14px 16px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-control);
+    text-decoration: none;
+    color: var(--ink);
+    min-height: 80px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 6px;
+    transition: border-color .15s, transform .08s;
+  }
+  .tile:hover { border-color: var(--accent); transform: translateY(-1px); }
+  .tile .label { font-weight: 600; }
+  .tile .meta { font-family: var(--font-data); font-size: 12px; color: var(--muted); }
+
+  /* Steps */
+  ol.steps { padding-left: 0; counter-reset: step; list-style: none; }
+  ol.steps > li {
+    counter-increment: step;
+    position: relative;
+    padding: 10px 0 10px 44px;
+    border-left: 2px solid var(--line);
+    margin-left: 16px;
+  }
+  ol.steps > li::before {
+    content: counter(step);
+    position: absolute;
+    left: -16px; top: 8px;
+    width: 30px; height: 30px;
+    background: var(--action);
+    color: var(--on-action);
+    border-radius: 50%;
+    display: grid; place-items: center;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 14px;
+    box-shadow: 0 0 0 3px var(--paper);
+  }
+  ol.steps > li:last-child { border-left-color: transparent; }
+
+  /* Key/value */
+  dl.kv { display: grid; grid-template-columns: 180px 1fr; gap: 6px 16px; margin: 0; }
+  dl.kv dt { font-family: var(--font-data); color: var(--muted); font-size: 13px; }
+  dl.kv dd { margin: 0; }
+
+  /* Meter */
+  .meter {
+    height: 8px; background: var(--sunken); border-radius: 999px; overflow: hidden;
+  }
+  .meter > span {
+    display: block; height: 100%;
+    background: linear-gradient(90deg, var(--sky), var(--accent));
+    border-radius: 0 4px 4px 0;
+  }
+
+  /* Tooltips (native, enhanced) */
+  [title] { cursor: help; }
+
+  /* Footer */
+  footer {
+    padding: 24px;
+    text-align: center;
+    color: var(--muted);
+    font-family: var(--font-data);
+    font-size: 12px;
+    border-top: 1px solid var(--line);
+    margin-top: 40px;
+  }
+
+  /* Responsive */
+  @media (max-width: 900px) {
+    .app { grid-template-columns: 1fr; padding: 12px; gap: 12px; }
+    .sidebar { position: static; max-height: none; }
+    .page-header { flex-direction: column; align-items: stretch; }
+    .search { min-width: 0; width: 100%; }
+    h1 { font-size: 28px; line-height: 34px; }
+    dl.kv { grid-template-columns: 1fr; }
+    .status-band { flex-wrap: wrap; gap: 8px; padding: 8px 12px; }
+    .band-sep { display: none; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
+  }
+
+  /* Scrollbar (subtle) */
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-thumb { background: var(--line); border-radius: 999px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+</style>
+</head>
+<body>
+
+<!-- =========================================================
+     Status band (signature element, principle 1)
+     ========================================================= -->
+<div class="status-band" role="status" aria-label="System status">
+  <span class="level-chip" title="Current EOC alert level. White = normal operations.">
+    <span class="dot" aria-hidden="true"></span>
+    <span>EOC WHITE LEVEL · Normal operations</span>
+  </span>
+  <span class="band-sep" aria-hidden="true"></span>
+  <span class="band-item" title="No State of Imminent Disaster is in force.">
+    No declaration in force
+  </span>
+  <span class="band-sep" aria-hidden="true"></span>
+  <span class="band-item">
+    <a href="#sync" title="Opens Sync and offline data in Settings.">Synced just now</a>
+  </span>
+  <span style="margin-left:auto; font-family: var(--font-data); color: var(--muted);">
+    MODE v1.22.0 · 17 Nov 2026
+  </span>
+</div>
+
+<div class="app">
+
+  <!-- =========================================================
+       Sidebar
+       ========================================================= -->
+  <aside class="sidebar" aria-label="Guide navigation">
+    <div class="brand">
+      <div class="seal" title="City of Ormoc · CDRRMO">ORM</div>
+      <div class="brand-text">
+        <div class="t1">MODE User Guide</div>
+        <div class="t2">City of Ormoc · CDRRMO</div>
+      </div>
+    </div>
+
+    <div class="nav-title">Start</div>
+    <nav class="nav" aria-label="Table of contents">
+      <a href="#start" class="active"><span class="part-num">—</span>Start here</a>
+    </nav>
+
+    <div class="nav-title">Guide</div>
+    <nav class="nav">
+      <a href="#p1"><span class="part-num">1</span>Get in</a>
+      <a href="#p2"><span class="part-num">2</span>Find your way around</a>
+      <a href="#p3"><span class="part-num">3</span>“I want to…”</a>
+      <a href="#p4"><span class="part-num">4</span>Today</a>
+      <a href="#p5"><span class="part-num">5</span>EOC</a>
+      <a href="#p6"><span class="part-num">6</span>Protocols</a>
+      <a href="#p7"><span class="part-num">7</span>Assess</a>
+      <a href="#p8"><span class="part-num">8</span>Library</a>
+      <a href="#p9"><span class="part-num">9</span>Vault</a>
+      <a href="#p10"><span class="part-num">10</span>Tools</a>
+      <a href="#p11"><span class="part-num">11</span>RACI &amp; Capability</a>
+      <a href="#p12"><span class="part-num">12</span>Settings</a>
+      <a href="#p13"><span class="part-num">13</span>Offline &amp; sync</a>
+      <a href="#p14"><span class="part-num">14</span>Who can do what</a>
+      <a href="#p15"><span class="part-num">15</span>Walk-throughs</a>
+      <a href="#p16"><span class="part-num">16</span>When something goes wrong</a>
+      <a href="#p17"><span class="part-num">17</span>Words you will see</a>
+      <a href="#p18"><span class="part-num">18</span>One-page quick card</a>
+    </nav>
+
+    <div class="nav-title">Legend</div>
+    <div style="padding: 8px 10px; display:flex; flex-wrap:wrap; gap:6px;">
+      <span class="badge draft">Draft</span>
+      <span class="badge review">For validation</span>
+      <span class="badge approved">Approved</span>
+      <span class="badge retired">Retired</span>
+    </div>
+    <div style="padding: 8px 10px; display:flex; flex-wrap:wrap; gap:6px;">
+      <span class="pillar prev">Prevention</span>
+      <span class="pillar prep">Preparedness</span>
+      <span class="pillar resp">Response</span>
+      <span class="pillar rec">Recovery</span>
+    </div>
+    <div style="padding: 8px 10px; display:flex; gap:6px;">
+      <span class="raci R" title="Responsible">R</span>
+      <span class="raci A" title="Accountable">A</span>
+      <span class="raci C" title="Consulted">C</span>
+      <span class="raci I" title="Informed">I</span>
+    </div>
+  </aside>
+
+  <!-- =========================================================
+       Main
+       ========================================================= -->
+  <main>
+
+    <header class="page-header">
+      <div>
+        <h1>MODE User Guide</h1>
+        <div class="subtitle">For CDRRMO and EOC staff of the City of Ormoc · Plain-language guide · MODE v1.22.0 · 17 Nov 2026</div>
+      </div>
+      <label class="search" title="Search screens, manual sections, procedures and forms. Works offline.">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+        <input type="search" placeholder="Search the guide…" aria-label="Search the guide"/>
+        <kbd>Ctrl+K</kbd>
+      </label>
+    </header>
+
+    <!-- ============== START HERE ============== -->
+    <section id="start" class="card">
+      <h2>Start here</h2>
+      <p><strong>MODE</strong> means <strong>M</strong>anual of <strong>O</strong>perations for the <strong>D</strong>RRMO and <strong>E</strong>OC. It is a website and phone app that keeps our Manual of Operations in one place, helps us follow its steps, and records what we do during an emergency.</p>
+      <p>You do not need to be good with computers. If you can use Facebook or send a text message, you can use MODE. This manual shows every screen in the order you will meet it, and tells you which button to press.</p>
+
+      <h3>Five rules to remember</h3>
+      <ol>
+        <li><strong>MODE does not issue warnings.</strong> For weather and earthquake warnings, use PAGASA and PHIVOLCS. MODE only gives you the links.</li>
+        <li><strong>Drafts are not official.</strong> Anything marked <em>Draft</em> is still being written. The approved Manual of Operations and EOC Manual remain the legal documents.</li>
+        <li><strong>Never type the names of affected persons, evacuees, patients or informants.</strong> Type counts only (for example, 12 families, 48 persons). This follows the Data Privacy Act (RA 10173).</li>
+        <li><strong>It works without internet.</strong> What you type is saved on your device and sent later. A few big decisions (like changing the EOC alert level) need a connection.</li>
+        <li><strong>The logbook cannot be erased.</strong> If you make a mistake, write a correction. The first entry stays on record.</li>
+      </ol>
+
+      <div class="notice tip">
+        <div class="icon" aria-hidden="true">?</div>
+        <div>
+          <strong>Tip</strong>
+          Hold your finger (or hover your mouse) over any button, tab or box. A small note appears that says what it does and who may use it.
+        </div>
+      </div>
+    </section>
+
+    <!-- ============== PART 1 ============== -->
+    <section id="p1" class="card">
+      <h2>Part 1. Get in</h2>
+
+      <h3>1.1 Open MODE</h3>
+      <p>Open your web browser (Chrome, Edge, Safari) and go to the MODE address given by the CDRRMO. You will see the <strong>MODE</strong> login page with the City seals and the words <em>Prepare Before · Respond Together · Recover Stronger · Build Safer Communities</em>.</p>
+
+      <h3>1.2 Make a new account (first time only)</h3>
+      <p><strong>Who:</strong> any City staff member. Any email address works, including a personal one.</p>
+      <ol class="steps">
+        <li>On the login page, tap <strong>New account</strong> (the tab on the right).</li>
+        <li>Fill in the boxes:
+          <ul>
+            <li><strong>Full name</strong>, for example <em>Maria Santos</em>.</li>
+            <li><strong>Position and office</strong> (optional), for example <em>LDRRMO III, CDRRMO Operations</em>.</li>
+            <li><strong>Email</strong>.</li>
+            <li><strong>Password</strong>: at least 10 characters, with letters and a number.</li>
+            <li><strong>Password again</strong>: type the same password.</li>
+          </ul>
+        </li>
+        <li>Tap <strong>Create account</strong>.</li>
+        <li>Open your email. Tap the confirmation link MODE sent you.</li>
+      </ol>
+      <div class="notice warn">
+        <div class="icon" aria-hidden="true">!</div>
+        <div><strong>If stuck:</strong> no email? Check your spam folder. Back on the login page, tap <strong>Have an account</strong>, type your email, and tap <strong>Send the confirmation link again</strong>.</div>
+      </div>
+
+      <h3>1.3 Wait for approval</h3>
+      <p>After you confirm your email, MODE shows <strong>Waiting for approval</strong>. This is normal. Your account sees <em>no</em> City records until the system administrator gives you a <strong>role</strong> (see Part 14).</p>
+      <ul>
+        <li>You can fix your name or position under <strong>Your details</strong>, then <strong>Save details</strong>.</li>
+        <li>Tap <strong>Check again</strong> to see if you were approved.</li>
+        <li>Tell your administrator you registered. They approve you in <strong>Settings → Users and roles</strong>.</li>
+      </ul>
+
+      <h3>1.4 Sign in (every other time)</h3>
+      <p>On the login page, stay on <strong>Have an account</strong>. You have two ways:</p>
+      <table>
+        <thead><tr><th>Way</th><th>What to do</th></tr></thead>
+        <tbody>
+          <tr><td><strong>With a password</strong></td><td>Type your <strong>Email</strong> and <strong>Password</strong>, then tap the sign-in button.</td></tr>
+          <tr><td><strong>Without a password</strong></td><td>Type your <strong>Email</strong>, leave Password empty, tap <strong>Email me a sign-in link</strong>. Open the email <em>on the same device</em> and tap the link.</td></tr>
+        </tbody>
+      </table>
+
+      <h3>1.5 Forgot your password</h3>
+      <p>Tap <strong>Forgot your password?</strong>, type your email, tap <strong>Email me a reset link</strong>, open the email and choose a new password.</p>
+
+      <h3>1.6 Put MODE on your phone</h3>
+      <p>MODE is a <em>progressive web app</em>. In simple words: it can sit on your home screen like a normal app and still open without signal. If your browser offers <strong>Install</strong> or <strong>Add to Home screen</strong>, accept it. Do this once while you have a good connection, and sign in at least once so your data is saved on the phone.</p>
+
+      <h3>1.7 Sign out</h3>
+      <p><strong>Where:</strong> <strong>Settings</strong> (bottom of the left menu) → <strong>Sign out and clear this device</strong>.</p>
+      <p>This erases MODE’s copy of the data on that device. If you still have entries that have <strong>not been sent</strong>, MODE warns you first. Connect and tap <strong>Snow now</strong> (Part 13).</p>
+      <div class="notice info">
+        <div class="icon" aria-hidden="true">i</div>
+        <div><strong>Shared phones:</strong> always sign out when you hand a phone to someone else.</div>
+      </div>
+    </section>
+
+    <!-- ============== PART 2 ============== -->
+    <section id="p2" class="card">
+      <h2>Part 2. Find your way around</h2>
+
+      <h3>2.1 The three places you always see</h3>
+      <table>
+        <thead><tr><th>Place</th><th>What it shows</th><th>Why it matters</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Top bar, left:</strong> <em>EOC WHITE LEVEL, normal operations</em></td><td>The current EOC alert level, and any State of Imminent Disaster in force</td><td>You always know the situation, on every screen</td></tr>
+          <tr><td><strong>Top bar, middle:</strong> <strong>Search</strong> (or press <strong>Ctrl+K</strong>)</td><td>A search box for screens, manual sections, procedures and forms</td><td>Fastest way to find anything</td></tr>
+          <tr><td><strong>Top bar, right:</strong> <em>Synced 21 seconds ago</em></td><td>Whether your data is up to date</td><td>Tap it to see what is waiting to send (Part 13)</td></tr>
+        </tbody>
+      </table>
+
+      <h3>2.2 The main menu</h3>
+      <p>On a <strong>computer</strong>, the menu is on the left. On a <strong>phone</strong>, it is the bar at the bottom. An orange bar or line shows where you are.</p>
+      <table>
+        <thead><tr><th>Menu item</th><th>In one sentence</th><th>Part</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Today</strong></td><td>Your daily start page: hazard links, quick buttons, what changed</td><td>4</td></tr>
+          <tr><td><strong>Assess</strong></td><td>Score our readiness (the IAT) and view <strong>Hazard maps</strong></td><td>7</td></tr>
+          <tr><td><strong>Protocols</strong></td><td>Step-by-step procedures to run live or as drills</td><td>6</td></tr>
+          <tr><td><strong>EOC</strong></td><td>Alert level, logbook, SitReps, barangay reports, requests, anticipatory action</td><td>5</td></tr>
+          <tr><td><strong>Library</strong></td><td>The Manual of Operations, chapter by chapter</td><td>8</td></tr>
+          <tr><td><strong>Vault</strong></td><td>Laws, plans, City issuances and records</td><td>9</td></tr>
+          <tr><td><strong>Tools</strong></td><td>ECHO, flood intelligence, ICS exercises, continuity plan, Gawad KALASAG, outside hazard websites</td><td>10</td></tr>
+          <tr><td><strong>Appearance</strong></td><td>Light or dark screen</td><td>12</td></tr>
+          <tr><td><strong>Settings</strong></td><td>Sync, language, accounts, privacy, sign out</td><td>12</td></tr>
+        </tbody>
+      </table>
+
+      <h3>2.3 Tabs, back arrows and big buttons</h3>
+      <ul>
+        <li><strong>Tabs</strong> sit under the page title (for example the EOC has <em>Board, Logbook, SitReps, Requests…</em>). On a small screen the tabs slide sideways. Swipe them.</li>
+        <li><strong>Back</strong> (top left of a page) returns you to the list you came from.</li>
+        <li><strong>One main button per screen.</strong> It is the filled blue one, and its name says what will happen (for example <strong>Add document</strong>, <strong>New SitRep</strong>, <strong>Record report</strong>).</li>
+        <li><strong>Side sheets.</strong> Forms open in a panel over the page. <strong>Cancel</strong> closes it without saving.</li>
+      </ul>
+
+      <h3>2.4 What the colours mean</h3>
+      <table>
+        <thead><tr><th>Colour</th><th>Meaning</th></tr></thead>
+        <tbody>
+          <tr><td><span style="display:inline-block;width:14px;height:14px;border-radius:50%;background:#fff;border:1px solid var(--line);vertical-align:middle"></span> / <span style="display:inline-block;width:14px;height:14px;border-radius:50%;background:#1E3FC2;vertical-align:middle"></span> / <span style="display:inline-block;width:14px;height:14px;border-radius:50%;background:#B11E16;vertical-align:middle"></span> <strong>White / Blue / Red</strong></td><td>The EOC alert level. They appear <em>only</em> in the top bar, the EOC Board and the level controls.</td></tr>
+          <tr><td><span style="display:inline-block;width:14px;height:14px;border-radius:50%;background:#D66812;vertical-align:middle"></span> <strong>Orange</strong></td><td>Where you are, or what is selected.</td></tr>
+          <tr><td><span style="display:inline-block;width:14px;height:14px;border-radius:50%;background:#0F7A3C;vertical-align:middle"></span> <strong>Green</strong></td><td>Done, approved, OK.</td></tr>
+          <tr><td><span style="display:inline-block;width:14px;height:14px;border-radius:50%;background:#B8860B;vertical-align:middle"></span> <strong>Yellow / ochre</strong></td><td>Be careful, needs attention.</td></tr>
+          <tr><td><span style="display:inline-block;width:14px;height:14px;border-radius:50%;background:#B11E16;vertical-align:middle"></span> <strong>Red</strong></td><td>Problem or overdue.</td></tr>
+        </tbody>
+      </table>
+      <p>Colours are always shown with words too, so nothing depends on colour alone.</p>
+
+      <h3>2.5 Make MODE easier to read</h3>
+      <p>Tap the <strong>Accessibility</strong> button (bottom right of every screen). You can make the text <strong>larger or smaller</strong>, turn on <strong>Higher contrast</strong>, use a <strong>plainer font with wider spacing</strong>, or <strong>turn off movement</strong>. Use <strong>Appearance</strong> in the menu to switch between light and dark.</p>
+    </section>
+
+    <!-- ============== PART 3 ============== -->
+    <section id="p3" class="card">
+      <h2>Part 3. “I want to…” (find the right screen)</h2>
+      <p>Use this page like a phone book. Find your task, then go to the part named.</p>
+      <table>
+        <thead><tr><th>I want to…</th><th>Go to</th><th>Press</th><th>Part</th></tr></thead>
+        <tbody>
+          <tr><td>See what needs attention this morning</td><td><strong>Today</strong></td><td>(opens by itself)</td><td>4</td></tr>
+          <tr><td>Check official weather, earthquake or tsunami information</td><td><strong>Today</strong> → Hazard watch</td><td>the PAGASA / PHIVOLCS links</td><td>4</td></tr>
+          <tr><td>Write something in the logbook</td><td><strong>Today</strong> → <strong>Log an entry</strong>, or <strong>EOC → Logbook</strong></td><td><strong>New entry</strong></td><td>5.3</td></tr>
+          <tr><td>Fix a mistake in the logbook</td><td><strong>EOC → Logbook</strong></td><td>tap the entry, write the correction</td><td>5.3</td></tr>
+          <tr><td>Record a barangay’s report</td><td><strong>EOC → Barangays</strong></td><td>tap the barangay → <strong>Record report</strong></td><td>5.4</td></tr>
+          <tr><td>Ask for vehicles, equipment, relief or teams</td><td><strong>EOC → Requests</strong></td><td><strong>New request</strong></td><td>5.5</td></tr>
+          <tr><td>See what equipment we have</td><td><strong>EOC → Resources</strong></td><td>tap an item</td><td>5.6</td></tr>
+          <tr><td>Write a situation report (SitRep)</td><td><strong>EOC → SitReps</strong></td><td><strong>New SitRep</strong></td><td>5.7</td></tr>
+          <tr><td>Change the EOC alert level</td><td><strong>EOC → Board</strong></td><td><strong>Change level</strong></td><td>5.2</td></tr>
+          <tr><td>See which barangays have gone quiet</td><td><strong>EOC → Barangay liaison</strong></td><td>tap a cluster</td><td>5.8</td></tr>
+          <tr><td>See each barangay’s hazard profile</td><td><strong>EOC → Risk</strong></td><td>filter by hazard</td><td>5.9</td></tr>
+          <tr><td>Assess a forecast hazard before it hits</td><td><strong>EOC → Anticipatory action</strong></td><td><strong>New PDRA</strong></td><td>5.13</td></tr>
+          <tr><td>Follow a written procedure step by step</td><td><strong>Protocols</strong></td><td>tap a protocol → <strong>Start protocol</strong></td><td>6</td></tr>
+          <tr><td>Practise a procedure as an exercise</td><td><strong>Protocols</strong></td><td>tick <strong>This is a drill</strong> → <strong>Start drill</strong></td><td>6.3</td></tr>
+          <tr><td>Read a chapter or SOP of the Manual</td><td><strong>Library</strong></td><td><strong>Find a section</strong></td><td>8</td></tr>
+          <tr><td>Find a law, memo or plan</td><td><strong>Vault</strong></td><td>search box</td><td>9</td></tr>
+          <tr><td>Run an evacuation or camp exercise</td><td><strong>Tools → ECHO</strong></td><td><strong>Simulator</strong> tab</td><td>10.1</td></tr>
+          <tr><td>See who does what (RACI)</td><td><strong>Today</strong> → <strong>RACI board</strong></td><td>search box</td><td>11</td></tr>
+          <tr><td>Check if my phone has unsent entries</td><td>top bar, <strong>Synced…</strong></td><td>tap it</td><td>13</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ============== PART 4 ============== -->
+    <section id="p4" class="card">
+      <h2>Part 4. Today</h2>
+      <p><strong>Where:</strong> <strong>Today</strong> (first item in the menu). It opens by itself after you sign in. <strong>Who:</strong> everyone with a role.</p>
+      <p>Today is your morning start page. Scroll down to see these blocks.</p>
+
+      <h3>The quick action tiles</h3>
+      <div class="tiles">
+        <a class="tile" href="#p5" title="Opens the EOC logbook. Shown to duty officers, EOC staff, EOC Manager, CDRRMO Head, admin.">
+          <span class="label">Log an entry</span>
+          <span class="meta">EOC logbook</span>
+        </a>
+        <a class="tile" href="#p6" title="Opens the Protocols list.">
+          <span class="label">Run a protocol</span>
+          <span class="meta">Protocols</span>
+        </a>
+        <a class="tile" href="#p5" title="Opens EOC → Barangays.">
+          <span class="label">Barangay status</span>
+          <span class="meta">EOC → Barangays</span>
+        </a>
+        <a class="tile" href="#p5" title="Opens a new Pre-Disaster Risk Assessment. CDRRMO Head, EOC Manager, EOC staff.">
+          <span class="label">New PDRA</span>
+          <span class="meta">Pre-disaster risk assessment</span>
+        </a>
+        <a class="tile" href="#p7" title="Opens the current IAT cycle. Assessors, validators, lead-office focal persons.">
+          <span class="label">Continue assessment</span>
+          <span class="meta">IAT cycle</span>
+        </a>
+        <a class="tile" href="#p9" title="Opens the Document Vault.">
+          <span class="label">Document Vault</span>
+          <span class="meta">Laws, plans, records</span>
+        </a>
+        <a class="tile" href="#p11" title="Opens the RACI board.">
+          <span class="label">RACI board</span>
+          <span class="meta">Who does what</span>
+        </a>
+        <a class="tile" href="#p10" title="Opens Tools and hazard maps.">
+          <span class="label">Tools and hazard maps</span>
+          <span class="meta">Tools</span>
+        </a>
+      </div>
+
+      <div class="notice bad">
+        <div class="icon" aria-hidden="true">!</div>
+        <div><strong>Reminder:</strong> the top bar and the <strong>Hazard watch</strong> note both say it: MODE does not issue warnings. Always check PAGASA and PHIVOLCS.</div>
+      </div>
+    </section>
+
+    <!-- ============== PART 5 ============== -->
+    <section id="p5" class="card">
+      <h2>Part 5. EOC (Emergency Operations Center)</h2>
+      <p><strong>Where:</strong> <strong>EOC</strong> in the menu. The EOC has many tabs under the title: <strong>Board · Logbook · SitReps · Requests · Resources · Barangays · Barangay liaison · Risk · Plans and clusters · Roster · Map · Anticipatory action</strong>.</p>
+
+      <h3>5.1 The Board: the EOC at a glance</h3>
+      <p>The Board shows the current situation in blocks. Every block has a link to its full screen.</p>
+      <ul>
+        <li><strong>Alert level card</strong> (big, top): for example <em>White level — Normal operations</em>, with the <strong>Change level</strong> button.</li>
+        <li><strong>Logbook:</strong> type a quick note and tap <strong>Log</strong>. <strong>All entries</strong> opens the full logbook.</li>
+        <li><strong>Barangays:</strong> how many barangays reported a condition in the last 24 hours, and how many families and persons are evacuated.</li>
+        <li><strong>Open resource requests</strong>, <strong>Evacuation centres (ECHO)</strong>, <strong>Latest SitRep</strong>, <strong>Priority barangays (DDRiVE)</strong>, <strong>EOC capability</strong>.</li>
+      </ul>
+
+      <h3>5.2 Change the EOC alert level</h3>
+      <p><strong>Who:</strong> EOC Manager, CDRRMO Head, system administrator. <strong>Needs a connection.</strong></p>
+      <table>
+        <thead><tr><th>Level</th><th>Meaning in MODE</th></tr></thead>
+        <tbody>
+          <tr><td><span class="level-chip" style="font-size:12px;padding:3px 8px;">White</span></td><td>Normal operations</td></tr>
+          <tr><td><span class="level-chip" style="font-size:12px;padding:3px 8px;background:var(--lvl-blue);color:var(--on-level);border-color:var(--lvl-blue);">Blue</span></td><td>Partial activation: at least half of resources on standby</td></tr>
+          <tr><td><span class="level-chip" style="font-size:12px;padding:3px 8px;background:var(--lvl-red);color:var(--on-level);border-color:var(--lvl-red);">Red</span></td><td>Full activation: all resources available</td></tr>
+        </tbody>
+      </table>
+      <ol class="steps">
+        <li><strong>EOC</strong> → <strong>Board</strong> → tap <strong>Change level</strong>.</li>
+        <li>Choose the new level. The level you are on now is greyed out and says <em>Current level</em>.</li>
+        <li>Type the <strong>Reason</strong>. This is required. It goes into the logbook and shows in the top bar.</li>
+        <li>Optional: choose the <strong>Hazard</strong>, and type the <strong>Authority or memo reference</strong>.</li>
+        <li>Tap the confirm button at the bottom of the panel. The change is logged with your name, the time and the reason.</li>
+      </ol>
+
+      <h3>5.3 Logbook: the official diary</h3>
+      <p><strong>Write an entry:</strong> Tap <strong>New entry</strong>. Pick a <strong>Category</strong> (<em>General, Decision, Warning, Request, Resource, Report</em>). Type the <strong>Entry</strong>. Tap save.</p>
+      <p><strong>Fix a mistake:</strong> Tap the wrong entry. In <strong>Correct an entry</strong>, type the <strong>Corrected entry</strong>. Save. A new entry is added and linked to the old one. The old one stays visible with a line through it.</p>
+      <div class="notice info">
+        <div class="icon" aria-hidden="true">i</div>
+        <div>You cannot edit or delete entries, and you cannot correct a <em>Level change</em> entry.</div>
+      </div>
+
+      <h3>5.4 Barangay status reports</h3>
+      <ol class="steps">
+        <li>Tap the barangay.</li>
+        <li>Choose the <strong>Condition</strong>: <em>Normal, Monitoring, Affected, Isolated</em> or <em>Evacuating</em>.</li>
+        <li>If evacuating, type <strong>Families evacuated</strong> and <strong>Persons evacuated</strong>. Otherwise leave them blank.</li>
+        <li>Choose <strong>Received by</strong>: <em>Radio, SMS, Phone call, This app</em> or <em>In person</em>.</li>
+        <li>Add <strong>Remarks</strong> if needed. <strong>No names.</strong></li>
+        <li>Tap <strong>Record report</strong>.</li>
+      </ol>
+      <div class="notice warn">
+        <div class="icon" aria-hidden="true">!</div>
+        <div><strong>Blank is not zero.</strong> If the barangay did not give a number, leave the box empty. MODE keeps it as <em>not reported</em>. Typing 0 means <em>they reported zero</em>.</div>
+      </div>
+
+      <h3>5.5 Resource requests</h3>
+      <p>A request moves through five steps: <strong>Requested → Approved → Mobilized → Delivered → Demobilized</strong>. A request can also be <strong>Rejected</strong>.</p>
+      <ol class="steps">
+        <li>Tap <strong>New request</strong>.</li>
+        <li>Fill in <strong>Requested by</strong>, <strong>Item</strong>, <strong>Quantity</strong>, <strong>Unit</strong>, and the priority (<em>Life safety, Urgent</em> or <em>Routine</em>).</li>
+        <li>Save. It appears under <strong>Open</strong>.</li>
+      </ol>
+
+      <h3>5.6 Resource inventory</h3>
+      <p>A list of what the EOC can use: vehicles, heavy equipment, rescue, medical, relief goods, communications, power and others. Find things with <strong>Find a resource</strong>, <strong>Kind</strong>, or <strong>Barangay or place</strong>.</p>
+
+      <h3>5.7 SitReps (situation reports)</h3>
+      <p>A SitRep is the official report sent to OCD VIII and the Province. MODE follows the DILG VIII harmonized template. It moves <strong>Draft → Submitted → Approved</strong>.</p>
+      <ol class="steps">
+        <li>Tap <strong>New SitRep</strong>. Do this once for each reporting period during an activation.</li>
+        <li>Set the <strong>Reporting period</strong>: <strong>From</strong> and <strong>To</strong>.</li>
+        <li>Under <strong>DILG VIII harmonized fields</strong>, choose the <strong>Report type</strong> and fill in the fields.</li>
+        <li>Under <strong>Situation</strong>, write the overview, actions taken and needs.</li>
+        <li>Under <strong>Figures</strong>, tap <strong>Fill from barangay reports</strong> and <strong>Add ECHO camp figures</strong>.</li>
+        <li>Tap <strong>Save</strong>. When ready, tap <strong>Submit</strong>. The SitRep gets its number.</li>
+        <li>The EOC Manager, CDRRMO Head or administrator taps <strong>Approve</strong>. An approved SitRep is locked.</li>
+      </ol>
+
+      <h3>5.8 Barangay liaison desk</h3>
+      <p>Shows, by barangay cluster, which barangays have reported and which are <strong>silent</strong>. Tap a cluster to see its barangays. Silent barangays are listed first, ranked by DDRiVE priority. Counts only.</p>
+
+      <h3>5.9 Risk (DDRiVE)</h3>
+      <p>A <strong>City risk picture</strong> and a <strong>Barangay profile</strong> for each barangay. Filter by hazard type. Aggregate data only. <em>Decision support only — never an evacuation trigger.</em></p>
+
+      <h3>5.10 Plans and clusters</h3>
+      <p><strong>This activation</strong> shows which plan, response clusters and EOC modules are switched on. Each is marked <em>Lead, Activated, On standby</em> or <em>Stood down</em>.</p>
+
+      <h3>5.11 Roster</h3>
+      <p>Every EOC position needs a <strong>Primary</strong> and two alternates so the EOC can run for 72 hours. The <strong>Depth</strong> meter shows how full the roster is.</p>
+      <div style="margin: 12px 0;">
+        <div style="display:flex;justify-content:space-between;font-family:var(--font-data);font-size:13px;color:var(--muted);margin-bottom:4px;">
+          <span>Operations Section — roster depth</span><span>5 / 6 filled</span>
+        </div>
+        <div class="meter"><span style="width:83%"></span></div>
+      </div>
+
+      <h3>5.12 Map (Geo-COP)</h3>
+      <p>The <em>common operating picture</em>: City hazard map library, reference points (EOC, alternate EOC, staging areas, evacuation hubs), and layers (KML, KMZ, GeoJSON).</p>
+
+      <h3>5.13 Anticipatory action (acting before a disaster)</h3>
+      <p>This follows <strong>RA 12287</strong> (Imminent Disaster Act) and its rules.</p>
+      <h4>Step A. Assess: New PDRA</h4>
+      <ol class="steps">
+        <li>Tap <strong>New PDRA</strong> (Pre-Disaster Risk Assessment).</li>
+        <li><strong>Forecast:</strong> choose the <strong>Hazard</strong>; type the <strong>Forecast source</strong>; set <strong>Forecast issued</strong> and <strong>Expected impact</strong>.</li>
+        <li><strong>Projected impact:</strong> choose <em>Severe, Moderate, Minor</em> or <em>Uncertain</em>; describe cascading hazards; tick the barangays.</li>
+        <li><strong>Decision:</strong> choose one — <strong>Monitor</strong>, <strong>City early action</strong>, or <strong>Request a State of Imminent Disaster</strong>.</li>
+      </ol>
+      <h4>Step B. Follow the declaration, in order</h4>
+      <ol class="steps">
+        <li>Pre-disaster risk assessment.</li>
+        <li><strong>Request to RDRRMC VIII.</strong> Tap <strong>Record request sent</strong>. This starts the 24-hour reply clock.</li>
+        <li><strong>RDRRMC recommendation.</strong> Record <em>Recommended</em> or <em>Not recommended</em>.</li>
+        <li><strong>Mayor’s Executive Order.</strong> Type the <strong>Executive Order number</strong> and record it.</li>
+        <li><strong>Anticipatory actions and funds.</strong> Tap to load the action checklist. The CDRRMO Head records releases under <strong>Funds released</strong>.</li>
+        <li><strong>Lifting.</strong> Tap <strong>Record lifting</strong>. This starts the 45-day clock.</li>
+        <li><strong>Report to OCD.</strong> Tap <strong>Record report sent</strong> within 45 days.</li>
+      </ol>
+    </section>
+
+    <!-- ============== PART 6 ============== -->
+    <section id="p6" class="card">
+      <h2>Part 6. Protocols (step-by-step procedures)</h2>
+      <p><strong>Where:</strong> <strong>Protocols</strong> in the menu. The page title is <em>DRRM Workflows and Protocols</em>.</p>
+      <table>
+        <thead><tr><th>Tab</th><th>What it holds</th><th>Simple meaning</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Workflows</strong></td><td>Management cycles between offices</td><td>A bigger job that many offices share</td></tr>
+          <tr><td><strong>Protocols</strong></td><td>Operational procedures</td><td>A checklist you follow at the moment of action</td></tr>
+          <tr><td><strong>Forms</strong></td><td>The form that each step is recorded on</td><td>Every step ends on a form</td></tr>
+        </tbody>
+      </table>
+
+      <h3>6.1 Start a protocol</h3>
+      <ol class="steps">
+        <li>Tap the protocol in the list. A panel opens with the steps, the process owner, and the forms.</li>
+        <li>Check <strong>Procedure source</strong>. It links to the Manual section in the Library. <strong>RACI for (code)</strong> shows who does what.</li>
+        <li>If this is an exercise, tick <strong>This is a drill</strong>.</li>
+        <li>Tap <strong>Start protocol</strong> (or <strong>Start drill</strong>).</li>
+      </ol>
+
+      <h3>6.2 Work through the steps</h3>
+      <ol class="steps">
+        <li>Do the action in real life.</li>
+        <li>Fill in the step’s form if it has one. Add a <strong>Note</strong>.</li>
+        <li>Close the step with the done button. MODE records <strong>who</strong> closed it and <strong>when</strong>.</li>
+        <li>When every critical step is closed, tap <strong>Complete</strong>.</li>
+      </ol>
+
+      <h3>6.3 Drills count</h3>
+      <p>A run started as a drill is recorded as a drill. This shows that a procedure has been <em>tested</em>, which helps the readiness assessment.</p>
+    </section>
+
+    <!-- ============== PART 7 ============== -->
+    <section id="p7" class="card">
+      <h2>Part 7. Assess (how ready are we?)</h2>
+      <p><strong>Where:</strong> <strong>Assess</strong>. Two tabs: <strong>Institutional assessment (IAT)</strong> and <strong>Hazard maps</strong>.</p>
+
+      <h3>7.1 What the IAT is</h3>
+      <p>The <strong>Institutional Assessment Tool (IAT)</strong> is a scorecard for how mature our CDRRMO and EOC are. In version 1.7 it has <strong>140 indicators</strong>:</p>
+      <table>
+        <thead><tr><th>Part</th><th>About</th><th>Indicators</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Part A</strong></td><td>The CDRRMO</td><td>82</td></tr>
+          <tr><td><strong>Part B</strong></td><td>The EOC</td><td>43</td></tr>
+          <tr><td><strong>Part C</strong></td><td>How the two work together (the interface)</td><td>15</td></tr>
+        </tbody>
+      </table>
+
+      <h3>7.2 Assessment cycles</h3>
+      <p>A <em>cycle</em> is one round of assessment, for example <em>2026 Baseline (IAT v1.7)</em>. Tap a cycle to open it.</p>
+
+      <h3>7.3 Read a cycle</h3>
+      <p>At the top: a progress bar and buttons for <strong>Validation workshop</strong>, <strong>Action plan</strong>, <strong>EOC capability checklist</strong>, <strong>Export CSV</strong>.</p>
+      <div style="margin: 16px 0;">
+        <div style="display:flex;justify-content:space-between;font-family:var(--font-data);font-size:13px;color:var(--muted);margin-bottom:4px;">
+          <span>Institutional Maturity Index</span><span>2.4 / 4.0 · Developing</span>
+        </div>
+        <div class="meter"><span style="width:60%"></span></div>
+      </div>
+      <p><strong>Results</strong> shows four scores: the Institutional Maturity Index (A+B), Part A (CDRRMO), Part B (EOC), and Part C (Interface Index). Each has a number out of 4.0, a word such as <em>Developing</em> or <em>Initial</em>, and <em>Mandatory met</em>.</p>
+
+      <h3>7.4 Score one indicator</h3>
+      <ol class="steps">
+        <li>Open the indicator.</li>
+        <li>Under <strong>Evidence</strong>, tap <strong>Add evidence</strong>. Choose the <strong>Type of evidence</strong> and <strong>What it shows</strong>, give it a <strong>Title</strong>, the <strong>Document date</strong>, and the <strong>Source office or position</strong>. <strong>Never type an informant’s name.</strong></li>
+        <li>Under <strong>Score</strong>, choose the <strong>Maturity level</strong>.</li>
+        <li>Add <strong>Gap or remarks</strong> and <strong>Recommended action</strong>.</li>
+        <li>Tap <strong>Save</strong>. Then send the score to a validator.</li>
+        <li>A validator confirms it. If the validator changes the score, a <strong>Reason for the change</strong> is required.</li>
+      </ol>
+
+      <h3>7.5 Hazard maps</h3>
+      <p>Official hazard sheets drawn over the barangays. Use the buttons above the map: <strong>Identify</strong>, <strong>Distance</strong>, <strong>Area</strong>, <strong>My location</strong>, <strong>Clear</strong>, <strong>Export PNG</strong>, <strong>Full screen</strong>, <strong>+/−</strong>.</p>
+      <p>The sheets are <em>reference pictures</em>: they do not forecast and do not trigger anything.</p>
+    </section>
+
+    <!-- ============== PART 8 ============== -->
+    <section id="p8" class="card">
+      <h2>Part 8. Library (the Manual of Operations)</h2>
+      <p><strong>Where:</strong> <strong>Library</strong>. Four tabs: <strong>Manuals, Traceability, Requirements, Frameworks</strong>.</p>
+      <p>The Library holds the Manual of Operations (MOO) for the CDRRMO, chapter by chapter, with each chapter’s SOPs, forms and annexes, and the EOC Manual alongside. <strong>The approved manuals remain the legal documents.</strong></p>
+
+      <h3>The four DRRM pillars</h3>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;margin:12px 0;">
+        <span class="pillar prev">Prevention &amp; Mitigation</span>
+        <span class="pillar prep">Preparedness</span>
+        <span class="pillar resp">Response</span>
+        <span class="pillar rec">Recovery &amp; Rehabilitation</span>
+      </div>
+
+      <h3>8.1 Find something</h3>
+      <p>In <strong>Find a section</strong>, type a code, a word from the title, an old chapter code, or <em>area 4</em>. Examples: <em>SOP 3-6</em>, <em>EOC Ch.2</em>, <em>contingency</em>.</p>
+
+      <h3>8.2 Browse</h3>
+      <ul>
+        <li><strong>Status colours</strong> box: <span class="badge draft">Draft</span> (being written), <span class="badge review">For validation</span> (being checked), <span class="badge approved">Approved</span> (the version in force).</li>
+        <li><strong>The four DRRM pillars:</strong> colour chips show which pillar a chapter or area belongs to.</li>
+        <li><strong>Manual of Operations: chapters:</strong> tap a chapter to open it and see its SOPs, forms and annexes.</li>
+        <li><strong>Functional areas:</strong> the assessment groupings that the chapters answer.</li>
+      </ul>
+
+      <h3>8.3 The other three tabs</h3>
+      <table>
+        <thead><tr><th>Tab</th><th>What it shows</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Traceability</strong></td><td>For each manual section, which assessment indicators and master requirements (MR-01 to MR-18) it supports</td></tr>
+          <tr><td><strong>Requirements</strong></td><td>The master requirements themselves</td></tr>
+          <tr><td><strong>Frameworks</strong></td><td>How the manual lines up with outside frameworks, such as the UNDRR Scorecard and the RA 12287 rules</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ============== PART 9 ============== -->
+    <section id="p9" class="card">
+      <h2>Part 9. Vault (documents)</h2>
+      <p><strong>Where:</strong> <strong>Vault</strong>. Three tabs: <strong>Documents, Document Review, References</strong>.</p>
+      <p>The Vault is one place for laws, guidelines, City issuances, plans and records.</p>
+
+      <h3>9.1 Find and open a document</h3>
+      <ol class="steps">
+        <li>Type in the search box (title, number, issuer or indicator), or use <strong>All types</strong>.</li>
+        <li>Tap a document. Tap <strong>Open file</strong> to read the attached copy. The link is private and works for five minutes.</li>
+        <li><strong>Evidence for</strong> lists the indicators this document supports.</li>
+      </ol>
+
+      <h3>9.2 Add a document</h3>
+      <ol class="steps">
+        <li>Tap <strong>Add document</strong>.</li>
+        <li>Fill in the details and do one of: <strong>upload a file</strong>, <strong>add a link</strong>, or <strong>say where the paper original is kept</strong>.</li>
+        <li>Choose the indicators it supports, and save.</li>
+      </ol>
+
+      <h3>9.3 Replace old versions</h3>
+      <p>Documents are <strong>never deleted</strong>. Use <strong>Mark as superseded</strong> when a newer version exists.</p>
+
+      <h3>9.5 References tab</h3>
+      <p>A catalogue of the laws and guidelines cited in MODE, each explained in plain language. Tapping a citation such as <code>RA 10121 Sec. 21</code> anywhere in MODE opens a short note.</p>
+    </section>
+
+    <!-- ============== PART 10 ============== -->
+    <section id="p10" class="card">
+      <h2>Part 10. Tools</h2>
+      <p><strong>Where:</strong> <strong>Tools</strong> in the side menu. On a phone, <strong>Today</strong> → <strong>Tools and hazard maps</strong>.</p>
+
+      <h3>10.1 ECHO: Evacuation and Camp Handling Operations</h3>
+      <table>
+        <thead><tr><th>Tab</th><th>Use it to</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Simulator</strong></td><td>Practise the whole cycle: scenario, evacuation, centres, camp operations, protection and closure</td></tr>
+          <tr><td><strong>Evacuation intelligence</strong></td><td>See the hazard sheets, barangay exposure, and screen centres and routes on a map</td></tr>
+          <tr><td><strong>Camp management</strong></td><td>Keep the evacuation-centre inventory and aggregate camp reports for the current activation</td></tr>
+          <tr><td><strong>EOC dashboard</strong></td><td>See evacuation status, capacity, unmet needs, requests and SitRep figures in one picture</td></tr>
+        </tbody>
+      </table>
+
+      <h3>10.2 Flood intelligence</h3>
+      <p>Shows each barangay’s flood exposure, the City hazard maps and official warning sources. It is <strong>static assessment data, not a live forecast</strong>.</p>
+
+      <h3>10.3 ICS Exercise Simulator</h3>
+      <p>Practise the Philippine Incident Command System on Ormoc scenarios. You can run an <strong>individual drill</strong>, a <strong>facilitated tabletop</strong> or a <strong>position drill</strong>.</p>
+
+      <h3>10.4 Public Service Continuity Plan (PSCP)</h3>
+      <p>A workbench to build the plan that keeps essential services running. Work through the sections in order: <em>Policy and team, Essential functions (BIA), Risk assessment, Continuity strategies, Activation, Plan document</em>.</p>
+
+      <h3>10.5 Gawad KALASAG Seal Readiness</h3>
+      <p>Rate the six Seal criteria from 0 to 3 and add notes. MODE calculates a weighted score and rating. <strong>Fill from IAT</strong> can pre-fill ratings from the assessment.</p>
+    </section>
+
+    <!-- ============== PART 11 ============== -->
+    <section id="p11" class="card">
+      <h2>Part 11. Two boards that tie everything together</h2>
+
+      <h3>11.1 RACI board: who does what</h3>
+      <p>Type a protocol code, an activity or an office in the search box. Each activity shows four kinds of people:</p>
+      <table>
+        <thead><tr><th>Letter</th><th>Meaning</th></tr></thead>
+        <tbody>
+          <tr><td><span class="raci R">R</span> <strong>Responsible</strong></td><td>Does the work</td></tr>
+          <tr><td><span class="raci A">A</span> <strong>Accountable</strong></td><td>Answers for it. There should be exactly one</td></tr>
+          <tr><td><span class="raci C">C</span> <strong>Consulted</strong></td><td>Gives advice first</td></tr>
+          <tr><td><span class="raci I">I</span> <strong>Informed</strong></td><td>Is told afterwards</td></tr>
+        </tbody>
+      </table>
+
+      <h3>11.2 EOC capability board</h3>
+      <p>The OCD/NDRRMC checklist of <strong>154 items in 15 sections</strong>. Each item shows a status taken from our assessment evidence: <span class="badge approved">Met</span>, <span class="badge draft">Partially met</span>, <span class="badge review">Largely unmet</span>, <span class="badge retired">Not met</span>, or <em>No direct IAT indicator</em>.</p>
+    </section>
+
+    <!-- ============== PART 12 ============== -->
+    <section id="p12" class="card">
+      <h2>Part 12. Settings</h2>
+      <table>
+        <thead><tr><th>Item</th><th>What it does</th><th>Who</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Your account</strong></td><td>Your name, position and roles</td><td>everyone</td></tr>
+          <tr><td><strong>Appearance</strong></td><td>Light or dark screen</td><td>everyone</td></tr>
+          <tr><td><strong>Language</strong></td><td>English or Sinugboanon (Bisaya). This changes the menus and dashboard only</td><td>everyone</td></tr>
+          <tr><td><strong>Sync and offline data</strong></td><td>What is waiting to send, and anything the server refused</td><td>everyone</td></tr>
+          <tr><td><strong>Users and roles</strong></td><td>Approve new accounts and grant roles</td><td>system administrator</td></tr>
+          <tr><td><strong>Barangay list</strong></td><td>Load the barangays with their PSGC codes</td><td>system administrator</td></tr>
+          <tr><td><strong>Error reports</strong></td><td>Screens that crashed, with the app version</td><td>system administrator</td></tr>
+          <tr><td><strong>About and data privacy</strong></td><td>MODE version, where data is held, privacy</td><td>everyone</td></tr>
+          <tr><td><strong>Sign out and clear this device</strong></td><td>Part 1.7</td><td>everyone</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ============== PART 13 ============== -->
+    <section id="p13" class="card">
+      <h2>Part 13. Working offline and syncing</h2>
+
+      <h3>13.1 What the top-right words mean</h3>
+      <table>
+        <thead><tr><th>You see</th><th>It means</th><th>What to do</th></tr></thead>
+        <tbody>
+          <tr><td><em>Synced 21 seconds ago</em></td><td>Everything is up to date</td><td>Nothing</td></tr>
+          <tr><td><em>Syncing</em></td><td>MODE is sending and receiving now</td><td>Wait</td></tr>
+          <tr><td><em>Offline</em></td><td>No signal</td><td>Keep working. Entries are saved on the device</td></tr>
+          <tr><td><em>Offline, 3 waiting</em></td><td>3 entries are saved but not yet sent</td><td>They send by themselves when signal returns</td></tr>
+          <tr><td><em>Server problem, 2 waiting</em></td><td>The connection works but the server is not answering</td><td>MODE retries. Keep working</td></tr>
+          <tr><td><em>2 need attention</em></td><td>The server refused something or two people changed the same record</td><td>Tap it and read Part 13.3</td></tr>
+        </tbody>
+      </table>
+
+      <h3>13.2 What works without internet</h3>
+      <p><strong>Works offline:</strong> reading anything already loaded, Search, logbook entries, barangay reports, new resource requests, SitRep drafts, running protocols, proposing roster designations, the ICS, PSCP, KALASAG and ECHO simulator tools.</p>
+      <p><strong>Needs a connection:</strong> changing the EOC alert level, approving anything, declaration steps and fund releases, activating a plan, saving resource edits, validating scores, and managing accounts.</p>
+    </section>
+
+    <!-- ============== PART 14 ============== -->
+    <section id="p14" class="card">
+      <h2>Part 14. Who can do what</h2>
+      <p>An administrator gives each person one or more <strong>roles</strong>. Your role decides which buttons you see.</p>
+      <table>
+        <thead><tr><th>Role</th><th>In plain words</th><th>Main things they can do</th></tr></thead>
+        <tbody>
+          <tr><td><strong>CDRRMO Head</strong></td><td>Head of the office</td><td>Approves manual versions, protocols and forms; approves roster designations; releases anticipatory action funds; validates EOC capability runs; changes the EOC level; approves SitReps; records PDRAs</td></tr>
+          <tr><td><strong>EOC Manager</strong></td><td>Runs the EOC</td><td>Changes the EOC level; approves or rejects resource requests; approves SitReps; activates plans and clusters; records PDRAs</td></tr>
+          <tr><td><strong>EOC staff</strong></td><td>EOC team member</td><td>Logbook, barangay reports, requests, SitRep drafts, protocols, PDRAs, roster proposals</td></tr>
+          <tr><td><strong>Duty officer</strong></td><td>On shift</td><td>Logbook, barangay reports, requests, starts protocols</td></tr>
+          <tr><td><strong>Assessor</strong></td><td>Scores the IAT</td><td>Adds evidence and scores indicators; uses the Vault</td></tr>
+          <tr><td><strong>Validator</strong></td><td>Checks the scores</td><td>Confirms or revises scores; uses the Vault</td></tr>
+          <tr><td><strong>Lead-office focal person</strong></td><td>Speaks for an office</td><td>Answers assessment questions for their office</td></tr>
+          <tr><td><strong>Manual author</strong></td><td>Writes the Manual</td><td>Drafts manual sections</td></tr>
+          <tr><td><strong>Viewer</strong></td><td>Reads only</td><td>Reads what their account may see</td></tr>
+          <tr><td><strong>System administrator</strong></td><td>Looks after accounts</td><td>Approves accounts, grants roles, loads the barangay list, reads error reports</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ============== PART 15 ============== -->
+    <section id="p15" class="card">
+      <h2>Part 15. Walk-throughs</h2>
+
+      <h3>15.1 Start of shift (about 10 minutes)</h3>
+      <ol class="steps">
+        <li>Open <strong>Today</strong>. Read the <strong>Since your last visit</strong> counters.</li>
+        <li>Look at the top bar: what is the EOC level? Is it <em>Synced</em>?</li>
+        <li>Open the <strong>Hazard watch</strong> links and read the latest PAGASA and PHIVOLCS information.</li>
+        <li>Check <strong>Data quality</strong> and <strong>Hazard context</strong>. Phone any high-risk barangay that has not reported in 12 hours.</li>
+        <li>Open <strong>EOC → Logbook</strong> and read the last entries.</li>
+        <li>Write a <strong>General</strong> entry: <em>Shift started, handover read.</em></li>
+      </ol>
+
+      <h3>15.2 A typhoon or flood, from watch to wrap-up</h3>
+      <table>
+        <thead><tr><th>Moment</th><th>Where</th><th>What you do</th></tr></thead>
+        <tbody>
+          <tr><td><strong>1. A forecast appears</strong></td><td><strong>Today</strong> → Hazard watch</td><td>Read PAGASA. Log a <strong>Warning</strong> entry.</td></tr>
+          <tr><td><strong>2. Time to prepare</strong></td><td><strong>EOC</strong> → <strong>Anticipatory action</strong> → <strong>New PDRA</strong></td><td>Record the forecast, expected impact and decision.</td></tr>
+          <tr><td><strong>3. Follow the procedure</strong></td><td><strong>Protocols</strong></td><td>Tap the right protocol, <strong>Start protocol</strong>, close each step.</td></tr>
+          <tr><td><strong>4. Leadership decides to activate</strong></td><td><strong>EOC</strong> → <strong>Board</strong> → <strong>Change level</strong></td><td>The EOC Manager or CDRRMO Head sets Blue or Red.</td></tr>
+          <tr><td><strong>5. Switch on the plan</strong></td><td><strong>EOC</strong> → <strong>Plans and clusters</strong></td><td>Open the hazard’s plan so the clusters and modules switch on.</td></tr>
+          <tr><td><strong>6. Barangays report</strong></td><td><strong>EOC</strong> → <strong>Barangays</strong></td><td>Record each report. Check <strong>Barangay liaison</strong> for silent barangays.</td></tr>
+          <tr><td><strong>7. People move to centres</strong></td><td><strong>Tools</strong> → <strong>ECHO</strong> → <strong>Camp management</strong></td><td>Record camp counts.</td></tr>
+          <tr><td><strong>8. Help is needed</strong></td><td><strong>EOC</strong> → <strong>Requests</strong></td><td><strong>New request</strong>. The EOC Manager approves.</td></tr>
+          <tr><td><strong>9. Everything important</strong></td><td><strong>EOC</strong> → <strong>Logbook</strong></td><td>Write decisions, warnings and orders as they happen. Correct, never erase.</td></tr>
+          <tr><td><strong>10. Report upward</strong></td><td><strong>EOC</strong> → <strong>SitReps</strong></td><td><strong>New SitRep</strong>, <strong>Fill from barangay reports</strong>, <strong>Submit</strong>.</td></tr>
+          <tr><td><strong>11. It is over</strong></td><td><strong>EOC</strong> → <strong>Board</strong></td><td>The EOC Manager lowers the level. If a declaration was in force, record <strong>Lifting</strong> and the 45-day <strong>Report to OCD</strong>.</td></tr>
+          <tr><td><strong>12. Learn from it</strong></td><td><strong>Assess</strong>, <strong>Library</strong></td><td>Hold the after-action review. Note what to fix in the action plan.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ============== PART 16 ============== -->
+    <section id="p16" class="card">
+      <h2>Part 16. When something goes wrong</h2>
+      <table>
+        <thead><tr><th>What happens</th><th>What to do</th></tr></thead>
+        <tbody>
+          <tr><td>I cannot sign in</td><td>Check the email. Try <strong>Email me a sign-in link</strong> instead of a password, or <strong>Forgot your password?</strong></td></tr>
+          <tr><td>It says <em>Waiting for approval</em></td><td>Tell your administrator. Tap <strong>Check again</strong> later.</td></tr>
+          <tr><td>A button is grey</td><td>Hover over it (or hold your finger on it). The note says why.</td></tr>
+          <tr><td><em>This needs a connection</em></td><td>Move to a place with signal. Level changes and approvals cannot be saved for later.</td></tr>
+          <tr><td>The top bar says <em>need attention</em></td><td>Tap it, then follow Part 13.3.</td></tr>
+          <tr><td>A list is empty (protocols, barangays)</td><td><strong>Settings</strong> → <strong>Sync and offline data</strong> → <strong>Sync now</strong>.</td></tr>
+          <tr><td>I typed something wrong in the logbook</td><td>Tap the entry and write a <strong>Correction</strong>.</td></tr>
+          <tr><td>I made a wrong barangay report</td><td>Record a new, correct report. The latest one counts.</td></tr>
+          <tr><td>A page shows a plain recovery message</td><td>Go back, or reload the page. Tell your administrator.</td></tr>
+          <tr><td>The text is too small</td><td><strong>Accessibility</strong> button → larger text.</td></tr>
+          <tr><td>A map or document will not open</td><td>Check your connection. Maps and files from outside MODE need internet.</td></tr>
+          <tr><td>I do not know where something is</td><td>Press <strong>Ctrl+K</strong> (or tap <strong>Search</strong>) and type a word.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ============== PART 17 ============== -->
+    <section id="p17" class="card">
+      <h2>Part 17. Words you will see</h2>
+      <dl class="kv">
+        <dt>AAR</dt><dd>After-action review: what happened, what worked, what to fix.</dd>
+        <dt>Anticipatory action (AA)</dt><dd>Acting before a forecast hazard strikes.</dd>
+        <dt>Barangay liaison</dt><dd>EOC desk that keeps contact with barangays.</dd>
+        <dt>CDRRMC / CDRRMO</dt><dd>City DRRM Council (policy and oversight) / City DRRM Office (the permanent office).</dd>
+        <dt>Cluster</dt><dd>A group of agencies or barangays that work together in a response.</dd>
+        <dt>DDRiVE</dt><dd>Risk and vulnerability information for Ormoc, used here as reference only.</dd>
+        <dt>DILG VIII / OCD VIII</dt><dd>Regional offices that receive our reports.</dd>
+        <dt>DRRM</dt><dd>Disaster risk reduction and management.</dd>
+        <dt>ECHO</dt><dd>Evacuation and Camp Handling Operations.</dd>
+        <dt>EOC</dt><dd>Emergency Operations Center, switched on during an emergency.</dd>
+        <dt>ICS</dt><dd>Incident Command System.</dd>
+        <dt>IAT</dt><dd>Institutional Assessment Tool: the readiness scorecard.</dd>
+        <dt>LDRRMF</dt><dd>Local DRRM Fund.</dd>
+        <dt>Logbook</dt><dd>The EOC’s time-stamped diary that cannot be erased.</dd>
+        <dt>MOO</dt><dd>The Manual of Operations.</dd>
+        <dt>PDRA</dt><dd>Pre-Disaster Risk Assessment, done on a forecast hazard.</dd>
+        <dt>PSCP</dt><dd>Public Service Continuity Plan.</dd>
+        <dt>PWA</dt><dd>An app that runs in your browser, can sit on your home screen, and works offline.</dd>
+        <dt>RACI</dt><dd>Responsible, Accountable, Consulted, Informed.</dd>
+        <dt>RDRRMC</dt><dd>Regional DRRM Council.</dd>
+        <dt>SitRep</dt><dd>Situation report.</dd>
+        <dt>SOP</dt><dd>Standard operating procedure.</dd>
+        <dt>State of Imminent Disaster</dt><dd>A declaration under RA 12287 made before a disaster, when impact is expected.</dd>
+        <dt>Sync</dt><dd>Sending your saved entries to the server and fetching others’.</dd>
+        <dt>Tooltip</dt><dd>The small note that appears when you hover or press and hold.</dd>
+        <dt>Vault</dt><dd>The document store.</dd>
+      </dl>
+    </section>
+
+    <!-- ============== PART 18 ============== -->
+    <section id="p18" class="card" style="border: 2px solid var(--accent);">
+      <h2 style="margin-top:0;">Part 18. One-page quick card</h2>
+      <p><em>Print this page and keep it at your desk.</em></p>
+      <ol class="steps">
+        <li><strong>Check the top bar first:</strong> EOC level and <em>Synced</em>.</li>
+        <li><strong>Warnings come from PAGASA and PHIVOLCS</strong>, not from MODE.</li>
+        <li><strong>Log it:</strong> <strong>EOC → Logbook → New entry</strong>. Never erase, only correct.</li>
+        <li><strong>Barangay report:</strong> <strong>EOC → Barangays →</strong> tap barangay → <strong>Record report</strong>. Blank means <em>not reported</em>.</li>
+        <li><strong>Need something:</strong> <strong>EOC → Requests → New request</strong>.</li>
+        <li><strong>Report up:</strong> <strong>EOC → SitReps → New SitRep → Submit</strong>.</li>
+        <li><strong>Follow a procedure:</strong> <strong>Protocols →</strong> tap one → <strong>Start protocol</strong> (use <strong>Start drill</strong> for practice).</li>
+        <li><strong>No names</strong> of evacuees, patients or informants. Ever.</li>
+        <li><strong>Offline is fine.</strong> Level changes and approvals need signal.</li>
+        <li><strong>Lost?</strong> Press <strong>Ctrl+K</strong> or tap <strong>Search</strong>. Ask your administrator for help with roles and accounts.</li>
+      </ol>
+    </section>
+
+    <footer>
+      Prepared 17 Nov 2026 from MODE version 1.22.0 · City of Ormoc · CDRRMO · <em>Prepare Before · Respond Together · Recover Stronger · Build Safer Communities</em>
+    </footer>
+  </main>
+</div>
+
+<script>
+  // Active-link highlighting as the user scrolls
+  const links = document.querySelectorAll('.nav a');
+  const sections = Array.from(links).map(a => document.querySelector(a.getAttribute('href'))).filter(Boolean);
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        const id = e.target.id;
+        links.forEach(l => l.classList.toggle('active', l.getAttribute('href') === '#' + id));
+      }
+    });
+  }, { rootMargin: '-40% 0px -55% 0px' });
+  sections.forEach(s => io.observe(s));
+
+  // Ctrl+K / Cmd+K focuses the search
+  document.addEventListener('keydown', (e) => {
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+      e.preventDefault();
+      const input = document.querySelector('.search input');
+      if (input) input.focus();
+    }
+  });
+</script>
+</body>
+</html>
