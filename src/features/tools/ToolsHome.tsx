@@ -196,6 +196,8 @@ export const DDRIVE_M: ExternalTool = {
 export const EXTERNAL_TOOLS: ExternalTool[] = [...PHILIPPINE_TOOLS, ...INTERNATIONAL_TOOLS, ...SPECIALIZED_TOOLS, DDRIVE_M];
 
 export const INTERNAL_TOOLS: InternalTool[] = [
+  { to: '/tools/flood-intelligence', name: 'Flood intelligence', icon: Waves, iat: 'A5, A6, B2, B5',
+    text: 'Ormoc DDRiVE flood picture, Copernicus on-demand mapping links, PAGASA and supporting sources. Decision support only — not an official forecast or trigger.' },
   { to: '/tools/echo', name: 'ECHO: Evacuation and Camp Handling Operations', icon: Tent, iat: 'A7.4, A7.6, A7.9, B5.1, B6.3, B6.4',
     text: 'Simulate the whole cycle from evacuation planning to camp closure, screen centres and routes on the hazard sheets, keep the evacuation-centre inventory and aggregate camp reports, and see one EOC picture with SitRep figures.' },
   { to: '/tools/ics', name: 'ICS Exercise Simulator', icon: Swords, iat: 'A8.1, B6.1, B7.2, B7.3',
