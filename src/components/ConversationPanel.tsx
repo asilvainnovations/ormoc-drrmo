@@ -3,7 +3,7 @@
  * Attach to IndicatorPage (response), CycleOverview (assessment_cycle),
  * and later EOC activation / protocol run screens.
  *
- * Messages: offline via save(). Resolve / reopen: callOnline (authority).
+ * Messages: offline via save(). Resolve / reopen: updateOnline (authority).
  */
 import { useCallback, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
@@ -16,16 +16,15 @@ import { useOnline } from '@/lib/hooks';
 import { fmtDateTime } from '@/lib/time';
 import { useToast } from '@/components/Toast';
 import { Badge, Button, Loading, Notice, Section, Textarea } from '@/components/ui';
-import { tip } from '@/components/Tooltip';
-import type { ConversationMessage, ConversationParentKind, ConversationThread } from '@/types';
+import type { ConversationMessage, ConversationParentKind, ConversationStatus, ConversationThread } from '@/types';
 
 const PRIVACY =
   'Do not write names of affected persons, evacuees or informants. Prefer role or position. Aggregate counts only.';
 
-const STATUS_TONE: Record<ConversationThread['status'], 'ok' | 'warn' | 'muted'> = {
+const STATUS_TONE: Record<ConversationStatus, 'ok' | 'warn' | 'neutral'> = {
   open: 'ok',
   resolved: 'warn',
-  locked: 'muted',
+  locked: 'neutral',
 };
 
 type Props = {
@@ -36,7 +35,7 @@ type Props = {
 };
 
 export function ConversationPanel({ parentKind, parentId, label }: Props) {
-  const { has, userId } = useAuth();
+  const { has } = useAuth();
   const online = useOnline();
   const toast = useToast();
   const [body, setBody] = useState('');
@@ -56,9 +55,10 @@ export function ConversationPanel({ parentKind, parentId, label }: Props) {
       .where('[parent_kind+parent_id]')
       .equals([parentKind, parentId])
       .toArray();
-    // Prefer the non-locked thread; else the most recent locked one for read-back.
-    const active = threads.find((t) => t.status !== 'locked') ?? threads.sort((a, b) =>
-      (b.updated_at ?? '').localeCompare(a.updated_at ?? ''))[0] ?? null;
+    const active = threads.find((t: ConversationThread) => t.status !== 'locked')
+      ?? threads.sort((a: ConversationThread, b: ConversationThread) =>
+        (b.updated_at ?? '').localeCompare(a.updated_at ?? ''))[0]
+      ?? null;
     const messages = active
       ? await db.conversation_messages.where('thread_id').equals(active.id).sortBy('created_at')
       : [];
@@ -71,15 +71,16 @@ export function ConversationPanel({ parentKind, parentId, label }: Props) {
     if (!canPost) return;
     setBusy(true);
     try {
-      const row: ConversationThread = {
+      const row: ConversationThread & { _new?: boolean } = {
         id: uuid(),
         parent_kind: parentKind,
         parent_id: parentId,
         title: label ? `Discussion — ${label}` : null,
         status: 'open',
         version: 1,
+        _new: true,
       };
-      await save('conversation_threads', { ...row, _new: true }, 'Start conversation');
+      await save('conversation_threads', row, 'Start conversation');
       toast('Conversation started');
     } catch (e) {
       toast((e as Error).message, 'bad');
@@ -93,14 +94,15 @@ export function ConversationPanel({ parentKind, parentId, label }: Props) {
     if (!text || !data?.thread || data.thread.status !== 'open' || !canPost) return;
     setBusy(true);
     try {
-      const row: ConversationMessage = {
+      const row: ConversationMessage & { _new?: boolean } = {
         id: uuid(),
         thread_id: data.thread.id,
         body: text,
         in_reply_to: null,
         created_at: new Date().toISOString(),
+        _new: true,
       };
-      await save('conversation_messages', { ...row, _new: true }, 'Post conversation message');
+      await save('conversation_messages', row, 'Post conversation message');
       setBody('');
       toast('Message saved');
     } catch (e) {
@@ -118,8 +120,12 @@ export function ConversationPanel({ parentKind, parentId, label }: Props) {
     }
     setBusy(true);
     try {
-      await updateOnline('conversation_threads', data.thread, { status } as Partial<ConversationThread>,
-        status === 'resolved' ? 'Resolve conversation' : 'Reopen conversation');
+      await updateOnline(
+        'conversation_threads',
+        data.thread,
+        { status } as Partial<ConversationThread>,
+        status === 'resolved' ? 'Resolve conversation' : 'Reopen conversation',
+      );
       toast(status === 'resolved' ? 'Conversation resolved' : 'Conversation reopened');
     } catch (e) {
       toast((e as Error).message, 'bad');
@@ -128,16 +134,15 @@ export function ConversationPanel({ parentKind, parentId, label }: Props) {
     }
   }, [data, canResolve, online, toast]);
 
-  const profiles = data?.byId ?? new Map();
+  const profiles = data?.byId ?? new Map<string, string>();
 
   if (data === undefined) return <Loading />;
 
   return (
-    <Section
-      title="Conversation"
-      tip="Discuss this record with assessors, validators and authorised staff. Messages stay on this object only (ADR-040)."
-      icon={<MessageSquare className="h-4 w-4" />}
-    >
+    <Section title="Conversation">
+      <p className="mb-2 text-sm text-muted">
+        Discuss this record with assessors, validators and authorised staff. Messages stay on this object only (ADR-040).
+      </p>
       <Notice tone="info">{PRIVACY}</Notice>
 
       {!data.thread ? (
@@ -145,11 +150,11 @@ export function ConversationPanel({ parentKind, parentId, label }: Props) {
           <span className="text-sm text-muted">No conversation yet.</span>
           {canPost && (
             <Button
-              size="sm"
               disabled={busy}
               onClick={() => void openThread()}
               tip="Start a discussion thread on this record. One open thread per record."
             >
+              <MessageSquare className="mr-1 h-4 w-4" aria-hidden />
               Start conversation
             </Button>
           )}
@@ -159,16 +164,22 @@ export function ConversationPanel({ parentKind, parentId, label }: Props) {
           <div className="mt-2 flex flex-wrap items-center gap-2">
             <Badge tone={STATUS_TONE[data.thread.status]}>{data.thread.status}</Badge>
             {data.thread.status === 'open' && canResolve && (
-              <Button size="sm" variant="secondary" disabled={busy || !online}
+              <Button
+                variant="secondary"
+                disabled={busy || !online}
                 onClick={() => void setStatus('resolved')}
-                tip="Mark resolved. Needs a connection. New messages are blocked until reopened.">
+                tip="Mark resolved. Needs a connection. New messages are blocked until reopened."
+              >
                 Resolve
               </Button>
             )}
             {data.thread.status === 'resolved' && canResolve && (
-              <Button size="sm" variant="secondary" disabled={busy || !online}
+              <Button
+                variant="secondary"
+                disabled={busy || !online}
                 onClick={() => void setStatus('open')}
-                tip="Reopen for further discussion. Needs a connection.">
+                tip="Reopen for further discussion. Needs a connection."
+              >
                 Reopen
               </Button>
             )}
@@ -182,7 +193,7 @@ export function ConversationPanel({ parentKind, parentId, label }: Props) {
               <li className="text-sm text-muted">No messages yet.</li>
             )}
             {data.messages.map((m) => (
-              <li key={m.id} className="rounded-md border border-border bg-card p-3">
+              <li key={m.id} className="rounded-md border border-line bg-surface p-3">
                 <div className="mb-1 flex flex-wrap items-baseline justify-between gap-2 text-xs text-muted">
                   <span>{profiles.get(m.author_id ?? '') ?? 'Staff'}</span>
                   <span>{fmtDateTime(m.created_at)}</span>
@@ -200,17 +211,15 @@ export function ConversationPanel({ parentKind, parentId, label }: Props) {
                 rows={3}
                 maxLength={2000}
                 placeholder="Write a message (no names of affected persons)…"
-                tip="Saved on this device and sent when a connection returns. Max 2000 characters."
               />
               <div className="flex items-center justify-between gap-2">
                 <span className="text-xs text-muted">{body.trim().length}/2000</span>
                 <Button
-                  size="sm"
                   disabled={busy || !body.trim()}
                   onClick={() => void post()}
                   tip="Save the message to this device and queue it for sync."
                 >
-                  <Send className="mr-1 h-3.5 w-3.5" /> Post
+                  <Send className="mr-1 h-3.5 w-3.5" aria-hidden /> Post
                 </Button>
               </div>
             </div>
