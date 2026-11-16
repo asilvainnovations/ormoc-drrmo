@@ -108,6 +108,16 @@ export const TABLES: TableConfig[] = [
   { name: 'training_runs', pk: 'id', cursor: 'updated_at', write: 'none' },
   { name: 'resources', pk: 'id', cursor: 'updated_at', write: 'none' },
   { name: 'sitrep_cutoffs', pk: 'id', cursor: 'updated_at', write: 'none' },
+  // 1.22.0 (ADR-035): EOC capability checklist. Items are reference data; answers are captured offline by the
+  // assessment team. Provenance, state and who/when are set by the server; validation is online (Head only).
+  { name: 'eoc_cap_items', pk: 'id', cursor: 'updated_at', write: 'none' },
+  { name: 'eoc_cap_responses', pk: 'id', cursor: 'updated_at', write: 'upsert',
+    omit: [...STAMPS, 'provenance', 'state', 'assessed_by', 'assessed_at', 'validated_by', 'validated_at'] },
+  // 1.22.0 (ADR-040): conversations. A thread is opened offline (insert); resolving or reopening is an online
+  // authority action (updateOnline). Messages are append-only. The server stamps authors, times and resolution.
+  { name: 'conversation_threads', pk: 'id', cursor: 'updated_at', write: 'insert',
+    omit: [...STAMPS, 'created_by', 'resolved_by', 'resolved_at'] },
+  { name: 'conversation_messages', pk: 'id', cursor: 'created_at', write: 'insert', omit: ['created_at', 'author_id'] },
 ];
 
 export const TABLE = Object.fromEntries(TABLES.map((t) => [t.name, t])) as Record<string, TableConfig>;

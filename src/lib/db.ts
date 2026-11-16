@@ -140,6 +140,11 @@ export class DrrmDB extends Dexie {
   training_runs!: Table<T.TrainingRun, string>;
   resources!: Table<T.Resource, string>;
   sitrep_cutoffs!: Table<T.SitrepCutoff, string>;
+  // 1.22.0: cycle-scoped EOC capability checklist (ADR-035) and object-scoped conversations (ADR-040)
+  eoc_cap_items!: Table<T.EocCapItem, string>;
+  eoc_cap_responses!: Table<T.EocCapResponse, string>;
+  conversation_threads!: Table<T.ConversationThread, string>;
+  conversation_messages!: Table<T.ConversationMessage, string>;
 
   constructor(name = 'ormoc-drrm-ops') {
     super(name);
@@ -244,6 +249,13 @@ export class DrrmDB extends Dexie {
       training_runs: 'id, tool, run_at, filed_to_indicator',
       resources: 'id, category, owner_office_id',
       sitrep_cutoffs: 'id, alert_level',
+    });
+    // v10 (1.22.0): EOC capability checklist tables (restored) and conversations (ADR-040). Additive only.
+    this.version(10).stores({
+      eoc_cap_items: 'id, section, sort',
+      eoc_cap_responses: 'id, cycle_id, item_id, [cycle_id+site]',
+      conversation_threads: 'id, parent_id, [parent_kind+parent_id], status',
+      conversation_messages: 'id, thread_id, created_at',
     });
   }
 }
