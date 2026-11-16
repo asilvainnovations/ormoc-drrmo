@@ -20,26 +20,10 @@ import type { GeoLayer, GeoLayerGroup, GeoPointKind, GeoReferencePoint } from '@
 import { ORMOC, basemapReady, baseStyle, ensureProtocol, plainStyle, token } from './map/base';
 import { addLayer, addPoint, loadLayer, markOfficial, parseCoord, supersedeLayer, supersedePoint, verifyPoint } from './geo';
 import { CONDITION, EOC_TABS, LAYER_GROUP, LAYER_VALIDATION, POINT_KIND, POINT_STATUS } from './labels';
+import { CITY_REFERENCE_MAPS } from './map/referenceMaps';
 
 const empty = { type: 'FeatureCollection' as const, features: [] as unknown[] };
-const CITY_MAPS = [
-  { title:'Flood Hazard Map', file:'ormoc-city-flood-hazard-map.webp', group:'Hydrometeorological' },
-  { title:'Rain-Induced Landslide Hazard Map', file:'ormoc-city-rain-induced-landslide-hazard-map.webp', group:'Geological' },
-  { title:'Earthquake-Induced Landslide Hazard Map', file:'ormoc-city-earthquake-induced-landslide-hazard-map.webp', group:'Geological' },
-  { title:'Landslide Susceptibility Map', file:'ormoc-city-landslide-hazard-map.webp', group:'Geological' },
-  { title:'Liquefaction Hazard Map', file:'ormoc-city-liquefaction-hazard-map.webp', group:'Geological' },
-  { title:'Ground Shaking Hazard Map', file:'ormoc-city-ground-shaking-hazard-map.webp', group:'Geological' },
-  { title:'Ground Rupture Hazard Map', file:'ormoc-city-ground-rupture-hazard-map.webp', group:'Geological' },
-  { title:'Tsunami Hazard Map', file:'ormoc-city-tsunami-hazard-map.webp', group:'Hydrometeorological' },
-  { title:'Storm Surge Advisory 1 — 2 m', file:'ormoc-city-storm-surge-advisory-1-map.webp', group:'Hydrometeorological' },
-  { title:'Storm Surge Advisory 2 — 3 m', file:'ormoc-city-storm-surge-advisory-2-map.webp', group:'Hydrometeorological' },
-  { title:'Storm Surge Advisory 3 — 4 m', file:'ormoc-city-storm-surge-advisory-3-map.webp', group:'Hydrometeorological' },
-  { title:'Storm Surge Advisory 4 — 5 m', file:'ormoc-city-storm-surge-advisory-4-map.webp', group:'Hydrometeorological' },
-  { title:'Slope Map', file:'ormoc-city-slope-map.webp', group:'Terrain' },
-  { title:'Topographic Map', file:'ormoc-city-topography-map.webp', group:'Terrain' },
-  { title:'Political Boundary Map', file:'ormoc-city-political-boundary-map.webp', group:'Administrative' },
-  { title:'Zoning Map', file:'ormoc-city-zoning-map.webp', group:'Land use' },
-] as const;
+
 
 export default function MapPage() {
   const { has, userId } = useAuth();
@@ -109,8 +93,8 @@ export default function MapPage() {
     <Tabs items={EOC_TABS}/>
     <Section title="City hazard map library">
       <p className="mb-3 text-sm text-muted">High-resolution source map displays. Open a map to inspect its full-resolution image. The map's original legend, date, scale and limitations remain part of the source.</p>
-      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">{CITY_MAPS.map((item)=><a key={item.file} href={`/maps/${item.file}`} target="_blank" rel="noopener noreferrer" className="overflow-hidden rounded-control border border-line bg-surface hover:border-action">
-        <div className="aspect-[4/3] bg-sunken"><img src={`/maps/${item.file}`} alt={`${item.title}, Ormoc City`} loading="lazy" decoding="async" className="h-full w-full object-contain"/></div><div className="p-3"><span className="font-semibold">{item.title}</span><Badge className="ml-2">{item.group}</Badge></div>
+      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">{CITY_REFERENCE_MAPS.map((item)=><a key={item.id} href={item.href} target="_blank" rel="noopener noreferrer" className="overflow-hidden rounded-control border border-line bg-surface hover:border-action">
+        <div className="aspect-[4/3] bg-sunken"><img src={item.href} alt={`${item.title}, Ormoc City`} loading="lazy" decoding="async" className="h-full w-full object-contain"/></div><div className="p-3"><span className="font-semibold">{item.title}</span><Badge className="ml-2">{item.group}</Badge><span className="mt-1 block text-xs text-muted">{item.description}</span></div>
       </a>)}</div>
     </Section>
     {baseProblem&&<Notice tone="warn" title="Basemap not available">{baseProblem} The City reference maps above remain available. Points and overlays still load where possible.</Notice>}
