@@ -1,43 +1,14 @@
-MODE 1.22.0 — Object-scoped conversations (ADR-040) — Slice 1 assessment
-========================================================================
-Base: main at 1.21.0 (tag v1.21.0 once created) with Tokyo migrations through 03200 applied.
+MODE 1.22.0 Slice 2 — Flood intelligence, hazard watch, EOC analytics/roster scenarios (ADR-041)
+===============================================================================================
+Prerequisites: 1.21.0 on Tokyo (migrations through 03200); Slice 1 conversations (03300) applied if shipping both under 1.22.0.
 
-This handover is additive. No DELETE.txt.
+No new database migration is required for Slice 2 core (uses existing DDRiVE, eoc_positions/designations, eoc_assessment seeds).
+Optional: place the reference flood prototype HTML at public/tools/flood-intelligence-prototype.html (static open-in-new-tab only).
 
-1. Copy every file in this zip into the repo at its repo-relative path.
-   - docs/adr/040-object-scoped-conversations.md (already accepted; overwrite if older)
-   - docs/adr/README.md row for 040 (merge if you already have it)
-   - supabase/migrations/20261116003300_conversations.sql
-   - src/components/ConversationPanel.tsx
-   - Merge snippets from PATCH notes below into src/types.ts, src/lib/tables.ts, src/lib/db.ts,
-     src/features/iat/IndicatorPage.tsx, src/features/iat/CycleOverview.tsx,
-     supabase/migrations/migration_status.sql, supabase/tests/10_rules_and_security.sql
-
-2. Apply the migration on Tokyo (and training):
-     psql -f supabase/migrations/20261116003300_conversations.sql
-   Or GitHub → Actions → Load reference data (if the workflow is extended to pick up new migrations).
-   Idempotent.
-
-3. Merge TypeScript (see PATCHES.md in this zip):
-   - Types ConversationThread, ConversationMessage, ConversationParentKind, ConversationStatus
-   - tables.ts: conversation_threads (upsert), conversation_messages (insert)
-   - db.ts: version(10) stores for both tables; Table<> declarations
-   - IndicatorPage: render <ConversationPanel parentKind="response" parentId={response.id} />
-   - CycleOverview: render <ConversationPanel parentKind="assessment_cycle" parentId={cycle.id} />
-
-4. npm ci && npm run typecheck && npx vitest run && npm run build
-
-5. Database checks:
-     -- migration_status should list 20261116003300_conversations as applied
-     -- guards present:
-     select proname from pg_proc where pronamespace = 'app'::regnamespace
-       and proname like 'guard_conversation%';
-     -- run the new rows in supabase/tests/10_rules_and_security.sql
-
-6. Commit and push with git (never GitHub web upload), then tag:
-     git add -A && git commit -m "feat: object-scoped conversations for assessment (1.22.0, ADR-040 Slice 1)"
-     git push origin main && git tag -a v1.22.0 -m "MODE 1.22.0 — object-scoped conversations (ADR-040)" && git push origin v1.22.0
-
-7. Slice 2 (EOC activation + protocol run panels) is the same tables; only UI wiring remains.
-
-Privacy: every conversation panel shows the RA 10173 reminder. Messages never hold names of affected persons.
+1. Copy files from this zip at repo-relative paths.
+2. Merge PATCHES.md into ToolsHome, TodayPage, RiskPage, RosterPage (and routes if needed).
+3. npm run typecheck && npx vitest run && npm run build
+4. Confirm EOC capability seed already loaded (iat/eoc assessment boards show data). If not, re-run operational/parts 38*.
+5. Commit with git; tag when both Slice 1 and 2 are on main:
+     git tag -a v1.22.0 -m "MODE 1.22.0 — conversations (ADR-040) + flood/hazard/EOC analytics (ADR-041)"
+6. External links open with rel=noopener noreferrer only — never iframes (ADR-011).
