@@ -2,8 +2,8 @@ import { Link } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { 
   ClipboardCheck, FolderLock, ListChecks, NotebookPen, Settings, Siren, Users, 
-  Workflow, Wrench, TrendingUp, TrendingDown, Minus, ShieldCheck, AlertCircle, 
-  Database, Clock, MapPin, Building2, ArrowUpRight 
+  Workflow, Wrench, TrendingUp, TrendingDown, Minus, ShieldCheck, AlertCircle,
+  Clock, MapPin, Building2, ArrowUpRight
 } from 'lucide-react';
 import { db } from '@/lib/db';
 import { useAuth } from '@/lib/auth';
@@ -34,6 +34,8 @@ import { HazardWatch } from './HazardWatch';
 const GREET_KEYS = ['greet.morning', 'greet.afternoon', 'greet.evening'] as const;
 
 // --- INLINE ANALYTICS COMPONENTS (Uses project design tokens) ---
+
+type TrendDirection = 'up' | 'down' | 'neutral';
 
 function ShiftDeltaStrip({ delta }: { delta: { newLogs: number; newReports: number; openedReqs: number; closedReqs: number; newSitreps: number; eocLevelChanges: number } }) {
   const metrics = [
@@ -73,9 +75,9 @@ function Sparkline({ data, color }: { data: number[]; color: string }) {
 
 function OperationalTrendCards({ trends }: { trends: { reports24h: number; reports7d: number; openReqs: number; campOccupancy: number } }) {
   const cards = [
-    { title: 'Barangay Reports (24h)', value: trends.reports24h, trend: 'neutral' as const, data: [2, 4, 3, 5, 4, 6, trends.reports24h], color: 'var(--sky)', link: '/eoc/barangays' },
-    { title: 'Open Resource Requests', value: trends.openReqs, trend: 'neutral' as const, data: [5, 4, 6, 5, trends.openReqs, trends.openReqs, trends.openReqs], color: 'var(--warn)', link: '/eoc/logistics' },
-    { title: 'Active Camps (ECHO)', value: trends.campOccupancy, trend: 'neutral' as const, data: [1, 1, 2, 2, 3, trends.campOccupancy, trends.campOccupancy], color: 'var(--ok)', link: '/eoc/ccc' },
+    { title: 'Barangay Reports (24h)', value: trends.reports24h, trend: 'neutral' as TrendDirection, data: [2, 4, 3, 5, 4, 6, trends.reports24h], color: 'var(--sky)', link: '/eoc/barangays' },
+    { title: 'Open Resource Requests', value: trends.openReqs, trend: 'neutral' as TrendDirection, data: [5, 4, 6, 5, trends.openReqs, trends.openReqs, trends.openReqs], color: 'var(--warn)', link: '/eoc/logistics' },
+    { title: 'Active Camps (ECHO)', value: trends.campOccupancy, trend: 'neutral' as TrendDirection, data: [1, 1, 2, 2, 3, trends.campOccupancy, trends.campOccupancy], color: 'var(--ok)', link: '/eoc/ccc' },
   ];
 
   return (
