@@ -1,20 +1,3 @@
-
-// ... other imports
-
-export function ToolsHome() {
-  // ... existing component logic
-
-  
-        Refer to Part 10 of the guide for step-by-step instructions on ECHO, ICS Simulator, PSCP, and external hazard links.
-      </Notice>
-
-      {/* ... existing tool sections (Official warnings, Philippine mapping, ECHO, ICS, etc.) ... */}
-      
-    </div>
-  );
-}
-
-
 import {
   Activity,
   Award,
