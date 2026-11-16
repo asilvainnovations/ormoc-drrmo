@@ -7,7 +7,6 @@ import { ExternalLink, Waves } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '@/lib/db';
-import { hazardChip } from '@/domain/ddrive';
 import { Badge, List, ListRow, Notice, PageHeader, Section } from '@/components/ui';
 import { tip } from '@/components/Tooltip';
 import { ORMOC } from './ToolsHome';
@@ -91,7 +90,7 @@ export function FloodIntelligencePage() {
         to city-level early action, not automatically to a State of Imminent Disaster declaration.
       </Notice>
 
-      <Section title="Ormoc context" tip="Fixed local facts used across MODE.">
+      <Section title="Ormoc context">
         <ul className="list-disc space-y-1 pl-5 text-sm">
           <li>City proper sits between the Anilao and Malbasag rivers (approx. {ORMOC.lat}°N, {ORMOC.lon}°E).</li>
           <li>Working barangay count: 85 (PSA PSGC; confirm with CPDO before treating as final).</li>
@@ -99,7 +98,7 @@ export function FloodIntelligencePage() {
         </ul>
       </Section>
 
-      <Section title="Local flood picture (DDRiVE)" tip="Loaded with reference data; works offline once synced.">
+      <Section title="Local flood picture (DDRiVE)">
         {!snap ? (
           <p className="text-sm text-muted">Loading…</p>
         ) : snap.nFlood === 0 ? (
@@ -111,9 +110,7 @@ export function FloodIntelligencePage() {
             </p>
             <div className="mb-4 flex flex-wrap gap-2">
               {snap.byClass.map(([cls, n]) => (
-                <Badge key={cls} tip={`Susceptibility class “${cls}”`}>
-                  {cls}: {n}
-                </Badge>
+                <Badge key={cls}>{cls}: {n}</Badge>
               ))}
             </div>
             <h3 className="mb-2 text-sm font-semibold">Priority barangays (decision support)</h3>
@@ -128,7 +125,7 @@ export function FloodIntelligencePage() {
               ))}
             </List>
             <p className="mt-3">
-              <Link className="text-sm font-medium text-primary underline" to="/eoc/risk">
+              <Link className="text-sm font-medium text-action underline" to="/eoc/risk">
                 Open City Risk Picture →
               </Link>
             </p>
@@ -136,18 +133,18 @@ export function FloodIntelligencePage() {
         )}
       </Section>
 
-      <Section title="On-demand mapping & official sources" tip="Opens outside MODE. Requires a connection.">
+      <Section title="On-demand mapping & official sources">
         <List>
           {OUTBOUND.map((t) => (
-            <li key={t.url} className="border-b border-border py-3 last:border-0">
+            <li key={t.url} className="border-b border-line py-3 last:border-0">
               <a
                 href={t.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-start gap-2 font-medium text-primary hover:underline"
+                className="flex items-start gap-2 font-medium text-action hover:underline"
                 {...tip(`Open ${t.name} in a new tab`)}
               >
-                <ExternalLink className="mt-0.5 h-4 w-4 shrink-0" />
+                <ExternalLink className="mt-0.5 h-4 w-4 shrink-0" aria-hidden />
                 <span>
                   {t.name}
                   <span className="mt-0.5 block text-xs font-normal text-muted">{t.by}</span>
@@ -159,20 +156,20 @@ export function FloodIntelligencePage() {
         </List>
       </Section>
 
-      <Section title="Reference prototype" tip="Optional static model from the engagement — not an official product.">
+      <Section title="Reference prototype">
         <p className="mb-2 text-sm text-muted">
           A Bayesian-style flood intervention explorer was prepared as a design reference. If the file is
           installed under <code className="text-xs">public/tools/flood-intelligence-prototype.html</code>, open it
           in a new tab. It must not be treated as a PAGASA product or as an activation trigger.
         </p>
         <a
-          className="inline-flex items-center gap-2 text-sm font-medium text-primary underline"
+          className="inline-flex items-center gap-2 text-sm font-medium text-action underline"
           href="/tools/flood-intelligence-prototype.html"
           target="_blank"
           rel="noopener noreferrer"
           {...tip('Open the static reference prototype if present')}
         >
-          <Waves className="h-4 w-4" /> Open reference prototype
+          <Waves className="h-4 w-4" aria-hidden /> Open reference prototype
         </a>
       </Section>
     </div>

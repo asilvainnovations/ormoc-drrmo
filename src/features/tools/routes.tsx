@@ -9,6 +9,7 @@ import { EchoSimulator } from './echo/EchoSimulator';
 import { EchoCamps, EchoCentre } from './echo/EchoCamps';
 import { EchoDashboard } from './echo/EchoDashboard';
 import { EchoReport } from './echo/EchoReport';
+import { FloodIntelligencePage } from './FloodIntelligencePage';
 
 // The map library is large; it loads only when the ECHO map opens.
 const EchoIntel = lazy(() => import('./echo/EchoIntel'));
@@ -20,6 +21,8 @@ export default function ToolsRoutes() {
       <Route path="ics" element={<IcsPage />} />
       <Route path="gk" element={<GkPage />} />
       <Route path="pscp" element={<PscpPage />} />
+      {/* 1.22.0 (ADR-041): flood intelligence — DDRiVE local picture + outbound official sources. */}
+      <Route path="flood-intelligence" element={<FloodIntelligencePage />} />
       {/* 1.16.0 (ADR-030): ECHO, Evacuation and Camp Handling Operations. */}
       <Route path="echo" element={<EchoSimulator />} />
       <Route path="echo/report" element={<EchoReport />} />
