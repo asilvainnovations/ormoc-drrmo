@@ -25,6 +25,7 @@ import { PRIORITY_INDICATORS } from '@/features/iat/priority';
 import { useT, type StringKey } from '@/lib/i18n';
 import type { Indicator, Response } from '@/types';
 import { Separator } from '@/components/ui/separator';
+import { HazardWatch } from './HazardWatch';
 
 // 1.17 (ADR-031): the greeting follows the device language (src/lib/i18n).
 const GREET_KEYS = ['greet.morning', 'greet.afternoon', 'greet.evening'] as const;
@@ -91,6 +92,8 @@ export function TodayPage() {
       </GlassCard>
 
       {offlineIdentity && <Notice tone="info" title="Working offline">You are using the last sign-in on this device. Your entries are kept here and sent when the connection returns.</Notice>}
+
+      <HazardWatch />
 
       {decl && (
         <Link to={`/eoc/aa/d/${decl.id}`} {...tip('Open the declaration: next legal step, anticipatory action checklist and funds')} className="mb-6 block rounded-sheet border-2 border-bad bg-bad-soft p-4 hover:opacity-95">
