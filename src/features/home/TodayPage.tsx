@@ -3,7 +3,7 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { 
   ClipboardCheck, FolderLock, ListChecks, NotebookPen, Settings, Siren, Users, 
   Workflow, Wrench, TrendingUp, TrendingDown, Minus, ShieldCheck, AlertCircle,
-  Clock, MapPin, Building2, ArrowUpRight
+  Clock, MapPin, Building2, ArrowUpRight, BookOpen
 } from 'lucide-react';
 import { db } from '@/lib/db';
 import { useAuth } from '@/lib/auth';
@@ -13,7 +13,8 @@ import { statusCounts } from '@/domain/eoc_assessment';
 import { nextDeadline } from '@/domain/aa';
 import { canOperate } from '@/domain/eoc';
 import { duration, fmtDateTime, fmtLongDate, fmtTime, manilaHour, relative } from '@/lib/time';
-import { Badge, List, ListRow, Notice, TextLink } from '@/components/ui';
+import { Badge, ButtonAnchor, List, ListRow, Notice, TextLink } from '@/components/ui';
+import { USER_GUIDE_LABEL, USER_GUIDE_TIP, USER_GUIDE_URL } from '@/lib/userGuide';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -374,6 +375,7 @@ export function TodayPage() {
             <p className="font-data text-sm font-semibold uppercase tracking-widest text-accent-ink">{fmtLongDate(now)}</p>
             <h1 className="mt-1 text-2xl font-extrabold lg:text-3xl text-ink">{t(GREET_KEYS[hour < 12 ? 0 : hour < 18 ? 1 : 2])}{profile?.full_name ? `, ${profile.full_name.split(' ')[0]}` : ''}</h1>
             <p className="mt-1 max-w-prose text-muted">{t('today.hero')}</p>
+            <ButtonAnchor href={USER_GUIDE_URL} variant="primary" icon={BookOpen} tip={USER_GUIDE_TIP} className="mt-4">{USER_GUIDE_LABEL}</ButtonAnchor>
           </div>
           <div className="flex shrink-0 items-center gap-1 lg:hidden">
             <ThemeToggle />
