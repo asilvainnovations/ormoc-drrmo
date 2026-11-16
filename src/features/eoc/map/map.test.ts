@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { existsSync, readFileSync } from 'node:fs';
 import { cornersToPixel, distance, polygonArea, toUtm51 } from './geodesy';
 import { HAZARD_MAPS } from './hazardMaps';
+import { CITY_REFERENCE_MAPS } from './referenceMaps';
 import { classify, classOf, exposureSummary, type ThemeData } from './themes';
 
 describe('geodesy', () => {
@@ -45,6 +46,19 @@ describe('hazard map catalogue', () => {
     expect(g.features).toHaveLength(85);
     expect(new Set(g.features.map((f) => f.properties.psgc)).size).toBe(85);
     expect(g.features.every((f) => /^08037380\d{2}$|^0803738\d{3}$/.test(f.properties.psgc))).toBe(true);
+  });
+});
+
+describe('City static reference-map catalogue', () => {
+  it('keeps all 16 supplied cartographic sheets under public/geo/hazard/reference', () => {
+    expect(CITY_REFERENCE_MAPS).toHaveLength(16);
+    expect(new Set(CITY_REFERENCE_MAPS.map((m) => m.id)).size).toBe(16);
+    for (const m of CITY_REFERENCE_MAPS) {
+      expect(m.href.startsWith('/geo/hazard/reference/')).toBe(true);
+      expect(existsSync(`public${m.href}`), m.href).toBe(true);
+      expect(m.description.length).toBeGreaterThan(10);
+      expect(m.caution.length).toBeGreaterThan(10);
+    }
   });
 });
 
