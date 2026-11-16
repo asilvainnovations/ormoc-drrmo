@@ -2,6 +2,7 @@ import {
   Activity,
   Award,
   BarChart3,
+  BookOpen,
   CloudRain,
   Compass,
   Earth,
@@ -24,6 +25,7 @@ import {
 import type { LucideIcon } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useOnline } from '@/lib/hooks';
+import { USER_GUIDE_LABEL, USER_GUIDE_TIP, USER_GUIDE_URL } from '@/lib/userGuide';
 import { Badge, Notice, PageHeader, Section } from '@/components/ui';
 import { tip } from '@/components/Tooltip';
 
@@ -263,6 +265,25 @@ function InternalToolCard({ tool }: { tool: InternalTool }) {
   );
 }
 
+/** The MODE User Guide, first on the page so staff meet it before any other tool. */
+function UserGuideCard() {
+  return (
+    <a href={USER_GUIDE_URL} target="_blank" rel="noopener noreferrer" {...tip(USER_GUIDE_TIP)} className={`${CARD} mb-6`}>
+      <span className="flex items-start gap-3">
+        <BookOpen className="mt-0.5 h-6 w-6 shrink-0 text-action" aria-hidden />
+        <span className="min-w-0 flex-1">
+          <span className="block text-lg font-bold leading-snug">MODE User Guide</span>
+          <span className="mt-0.5 block text-xs text-muted">City Government of Ormoc, CDRRMO and EOC</span>
+        </span>
+        <ExternalLink className="h-4 w-4 shrink-0 text-muted group-hover:text-action" aria-hidden />
+        <span className="sr-only">(opens in a new tab)</span>
+      </span>
+      <span className="mt-3 block text-sm">A plain-language guide to every MODE screen: signing in, the EOC logbook, barangay reports, SitReps, protocols, the Library, the Vault and these tools, with step-by-step instructions.</span>
+      <span className="mt-3 block border-t border-line pt-3 text-sm font-semibold text-action">{USER_GUIDE_LABEL}</span>
+    </a>
+  );
+}
+
 /** Readiness tools and hazard information services, in one place. */
 export function ToolsHome() {
   const online = useOnline();
@@ -270,6 +291,8 @@ export function ToolsHome() {
     <div className="page">
       <PageHeader title="DRRM Intelligence and Tools"
         subtitle="Hazard monitoring, risk analytics, disaster intelligence and readiness tools for Ormoc City, in one place." />
+
+      <UserGuideCard />
 
       <Notice tone="info" title="Multi-hazard intelligence hub">
         <span className="flex items-start gap-2">
