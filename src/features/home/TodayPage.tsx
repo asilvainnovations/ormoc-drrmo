@@ -5,7 +5,7 @@ import {
   Workflow, Wrench, TrendingUp, TrendingDown, Minus, ShieldCheck, AlertCircle,
   Clock, MapPin, Building2, ArrowUpRight, BookOpen
 } from 'lucide-react';
-import { ButtonLink } from '@/components/ui'; // Adjust path to your actual ui.tsx
+import { ButtonAnchor, Badge, List, ListRow, Notice, TextLink } from '@/components/ui';
 import { USER_GUIDE_LABEL, USER_GUIDE_TIP, USER_GUIDE_URL } from '@/lib/userGuide';
 import { db } from '@/lib/db';
 import { useAuth } from '@/lib/auth';
@@ -15,8 +15,6 @@ import { statusCounts } from '@/domain/eoc_assessment';
 import { nextDeadline } from '@/domain/aa';
 import { canOperate } from '@/domain/eoc';
 import { duration, fmtDateTime, fmtLongDate, fmtTime, manilaHour, relative } from '@/lib/time';
-import { Badge, ButtonAnchor, List, ListRow, Notice, TextLink } from '@/components/ui';
-import { USER_GUIDE_LABEL, USER_GUIDE_TIP, USER_GUIDE_URL } from '@/lib/userGuide';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -35,19 +33,6 @@ import { Separator } from '@/components/ui/separator';
 import { HazardWatch } from './HazardWatch';
 
 const GREET_KEYS = ['greet.morning', 'greet.afternoon', 'greet.evening'] as const;
-
- {/* NEW: User Guide Tile */}
-  <ButtonLink
-    to={USER_GUIDE_URL}
-    variant="secondary"
-    tip={USER_GUIDE_TIP}
-    target="_blank"
-    rel="noopener noreferrer"
-    className="w-full justify-start min-h-[80px]" // Matches tile dimensions from design system
-     >
-    {/*BookOpenIcon className="h-5 w-5" /> */}
-    <span className="font-semibold">{USER_GUIDE_LABEL}</span>
-    </ButtonLink>
 
 // --- INLINE ANALYTICS COMPONENTS (Uses project design tokens) ---
 
@@ -388,13 +373,30 @@ export function TodayPage() {
           <div>
             <Seals size={44} className="mb-3 lg:hidden" />
             <p className="font-data text-sm font-semibold uppercase tracking-widest text-accent-ink">{fmtLongDate(now)}</p>
-            <h1 className="mt-1 text-2xl font-extrabold lg:text-3xl text-ink">{t(GREET_KEYS[hour < 12 ? 0 : hour < 18 ? 1 : 2])}{profile?.full_name ? `, ${profile.full_name.split(' ')[0]}` : ''}</h1>
+            <h1 className="mt-1 text-2xl font-extrabold lg:text-3xl text-ink">
+              {t(GREET_KEYS[hour < 12 ? 0 : hour < 18 ? 1 : 2])}
+              {profile?.full_name ? `, ${profile.full_name.split(' ')[0]}` : ''}
+            </h1>
             <p className="mt-1 max-w-prose text-muted">{t('today.hero')}</p>
-            <ButtonAnchor href={USER_GUIDE_URL} variant="primary" icon={BookOpen} tip={USER_GUIDE_TIP} className="mt-4">{USER_GUIDE_LABEL}</ButtonAnchor>
+            
+            {/* UPDATED: Added target and rel for external static file to preserve app state */}
+            <ButtonAnchor 
+              href={USER_GUIDE_URL} 
+              variant="primary" 
+              icon={BookOpen} 
+              tip={USER_GUIDE_TIP} 
+              className="mt-4"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {USER_GUIDE_LABEL}
+            </ButtonAnchor>
           </div>
           <div className="flex shrink-0 items-center gap-1 lg:hidden">
             <ThemeToggle />
-            <Link to="/settings" {...tip('Settings: sync, users and roles, about, sign out')} className="inline-flex h-tap w-tap items-center justify-center rounded-control hover:bg-sunken" aria-label="Settings"><Settings className="h-5 w-5 text-muted" aria-hidden /></Link>
+            <Link to="/settings" {...tip('Settings: sync, users and roles, about, sign out')} className="inline-flex h-tap w-tap items-center justify-center rounded-control hover:bg-sunken" aria-label="Settings">
+              <Settings className="h-5 w-5 text-muted" aria-hidden />
+            </Link>
           </div>
         </header>
       </GlassCard>
@@ -608,32 +610,5 @@ function ManualReadiness({ data }: { data?: { templates: { status: string; kind?
         ))}
       </CardContent>
     </Card>
-  );
-}
-
-
-
-
-
-
-export function TodayPage() {
-  // ... existing component logic
-
-  return (
-    <div className="space-y-6">
-      {/* ... existing Greeting, Notices, Hazard Watch blocks ... */}
-
-      <section>
-        <h2 className="text-xl font-display font-bold mb-3">Quick actions</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-          
-          {/* ... your existing role-based tiles ... */}
-
-
-        </div>
-      </section>
-
-      {/* ... rest of the page (Since your last visit, Trend cards, etc.) ... */}
-    </div>
   );
 }
