@@ -27,8 +27,6 @@ import { Link } from 'react-router-dom';
 import { useOnline } from '@/lib/hooks';
 import { USER_GUIDE_LABEL, USER_GUIDE_TIP, USER_GUIDE_URL } from '@/lib/userGuide';
 import { Badge, Notice, PageHeader, Section } from '@/components/ui';
-import { ButtonLink, Notice } from '@/components/ui'; // Adjust path to your actual ui.tsx
-import { USER_GUIDE_LABEL, USER_GUIDE_TIP, USER_GUIDE_URL } from '@/lib/userGuide';
 import { tip } from '@/components/Tooltip';
 
 /** Ormoc City (city proper, between the Anilao and Malbasag rivers). Centers map links. */
@@ -37,26 +35,6 @@ export const ORMOC = { lat: 11.0064, lon: 124.6075 };
 type ToolCategory = 'official' | 'philippines' | 'international' | 'specialized';
 type ToolPriority = 'official' | 'supporting' | 'reference';
 
-return (
-    <div className="space-y-6">
-      
-      {/* NEW: Contextual Help Notice */}
-      <Notice 
-        tone="info" 
-        title="Need help using these tools?"
-        action={
-          <ButtonLink 
-            to={USER_GUIDE_URL} 
-            variant="secondary" 
-            size="sm" 
-            tip={USER_GUIDE_TIP}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Open {USER_GUIDE_LABEL}
-          </ButtonLink>
-        }
-      >
 export interface ExternalTool {
   id: string;
   name: string;
