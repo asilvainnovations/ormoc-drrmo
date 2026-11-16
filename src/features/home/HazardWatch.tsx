@@ -23,6 +23,12 @@ const LINKS = [
     text: 'Official earthquake information and monitoring.',
   },
   {
+    name: 'PHIVOLCS Tsunami Information',
+    url: 'https://tsunami.phivolcs.dost.gov.ph/',
+    icon: Waves,
+    text: 'Official tsunami information bulletins for significant earthquakes, in the Philippines and abroad.',
+  },
+  {
     name: 'PAGASA weather',
     url: 'https://www.pagasa.dost.gov.ph/weather',
     icon: CloudRain,
