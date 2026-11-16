@@ -8,25 +8,9 @@ import { Link } from 'react-router-dom';
 import { Badge, List, ListRow, Notice, PageHeader, Section } from '@/components/ui';
 import { tip } from '@/components/Tooltip';
 import { ORMOC_FLOOD_EXPOSURE, FLOOD_EXPOSURE_AS_OF } from '@/domain/floodExposure';
+import { CITY_REFERENCE_MAPS } from '@/features/eoc/map/referenceMaps';
 
-const MAPS = [
-  { id:'flood', title:'Flood Hazard Map', file:'ormoc-city-flood-hazard-map.webp', desc:'Flood susceptibility map for Ormoc City.' },
-  { id:'rain-landslide', title:'Rain-Induced Landslide Hazard Map', file:'ormoc-city-rain-induced-landslide-hazard-map.webp', desc:'Rain-induced landslide susceptibility.' },
-  { id:'slope', title:'Slope Map', file:'ormoc-city-slope-map.webp', desc:'Terrain slope classes.' },
-  { id:'topography', title:'Topographic Map', file:'ormoc-city-topography-map.webp', desc:'City topographic reference.' },
-  { id:'tsunami', title:'Tsunami Hazard Map', file:'ormoc-city-tsunami-hazard-map.webp', desc:'Tsunami inundation hazard reference.' },
-  { id:'eq-landslide', title:'Earthquake-Induced Landslide Hazard Map', file:'ormoc-city-earthquake-induced-landslide-hazard-map.webp', desc:'Earthquake-induced landslide susceptibility.' },
-  { id:'ground-rupture', title:'Ground Rupture Hazard Map', file:'ormoc-city-ground-rupture-hazard-map.webp', desc:'Ground rupture reference map.' },
-  { id:'ground-shaking', title:'Ground Shaking Hazard Map', file:'ormoc-city-ground-shaking-hazard-map.webp', desc:'Ground shaking intensity reference map.' },
-  { id:'landslide', title:'Landslide Susceptibility Map', file:'ormoc-city-landslide-hazard-map.webp', desc:'Landslide susceptibility classes.' },
-  { id:'liquefaction', title:'Liquefaction Hazard Map', file:'ormoc-city-liquefaction-hazard-map.webp', desc:'Liquefaction hazard reference map.' },
-  { id:'zoning', title:'Zoning Map', file:'ormoc-city-zoning-map.webp', desc:'City land-use and zoning reference.' },
-  { id:'boundary', title:'Political Boundary Map', file:'ormoc-city-political-boundary-map.webp', desc:'Ormoc City political and barangay boundary reference.' },
-  { id:'surge-1', title:'Storm Surge Advisory 1 — 2 metres', file:'ormoc-city-storm-surge-advisory-1-map.webp', desc:'Storm surge scenario map at 2 metres.' },
-  { id:'surge-2', title:'Storm Surge Advisory 2 — 3 metres', file:'ormoc-city-storm-surge-advisory-2-map.webp', desc:'Storm surge scenario map at 3 metres.' },
-  { id:'surge-3', title:'Storm Surge Advisory 3 — 4 metres', file:'ormoc-city-storm-surge-advisory-3-map.webp', desc:'Storm surge scenario map at 4 metres.' },
-  { id:'surge-4', title:'Storm Surge Advisory 4 — 5 metres', file:'ormoc-city-storm-surge-advisory-4-map.webp', desc:'Storm surge scenario map at 5 metres.' },
-] as const;
+
 
 const OUTBOUND = [
   { name:'PAGASA — Visayas regional forecast', by:'DOST-PAGASA', url:'https://www.pagasa.dost.gov.ph/regional-forecast/visprsd', use:'Official regional forecasts and weather advisories.' },
@@ -75,9 +59,9 @@ export function FloodIntelligencePage() {
       <Section title="Ormoc City hazard map library">
         <p className="mb-3 text-sm text-muted">High-resolution display copies of the City-provided map images. Click a map to inspect it at full size. Map dates, legends and limitations remain those printed on each source map.</p>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {MAPS.map((m) => <a key={m.id} href={`/maps/${m.file}`} target="_blank" rel="noopener noreferrer" className="group overflow-hidden rounded-control border border-line bg-surface hover:border-action">
-            <div className="aspect-[4/3] overflow-hidden bg-sunken"><img src={`/maps/${m.file}`} alt={`${m.title}, Ormoc City`} loading="lazy" decoding="async" className="h-full w-full object-contain transition-transform group-hover:scale-[1.02]" /></div>
-            <div className="p-3"><span className="font-semibold">{m.title}</span><span className="mt-1 block text-xs text-muted">{m.desc}</span><span className="mt-2 inline-flex items-center gap-1 text-xs text-action">Open full map <ExternalLink className="h-3 w-3" aria-hidden /></span></div>
+          {CITY_REFERENCE_MAPS.map((m) => <a key={m.id} href={m.href} target="_blank" rel="noopener noreferrer" className="group overflow-hidden rounded-control border border-line bg-surface hover:border-action">
+            <div className="aspect-[4/3] overflow-hidden bg-sunken"><img src={m.href} alt={`${m.title}, Ormoc City`} loading="lazy" decoding="async" className="h-full w-full object-contain transition-transform group-hover:scale-[1.02]" /></div>
+            <div className="p-3"><span className="font-semibold">{m.title}</span><span className="mt-1 block text-xs text-muted">{m.description}</span><span className="mt-1 block text-xs text-muted">{m.caution}</span><span className="mt-2 inline-flex items-center gap-1 text-xs text-action">Open full map <ExternalLink className="h-3 w-3" aria-hidden /></span></div>
           </a>)}
         </div>
       </Section>
