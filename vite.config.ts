@@ -39,85 +39,100 @@ export default defineConfig(({ command, mode }) => {
     const c = checkSupabaseConfig(e.VITE_SUPABASE_URL, e.VITE_SUPABASE_PUBLISHABLE_KEY ?? e.VITE_SUPABASE_ANON_KEY);
     if (c.error) throw new Error(`Build stopped: ${c.error} Set it in the hosting environment variables (DEPLOY.md, section 6).`);
   }
+  
   // Keep the default in step with SITE.url in src/lib/site.ts.
   const siteUrl = loadEnv(mode, process.cwd(), 'VITE_').VITE_SITE_URL || 'https://www.mode-cddrmo-ormoc.online';
+  
   return {
-  define: { __APP_VERSION__: JSON.stringify(APP_VERSION) },
-  resolve: { alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) } },
-  plugins: [
-    react(),
-    seoFiles(siteUrl),
-    VitePWA({
-      registerType: 'prompt',            // staff choose when to reload; never mid-entry
-      injectRegister: false,
-      includeAssets: ['icons/*.svg', 'icons/*.png'],
-      manifest: {
-        // Keep in step with src/lib/product.ts.
-        name: 'MODE: Ormoc City DRRMO & EOC Manual of Operations',
-        short_name: 'MODE',
-        description: 'Ormoc City DRRMO & EOC Manual of Operations Development Platform: assessment, manuals, protocols and EOC operations',
-        lang: 'en-PH',
-        // 1.10: the installed app opens the workspace; the public home page is for browsers and search.
-        start_url: '/today',
-        scope: '/',
-        display: 'standalone',
-        orientation: 'any',
-        background_color: '#EEF5FB',
-        theme_color: '#0F3D66',
-        icons: [
-          { src: '/icons/icon-192.png', sizes: '192x192', type: 'image/png' },
-          { src: '/icons/icon-512.png', sizes: '512x512', type: 'image/png' },
-          { src: '/icons/icon-maskable-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
-        ],
-        shortcuts: [
-          { name: 'Logbook entry', url: '/eoc/log', icons: [{ src: '/icons/icon-192.png', sizes: '192x192' }] },
-          { name: 'Run a protocol', url: '/drrm/protocols', icons: [{ src: '/icons/icon-192.png', sizes: '192x192' }] },
-        ],
-      },
-      workbox: {
-        // kml: the EOC placemark (ADR-015) downloads offline.
-        globPatterns: ['**/*.{js,mjs,css,html,svg,png,webp,woff2,kml}'],
-        // 1.18: the bundled reference data (chapters 0-8 with annexes) is 2.4 MB and must precache —
-        // the manual text is the offline core of the app (ADR-003).
-        maximumFileSizeToCacheInBytes: 4 * 1024 * 1024,
-        // The original logo and banner files are kept for print and reuse, but are too large to
-        // ship to every phone; the app uses the compressed copies in /brand.
-        globIgnores: ['App_Banner.png', 'Ormoc_City_Logo.png', 'Ormoc_CDRRMO_Logo.png', 'brand/*.jpg',
-          // Full-size source images never ship to phones (a 3.4 MB copy here stopped the 5 Nov build).
-          'brand/*.png',
-          // Latin is all the app needs; other script subsets still load on demand if ever used.
-          '**/*-{cyrillic,cyrillic-ext,greek,greek-ext,vietnamese,devanagari,math,symbols,latin-ext}-*.woff2',
-          'brand/*-512.webp', 'brand/*-64.webp',
-          // Manual figures load when online; the manual text itself is in the bundled reference data.
-          'library/**',
-          // Hazard map sheets and barangay boundaries (ADR-028): cached the first time the Hazard maps page opens.
-          'geo/**'],
-        navigateFallback: '/index.html',
-        navigateFallbackDenylist: [/^\/auth\//],
-        // Supabase API calls are never cached by the service worker; the app keeps its own
-        // offline copy in IndexedDB and syncs through an outbox (ADR-003).
-        runtimeCaching: [
-          { urlPattern: ({ url, sameOrigin }) => sameOrigin && url.pathname.startsWith('/geo/'),
-            handler: 'CacheFirst', options: { cacheName: 'mode-geo', expiration: { maxEntries: 40 } } },
-        ],
-        cleanupOutdatedCaches: true,
-      },
-      devOptions: { enabled: false },
-    }),
-  ],
-  build: {
-    target: 'es2022',
-    sourcemap: false,
-    rollupOptions: {
-      output: {
-        manualChunks: {
-          react: ['react', 'react-dom', 'react-router-dom'],
-          data: ['dexie', 'dexie-react-hooks', '@supabase/supabase-js'],
-          markdown: ['marked', 'dompurify'],
+    define: { __APP_VERSION__: JSON.stringify(APP_VERSION) },
+    resolve: { alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) } },
+    plugins: [
+      react(),
+      seoFiles(siteUrl),
+      VitePWA({
+        registerType: 'prompt',            // staff choose when to reload; never mid-entry
+        injectRegister: false,
+        includeAssets: ['icons/*.svg', 'icons/*.png'],
+        manifest: {
+          // Keep in step with src/lib/product.ts.
+          name: 'MODE: Ormoc City DRRMO & EOC Manual of Operations',
+          short_name: 'MODE',
+          description: 'Ormoc City DRRMO & EOC Manual of Operations Development Platform: assessment, manuals, protocols and EOC operations',
+          lang: 'en-PH',
+          // 1.10: the installed app opens the workspace; the public home page is for browsers and search.
+          start_url: '/today',
+          scope: '/',
+          display: 'standalone',
+          orientation: 'any',
+          background_color: '#EEF5FB',
+          theme_color: '#0F3D66',
+          icons: [
+            { src: '/icons/icon-192.png', sizes: '192x192', type: 'image/png' },
+            { src: '/icons/icon-512.png', sizes: '512x512', type: 'image/png' },
+            { src: '/icons/icon-maskable-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
+          ],
+          shortcuts: [
+            { name: 'Logbook entry', url: '/eoc/log', icons: [{ src: '/icons/icon-192.png', sizes: '192x192' }] },
+            { name: 'Run a protocol', url: '/drrm/protocols', icons: [{ src: '/icons/icon-192.png', sizes: '192x192' }] },
+          ],
+        },
+        workbox: {
+          // kml: the EOC placemark (ADR-015) downloads offline.
+          globPatterns: ['**/*.{js,mjs,css,html,svg,png,webp,woff2,kml}'],
+          // 1.18: the bundled reference data (chapters 0-8 with annexes) is 2.4 MB and must precache —
+          // the manual text is the offline core of the app (ADR-003).
+          maximumFileSizeToCacheInBytes: 4 * 1024 * 1024,
+          
+          // EXPLICIT OFFLINE GUARANTEE: 
+          // Force precache of the User Guide HTML file so it opens instantly even with zero network 
+          // connection, satisfying User Guide Rule #4 ("It works without internet").
+          additionalManifestEntries: [
+            { url: '/mode-user-guide.html', revision: `guide-v${APP_VERSION}` }
+          ],
+          
+          // The original logo and banner files are kept for print and reuse, but are too large to
+          // ship to every phone; the app uses the compressed copies in /brand.
+          globIgnores: [
+            'App_Banner.png', 'Ormoc_City_Logo.png', 'Ormoc_CDRRMO_Logo.png', 'brand/*.jpg',
+            // Full-size source images never ship to phones (a 3.4 MB copy here stopped the 5 Nov build).
+            'brand/*.png',
+            // Latin is all the app needs; other script subsets still load on demand if ever used.
+            '**/*-{cyrillic,cyrillic-ext,greek,greek-ext,vietnamese,devanagari,math,symbols,latin-ext}-*.woff2',
+            'brand/*-512.webp', 'brand/*-64.webp',
+            // Manual figures load when online; the manual text itself is in the bundled reference data.
+            'library/**',
+            // Hazard map sheets and barangay boundaries (ADR-028): cached the first time the Hazard maps page opens.
+            'geo/**'
+          ],
+          navigateFallback: '/index.html',
+          navigateFallbackDenylist: [/^\/auth\//],
+          // Supabase API calls are never cached by the service worker; the app keeps its own
+          // offline copy in IndexedDB and syncs through an outbox (ADR-003).
+          runtimeCaching: [
+            { 
+              urlPattern: ({ url, sameOrigin }) => sameOrigin && url.pathname.startsWith('/geo/'),
+              handler: 'CacheFirst', 
+              options: { cacheName: 'mode-geo', expiration: { maxEntries: 40 } } 
+            },
+          ],
+          cleanupOutdatedCaches: true,
+        },
+        devOptions: { enabled: false },
+      }),
+    ],
+    build: {
+      target: 'es2022',
+      sourcemap: false,
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            react: ['react', 'react-dom', 'react-router-dom'],
+            data: ['dexie', 'dexie-react-hooks', '@supabase/supabase-js'],
+            markdown: ['marked', 'dompurify'],
+          },
         },
       },
     },
-  },
-  server: { port: 5173 },
+    server: { port: 5173 },
   };
 });
