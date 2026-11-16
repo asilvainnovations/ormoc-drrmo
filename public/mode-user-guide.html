@@ -559,7 +559,7 @@
   </span>
   <span class="band-sep" aria-hidden="true"></span>
   <span class="band-item">
-    <a href="#sync" title="Opens Sync and offline data in Settings.">Synced just now</a>
+    <a href="/settings/sync" target="_blank" rel="noopener" title="Opens Sync and offline data in Settings.">Synced just now</a>
   </span>
   <span style="margin-left:auto; font-family: var(--font-data); color: var(--muted);">
     MODE v1.22.0 · 17 Nov 2026
@@ -702,7 +702,7 @@
       <ul>
         <li>You can fix your name or position under <strong>Your details</strong>, then <strong>Save details</strong>.</li>
         <li>Tap <strong>Check again</strong> to see if you were approved.</li>
-        <li>Tell your administrator you registered. They approve you in <strong>Settings → Users and roles</strong>.</li>
+        <li>Tell your administrator you registered. They approve you in <a href="/settings" target="_blank" rel="noopener"><strong>Settings → Users and roles</strong></a>.</li>
       </ul>
 
       <h3>1.4 Sign in (every other time)</h3>
@@ -722,8 +722,8 @@
       <p>MODE is a <em>progressive web app</em>. In simple words: it can sit on your home screen like a normal app and still open without signal. If your browser offers <strong>Install</strong> or <strong>Add to Home screen</strong>, accept it. Do this once while you have a good connection, and sign in at least once so your data is saved on the phone.</p>
 
       <h3>1.7 Sign out</h3>
-      <p><strong>Where:</strong> <strong>Settings</strong> (bottom of the left menu) → <strong>Sign out and clear this device</strong>.</p>
-      <p>This erases MODE’s copy of the data on that device. If you still have entries that have <strong>not been sent</strong>, MODE warns you first. Connect and tap <strong>Snow now</strong> (Part 13).</p>
+      <p><strong>Where:</strong> <a href="/settings" target="_blank" rel="noopener"><strong>Settings</strong></a> (bottom of the left menu) → <strong>Sign out and clear this device</strong>.</p>
+      <p>This erases MODE’s copy of the data on that device. If you still have entries that have <strong>not been sent</strong>, MODE warns you first. Connect and tap <strong>Sync now</strong> (Part 13).</p>
       <div class="notice info">
         <div class="icon" aria-hidden="true">i</div>
         <div><strong>Shared phones:</strong> always sign out when you hand a phone to someone else.</div>
@@ -749,15 +749,15 @@
       <table>
         <thead><tr><th>Menu item</th><th>In one sentence</th><th>Part</th></tr></thead>
         <tbody>
-          <tr><td><strong>Today</strong></td><td>Your daily start page: hazard links, quick buttons, what changed</td><td>4</td></tr>
-          <tr><td><strong>Assess</strong></td><td>Score our readiness (the IAT) and view <strong>Hazard maps</strong></td><td>7</td></tr>
-          <tr><td><strong>Protocols</strong></td><td>Step-by-step procedures to run live or as drills</td><td>6</td></tr>
-          <tr><td><strong>EOC</strong></td><td>Alert level, logbook, SitReps, barangay reports, requests, anticipatory action</td><td>5</td></tr>
-          <tr><td><strong>Library</strong></td><td>The Manual of Operations, chapter by chapter</td><td>8</td></tr>
-          <tr><td><strong>Vault</strong></td><td>Laws, plans, City issuances and records</td><td>9</td></tr>
-          <tr><td><strong>Tools</strong></td><td>ECHO, flood intelligence, ICS exercises, continuity plan, Gawad KALASAG, outside hazard websites</td><td>10</td></tr>
+          <tr><td><a href="/today" target="_blank" rel="noopener"><strong>Today</strong></a></td><td>Your daily start page: hazard links, quick buttons, what changed</td><td>4</td></tr>
+          <tr><td><a href="/assess" target="_blank" rel="noopener"><strong>Assess</strong></a></td><td>Score our readiness (the IAT) and view <strong>Hazard maps</strong></td><td>7</td></tr>
+          <tr><td><a href="/drrm/protocols" target="_blank" rel="noopener"><strong>Protocols</strong></a></td><td>Step-by-step procedures to run live or as drills</td><td>6</td></tr>
+          <tr><td><a href="/eoc" target="_blank" rel="noopener"><strong>EOC</strong></a></td><td>Alert level, logbook, SitReps, barangay reports, requests, anticipatory action</td><td>5</td></tr>
+          <tr><td><a href="/library" target="_blank" rel="noopener"><strong>Library</strong></a></td><td>The Manual of Operations, chapter by chapter</td><td>8</td></tr>
+          <tr><td><a href="/vault" target="_blank" rel="noopener"><strong>Vault</strong></a></td><td>Laws, plans, City issuances and records</td><td>9</td></tr>
+          <tr><td><a href="/tools" target="_blank" rel="noopener"><strong>Tools</strong></a></td><td>ECHO, flood intelligence, ICS exercises, continuity plan, Gawad KALASAG, outside hazard websites</td><td>10</td></tr>
           <tr><td><strong>Appearance</strong></td><td>Light or dark screen</td><td>12</td></tr>
-          <tr><td><strong>Settings</strong></td><td>Sync, language, accounts, privacy, sign out</td><td>12</td></tr>
+          <tr><td><a href="/settings" target="_blank" rel="noopener"><strong>Settings</strong></a></td><td>Sync, language, accounts, privacy, sign out</td><td>12</td></tr>
         </tbody>
       </table>
 
@@ -793,25 +793,26 @@
       <table>
         <thead><tr><th>I want to…</th><th>Go to</th><th>Press</th><th>Part</th></tr></thead>
         <tbody>
-          <tr><td>See what needs attention this morning</td><td><strong>Today</strong></td><td>(opens by itself)</td><td>4</td></tr>
-          <tr><td>Check official weather, earthquake or tsunami information</td><td><strong>Today</strong> → Hazard watch</td><td>the PAGASA / PHIVOLCS links</td><td>4</td></tr>
-          <tr><td>Write something in the logbook</td><td><strong>Today</strong> → <strong>Log an entry</strong>, or <strong>EOC → Logbook</strong></td><td><strong>New entry</strong></td><td>5.3</td></tr>
-          <tr><td>Fix a mistake in the logbook</td><td><strong>EOC → Logbook</strong></td><td>tap the entry, write the correction</td><td>5.3</td></tr>
-          <tr><td>Record a barangay’s report</td><td><strong>EOC → Barangays</strong></td><td>tap the barangay → <strong>Record report</strong></td><td>5.4</td></tr>
-          <tr><td>Ask for vehicles, equipment, relief or teams</td><td><strong>EOC → Requests</strong></td><td><strong>New request</strong></td><td>5.5</td></tr>
-          <tr><td>See what equipment we have</td><td><strong>EOC → Resources</strong></td><td>tap an item</td><td>5.6</td></tr>
-          <tr><td>Write a situation report (SitRep)</td><td><strong>EOC → SitReps</strong></td><td><strong>New SitRep</strong></td><td>5.7</td></tr>
-          <tr><td>Change the EOC alert level</td><td><strong>EOC → Board</strong></td><td><strong>Change level</strong></td><td>5.2</td></tr>
-          <tr><td>See which barangays have gone quiet</td><td><strong>EOC → Barangay liaison</strong></td><td>tap a cluster</td><td>5.8</td></tr>
-          <tr><td>See each barangay’s hazard profile</td><td><strong>EOC → Risk</strong></td><td>filter by hazard</td><td>5.9</td></tr>
-          <tr><td>Assess a forecast hazard before it hits</td><td><strong>EOC → Anticipatory action</strong></td><td><strong>New PDRA</strong></td><td>5.13</td></tr>
-          <tr><td>Follow a written procedure step by step</td><td><strong>Protocols</strong></td><td>tap a protocol → <strong>Start protocol</strong></td><td>6</td></tr>
-          <tr><td>Practise a procedure as an exercise</td><td><strong>Protocols</strong></td><td>tick <strong>This is a drill</strong> → <strong>Start drill</strong></td><td>6.3</td></tr>
-          <tr><td>Read a chapter or SOP of the Manual</td><td><strong>Library</strong></td><td><strong>Find a section</strong></td><td>8</td></tr>
-          <tr><td>Find a law, memo or plan</td><td><strong>Vault</strong></td><td>search box</td><td>9</td></tr>
-          <tr><td>Run an evacuation or camp exercise</td><td><strong>Tools → ECHO</strong></td><td><strong>Simulator</strong> tab</td><td>10.1</td></tr>
-          <tr><td>See who does what (RACI)</td><td><strong>Today</strong> → <strong>RACI board</strong></td><td>search box</td><td>11</td></tr>
-          <tr><td>Check if my phone has unsent entries</td><td>top bar, <strong>Synced…</strong></td><td>tap it</td><td>13</td></tr>
+          <tr><td>See what needs attention this morning</td><td><a href="/today" target="_blank" rel="noopener"><strong>Today</strong></a></td><td>(opens by itself)</td><td>4</td></tr>
+          <tr><td>Check official weather, earthquake or tsunami information</td><td><a href="/today" target="_blank" rel="noopener"><strong>Today</strong></a> → Hazard watch</td><td>the PAGASA / PHIVOLCS links</td><td>4</td></tr>
+          <tr><td>Write something in the logbook</td><td><a href="/today" target="_blank" rel="noopener"><strong>Today</strong></a> → <strong>Log an entry</strong>, or <a href="/eoc/log" target="_blank" rel="noopener"><strong>EOC → Logbook</strong></a></td><td><strong>New entry</strong></td><td>5.3</td></tr>
+          <tr><td>Fix a mistake in the logbook</td><td><a href="/eoc/log" target="_blank" rel="noopener"><strong>EOC → Logbook</strong></a></td><td>tap the entry, write the correction</td><td>5.3</td></tr>
+          <tr><td>Record a barangay’s report</td><td><a href="/eoc/barangays" target="_blank" rel="noopener"><strong>EOC → Barangays</strong></a></td><td>tap the barangay → <strong>Record report</strong></td><td>5.4</td></tr>
+          <tr><td>Ask for vehicles, equipment, relief or teams</td><td><a href="/eoc/requests" target="_blank" rel="noopener"><strong>EOC → Requests</strong></a></td><td><strong>New request</strong></td><td>5.5</td></tr>
+          <tr><td>See what equipment we have</td><td><a href="/eoc/resources" target="_blank" rel="noopener"><strong>EOC → Resources</strong></a></td><td>tap an item</td><td>5.6</td></tr>
+          <tr><td>Write a situation report (SitRep)</td><td><a href="/eoc/sitreps" target="_blank" rel="noopener"><strong>EOC → SitReps</strong></a></td><td><strong>New SitRep</strong></td><td>5.7</td></tr>
+          <tr><td>Change the EOC alert level</td><td><a href="/eoc" target="_blank" rel="noopener"><strong>EOC → Board</strong></a></td><td><strong>Change level</strong></td><td>5.2</td></tr>
+          <tr><td>See which barangays have gone quiet</td><td><a href="/eoc/liaison" target="_blank" rel="noopener"><strong>EOC → Barangay liaison</strong></a></td><td>tap a cluster</td><td>5.8</td></tr>
+          <tr><td>See each barangay’s hazard profile</td><td><a href="/eoc/risk" target="_blank" rel="noopener"><strong>EOC → Risk</strong></a></td><td>filter by hazard</td><td>5.9</td></tr>
+          <tr><td>Assess a forecast hazard before it hits</td><td><a href="/eoc/aa" target="_blank" rel="noopener"><strong>EOC → Anticipatory action</strong></a></td><td><strong>New PDRA</strong></td><td>5.13</td></tr>
+          <tr><td>Follow a written procedure step by step</td><td><a href="/drrm/protocols" target="_blank" rel="noopener"><strong>Protocols</strong></a></td><td>tap a protocol → <strong>Start protocol</strong></td><td>6</td></tr>
+          <tr><td>Practise a procedure as an exercise</td><td><a href="/drrm/protocols" target="_blank" rel="noopener"><strong>Protocols</strong></a></td><td>tick <strong>This is a drill</strong> → <strong>Start drill</strong></td><td>6.3</td></tr>
+          <tr><td>Read a chapter or SOP of the Manual</td><td><a href="/library" target="_blank" rel="noopener"><strong>Library</strong></a></td><td><strong>Find a section</strong></td><td>8</td></tr>
+          <tr><td>Find a law, memo or plan</td><td><a href="/vault" target="_blank" rel="noopener"><strong>Vault</strong></a></td><td>search box</td><td>9</td></tr>
+          <tr><td>Run an evacuation or camp exercise</td><td><a href="/tools/echo" target="_blank" rel="noopener"><strong>Tools → ECHO</strong></a></td><td><strong>Simulator</strong> tab</td><td>10.1</td></tr>
+          <tr><td>See who does what (RACI)</td><td><a href="/raci" target="_blank" rel="noopener"><strong>Today</strong> → <strong>RACI board</strong></a></td><td>search box</td><td>11</td></tr>
+          <tr><td>Score our readiness</td><td><a href="/assess" target="_blank" rel="noopener"><strong>Assess</strong></a></td><td>open the cycle</td><td>7</td></tr>
+          <tr><td>Check if my phone has unsent entries</td><td>top bar, <strong>Synced…</strong></td><td>tap it (or go to <a href="/settings/sync" target="_blank" rel="noopener">Settings → Sync</a>)</td><td>13</td></tr>
         </tbody>
       </table>
     </section>
@@ -819,40 +820,40 @@
     <!-- ============== PART 4 ============== -->
     <section id="p4" class="card">
       <h2>Part 4. Today</h2>
-      <p><strong>Where:</strong> <strong>Today</strong> (first item in the menu). It opens by itself after you sign in. <strong>Who:</strong> everyone with a role.</p>
+      <p><strong>Where:</strong> <a href="/today" target="_blank" rel="noopener"><strong>Today</strong></a> (first item in the menu). It opens by itself after you sign in. <strong>Who:</strong> everyone with a role.</p>
       <p>Today is your morning start page. Scroll down to see these blocks.</p>
 
       <h3>The quick action tiles</h3>
       <div class="tiles">
-        <a class="tile" href="#p5" title="Opens the EOC logbook. Shown to duty officers, EOC staff, EOC Manager, CDRRMO Head, admin.">
+        <a class="tile" href="/eoc/log" target="_blank" rel="noopener" title="Opens the EOC logbook. Shown to duty officers, EOC staff, EOC Manager, CDRRMO Head, admin.">
           <span class="label">Log an entry</span>
           <span class="meta">EOC logbook</span>
         </a>
-        <a class="tile" href="#p6" title="Opens the Protocols list.">
+        <a class="tile" href="/drrm/protocols" target="_blank" rel="noopener" title="Opens the Protocols list.">
           <span class="label">Run a protocol</span>
           <span class="meta">Protocols</span>
         </a>
-        <a class="tile" href="#p5" title="Opens EOC → Barangays.">
+        <a class="tile" href="/eoc/barangays" target="_blank" rel="noopener" title="Opens EOC → Barangays.">
           <span class="label">Barangay status</span>
           <span class="meta">EOC → Barangays</span>
         </a>
-        <a class="tile" href="#p5" title="Opens a new Pre-Disaster Risk Assessment. CDRRMO Head, EOC Manager, EOC staff.">
+        <a class="tile" href="/eoc/aa" target="_blank" rel="noopener" title="Opens a new Pre-Disaster Risk Assessment. CDRRMO Head, EOC Manager, EOC staff.">
           <span class="label">New PDRA</span>
           <span class="meta">Pre-disaster risk assessment</span>
         </a>
-        <a class="tile" href="#p7" title="Opens the current IAT cycle. Assessors, validators, lead-office focal persons.">
+        <a class="tile" href="/assess" target="_blank" rel="noopener" title="Opens the current IAT cycle. Assessors, validators, lead-office focal persons.">
           <span class="label">Continue assessment</span>
           <span class="meta">IAT cycle</span>
         </a>
-        <a class="tile" href="#p9" title="Opens the Document Vault.">
+        <a class="tile" href="/vault" target="_blank" rel="noopener" title="Opens the Document Vault.">
           <span class="label">Document Vault</span>
           <span class="meta">Laws, plans, records</span>
         </a>
-        <a class="tile" href="#p11" title="Opens the RACI board.">
+        <a class="tile" href="/raci" target="_blank" rel="noopener" title="Opens the RACI board.">
           <span class="label">RACI board</span>
           <span class="meta">Who does what</span>
         </a>
-        <a class="tile" href="#p10" title="Opens Tools and hazard maps.">
+        <a class="tile" href="/tools" target="_blank" rel="noopener" title="Opens Tools and hazard maps.">
           <span class="label">Tools and hazard maps</span>
           <span class="meta">Tools</span>
         </a>
@@ -867,7 +868,7 @@
     <!-- ============== PART 5 ============== -->
     <section id="p5" class="card">
       <h2>Part 5. EOC (Emergency Operations Center)</h2>
-      <p><strong>Where:</strong> <strong>EOC</strong> in the menu. The EOC has many tabs under the title: <strong>Board · Logbook · SitReps · Requests · Resources · Barangays · Barangay liaison · Risk · Plans and clusters · Roster · Map · Anticipatory action</strong>.</p>
+      <p><strong>Where:</strong> <a href="/eoc" target="_blank" rel="noopener"><strong>EOC</strong></a> in the menu. The EOC has many tabs under the title: <a href="/eoc" target="_blank" rel="noopener"><strong>Board</strong></a> · <a href="/eoc/log" target="_blank" rel="noopener"><strong>Logbook</strong></a> · <a href="/eoc/sitreps" target="_blank" rel="noopener"><strong>SitReps</strong></a> · <a href="/eoc/requests" target="_blank" rel="noopener"><strong>Requests</strong></a> · <a href="/eoc/resources" target="_blank" rel="noopener"><strong>Resources</strong></a> · <a href="/eoc/barangays" target="_blank" rel="noopener"><strong>Barangays</strong></a> · <a href="/eoc/liaison" target="_blank" rel="noopener"><strong>Barangay liaison</strong></a> · <a href="/eoc/risk" target="_blank" rel="noopener"><strong>Risk</strong></a> · <a href="/eoc/plans" target="_blank" rel="noopener"><strong>Plans and clusters</strong></a> · <a href="/eoc/roster" target="_blank" rel="noopener"><strong>Roster</strong></a> · <a href="/eoc/map" target="_blank" rel="noopener"><strong>Map</strong></a> · <a href="/eoc/aa" target="_blank" rel="noopener"><strong>Anticipatory action</strong></a>.</p>
 
       <h3>5.1 The Board: the EOC at a glance</h3>
       <p>The Board shows the current situation in blocks. Every block has a link to its full screen.</p>
@@ -889,7 +890,7 @@
         </tbody>
       </table>
       <ol class="steps">
-        <li><strong>EOC</strong> → <strong>Board</strong> → tap <strong>Change level</strong>.</li>
+        <li><a href="/eoc" target="_blank" rel="noopener"><strong>EOC</strong></a> → <strong>Board</strong> → tap <strong>Change level</strong>.</li>
         <li>Choose the new level. The level you are on now is greyed out and says <em>Current level</em>.</li>
         <li>Type the <strong>Reason</strong>. This is required. It goes into the logbook and shows in the top bar.</li>
         <li>Optional: choose the <strong>Hazard</strong>, and type the <strong>Authority or memo reference</strong>.</li>
@@ -986,13 +987,13 @@
     <!-- ============== PART 6 ============== -->
     <section id="p6" class="card">
       <h2>Part 6. Protocols (step-by-step procedures)</h2>
-      <p><strong>Where:</strong> <strong>Protocols</strong> in the menu. The page title is <em>DRRM Workflows and Protocols</em>.</p>
+      <p><strong>Where:</strong> <a href="/drrm/protocols" target="_blank" rel="noopener"><strong>Protocols</strong></a> in the menu. The page title is <em>DRRM Workflows and Protocols</em>.</p>
       <table>
         <thead><tr><th>Tab</th><th>What it holds</th><th>Simple meaning</th></tr></thead>
         <tbody>
-          <tr><td><strong>Workflows</strong></td><td>Management cycles between offices</td><td>A bigger job that many offices share</td></tr>
-          <tr><td><strong>Protocols</strong></td><td>Operational procedures</td><td>A checklist you follow at the moment of action</td></tr>
-          <tr><td><strong>Forms</strong></td><td>The form that each step is recorded on</td><td>Every step ends on a form</td></tr>
+          <tr><td><a href="/drrm" target="_blank" rel="noopener"><strong>Workflows</strong></a></td><td>Management cycles between offices</td><td>A bigger job that many offices share</td></tr>
+          <tr><td><a href="/drrm/protocols" target="_blank" rel="noopener"><strong>Protocols</strong></a></td><td>Operational procedures</td><td>A checklist you follow at the moment of action</td></tr>
+          <tr><td><a href="/drrm/forms" target="_blank" rel="noopener"><strong>Forms</strong></a></td><td>The form that each step is recorded on</td><td>Every step ends on a form</td></tr>
         </tbody>
       </table>
 
@@ -1019,7 +1020,7 @@
     <!-- ============== PART 7 ============== -->
     <section id="p7" class="card">
       <h2>Part 7. Assess (how ready are we?)</h2>
-      <p><strong>Where:</strong> <strong>Assess</strong>. Two tabs: <strong>Institutional assessment (IAT)</strong> and <strong>Hazard maps</strong>.</p>
+      <p><strong>Where:</strong> <a href="/assess" target="_blank" rel="noopener"><strong>Assess</strong></a>. Two tabs: <a href="/assess" target="_blank" rel="noopener"><strong>Institutional assessment (IAT)</strong></a> and <a href="/assess/hazard-maps" target="_blank" rel="noopener"><strong>Hazard maps</strong></a>.</p>
 
       <h3>7.1 What the IAT is</h3>
       <p>The <strong>Institutional Assessment Tool (IAT)</strong> is a scorecard for how mature our CDRRMO and EOC are. In version 1.7 it has <strong>140 indicators</strong>:</p>
@@ -1063,7 +1064,7 @@
     <!-- ============== PART 8 ============== -->
     <section id="p8" class="card">
       <h2>Part 8. Library (the Manual of Operations)</h2>
-      <p><strong>Where:</strong> <strong>Library</strong>. Four tabs: <strong>Manuals, Traceability, Requirements, Frameworks</strong>.</p>
+      <p><strong>Where:</strong> <a href="/library" target="_blank" rel="noopener"><strong>Library</strong></a>. Four tabs: <a href="/library" target="_blank" rel="noopener"><strong>Manuals</strong></a>, <a href="/library/trace" target="_blank" rel="noopener"><strong>Traceability</strong></a>, <a href="/library/requirements" target="_blank" rel="noopener"><strong>Requirements</strong></a>, <a href="/library/crosswalk" target="_blank" rel="noopener"><strong>Frameworks</strong></a>.</p>
       <p>The Library holds the Manual of Operations (MOO) for the CDRRMO, chapter by chapter, with each chapter’s SOPs, forms and annexes, and the EOC Manual alongside. <strong>The approved manuals remain the legal documents.</strong></p>
 
       <h3>The four DRRM pillars</h3>
@@ -1099,7 +1100,7 @@
     <!-- ============== PART 9 ============== -->
     <section id="p9" class="card">
       <h2>Part 9. Vault (documents)</h2>
-      <p><strong>Where:</strong> <strong>Vault</strong>. Three tabs: <strong>Documents, Document Review, References</strong>.</p>
+      <p><strong>Where:</strong> <a href="/vault" target="_blank" rel="noopener"><strong>Vault</strong></a>. Three tabs: <strong>Documents, Document Review, References</strong>.</p>
       <p>The Vault is one place for laws, guidelines, City issuances, plans and records.</p>
 
       <h3>9.1 Find and open a document</h3>
@@ -1126,9 +1127,10 @@
     <!-- ============== PART 10 ============== -->
     <section id="p10" class="card">
       <h2>Part 10. Tools</h2>
-      <p><strong>Where:</strong> <strong>Tools</strong> in the side menu. On a phone, <strong>Today</strong> → <strong>Tools and hazard maps</strong>.</p>
+      <p><strong>Where:</strong> <a href="/tools" target="_blank" rel="noopener"><strong>Tools</strong></a> in the side menu. On a phone, <a href="/today" target="_blank" rel="noopener"><strong>Today</strong></a> → <strong>Tools and hazard maps</strong>.</p>
 
       <h3>10.1 ECHO: Evacuation and Camp Handling Operations</h3>
+      <p><strong>Where:</strong> <a href="/tools/echo" target="_blank" rel="noopener"><strong>Tools → ECHO</strong></a>. Four tabs:</p>
       <table>
         <thead><tr><th>Tab</th><th>Use it to</th></tr></thead>
         <tbody>
@@ -1140,15 +1142,19 @@
       </table>
 
       <h3>10.2 Flood intelligence</h3>
+      <p><strong>Where:</strong> <a href="/tools/flood-intelligence" target="_blank" rel="noopener"><strong>Tools → Flood intelligence</strong></a>.</p>
       <p>Shows each barangay’s flood exposure, the City hazard maps and official warning sources. It is <strong>static assessment data, not a live forecast</strong>.</p>
 
       <h3>10.3 ICS Exercise Simulator</h3>
+      <p><strong>Where:</strong> <a href="/tools/ics" target="_blank" rel="noopener"><strong>Tools → ICS Exercise Simulator</strong></a>.</p>
       <p>Practise the Philippine Incident Command System on Ormoc scenarios. You can run an <strong>individual drill</strong>, a <strong>facilitated tabletop</strong> or a <strong>position drill</strong>.</p>
 
       <h3>10.4 Public Service Continuity Plan (PSCP)</h3>
+      <p><strong>Where:</strong> <a href="/tools/pscp" target="_blank" rel="noopener"><strong>Tools → Public Service Continuity Plan</strong></a>.</p>
       <p>A workbench to build the plan that keeps essential services running. Work through the sections in order: <em>Policy and team, Essential functions (BIA), Risk assessment, Continuity strategies, Activation, Plan document</em>.</p>
 
       <h3>10.5 Gawad KALASAG Seal Readiness</h3>
+      <p><strong>Where:</strong> <a href="/tools/gk" target="_blank" rel="noopener"><strong>Tools → Gawad KALASAG Seal Readiness</strong></a>.</p>
       <p>Rate the six Seal criteria from 0 to 3 and add notes. MODE calculates a weighted score and rating. <strong>Fill from IAT</strong> can pre-fill ratings from the assessment.</p>
     </section>
 
@@ -1157,6 +1163,7 @@
       <h2>Part 11. Two boards that tie everything together</h2>
 
       <h3>11.1 RACI board: who does what</h3>
+      <p><strong>Where:</strong> <a href="/raci" target="_blank" rel="noopener"><strong>Today → RACI board</strong></a>, or the <strong>RACI for (code)</strong> link inside a protocol.</p>
       <p>Type a protocol code, an activity or an office in the search box. Each activity shows four kinds of people:</p>
       <table>
         <thead><tr><th>Letter</th><th>Meaning</th></tr></thead>
@@ -1169,19 +1176,21 @@
       </table>
 
       <h3>11.2 EOC capability board</h3>
+      <p><strong>Where:</strong> <a href="/eoc" target="_blank" rel="noopener"><strong>EOC → Board</strong></a> → <strong>EOC capability</strong> → <strong>Capability board</strong>, or <a href="/assess" target="_blank" rel="noopener"><strong>Assess</strong></a> → (a cycle) → <strong>EOC capability checklist</strong>. (Also accessible directly at <a href="/eoc-assessment" target="_blank" rel="noopener">/eoc-assessment</a>).</p>
       <p>The OCD/NDRRMC checklist of <strong>154 items in 15 sections</strong>. Each item shows a status taken from our assessment evidence: <span class="badge approved">Met</span>, <span class="badge draft">Partially met</span>, <span class="badge review">Largely unmet</span>, <span class="badge retired">Not met</span>, or <em>No direct IAT indicator</em>.</p>
     </section>
 
     <!-- ============== PART 12 ============== -->
     <section id="p12" class="card">
       <h2>Part 12. Settings</h2>
+      <p><strong>Where:</strong> <a href="/settings" target="_blank" rel="noopener"><strong>Settings</strong></a> (bottom of the menu), or the gear on <a href="/today" target="_blank" rel="noopener"><strong>Today</strong></a>.</p>
       <table>
         <thead><tr><th>Item</th><th>What it does</th><th>Who</th></tr></thead>
         <tbody>
           <tr><td><strong>Your account</strong></td><td>Your name, position and roles</td><td>everyone</td></tr>
           <tr><td><strong>Appearance</strong></td><td>Light or dark screen</td><td>everyone</td></tr>
           <tr><td><strong>Language</strong></td><td>English or Sinugboanon (Bisaya). This changes the menus and dashboard only</td><td>everyone</td></tr>
-          <tr><td><strong>Sync and offline data</strong></td><td>What is waiting to send, and anything the server refused</td><td>everyone</td></tr>
+          <tr><td><strong>Sync and offline data</strong></td><td>What is waiting to send, and anything the server refused (Part 13)</td><td>everyone (<a href="/settings/sync" target="_blank" rel="noopener">/settings/sync</a>)</td></tr>
           <tr><td><strong>Users and roles</strong></td><td>Approve new accounts and grant roles</td><td>system administrator</td></tr>
           <tr><td><strong>Barangay list</strong></td><td>Load the barangays with their PSGC codes</td><td>system administrator</td></tr>
           <tr><td><strong>Error reports</strong></td><td>Screens that crashed, with the app version</td><td>system administrator</td></tr>
@@ -1211,6 +1220,15 @@
       <h3>13.2 What works without internet</h3>
       <p><strong>Works offline:</strong> reading anything already loaded, Search, logbook entries, barangay reports, new resource requests, SitRep drafts, running protocols, proposing roster designations, the ICS, PSCP, KALASAG and ECHO simulator tools.</p>
       <p><strong>Needs a connection:</strong> changing the EOC alert level, approving anything, declaration steps and fund releases, activating a plan, saving resource edits, validating scores, and managing accounts.</p>
+
+      <h3>13.3 The Sync and offline data page</h3>
+      <p><strong>Where:</strong> <a href="/settings/sync" target="_blank" rel="noopener"><strong>Settings → Sync and offline data</strong></a>, or tap the sync words.</p>
+      <ul>
+        <li><strong>Sync now</strong> sends waiting changes and fetches the latest data. <strong>Retry now</strong> tries waiting changes again.</li>
+        <li><strong>Refused entries:</strong> the server said no, with its reason in plain words. <strong>Copy</strong> keeps what you typed so you can enter it again. <strong>Dismiss</strong> removes the message.</li>
+        <li><strong>Conflicts:</strong> someone else changed the same record. <strong>Apply my change on top</strong> keeps the other person’s version and adds your changed fields. <strong>Keep theirs</strong> drops yours.</li>
+        <li><strong>Files that could not upload:</strong> <strong>Retry upload</strong>, <strong>Save a copy</strong> to your device, or <strong>Discard</strong> (it asks you to confirm first).</li>
+      </ul>
     </section>
 
     <!-- ============== PART 14 ============== -->
@@ -1240,11 +1258,11 @@
 
       <h3>15.1 Start of shift (about 10 minutes)</h3>
       <ol class="steps">
-        <li>Open <strong>Today</strong>. Read the <strong>Since your last visit</strong> counters.</li>
+        <li>Open <a href="/today" target="_blank" rel="noopener"><strong>Today</strong></a>. Read the <strong>Since your last visit</strong> counters.</li>
         <li>Look at the top bar: what is the EOC level? Is it <em>Synced</em>?</li>
         <li>Open the <strong>Hazard watch</strong> links and read the latest PAGASA and PHIVOLCS information.</li>
         <li>Check <strong>Data quality</strong> and <strong>Hazard context</strong>. Phone any high-risk barangay that has not reported in 12 hours.</li>
-        <li>Open <strong>EOC → Logbook</strong> and read the last entries.</li>
+        <li>Open <a href="/eoc/log" target="_blank" rel="noopener"><strong>EOC → Logbook</strong></a> and read the last entries.</li>
         <li>Write a <strong>General</strong> entry: <em>Shift started, handover read.</em></li>
       </ol>
 
@@ -1252,18 +1270,18 @@
       <table>
         <thead><tr><th>Moment</th><th>Where</th><th>What you do</th></tr></thead>
         <tbody>
-          <tr><td><strong>1. A forecast appears</strong></td><td><strong>Today</strong> → Hazard watch</td><td>Read PAGASA. Log a <strong>Warning</strong> entry.</td></tr>
-          <tr><td><strong>2. Time to prepare</strong></td><td><strong>EOC</strong> → <strong>Anticipatory action</strong> → <strong>New PDRA</strong></td><td>Record the forecast, expected impact and decision.</td></tr>
-          <tr><td><strong>3. Follow the procedure</strong></td><td><strong>Protocols</strong></td><td>Tap the right protocol, <strong>Start protocol</strong>, close each step.</td></tr>
-          <tr><td><strong>4. Leadership decides to activate</strong></td><td><strong>EOC</strong> → <strong>Board</strong> → <strong>Change level</strong></td><td>The EOC Manager or CDRRMO Head sets Blue or Red.</td></tr>
-          <tr><td><strong>5. Switch on the plan</strong></td><td><strong>EOC</strong> → <strong>Plans and clusters</strong></td><td>Open the hazard’s plan so the clusters and modules switch on.</td></tr>
-          <tr><td><strong>6. Barangays report</strong></td><td><strong>EOC</strong> → <strong>Barangays</strong></td><td>Record each report. Check <strong>Barangay liaison</strong> for silent barangays.</td></tr>
-          <tr><td><strong>7. People move to centres</strong></td><td><strong>Tools</strong> → <strong>ECHO</strong> → <strong>Camp management</strong></td><td>Record camp counts.</td></tr>
-          <tr><td><strong>8. Help is needed</strong></td><td><strong>EOC</strong> → <strong>Requests</strong></td><td><strong>New request</strong>. The EOC Manager approves.</td></tr>
-          <tr><td><strong>9. Everything important</strong></td><td><strong>EOC</strong> → <strong>Logbook</strong></td><td>Write decisions, warnings and orders as they happen. Correct, never erase.</td></tr>
-          <tr><td><strong>10. Report upward</strong></td><td><strong>EOC</strong> → <strong>SitReps</strong></td><td><strong>New SitRep</strong>, <strong>Fill from barangay reports</strong>, <strong>Submit</strong>.</td></tr>
-          <tr><td><strong>11. It is over</strong></td><td><strong>EOC</strong> → <strong>Board</strong></td><td>The EOC Manager lowers the level. If a declaration was in force, record <strong>Lifting</strong> and the 45-day <strong>Report to OCD</strong>.</td></tr>
-          <tr><td><strong>12. Learn from it</strong></td><td><strong>Assess</strong>, <strong>Library</strong></td><td>Hold the after-action review. Note what to fix in the action plan.</td></tr>
+          <tr><td><strong>1. A forecast appears</strong></td><td><a href="/today" target="_blank" rel="noopener"><strong>Today</strong></a> → Hazard watch</td><td>Read PAGASA. Log a <strong>Warning</strong> entry.</td></tr>
+          <tr><td><strong>2. Time to prepare</strong></td><td><a href="/eoc/aa" target="_blank" rel="noopener"><strong>EOC</strong></a> → <strong>Anticipatory action</strong> → <strong>New PDRA</strong></td><td>Record the forecast, expected impact and decision.</td></tr>
+          <tr><td><strong>3. Follow the procedure</strong></td><td><a href="/drrm/protocols" target="_blank" rel="noopener"><strong>Protocols</strong></a></td><td>Tap the right protocol, <strong>Start protocol</strong>, close each step.</td></tr>
+          <tr><td><strong>4. Leadership decides to activate</strong></td><td><a href="/eoc" target="_blank" rel="noopener"><strong>EOC</strong></a> → <strong>Board</strong> → <strong>Change level</strong></td><td>The EOC Manager or CDRRMO Head sets Blue or Red.</td></tr>
+          <tr><td><strong>5. Switch on the plan</strong></td><td><a href="/eoc/plans" target="_blank" rel="noopener"><strong>EOC</strong></a> → <strong>Plans and clusters</strong></td><td>Open the hazard’s plan so the clusters and modules switch on.</td></tr>
+          <tr><td><strong>6. Barangays report</strong></td><td><a href="/eoc/barangays" target="_blank" rel="noopener"><strong>EOC</strong></a> → <strong>Barangays</strong></td><td>Record each report. Check <a href="/eoc/liaison" target="_blank" rel="noopener"><strong>Barangay liaison</strong></a> for silent barangays.</td></tr>
+          <tr><td><strong>7. People move to centres</strong></td><td><a href="/tools/echo" target="_blank" rel="noopener"><strong>Tools</strong></a> → <strong>ECHO</strong> → <strong>Camp management</strong></td><td>Record camp counts.</td></tr>
+          <tr><td><strong>8. Help is needed</strong></td><td><a href="/eoc/requests" target="_blank" rel="noopener"><strong>EOC</strong></a> → <strong>Requests</strong></td><td><strong>New request</strong>. The EOC Manager approves.</td></tr>
+          <tr><td><strong>9. Everything important</strong></td><td><a href="/eoc/log" target="_blank" rel="noopener"><strong>EOC</strong></a> → <strong>Logbook</strong></td><td>Write decisions, warnings and orders as they happen. Correct, never erase.</td></tr>
+          <tr><td><strong>10. Report upward</strong></td><td><a href="/eoc/sitreps" target="_blank" rel="noopener"><strong>EOC</strong></a> → <strong>SitReps</strong></td><td><strong>New SitRep</strong>, <strong>Fill from barangay reports</strong>, <strong>Submit</strong>.</td></tr>
+          <tr><td><strong>11. It is over</strong></td><td><a href="/eoc" target="_blank" rel="noopener"><strong>EOC</strong></a> → <strong>Board</strong></td><td>The EOC Manager lowers the level. If a declaration was in force, record <strong>Lifting</strong> and the 45-day <strong>Report to OCD</strong>.</td></tr>
+          <tr><td><strong>12. Learn from it</strong></td><td><a href="/assess" target="_blank" rel="noopener"><strong>Assess</strong></a>, <a href="/library" target="_blank" rel="noopener"><strong>Library</strong></a></td><td>Hold the after-action review. Note what to fix in the action plan.</td></tr>
         </tbody>
       </table>
     </section>
@@ -1279,7 +1297,7 @@
           <tr><td>A button is grey</td><td>Hover over it (or hold your finger on it). The note says why.</td></tr>
           <tr><td><em>This needs a connection</em></td><td>Move to a place with signal. Level changes and approvals cannot be saved for later.</td></tr>
           <tr><td>The top bar says <em>need attention</em></td><td>Tap it, then follow Part 13.3.</td></tr>
-          <tr><td>A list is empty (protocols, barangays)</td><td><strong>Settings</strong> → <strong>Sync and offline data</strong> → <strong>Sync now</strong>.</td></tr>
+          <tr><td>A list is empty (protocols, barangays)</td><td><a href="/settings/sync" target="_blank" rel="noopener"><strong>Settings</strong> → <strong>Sync and offline data</strong></a> → <strong>Sync now</strong>. If barangays are still missing, ask the administrator to load the list</td></tr>
           <tr><td>I typed something wrong in the logbook</td><td>Tap the entry and write a <strong>Correction</strong>.</td></tr>
           <tr><td>I made a wrong barangay report</td><td>Record a new, correct report. The latest one counts.</td></tr>
           <tr><td>A page shows a plain recovery message</td><td>Go back, or reload the page. Tell your administrator.</td></tr>
@@ -1330,11 +1348,11 @@
       <ol class="steps">
         <li><strong>Check the top bar first:</strong> EOC level and <em>Synced</em>.</li>
         <li><strong>Warnings come from PAGASA and PHIVOLCS</strong>, not from MODE.</li>
-        <li><strong>Log it:</strong> <strong>EOC → Logbook → New entry</strong>. Never erase, only correct.</li>
-        <li><strong>Barangay report:</strong> <strong>EOC → Barangays →</strong> tap barangay → <strong>Record report</strong>. Blank means <em>not reported</em>.</li>
-        <li><strong>Need something:</strong> <strong>EOC → Requests → New request</strong>.</li>
-        <li><strong>Report up:</strong> <strong>EOC → SitReps → New SitRep → Submit</strong>.</li>
-        <li><strong>Follow a procedure:</strong> <strong>Protocols →</strong> tap one → <strong>Start protocol</strong> (use <strong>Start drill</strong> for practice).</li>
+        <li><strong>Log it:</strong> <a href="/eoc/log" target="_blank" rel="noopener"><strong>EOC → Logbook → New entry</strong></a>. Never erase, only correct.</li>
+        <li><strong>Barangay report:</strong> <a href="/eoc/barangays" target="_blank" rel="noopener"><strong>EOC → Barangays →</strong></a> tap barangay → <strong>Record report</strong>. Blank means <em>not reported</em>.</li>
+        <li><strong>Need something:</strong> <a href="/eoc/requests" target="_blank" rel="noopener"><strong>EOC → Requests → New request</strong></a>.</li>
+        <li><strong>Report up:</strong> <a href="/eoc/sitreps" target="_blank" rel="noopener"><strong>EOC → SitReps → New SitRep → Submit</strong></a>.</li>
+        <li><strong>Follow a procedure:</strong> <a href="/drrm/protocols" target="_blank" rel="noopener"><strong>Protocols →</strong></a> tap one → <strong>Start protocol</strong> (use <strong>Start drill</strong> for practice).</li>
         <li><strong>No names</strong> of evacuees, patients or informants. Ever.</li>
         <li><strong>Offline is fine.</strong> Level changes and approvals need signal.</li>
         <li><strong>Lost?</strong> Press <strong>Ctrl+K</strong> or tap <strong>Search</strong>. Ask your administrator for help with roles and accounts.</li>
