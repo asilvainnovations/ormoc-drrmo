@@ -1,4 +1,4 @@
-# MODE User Manual
+# MODE User Guide
 
 *For CDRRMO and EOC staff of the City of Ormoc · A plain-language guide, not for developers · Written for MODE version 1.22.0, screens checked 17 Nov 2026 · Working draft for validation*
 
@@ -924,4 +924,4 @@ These show how the parts of MODE connect on real days.
 
 ---
 
-*Document control:* Working draft v0.1 · Prepared 17 Nov 2026 from MODE version 1.22.0 and screenshots of the live platform · To be checked by CDRRMO and EOC staff before release · The approved Manual of Operations and EOC Manual remain the legal documents.
+* Prepared 17 Nov 2026 from MODE version 1.22.0 and screenshots of the live platform.
