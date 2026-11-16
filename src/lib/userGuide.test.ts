@@ -1,12 +1,16 @@
 import { describe, expect, it } from 'vitest';
 import { USER_GUIDE_LABEL, USER_GUIDE_TIP, USER_GUIDE_URL } from './userGuide';
 
-describe('User Guide link', () => {
-  it('is an HTTPS link to MODE-User-Guide.md, with a label and a tooltip', () => {
-    const u = new URL(USER_GUIDE_URL);
-    expect(u.protocol).toBe('https:');
-    expect(u.pathname.endsWith('/MODE-User-Guide.md')).toBe(true);
-    expect(USER_GUIDE_LABEL).toBe('Explore the User Guide');
-    expect(USER_GUIDE_TIP.length).toBeGreaterThan(10);
+describe('User Guide configuration', () => {
+  it('points to the local HTML file in the public directory', () => {
+    // Verifies it resolves to the HTML file, not the raw Markdown
+    expect(USER_GUIDE_URL).toMatch(/\/mode-user-guide\.html$/);
+  });
+
+  it('has the correct label and a descriptive tooltip', () => {
+    expect(USER_GUIDE_LABEL).toBe('MODE User Guide');
+    expect(USER_GUIDE_TIP.length).toBeGreaterThan(20);
+    // Verifies the tooltip mentions offline capability (Design System Principle 5: Say why)
+    expect(USER_GUIDE_TIP.toLowerCase()).toContain('offline'); 
   });
 });
