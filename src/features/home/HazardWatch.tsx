@@ -49,10 +49,10 @@ export function HazardWatch() {
   }, []);
 
   return (
-    <Section
-      title="Hazard watch"
-      tip="Official agency products open outside MODE. Local flood counts come from DDRiVE reference data already on this device."
-    >
+    <Section title="Hazard watch">
+      <p className="mb-2 text-sm text-muted">
+        Official agency products open outside MODE. Local flood counts come from DDRiVE reference data already on this device.
+      </p>
       <Notice tone="info">
         MODE does not issue warnings. Use PAGASA and PHIVOLCS for operational decisions. Local figures below are
         desk-assessment support only.
@@ -65,21 +65,21 @@ export function HazardWatch() {
               href={l.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-2 text-sm font-medium text-primary hover:underline"
+              className="flex items-center gap-2 text-sm font-medium text-action hover:underline"
               {...tip(`Open ${l.name}`)}
             >
-              <l.icon className="h-4 w-4 shrink-0" />
+              <l.icon className="h-4 w-4 shrink-0" aria-hidden />
               {l.name}
-              <ExternalLink className="h-3.5 w-3.5 opacity-70" />
+              <ExternalLink className="h-3.5 w-3.5 opacity-70" aria-hidden />
             </a>
             <p className="pl-6 text-xs text-muted">{l.text}</p>
           </li>
         ))}
       </ul>
 
-      <div className="mt-4 rounded-lg border border-border bg-card p-3 text-sm">
+      <div className="mt-4 rounded-control border border-line bg-surface p-3 text-sm">
         <div className="mb-1 flex items-center gap-2 font-semibold">
-          <Waves className="h-4 w-4" /> Local flood snapshot (DDRiVE)
+          <Waves className="h-4 w-4" aria-hidden /> Local flood snapshot (DDRiVE)
         </div>
         {!local ? (
           <p className="text-muted">No flood reference rows on this device yet.</p>
@@ -92,11 +92,11 @@ export function HazardWatch() {
               <p className="mt-1 text-muted">Priority focus: {local.top.join(', ')}</p>
             )}
             <p className="mt-2">
-              <Link className="font-medium text-primary underline" to="/tools/flood-intelligence">
+              <Link className="font-medium text-action underline" to="/tools/flood-intelligence">
                 Flood intelligence →
               </Link>
               {' · '}
-              <Link className="font-medium text-primary underline" to="/eoc/risk">
+              <Link className="font-medium text-action underline" to="/eoc/risk">
                 City Risk Picture →
               </Link>
             </p>
