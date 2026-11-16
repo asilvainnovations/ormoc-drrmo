@@ -21,7 +21,7 @@ The following are **out of scope** for MODE 1.22.x Slice 2 and are **not** to be
 | Background jobs / edge functions to refresh forecasts | No custom application server or edge functions (ADR-001) |
 | Storing bulletins as authoritative activation inputs | Legal clocks and authority actions remain with City process and online RPCs (ADR-006) |
 
-**In scope instead:** outbound links on Today and Tools (`rel="noopener noreferrer"`) to PAGASA Visayas regional forecast, PAGASA weather, and PHIVOLCS earthquake monitoring.
+**In scope instead:** outbound links on Today and Tools (`rel="noopener noreferrer"`) to PAGASA Visayas regional forecast, PAGASA weather, PHIVOLCS earthquake monitoring, and PHIVOLCS Tsunami Information (`https://tsunami.phivolcs.dost.gov.ph/`). The tsunami page is a link only: no iframe, no scraping of its bulletin table, and no change to the CSP `frame-src`.
 
 ### 2. Full D3 / Bayesian flood network inside the PWA
 
