@@ -1,0 +1,166 @@
+{
+  "package": "MODE 2.0.0-update",
+  "repository": "asilvainnovations/ormoc-drrmo",
+  "source_archive": "ormoc-drrmo-main.zip",
+  "app_package_version": "1.22.0",
+  "preserved": {
+    "public/geo/ormoc-barangays.geojson": "SHA-256 73534a6738429f5a90a816ce522ff62f14fb4bb7a1f0700b3c7201ea159e5915",
+    "features": 85,
+    "unique_psgc": 85
+  },
+  "new_map_assets": [
+    {
+      "path": "public/geo/hazard/reference/ormoc-earthquake-induced-landslide.webp",
+      "bytes": 1443108,
+      "dimensions": [
+        2742,
+        3200
+      ]
+    },
+    {
+      "path": "public/geo/hazard/reference/ormoc-flood.webp",
+      "bytes": 618478,
+      "dimensions": [
+        3200,
+        2051
+      ]
+    },
+    {
+      "path": "public/geo/hazard/reference/ormoc-ground-rupture.webp",
+      "bytes": 1562474,
+      "dimensions": [
+        2742,
+        3200
+      ]
+    },
+    {
+      "path": "public/geo/hazard/reference/ormoc-ground-shaking.webp",
+      "bytes": 1752716,
+      "dimensions": [
+        3200,
+        2262
+      ]
+    },
+    {
+      "path": "public/geo/hazard/reference/ormoc-landslide-susceptibility.webp",
+      "bytes": 424956,
+      "dimensions": [
+        3200,
+        2213
+      ]
+    },
+    {
+      "path": "public/geo/hazard/reference/ormoc-liquefaction.webp",
+      "bytes": 1563384,
+      "dimensions": [
+        2742,
+        3200
+      ]
+    },
+    {
+      "path": "public/geo/hazard/reference/ormoc-political-boundary.webp",
+      "bytes": 438426,
+      "dimensions": [
+        2179,
+        3200
+      ]
+    },
+    {
+      "path": "public/geo/hazard/reference/ormoc-rain-induced-landslide.webp",
+      "bytes": 723076,
+      "dimensions": [
+        3200,
+        2038
+      ]
+    },
+    {
+      "path": "public/geo/hazard/reference/ormoc-slope.webp",
+      "bytes": 379128,
+      "dimensions": [
+        3200,
+        2207
+      ]
+    },
+    {
+      "path": "public/geo/hazard/reference/ormoc-storm-surge-advisory-1.webp",
+      "bytes": 694188,
+      "dimensions": [
+        2254,
+        3200
+      ]
+    },
+    {
+      "path": "public/geo/hazard/reference/ormoc-storm-surge-advisory-2.webp",
+      "bytes": 657544,
+      "dimensions": [
+        2263,
+        3200
+      ]
+    },
+    {
+      "path": "public/geo/hazard/reference/ormoc-storm-surge-advisory-3.webp",
+      "bytes": 683860,
+      "dimensions": [
+        2236,
+        3200
+      ]
+    },
+    {
+      "path": "public/geo/hazard/reference/ormoc-storm-surge-advisory-4.webp",
+      "bytes": 662926,
+      "dimensions": [
+        2235,
+        3200
+      ]
+    },
+    {
+      "path": "public/geo/hazard/reference/ormoc-topography.webp",
+      "bytes": 480906,
+      "dimensions": [
+        3200,
+        2183
+      ]
+    },
+    {
+      "path": "public/geo/hazard/reference/ormoc-tsunami.webp",
+      "bytes": 1977750,
+      "dimensions": [
+        3200,
+        2262
+      ]
+    },
+    {
+      "path": "public/geo/hazard/reference/ormoc-zoning.webp",
+      "bytes": 460222,
+      "dimensions": [
+        3200,
+        2183
+      ]
+    }
+  ],
+  "changed_or_added_files": [
+    "src/features/eoc/map/referenceMaps.ts",
+    "src/features/eoc/map/map.test.ts",
+    "src/features/eoc/MapPage.tsx",
+    "src/features/tools/FloodIntelligencePage.tsx",
+    "docs/adr/042-city-reference-map-library.md",
+    "docs/adr/README.md",
+    "MODE-2.0.0-UPDATE.md",
+    "README-MODE-2.0.0.md",
+    "APPLY.md",
+    "PR_BODY.md",
+    "reference/flood-assessment/Ormoc_City_Barangay_Level_Hazard_Assessment_Updated_2026-11-17_v3.xlsx"
+  ],
+  "verification": {
+    "geojson_unchanged": true,
+    "16_reference_maps_present": true,
+    "all_long_edge_3200": true,
+    "both_pages_use_shared_registry": true,
+    "typescript_build_and_tests": "Not run: node_modules absent in packaging environment"
+  },
+  "notes": [
+    "Existing eight georeferenced rasters under public/geo/hazard were preserved.",
+    "Static reference images are not georeferenced overlays.",
+    "Lao age-sex data is present in the source-aligned flood dataset; Linao age-sex remains pending due invalid uploaded alias."
+  ]
+}

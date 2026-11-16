@@ -1,15 +1,18 @@
-## MODE 1.22.0 build fix
+## MODE 2.0.0-update — GIS and Flood Intelligence
 
-Fixes the failing Vercel build (`tsc -b` exit 2) on `main`, and adds the PHIVOLCS Tsunami Information link to Today.
+### Summary
+- Preserve the canonical Ormoc barangay GeoJSON and existing eight georeferenced hazard rasters.
+- Add 16 high-resolution City cartographic map references under `public/geo/hazard/reference/`.
+- Introduce a shared `CITY_REFERENCE_MAPS` catalogue consumed by EOC Geo-COP and Flood Intelligence.
+- Remove the parallel `/maps/` asset assumption.
+- Add catalogue tests and ADR-042.
+- Include the updated barangay flood assessment workbook as a reference artifact.
 
-### Root causes
-1. `src/features/eoc/actions.ts` was overwritten by an upload with the EOC *assessment* actions (already in `features/eoc-assessment/actions.ts`), so `setEocLevel` and `addLog` vanished. **Restored** from `1dd5ce6^`.
-2. Dexie tables `eoc_cap_items` / `eoc_cap_responses` were dropped from `db.ts` / `tables.ts` in an earlier merge (46f44d7) while `EocCapabilityPage` and its tests still use them. **Restored** (Dexie v10, additive).
-3. ADR-040 tables `conversation_threads` / `conversation_messages` were never registered. **Added** (threads and messages insert-only; server stamps omitted).
-4. `package.json` version 1.22.0.
+### GIS integrity
+The sixteen printed map sheets are static reference images, not georeferenced raster layers. Existing interactive layers remain sourced from `src/features/eoc/map/hazardMaps.ts`. The 85-feature `public/geo/ormoc-barangays.geojson` remains the barangay boundary source.
 
-### Today page
-- Hazard watch now links to **PHIVOLCS Tsunami Information** (`https://tsunami.phivolcs.dost.gov.ph/`). Outbound link only (`rel="noopener noreferrer"`): no iframe, no scraping, CSP unchanged, per ADR-011 / ADR-041a. ADR-041a updated to list it.
+### Data provenance
+Lao age-sex detail comes from the valid Lao `Table` and `Age Group` workbook. Linao age-sex detail remains pending because the uploaded Linao file is a 348-byte macOS plist alias rather than an XLSX. No Linao age-sex values were imputed.
 
-### Verified locally (Node 22)
-`tsc -b` 0 errors; `vitest run` 41 files / 319 tests pass; `vite build` succeeds with Supabase env vars set. No SQL changes.
+### Verification required
+Run `npm ci` and `npm run check` in CI or a maintainer checkout. This package was not built or tested locally because dependencies were not installed in the packaging environment. Review the GeoJSON diff (it should be empty) before merge.
