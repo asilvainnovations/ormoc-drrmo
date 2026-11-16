@@ -316,7 +316,12 @@ export interface RaciAssignment extends Versioned {
 
 // ---------------------------------------------------- EOC capability assessment (1.20.0, ADR-035)
 /** Item status from the weakest mapped IAT B_EOC indicator score (app.eoc_assessment_status). */
-export type EocAssessmentStatus = 'met' | 'partially_met' | 'largely_unmet' | 'not_met' | 'no_direct_indicator';
+export type EocAssessmentStatus =
+  | 'met' | 'partially_met' | 'largely_unmet' | 'not_met'
+  | 'not_applicable' | 'not_assessed' | 'no_direct_indicator';
+export type EocAssessmentSite = 'primary' | 'alternate';
+export type EocAssessmentProvenance = 'prefilled_iat' | 'observed';
+export type EocAssessmentAnswerState = 'draft' | 'validated';
 export interface EocAssessmentItem extends Versioned {
   section: string; section_sort: number; item_no: number; item_text: string;
   /** The item was assessed for the primary EOC. */
@@ -334,10 +339,50 @@ export interface EocAssessmentRun extends Versioned {
 /** A display link to the SOP, Protocol, Workflow or Form record that closes the gap (controlled vocabulary). */
 export interface EocAssessmentToolLink { code: string; title: string }
 export interface EocAssessmentResponse extends Versioned {
-  run_id: string; item_id: string; status: EocAssessmentStatus;
+  run_id: string; item_id: string;
+  site: EocAssessmentSite;
+  status: EocAssessmentStatus;
+  provenance: EocAssessmentProvenance;
+  state: EocAssessmentAnswerState;
   /** Workbook columns, kept verbatim: Evidence Observed / Gap or Remarks / Recommended Action. */
   evidence: string | null; gap: string | null; recommended_action: string | null;
-  tool_links: EocAssessmentToolLink[]; updated_by: string | null;
+  tool_links: EocAssessmentToolLink[];
+  updated_by: string | null;
+  validated_by?: string | null;
+  validated_at?: string | null;
+}
+
+/** Cycle-scoped EOC capability checklist (eoc_cap_* tables; parallel to run-scoped ADR-035 board). */
+export type EocCapSite = 'primary' | 'alternate';
+export type EocCapStatus = 'met' | 'partially_met' | 'largely_unmet' | 'not_met' | 'not_applicable' | 'not_assessed';
+export type EocCapProvenance = 'prefilled_iat' | 'observed';
+export type EocCapAnswerState = 'draft' | 'validated';
+export interface EocCapItem extends Versioned {
+  section_group: string; section: string; item_no: number; item: string;
+  iat_indicators: string[]; assess_locally: boolean; sort: number; source_ref: string;
+}
+export interface EocCapResponse extends Versioned {
+  cycle_id: string; item_id: string; site: EocCapSite; status: EocCapStatus;
+  provenance: EocCapProvenance; state: EocCapAnswerState;
+  evidence_observed: string | null; gap_remarks: string | null; recommended_action: string | null;
+  vault_document_id?: string | null;
+  assessed_by?: string | null; assessed_at?: string | null;
+  validated_by?: string | null; validated_at?: string | null;
+}
+
+// ---------------------------------------------------- Conversations (1.22.0, ADR-040)
+export type ConversationParentKind = 'response' | 'assessment_cycle' | 'eoc_activation' | 'protocol_run';
+export type ConversationStatus = 'open' | 'resolved' | 'locked';
+export interface ConversationThread extends Versioned {
+  parent_kind: ConversationParentKind; parent_id: string;
+  title: string | null; status: ConversationStatus;
+  resolved_by?: string | null; resolved_at?: string | null;
+  created_by?: string | null; created_at?: string;
+}
+/** Append-only. Corrections are new rows. */
+export interface ConversationMessage {
+  id: string; thread_id: string; body: string; in_reply_to: string | null;
+  author_id?: string | null; created_at: string;
 }
 
 // ---------------------------------------------------- Indicator links, flags, training runs (1.21.0, ADR-036/037)
