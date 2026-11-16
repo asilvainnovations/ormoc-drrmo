@@ -1,0 +1,1 @@
+| [041](041-slice2-flood-intel-hazard-today-eoc-analytics.md) | Slice 2: Flood intelligence (Assess/Tools), Copernicus on-demand links, Today hazard watch, EOC risk analytics and roster scenarios; capability data via existing ADR-035 seeds | Proposed |
