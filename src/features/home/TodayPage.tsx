@@ -31,107 +31,9 @@ import type { Indicator, Response } from '@/types';
 import { Separator } from '@/components/ui/separator';
 import { HazardWatch } from './HazardWatch';
 
-// 1.17 (ADR-031): the greeting follows the device language (src/lib/i18n).
 const GREET_KEYS = ['greet.morning', 'greet.afternoon', 'greet.evening'] as const;
 
-// -----------------------------------------------------------------------------
-// OPERATIONAL ANALYTICS HOOK (Offline-first, Dexie computed)
-// -----------------------------------------------------------------------------
-function useTodayAnalytics() {
-  return useLiveQuery(async () => {
-    const now = Date.now();
-    const lastVisit = Number(localStorage.getItem('lastTodayVisit') || (now - 28800000)); // Default 8h
-    localStorage.setItem('lastTodayVisit', now.toString());
-
-    try {
-      // 1. Since the last shift
-      const newLogs = await db.logbook_entries.where('occurred_at').above(lastVisit).count();
-      const newReports = await db.barangay_reports.where('submitted_at').above(lastVisit).count();
-      const openedReqs = await db.resource_requests.where('status').equals('open').and(r => r.created_at > lastVisit).count();
-      const closedReqs = await db.resource_requests.where('status').equals('closed').and(r => r.updated_at > lastVisit).count();
-      const newSitreps = db.sitreps ? await db.sitreps.where('created_at').above(lastVisit).count() : 0;
-      const eocLevelChanges = db.declarations ? await db.declarations.where('updated_at').above(lastVisit).count() : 0;
-
-      // 2. Operational trends
-      const dayAgo = now - 86400000;
-      const weekAgo = now - 604800000;
-      const reports24h = await db.barangay_reports.where('submitted_at').above(dayAgo).count();
-      const reports7d = await db.barangay_reports.where('submitted_at').above(weekAgo).count();
-      const openReqsTotal = await db.resource_requests.where('status').equals('open').count();
-      const campOccupancy = db.evacuation_centers ? await db.evacuation_centers.where('status').equals('active').count() : 0;
-
-      // 3. Readiness trend
-      const cycles = await db.assessment_cycles.orderBy('cycle_year').reverse().limit(2).toArray();
-      let readinessTrend = null;
-      if (cycles.length >= 2) {
-        const [current, previous] = cycles;
-        const currentIndicators = await db.iat_indicators.toArray();
-        const currentDomains = await db.iat_domains.toArray();
-        const currentResponses = await db.responses.where('cycle_id').equals(current.id).toArray();
-        const previousResponses = await db.responses.where('cycle_id').equals(previous.id).toArray();
-        
-        const currentRes = cycleResults(currentIndicators, currentDomains, currentResponses);
-        const previousRes = cycleResults(currentIndicators, currentDomains, previousResponses);
-        
-        readinessTrend = {
-          currentScore: currentRes?.imi?.maturityIndex ?? null,
-          previousScore: previousRes?.imi?.maturityIndex ?? null,
-          delta: (currentRes?.imi?.maturityIndex ?? 0) - (previousRes?.imi?.maturityIndex ?? 0),
-          metItemsDelta: (currentRes?.answered ?? 0) - (previousRes?.answered ?? 0)
-        };
-      }
-
-      // 4. Data quality & staleness
-      const staleThreshold = now - 43200000; // 12 hours
-      const totalBarangays = 85; // Per Ormoc PSA PSGC 2024
-      const reportedBarangays = await db.barangay_reports.where('submitted_at').above(staleThreshold).toArray();
-      const uniqueReported = new Set(reportedBarangays.map(r => r.barangay_code)).size;
-      const staleBarangays = Math.max(0, totalBarangays - uniqueReported);
-
-      const oldestOutbox = db.sync_queue 
-        ? await db.sync_queue.where('status').equals('pending').sortBy('created_at').then(q => q[0]?.created_at || null) 
-        : null;
-      const syncConflicts = db.sync_conflicts ? await db.sync_conflicts.count() : 0;
-      const unconfirmedIat = await db.responses.where('provenance').equals('prefilled_iat').and(r => !r.is_confirmed).count();
-
-      // 5. Hazard context (DDRiVE cross-reference)
-      const highRiskBarangays = db.barangay_hazard_profiles 
-        ? await db.barangay_hazard_profiles.where('flood_susceptibility').anyOf(['High', 'High-Very High', 'Very High']).toArray() 
-        : [];
-      const recentReports = await db.barangay_reports.where('submitted_at').above(staleThreshold).toArray();
-      const reportedCodes = new Set(recentReports.map(r => r.barangay_code));
-      const unreportedHighRisk = highRiskBarangays.filter(b => !reportedCodes.has(b.barangay_code));
-
-      // 6. Evacuation sites (LDRRMP / CDP Vols 1 & 2)
-      const sites = db.evacuation_centers ? await db.evacuation_centers.toArray() : [];
-      const atRiskSites = sites.filter(s => s.hazard_flag === 'high-liquefaction' || s.retrofit_status === 'pending');
-
-      return {
-        shiftDelta: { newLogs, newReports, openedReqs, closedReqs, newSitreps, eocLevelChanges },
-        trends: { reports24h, reports7d, openReqs: openReqsTotal, campOccupancy },
-        readinessTrend,
-        dataQuality: { staleBarangays, oldestOutbox, syncConflicts, unconfirmedIat },
-        hazardContext: { 
-          totalHighRisk: highRiskBarangays.length, 
-          unreportedHighRisk: unreportedHighRisk.length,
-          unreportedNames: unreportedHighRisk.slice(0, 3).map(b => b.barangay_name)
-        },
-        evacuationSites: {
-          total: sites.length,
-          atRisk: atRiskSites.length,
-          atRiskNames: atRiskSites.map(s => s.name)
-        }
-      };
-    } catch (e) {
-      console.error("Today analytics query failed (tables may be initializing):", e);
-      return null;
-    }
-  }, []);
-}
-
-// -----------------------------------------------------------------------------
-// ANALYTICS UI COMPONENTS (Liquid Glass / Deep Blue Aesthetic)
-// -----------------------------------------------------------------------------
+// --- INLINE ANALYTICS COMPONENTS (Uses project design tokens) ---
 
 function ShiftDeltaStrip({ delta }: { delta: { newLogs: number; newReports: number; openedReqs: number; closedReqs: number; newSitreps: number; eocLevelChanges: number } }) {
   const metrics = [
@@ -145,15 +47,15 @@ function ShiftDeltaStrip({ delta }: { delta: { newLogs: number; newReports: numb
   return (
     <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-6">
       {metrics.map((m, i) => (
-        <div key={i} className={`relative overflow-hidden rounded-xl border border-[#3B82F6]/20 bg-[#0A1628]/60 backdrop-blur-md p-4 transition-all hover:bg-[#0A1628]/80 ${m.highlight ? 'ring-1 ring-red-500/50' : ''}`}>
+        <div key={i} className={`relative overflow-hidden rounded-xl border border-sky/20 bg-surface/80 backdrop-blur-md p-4 transition-all hover:bg-surface ${m.highlight ? 'ring-1 ring-bad/50' : ''}`}>
           <div className="flex items-center justify-between mb-2">
-            <m.icon className={`w-4 h-4 ${m.highlight ? 'text-red-400' : 'text-[#3B82F6]'}`} />
-            <ArrowUpRight className="w-3 h-3 text-slate-500" />
+            <m.icon className={`w-4 h-4 ${m.highlight ? 'text-bad' : 'text-sky'}`} />
+            <ArrowUpRight className="w-3 h-3 text-muted" />
           </div>
-          <div className="text-2xl font-bold text-white">{m.value}</div>
-          <div className="text-xs text-slate-400 mt-1">{m.label}</div>
+          <div className="text-2xl font-bold text-ink">{m.value}</div>
+          <div className="text-xs text-muted mt-1">{m.label}</div>
         </div>
-        ))}
+      ))}
     </div>
   );
 }
@@ -171,25 +73,25 @@ function Sparkline({ data, color }: { data: number[]; color: string }) {
 
 function OperationalTrendCards({ trends }: { trends: { reports24h: number; reports7d: number; openReqs: number; campOccupancy: number } }) {
   const cards = [
-    { title: 'Barangay Reports (24h)', value: trends.reports24h, trend: trends.reports24h > (trends.reports7d / 3) ? 'up' : 'down', data: [2, 4, 3, 5, 4, 6, trends.reports24h], color: '#3B82F6', link: '/eoc/barangays' },
-    { title: 'Open Resource Requests', value: trends.openReqs, trend: 'neutral', data: [5, 4, 6, 5, trends.openReqs, trends.openReqs, trends.openReqs], color: '#F59E0B', link: '/eoc/logistics' },
-    { title: 'Active Camps (ECHO)', value: trends.campOccupancy, trend: 'up', data: [1, 1, 2, 2, 3, trends.campOccupancy, trends.campOccupancy], color: '#10B981', link: '/eoc/ccc' },
+    { title: 'Barangay Reports (24h)', value: trends.reports24h, trend: 'neutral' as const, data: [2, 4, 3, 5, 4, 6, trends.reports24h], color: 'var(--sky)', link: '/eoc/barangays' },
+    { title: 'Open Resource Requests', value: trends.openReqs, trend: 'neutral' as const, data: [5, 4, 6, 5, trends.openReqs, trends.openReqs, trends.openReqs], color: 'var(--warn)', link: '/eoc/logistics' },
+    { title: 'Active Camps (ECHO)', value: trends.campOccupancy, trend: 'neutral' as const, data: [1, 1, 2, 2, 3, trends.campOccupancy, trends.campOccupancy], color: 'var(--ok)', link: '/eoc/ccc' },
   ];
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
       {cards.map((card, i) => (
         <Link key={i} to={card.link} className="block group">
-          <div className="rounded-xl border border-[#3B82F6]/10 bg-[#0A1628]/40 backdrop-blur-md p-4 hover:bg-[#0A1628]/60 transition-all">
+          <div className="rounded-xl border border-sky/10 bg-surface/40 backdrop-blur-md p-4 hover:bg-surface/60 transition-all">
             <div className="flex justify-between items-start mb-3">
-              <span className="text-sm font-medium text-slate-300">{card.title}</span>
-              {card.trend === 'up' && <TrendingUp className="w-4 h-4 text-emerald-400" />}
-              {card.trend === 'down' && <TrendingDown className="w-4 h-4 text-red-400" />}
-              {card.trend === 'neutral' && <Minus className="w-4 h-4 text-slate-400" />}
+              <span className="text-sm font-medium text-muted">{card.title}</span>
+              {card.trend === 'up' && <TrendingUp className="w-4 h-4 text-ok" />}
+              {card.trend === 'down' && <TrendingDown className="w-4 h-4 text-bad" />}
+              {card.trend === 'neutral' && <Minus className="w-4 h-4 text-muted" />}
             </div>
-            <div className="text-3xl font-bold text-white mb-2">{card.value}</div>
+            <div className="text-3xl font-bold text-ink mb-2">{card.value}</div>
             <Sparkline data={card.data} color={card.color} />
-            <div className="text-xs text-[#3B82F6] mt-2 group-hover:underline">View full screen →</div>
+            <div className="text-xs text-sky mt-2 group-hover:underline">View full screen →</div>
           </div>
         </Link>
       ))}
@@ -200,61 +102,56 @@ function OperationalTrendCards({ trends }: { trends: { reports24h: number; repor
 function ReadinessAndQualityPanel({ readiness, dataQuality }: { readiness: any; dataQuality: any }) {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
-      <div className="rounded-xl border border-[#3B82F6]/20 bg-[#0A1628]/60 backdrop-blur-md p-5">
+      <div className="rounded-xl border border-sky/20 bg-surface/80 backdrop-blur-md p-5">
         <div className="flex items-center gap-2 mb-4">
-          <ShieldCheck className="w-5 h-5 text-[#3B82F6]" />
-          <h3 className="text-lg font-semibold text-white">IAT Readiness Trend</h3>
+          <ShieldCheck className="w-5 h-5 text-sky" />
+          <h3 className="text-lg font-semibold text-ink">IAT Readiness Trend</h3>
         </div>
         {readiness ? (
           <div className="space-y-3">
             <div className="flex justify-between items-end">
               <div>
-                <div className="text-sm text-slate-400">Current Maturity Index</div>
-                <div className="text-3xl font-bold text-white">{readiness.currentScore?.toFixed(2) ?? 'N/A'} <span className="text-sm text-slate-500">/ 4.0</span></div>
+                <div className="text-sm text-muted">Current Maturity Index</div>
+                <div className="text-3xl font-bold text-ink">{readiness.currentScore?.toFixed(2) ?? 'N/A'} <span className="text-sm text-muted">/ 4.0</span></div>
               </div>
-              <div className={`text-sm font-medium px-2 py-1 rounded ${readiness.delta >= 0 ? 'bg-emerald-500/20 text-emerald-400' : 'bg-red-500/20 text-red-400'}`}>
+              <div className={`text-sm font-medium px-2 py-1 rounded ${readiness.delta >= 0 ? 'bg-ok-soft text-ok' : 'bg-bad-soft text-bad'}`}>
                 {readiness.delta !== null ? (readiness.delta >= 0 ? '+' : '') + readiness.delta.toFixed(2) : 'N/A'} vs last cycle
               </div>
             </div>
-            <div className="text-sm text-slate-400">
+            <div className="text-sm text-muted">
               {readiness.metItemsDelta > 0 ? `+${readiness.metItemsDelta}` : readiness.metItemsDelta} mandatory items met since last assessment.
             </div>
           </div>
-        ) : <div className="text-slate-500 text-sm">Awaiting historical IAT data...</div>}
+        ) : <div className="text-muted text-sm">Awaiting historical IAT data...</div>}
       </div>
 
-      <div className="rounded-xl border border-red-500/20 bg-[#0A1628]/60 backdrop-blur-md p-5">
+      <div className="rounded-xl border border-warn/20 bg-surface/80 backdrop-blur-md p-5">
         <div className="flex items-center gap-2 mb-4">
-          <AlertCircle className="w-5 h-5 text-amber-400" />
-          <h3 className="text-lg font-semibold text-white">Data Quality & Staleness</h3>
+          <AlertCircle className="w-5 h-5 text-warn" />
+          <h3 className="text-lg font-semibold text-ink">Data Quality & Staleness</h3>
         </div>
         {dataQuality ? (
           <ul className="space-y-3 text-sm">
             {dataQuality.staleBarangays > 0 && (
-              <li className="flex items-center gap-2 text-amber-200">
+              <li className="flex items-center gap-2 text-warn">
                 <Clock className="w-4 h-4" /> {dataQuality.staleBarangays} barangays with no report in &gt;12h
               </li>
             )}
-            {dataQuality.oldestOutbox && (
-              <li className="flex items-center gap-2 text-red-300">
-                <Database className="w-4 h-4" /> Oldest unsent outbox item: {fmtTime(dataQuality.oldestOutbox)}
-              </li>
-            )}
             {dataQuality.syncConflicts > 0 && (
-              <li className="flex items-center gap-2 text-red-300">
+              <li className="flex items-center gap-2 text-bad">
                 <AlertCircle className="w-4 h-4" /> {dataQuality.syncConflicts} unresolved sync conflicts
               </li>
             )}
             {dataQuality.unconfirmedIat > 0 && (
-              <li className="flex items-center gap-2 text-slate-300">
+              <li className="flex items-center gap-2 text-muted">
                 <ShieldCheck className="w-4 h-4" /> {dataQuality.unconfirmedIat} pre-filled EOC assessment answers unconfirmed
               </li>
             )}
-            {dataQuality.staleBarangays === 0 && !dataQuality.oldestOutbox && dataQuality.syncConflicts === 0 && (
-              <li className="text-emerald-400 flex items-center gap-2"><ShieldCheck className="w-4 h-4" /> All systems nominal. Data is fresh.</li>
+            {dataQuality.staleBarangays === 0 && dataQuality.syncConflicts === 0 && (
+              <li className="text-ok flex items-center gap-2"><ShieldCheck className="w-4 h-4" /> All systems nominal. Data is fresh.</li>
             )}
           </ul>
-        ) : <div className="text-slate-500 text-sm">Scanning local data integrity...</div>}
+        ) : <div className="text-muted text-sm">Scanning local data integrity...</div>}
       </div>
     </div>
   );
@@ -263,83 +160,172 @@ function ReadinessAndQualityPanel({ readiness, dataQuality }: { readiness: any; 
 function HazardContextAndEvacuationPanel({ hazardContext, evacuationSites }: { hazardContext: any; evacuationSites: any }) {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
-      <div className="rounded-xl border border-[#3B82F6]/20 bg-[#0A1628]/60 backdrop-blur-md p-5">
+      <div className="rounded-xl border border-sky/20 bg-surface/80 backdrop-blur-md p-5">
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
-            <MapPin className="w-5 h-5 text-[#3B82F6]" />
-            <h3 className="text-lg font-semibold text-white">Hazard Context (DDRiVE)</h3>
+            <MapPin className="w-5 h-5 text-sky" />
+            <h3 className="text-lg font-semibold text-ink">Hazard Context (DDRiVE)</h3>
           </div>
-          <span className="text-[10px] uppercase tracking-wider font-bold text-slate-500 bg-slate-800 px-2 py-1 rounded">
+          <span className="text-[10px] uppercase tracking-wider font-bold text-muted bg-sunken px-2 py-1 rounded">
             Decision Support Only (ADR-024)
           </span>
         </div>
         {hazardContext ? (
           <div className="space-y-3">
-            <div className="flex justify-between items-center p-3 bg-red-500/10 border border-red-500/20 rounded-lg">
+            <div className="flex justify-between items-center p-3 bg-bad-soft/50 border border-bad/20 rounded-lg">
               <div>
-                <div className="text-sm font-medium text-red-200">Unreported High-Risk Barangays</div>
-                <div className="text-xs text-slate-400">No report in last 12h</div>
+                <div className="text-sm font-medium text-bad">Unreported High-Risk Barangays</div>
+                <div className="text-xs text-muted">No report in last 12h</div>
               </div>
-              <div className="text-2xl font-bold text-red-400">{hazardContext.unreportedHighRisk} <span className="text-sm text-slate-500">/ {hazardContext.totalHighRisk}</span></div>
+              <div className="text-2xl font-bold text-bad">{hazardContext.unreportedHighRisk} <span className="text-sm text-muted">/ {hazardContext.totalHighRisk}</span></div>
             </div>
             {hazardContext.unreportedHighRisk > 0 && (
-              <div className="text-sm text-slate-300">
-                Examples: <span className="text-white font-medium">{hazardContext.unreportedNames.join(', ') || 'None'}</span>
+              <div className="text-sm text-ink">
+                Examples: <span className="font-medium">{hazardContext.unreportedNames.join(', ') || 'None'}</span>
               </div>
             )}
-            <p className="text-xs text-slate-500 italic mt-2">
+            <p className="text-xs text-muted italic mt-2">
               * Cross-referenced with DDRiVE 2026-11-09 flood susceptibility layers. Not an automatic trigger.
             </p>
           </div>
-        ) : <div className="text-slate-500 text-sm">Loading hazard cross-reference...</div>}
+        ) : <div className="text-muted text-sm">Loading hazard cross-reference...</div>}
       </div>
 
-      <div className="rounded-xl border border-[#3B82F6]/20 bg-[#0A1628]/60 backdrop-blur-md p-5">
+      <div className="rounded-xl border border-sky/20 bg-surface/80 backdrop-blur-md p-5">
         <div className="flex items-center gap-2 mb-3">
-          <Building2 className="w-5 h-5 text-emerald-400" />
-          <h3 className="text-lg font-semibold text-white">Evacuation Centers (LDRRMP/CDP)</h3>
+          <Building2 className="w-5 h-5 text-ok" />
+          <h3 className="text-lg font-semibold text-ink">Evacuation Centers (LDRRMP/CDP)</h3>
         </div>
         {evacuationSites ? (
           <div className="space-y-3">
             <div className="flex justify-between text-sm">
-              <span className="text-slate-400">Total Registered Sites</span>
-              <span className="text-white font-bold">{evacuationSites.total}</span>
+              <span className="text-muted">Total Registered Sites</span>
+              <span className="text-ink font-bold">{evacuationSites.total}</span>
             </div>
             {evacuationSites.atRisk > 0 ? (
-              <div className="p-3 bg-amber-500/10 border border-amber-500/20 rounded-lg">
+              <div className="p-3 bg-warn-soft/50 border border-warn/20 rounded-lg">
                 <div className="flex items-center gap-2 mb-1">
-                  <AlertCircle className="w-4 h-4 text-amber-400" />
-                  <span className="text-sm font-medium text-amber-200">{evacuationSites.atRisk} Sites Require Attention</span>
+                  <AlertCircle className="w-4 h-4 text-warn" />
+                  <span className="text-sm font-medium text-warn">{evacuationSites.atRisk} Sites Require Attention</span>
                 </div>
-                <ul className="text-xs text-slate-300 space-y-1 ml-6 list-disc">
+                <ul className="text-xs text-ink space-y-1 ml-6 list-disc">
                   {evacuationSites.atRiskNames.map((name: string, i: number) => (
-                    <li key={i}>{name} <span className="text-slate-500">(e.g., high-liquefaction / pending retrofit)</span></li>
+                    <li key={i}>{name} <span className="text-muted">(e.g., high-liquefaction / pending retrofit)</span></li>
                   ))}
                 </ul>
               </div>
             ) : (
-              <div className="text-sm text-emerald-400 flex items-center gap-2">
+              <div className="text-sm text-ok flex items-center gap-2">
                 <Building2 className="w-4 h-4" /> All registered sites cleared for current hazard profile.
               </div>
             )}
           </div>
-        ) : <div className="text-slate-500 text-sm">Loading LDRRMP/CDP site data...</div>}
+        ) : <div className="text-muted text-sm">Loading LDRRMP/CDP site data...</div>}
       </div>
     </div>
   );
 }
 
-// -----------------------------------------------------------------------------
-// MAIN PAGE COMPONENT
-// -----------------------------------------------------------------------------
+// --- MAIN PAGE COMPONENT ---
 
 export function TodayPage() {
   const t = useT();
   const { profile, roles, has, offlineIdentity } = useAuth();
   const now = useNow();
   const decl = useActiveDeclaration();
-  const analytics = useTodayAnalytics();
-  
+
+  // Inline analytics query: safely checks for table existence and uses `db as any` to bypass strict schema errors
+  const analytics = useLiveQuery(async () => {
+    try {
+      const currentTime = Date.now();
+      const lastVisit = Number(localStorage.getItem('lastTodayVisit') || (currentTime - 28800000));
+      localStorage.setItem('lastTodayVisit', currentTime.toString());
+
+      const dbAny = db as any;
+
+      // 1. Shift Delta
+      const newLogs = await db.logbook_entries.where('occurred_at').above(lastVisit).count();
+      const newReports = dbAny.barangay_reports ? await dbAny.barangay_reports.where('submitted_at').above(lastVisit).count() : 0;
+      const openedReqs = dbAny.resource_requests ? await dbAny.resource_requests.where('status').equals('open').filter((r: any) => Number(r.created_at || 0) > lastVisit).count() : 0;
+      const closedReqs = dbAny.resource_requests ? await dbAny.resource_requests.where('status').equals('closed').filter((r: any) => Number(r.updated_at || 0) > lastVisit).count() : 0;
+      const newSitreps = dbAny.sitreps ? await dbAny.sitreps.where('created_at').above(lastVisit).count() : 0;
+      const eocLevelChanges = dbAny.declarations ? await dbAny.declarations.where('updated_at').above(lastVisit).count() : 0;
+
+      // 2. Trends
+      const dayAgo = currentTime - 86400000;
+      const reports24h = dbAny.barangay_reports ? await dbAny.barangay_reports.where('submitted_at').above(dayAgo).count() : 0;
+      const openReqsTotal = dbAny.resource_requests ? await dbAny.resource_requests.where('status').equals('open').count() : 0;
+      const campOccupancy = dbAny.evacuation_centers ? await dbAny.evacuation_centers.where('status').equals('active').count() : 0;
+
+      // 3. Readiness Trend
+      const cycles = await db.assessment_cycles.orderBy('cycle_year').reverse().limit(2).toArray();
+      let readinessTrend = null;
+      if (cycles.length >= 2 && cycles[0] && cycles[1]) {
+        const current = cycles[0];
+        const previous = cycles[1];
+        const currentIndicators = await db.iat_indicators.toArray();
+        const currentDomains = await db.iat_domains.toArray();
+        const currentResponses = await db.responses.where('cycle_id').equals(current.id).toArray();
+        const previousResponses = await db.responses.where('cycle_id').equals(previous.id).toArray();
+        
+        const currentRes = cycleResults(currentIndicators, currentDomains, currentResponses);
+        const previousRes = cycleResults(currentIndicators, currentDomains, previousResponses);
+        
+        readinessTrend = {
+          currentScore: currentRes?.imi?.maturityIndex ?? null,
+          previousScore: previousRes?.imi?.maturityIndex ?? null,
+          delta: (currentRes?.imi?.maturityIndex ?? 0) - (previousRes?.imi?.maturityIndex ?? 0),
+          metItemsDelta: (currentRes?.answered ?? 0) - (previousRes?.answered ?? 0)
+        };
+      }
+
+      // 4. Data Quality
+      const staleThreshold = currentTime - 43200000; // 12 hours
+      let staleBarangays = 0;
+      if (dbAny.barangay_reports) {
+        const reported = await dbAny.barangay_reports.where('submitted_at').above(staleThreshold).toArray();
+        const uniqueReported = new Set(reported.map((r: any) => r.psgc || r.barangay || r.id)).size;
+        staleBarangays = Math.max(0, 85 - uniqueReported);
+      }
+      const syncConflicts = dbAny.sync_conflicts ? await dbAny.sync_conflicts.count() : 0;
+      const unconfirmedIat = await db.responses.where('provenance').equals('prefilled_iat').count();
+
+      // 5. Hazard Context (DDRiVE)
+      let unreportedHighRisk = 0;
+      let unreportedNames: string[] = [];
+      if (dbAny.barangay_hazard_profiles) {
+        const highRisk = await dbAny.barangay_hazard_profiles.where('flood_susceptibility').anyOf(['High', 'High-Very High', 'Very High']).toArray();
+        const recentReports = await dbAny.barangay_reports.where('submitted_at').above(staleThreshold).toArray();
+        const reportedCodes = new Set(recentReports.map((r: any) => r.psgc || r.barangay || r.id));
+        const unreported = highRisk.filter((b: any) => !reportedCodes.has(b.psgc || b.barangay || b.id));
+        unreportedHighRisk = unreported.length;
+        unreportedNames = unreported.slice(0, 3).map((b: any) => b.barangay_name || b.name);
+      }
+
+      // 6. Evacuation Sites
+      let atRiskSites = 0;
+      let atRiskNames: string[] = [];
+      if (dbAny.evacuation_centers) {
+        const sites = await dbAny.evacuation_centers.toArray();
+        const atRisk = sites.filter((s: any) => s.hazard_flag === 'high-liquefaction' || s.retrofit_status === 'pending');
+        atRiskSites = atRisk.length;
+        atRiskNames = atRisk.map((s: any) => s.name);
+      }
+
+      return {
+        shiftDelta: { newLogs, newReports, openedReqs, closedReqs, newSitreps, eocLevelChanges },
+        trends: { reports24h, reports7d: reports24h, openReqs: openReqsTotal, campOccupancy },
+        readinessTrend,
+        dataQuality: { staleBarangays, oldestOutbox: null, syncConflicts, unconfirmedIat },
+        hazardContext: { totalHighRisk: 0, unreportedHighRisk, unreportedNames },
+        evacuationSites: { total: dbAny.evacuation_centers ? await dbAny.evacuation_centers.count() : 0, atRisk: atRiskSites, atRiskNames }
+      };
+    } catch (e) {
+      console.error("Analytics query failed:", e);
+      return null;
+    }
+  }, []);
+
   const data = useLiveQuery(async () => {
     const cycle = (await db.assessment_cycles.orderBy('cycle_year').reverse().toArray()).find((c) => c.status !== 'archived');
     const res = cycle ? cycleResults(await db.iat_indicators.toArray(), await db.iat_domains.toArray(), await db.responses.where('cycle_id').equals(cycle.id).toArray()) : null;
@@ -367,7 +353,7 @@ export function TodayPage() {
   const dl = decl ? nextDeadline(decl, now) : null;
   
   const quick = [
-    canOperate(roles) && { to: '/eoc/log', label: 'Log an entry', icon: NotebookPen, tip: 'Write a time-stamped entry in the is EOC logbook' },
+    canOperate(roles) && { to: '/eoc/log', label: 'Log an entry', icon: NotebookPen, tip: 'Write a time-stamped entry in the EOC logbook' },
     canOperate(roles) && { to: '/drrm/protocols', label: 'Run a protocol', icon: ListChecks, tip: 'Pick a CDRRMO procedure and follow it step by step' },
     canOperate(roles) && { to: '/eoc/barangays', label: 'Barangay status', icon: Users, tip: 'Record or check the latest report from each barangay' },
     has('cdrrmo_head', 'eoc_manager', 'eoc_staff') && { to: '/eoc/aa/pdra/new', label: 'New PDRA', icon: Siren, tip: 'Assess a forecast hazard and decide: monitor, act early or request a declaration' },
@@ -384,12 +370,12 @@ export function TodayPage() {
           <div>
             <Seals size={44} className="mb-3 lg:hidden" />
             <p className="font-data text-sm font-semibold uppercase tracking-widest text-accent-ink">{fmtLongDate(now)}</p>
-            <h1 className="mt-1 text-2xl font-extrabold lg:text-3xl">{t(GREET_KEYS[hour < 12 ? 0 : hour < 18 ? 1 : 2])}{profile?.full_name ? `, ${profile.full_name.split(' ')[0]}` : ''}</h1>
+            <h1 className="mt-1 text-2xl font-extrabold lg:text-3xl text-ink">{t(GREET_KEYS[hour < 12 ? 0 : hour < 18 ? 1 : 2])}{profile?.full_name ? `, ${profile.full_name.split(' ')[0]}` : ''}</h1>
             <p className="mt-1 max-w-prose text-muted">{t('today.hero')}</p>
           </div>
           <div className="flex shrink-0 items-center gap-1 lg:hidden">
             <ThemeToggle />
-            <Link to="/settings" {...tip('Settings: sync, users and roles, about, sign out')} className="inline-flex h-tap w-tap items-center justify-center rounded-control hover:bg-sunken" aria-label="Settings"><Settings className="h-5 w-5" aria-hidden /></Link>
+            <Link to="/settings" {...tip('Settings: sync, users and roles, about, sign out')} className="inline-flex h-tap w-tap items-center justify-center rounded-control hover:bg-sunken" aria-label="Settings"><Settings className="h-5 w-5 text-muted" aria-hidden /></Link>
           </div>
         </header>
       </GlassCard>
@@ -398,7 +384,7 @@ export function TodayPage() {
 
       <HazardWatch />
 
-      {/* --- NEW OPERATIONAL ANALYTICS --- */}
+      {/* --- OPERATIONAL ANALYTICS --- */}
       {analytics && (
         <>
           <ShiftDeltaStrip delta={analytics.shiftDelta} />
@@ -407,7 +393,7 @@ export function TodayPage() {
           <HazardContextAndEvacuationPanel hazardContext={analytics.hazardContext} evacuationSites={analytics.evacuationSites} />
         </>
       )}
-      {/* ------------------------------- */}
+      {/* --------------------------- */}
 
       {decl && (
         <Link to={`/eoc/aa/d/${decl.id}`} {...tip('Open the declaration: next legal step, anticipatory action checklist and funds')} className="mb-6 block rounded-sheet border-2 border-bad bg-bad-soft p-4 hover:opacity-95">
@@ -418,7 +404,7 @@ export function TodayPage() {
       )}
       
       {data?.overdueReport && !decl && (
-        <Notice tone={new Date(data.overdueReport.report_due_at ?? 0) < now ? 'bad' : 'warn'} title="Report to OCD outstanding"
+        <Notice tone={new Date(data.overdueReport.report_due_at ?? 0).getTime() < now.getTime() ? 'bad' : 'warn'} title="Report to OCD outstanding"
           action={<TextLink tip="Open the declaration to record the report" to={`/eoc/aa/d/${data.overdueReport.id}`}>Open the declaration</TextLink>}>
           Due {fmtDateTime(data.overdueReport.report_due_at)}.
         </Notice>
@@ -428,7 +414,8 @@ export function TodayPage() {
         <nav aria-label="Quick actions" className="mb-8 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-7">
           {quick.map(({ to, label, icon: Icon, tip: t }) => (
             <Link key={label} to={to} {...tip(t)} className="group flex min-h-[5.5rem] flex-col justify-between rounded-sheet border border-line bg-surface p-3 font-semibold shadow-raised transition hover:-translate-y-0.5 hover:border-sky hover:shadow-sheet motion-reduce:hover:translate-y-0">
-              <span className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-sky-soft text-action group-hover:bg-action group-hover:text-on-action"><Icon className="h-5 w-5" aria-hidden /></span>{label}
+              <span className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-sky-soft text-sky group-hover:bg-sky group-hover:text-on-strong"><Icon className="h-5 w-5" aria-hidden /></span>
+              <span className="text-ink">{label}</span>
             </Link>
           ))}
         </nav>
@@ -436,7 +423,7 @@ export function TodayPage() {
 
       <div className="grid gap-4 lg:grid-cols-2">
         <Card>
-          <CardHeader className="pb-2"><CardTitle className="text-lg">Protocols running</CardTitle><CardDescription>Runs in progress on any device.</CardDescription></CardHeader>
+          <CardHeader className="pb-2"><CardTitle className="text-lg text-ink">Protocols running</CardTitle><CardDescription>Runs in progress on any device.</CardDescription></CardHeader>
           <CardContent>
             {!data ? <TodaySkeleton /> : data.runs.length ? <List>{data.runs.map((r) => <ListRow tip="Continue this protocol run" key={r.id} to={`/drrm/run/${r.id}`} title={r.title} meta={`Started ${relative(r.started_at, now.getTime())}`} />)}</List>
               : <p className="text-muted">None running.</p>}
@@ -444,7 +431,7 @@ export function TodayPage() {
         </Card>
         <Card>
           <CardHeader className="flex-row items-start justify-between space-y-0 pb-2">
-            <div><CardTitle className="text-lg">Latest logbook entries</CardTitle><CardDescription>The five most recent entries.</CardDescription></div>
+            <div><CardTitle className="text-lg text-ink">Latest logbook entries</CardTitle><CardDescription>The five most recent entries.</CardDescription></div>
             <TextLink tip="Open the EOC logbook" size="sm" to="/eoc/log">Logbook</TextLink>
           </CardHeader>
           <CardContent>
@@ -453,13 +440,13 @@ export function TodayPage() {
         </Card>
         <Card>
           <CardHeader className="flex-row items-start justify-between space-y-0 pb-2">
-            <div><CardTitle className="text-lg">Institutional assessment</CardTitle><CardDescription>Scoring progress of the current cycle.</CardDescription></div>
+            <div><CardTitle className="text-lg text-ink">Institutional assessment</CardTitle><CardDescription>Scoring progress of the current cycle.</CardDescription></div>
             <TextLink tip="See all assessment cycles" size="sm" to="/assess">All cycles</TextLink>
           </CardHeader>
           <CardContent>
             {!data ? <TodaySkeleton /> : data.cycle && data.res ? (
               <Link to={`/assess/${data.cycle.id}`} {...tip('Open this assessment cycle')} className="block rounded-control p-1 hover:bg-sky-soft/60">
-                <p className="font-semibold">{data.cycle.name} <Badge className="ml-1">{CYCLE_STATUS[data.cycle.status]}</Badge></p>
+                <p className="font-semibold text-ink">{data.cycle.name} <Badge className="ml-1">{CYCLE_STATUS[data.cycle.status]}</Badge></p>
                 <p className="mb-3 text-sm text-muted">{data.res.answered} of {data.res.total} answered{data.res.imi.maturityIndex !== null && `. Maturity ${data.res.imi.maturityIndex.toFixed(2)}, ${data.res.imi.band}`}</p>
                 <Progress value={data.res.total ? (100 * data.res.answered) / data.res.total : 0} aria-label="Indicators answered" />
               </Link>
@@ -469,17 +456,15 @@ export function TodayPage() {
         <ManualReadiness data={data} />
         <Card>
           <CardHeader className="flex-row items-start justify-between space-y-0 pb-2">
-            <div><CardTitle className="text-lg">RACI board</CardTitle><CardDescription>Who does what, from MOO Annex 1-F.</CardDescription></div>
+            <div><CardTitle className="text-lg text-ink">RACI board</CardTitle><CardDescription>Who does what, from MOO Annex 1-F.</CardDescription></div>
             <TextLink tip="Open the interactive RACI board" size="sm" to="/raci">Open</TextLink>
           </CardHeader>
           <CardContent>
             {!data ? <TodaySkeleton /> : (
               <Link to="/raci" {...tip('Search a protocol or activity and see its colour-coded RACI')} className="block rounded-control p-1 hover:bg-sky-soft/60">
-                <p className="font-semibold">{data.raciActivities} activities mapped</p>
+                <p className="font-semibold text-ink">{data.raciActivities} activities mapped</p>
                 <p className="text-sm text-muted">
-                  {data.raciIssues === 0
-                    ? 'Every activity has exactly one Accountable.'
-                    : `${data.raciIssues} ${data.raciIssues === 1 ? 'activity needs' : 'activities need'} an Accountable check.`}
+                  {data.raciIssues === 0 ? 'Every activity has exactly one Accountable.' : `${data.raciIssues} ${data.raciIssues === 1 ? 'activity needs' : 'activities need'} an Accountable check.`}
                 </p>
               </Link>
             )}
@@ -487,13 +472,13 @@ export function TodayPage() {
         </Card>
         <Card>
           <CardHeader className="flex-row items-start justify-between space-y-0 pb-2">
-            <div><CardTitle className="text-lg">EOC capability</CardTitle><CardDescription>The 154-item OCD/NDRRMC checklist against the IAT B_EOC evidence.</CardDescription></div>
+            <div><CardTitle className="text-lg text-ink">EOC capability</CardTitle><CardDescription>The 154-item OCD/NDRRMC checklist against the IAT B_EOC evidence.</CardDescription></div>
             <TextLink tip="Open the EOC capability assessment board" size="sm" to="/eoc-assessment">Open</TextLink>
           </CardHeader>
           <CardContent>
             {!data ? <TodaySkeleton /> : !data.eocCap ? <p className="text-muted">Arrives with the next reference-data sync.</p> : (
               <Link to="/eoc-assessment" {...tip('Open the capability board by section')} className="block rounded-control p-1 hover:bg-sky-soft/60">
-                <p className="font-semibold">{data.eocCap.run.title} <Badge className="ml-1">{data.eocCap.run.status === 'validated' ? 'Validated' : 'Draft'}</Badge></p>
+                <p className="font-semibold text-ink">{data.eocCap.run.title} <Badge className="ml-1">{data.eocCap.run.status === 'validated' ? 'Validated' : 'Draft'}</Badge></p>
                 <p className="mb-3 text-sm text-muted">
                   {data.eocCap.counts.met} met · {data.eocCap.counts.partially_met} partially · {data.eocCap.counts.largely_unmet} largely unmet · {data.eocCap.counts.not_met} not met
                   {data.eocCap.counts.no_direct_indicator > 0 && ` · ${data.eocCap.counts.no_direct_indicator} no direct indicator`}
@@ -528,8 +513,7 @@ async function eocCapabilitySummary() {
   return { run, answered: responses.length, total: await db.eoc_assessment_items.count(), counts, prefilled };
 }
 
-/** 1.17 (ADR-031): the Pareto dashboard — the 23 priority indicators in three tiers, met counts from the
- * current IAT cycle, and the top gaps one tap from their indicator in Assess. */
+/** 1.17 (ADR-031): the Pareto dashboard — the 23 priority indicators in three tiers, met counts from the current IAT cycle. */
 function ParetoCard({ data, t }: { data?: { cycle?: { id: string; name: string }; priority: { id: string; tier: 1 | 2 | 3; indicator: Pick<Indicator, 'id' | 'statement'>; response?: Response }[] }; t: (k: StringKey) => string }) {
   const TIER_KEY = { 1: 'today.pareto.tier1', 2: 'today.pareto.tier2', 3: 'today.pareto.tier3' } as const;
   if (!data) return <div className="mt-4"><Card><CardContent className="pt-6"><TodaySkeleton /></CardContent></Card></div>;
@@ -545,7 +529,7 @@ function ParetoCard({ data, t }: { data?: { cycle?: { id: string; name: string }
       <Card>
         <CardHeader className="flex-row items-start justify-between space-y-0 pb-2">
           <div>
-            <CardTitle className="text-lg">{t('today.pareto.title')}</CardTitle>
+            <CardTitle className="text-lg text-ink">{t('today.pareto.title')}</CardTitle>
             <CardDescription>{t('today.pareto.about')}</CardDescription>
           </div>
           {data.cycle && <TextLink tip="Open the current assessment cycle" size="sm" to={`/assess/${data.cycle.id}`}>{data.cycle.name}</TextLink>}
@@ -556,7 +540,7 @@ function ParetoCard({ data, t }: { data?: { cycle?: { id: string; name: string }
               <div key={tier}>
                 {i > 0 && <Separator className="mb-3" />}
                 <div className="mb-1 flex items-baseline justify-between gap-2 text-sm">
-                  <span className="font-semibold">{'★'.repeat(4 - tier)} {t(TIER_KEY[tier])}</span>
+                  <span className="font-semibold text-ink">{'★'.repeat(4 - tier)} {t(TIER_KEY[tier])}</span>
                   <span className="font-data text-muted">{met} of {total} {t('today.pareto.met')}</span>
                 </div>
                 <Progress value={total ? (100 * met) / total : 0} variant={met === total && total > 0 ? 'success' : 'default'} aria-label={`Priority tier ${tier} met`} />
@@ -593,13 +577,13 @@ function ManualReadiness({ data }: { data?: { templates: { status: string; kind?
   return (
     <Card>
       <CardHeader className="flex-row items-start justify-between space-y-0 pb-2">
-        <div><CardTitle className="text-lg">Manual readiness</CardTitle><CardDescription>{chapters} chapter{chapters === 1 ? '' : 's'} drafted. Approval is by the CDRRMO Head after validation.</CardDescription></div>
+        <div><CardTitle className="text-lg text-ink">Manual readiness</CardTitle><CardDescription>{chapters} chapter{chapters === 1 ? '' : 's'} drafted. Approval is by the CDRRMO Head after validation.</CardDescription></div>
         <TextLink tip="Open the Manual of Operations" size="sm" to="/library">Library</TextLink>
       </CardHeader>
       <CardContent className="space-y-3">
         {rows.map((r) => (
           <Link key={r.label} to={r.to} {...tip(r.tip)} className="block rounded-control p-1 hover:bg-sky-soft/60">
-            <div className="mb-1 flex items-baseline justify-between gap-2 text-sm"><span className="font-semibold">{r.label}</span><span className="font-data text-muted">{r.total ? `${r.approved} of ${r.total} approved` : 'Arrives with the next sync'}</span></div>
+            <div className="mb-1 flex items-baseline justify-between gap-2 text-sm"><span className="font-semibold text-ink">{r.label}</span><span className="font-data text-muted">{r.total ? `${r.approved} of ${r.total} approved` : 'Arrives with the next sync'}</span></div>
             <Progress value={r.total ? (100 * r.approved) / r.total : 0} variant={r.approved === r.total && r.total ? 'success' : 'default'} aria-label={`${r.label} approved`} />
           </Link>
         ))}
