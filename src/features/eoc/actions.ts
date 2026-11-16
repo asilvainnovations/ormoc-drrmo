@@ -1,24 +1,43 @@
-import { db } from '@/lib/db';
-import { callOnline, save } from '@/lib/store';
+// Authority edits of the EOC capability assessment (ADR-035, ADR-006): recording evidence, gap,
+// recommended action and tool links, and validating a run. These go straight to the server with
+// the row's version, never the outbox; a stale screen gets PT409 ("Someone changed this record…").
+// The local copy follows the server answer.
+import { insertOnline, updateOnline } from '@/lib/store';
 import { uuid } from '@/lib/ids';
-import { syncNow } from '@/lib/sync';
-import { currentLevel, levelChangeProblem } from '@/domain/eoc';
-import type { EocLevel, LogCategory, LogEntry } from '@/types';
+import type { EocAssessmentResponse, EocAssessmentRun, EocAssessmentSite } from '@/types';
 
-/** Change the activation level. Online only, so two people cannot act on stale state (ADR-003). */
-export async function setEocLevel(level: EocLevel, reason: string, hazard: string | null, authority: string | null) {
-  const { level: cur } = currentLevel(await db.eoc_activations.toArray());
-  const problem = levelChangeProblem(cur, level, reason);
-  if (problem) throw new Error(problem);
-  const id = await callOnline<string | null>('set_eoc_level', { p_level: level, p_reason: reason, p_hazard: hazard, p_authority: authority }, 'Changing the EOC level');
-  // Bring the new activation and its logbook line to this device at once.
-  await syncNow({ only: ['eoc_activations', 'logbook_entries'] });
-  return id;
+type Editable = Pick<EocAssessmentResponse, 'status' | 'evidence' | 'gap' | 'recommended_action' | 'tool_links'>;
+
+/** Save (or confirm) one checklist answer. The server marks it observed: a pre-filled answer becomes
+ *  a finding only when a person saves it (review fix, ADR-035). */
+export async function saveResponse(row: EocAssessmentResponse, patch: Partial<Editable>): Promise<EocAssessmentResponse> {
+  return updateOnline<EocAssessmentResponse>('eoc_assessment_responses', row, patch, 'Update the checklist answer');
 }
 
-export async function addLog(entry: string, category: LogCategory, userId: string | null, corrects: string | null = null) {
-  const { activation } = currentLevel(await db.eoc_activations.toArray());
-  const row: LogEntry & { _new: true } = { _new: true, id: uuid(), activation_id: activation?.id ?? null, occurred_at: new Date().toISOString(), category,
-    entry: entry.trim(), corrects_id: corrects, author: userId, created_at: new Date().toISOString() };
-  await save('logbook_entries', row, `Logbook: ${entry.slice(0, 40)}`);
+/** Record a first answer for an item at a site (e.g. the alternate EOC once one is designated). */
+export async function createResponse(runId: string, itemId: string, site: EocAssessmentSite, values: Editable): Promise<EocAssessmentResponse> {
+  return insertOnline<EocAssessmentResponse>('eoc_assessment_responses', {
+    id: uuid(),
+    run_id: runId,
+    item_id: itemId,
+    site,
+    provenance: 'observed',
+    state: 'draft',
+    updated_by: null,
+    version: 1,
+    ...values,
+  }, 'Record the checklist answer');
+}
+
+/** Validate or reopen one observed answer (CDRRMO Head or admin; the SQL guard refuses anyone else,
+ *  and refuses to validate an answer that is still pre-filled). */
+export async function setResponseState(row: EocAssessmentResponse, state: 'validated' | 'draft'): Promise<EocAssessmentResponse> {
+  return updateOnline<EocAssessmentResponse>('eoc_assessment_responses', row, { state },
+    state === 'validated' ? 'Validate the checklist answer' : 'Reopen the checklist answer');
+}
+
+/** Validate a run (CDRRMO Head or admin only — the SQL guard refuses anyone else and stamps
+ *  validated_by / validated_at). A validated run and its responses are locked for the record. */
+export async function validateRun(run: EocAssessmentRun): Promise<EocAssessmentRun> {
+  return updateOnline<EocAssessmentRun>('eoc_assessment_runs', run, { status: 'validated' }, 'Validate the capability run');
 }
