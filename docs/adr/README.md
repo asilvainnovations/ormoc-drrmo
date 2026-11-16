@@ -45,3 +45,5 @@ Each record states a decision, why it was made, and what it costs. Change a deci
 | [038](038-sitrep-dilg8.md) | SitReps carry the DILG VIII harmonized fields; reporting cut-offs by alert level are seeded in SQL and Head-editable, with a late flag on the barangay view; client-side Excel export in the DILG VIII layout | Proposed |
 | [039](039-resources-ddrive-decisions.md) | Read-first resource inventory screen over the existing table; DDRiVE ranks silent barangays on the liaison desk and shows the five priority barangays on the Board — decision support, never a trigger | Proposed |
 | [040](040-object-scoped-conversations.md) | Object-scoped conversations on indicator responses, assessment cycles, EOC activations and protocol runs; one open thread per parent; append-only messages; offline capture; resolve online; auto-lock with parent | Proposed |
+
+| [042](042-city-reference-map-library.md) | Canonical City reference-map library under `public/geo/hazard/reference/`, shared registry for Geo-COP and Flood Intelligence; preserve the 85-barangay GeoJSON and existing georeferenced raster layers | Proposed |
