@@ -62,7 +62,7 @@ export default function MapPage() {
       m.addSource('barangays',{type:'geojson',data:empty as never});
       m.addLayer({id:'barangays',type:'circle',source:'barangays',paint:{'circle-radius':5,'circle-stroke-width':1,'circle-stroke-color':token('surface'),'circle-color':['match',['get','condition'],'isolated',token('bad'),'affected',token('warn'),'evacuating',token('warn'),'monitoring',token('info'),token('muted')]}});
       m.addSource('points',{type:'geojson',data:empty as never});
-      m.addLayer({id:'points',type:'circle',source:'points',paint:{'circle-radius':9,'circle-stroke-width':3,'circle-color':token('action'),'circle-stroke-color':['case',['==',['get','status'],'field_verified',token('ok'),token('warn')]]}});
+      m.addLayer({id:'points',type:'circle',source:'points',paint:{'circle-radius':9,'circle-stroke-width':3,'circle-color':token('action'),'circle-stroke-color':['case',['==',['get','status'],'field_verified'],token('ok'),token('warn')]}});
       if(hasBase)m.addLayer({id:'points-label',type:'symbol',source:'points',layout:{'text-field':['get','name'],'text-font':['Noto Sans Regular'],'text-size':13,'text-offset':[0,1.4],'text-anchor':'top'},paint:{'text-color':token('ink'),'text-halo-color':token('surface'),'text-halo-width':1.5}});
       const popup=(id:string,html:(p:Record<string,string>)=>string)=>m.on('click',id,(e)=>{const f=e.features?.[0];if(!f)return;const el=document.createElement('div');el.className='text-sm text-ink';el.textContent=html(f.properties as Record<string,string>);new maplibregl.Popup({closeButton:true}).setLngLat(e.lngLat).setDOMContent(el).addTo(m);});
       popup('points',(p)=>`${p.name}: ${POINT_STATUS[p.status as keyof typeof POINT_STATUS]??''}`);

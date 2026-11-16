@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '@/lib/db';
 import { bandPrefix, hazardChip, riskBand } from '@/domain/ddrive';
-import { ORMOC_FLOOD_EXPOSURE, getBarangayFloodExposure } from '@/domain/floodExposure';
+import { getBarangayFloodExposure } from '@/domain/floodExposure';
 import { Badge, Field, Input, List, ListRow, Notice, PageHeader, Section, Select, Tabs } from '@/components/ui';
 import { Sheet } from '@/components/Sheet';
 import { tip } from '@/components/Tooltip';
