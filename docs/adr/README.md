@@ -47,3 +47,4 @@ Each record states a decision, why it was made, and what it costs. Change a deci
 | [040](040-object-scoped-conversations.md) | Object-scoped conversations on indicator responses, assessment cycles, EOC activations and protocol runs; one open thread per parent; append-only messages; offline capture; resolve online; auto-lock with parent | Proposed |
 
 | [042](042-city-reference-map-library.md) | Canonical City reference-map library under `public/geo/hazard/reference/`, shared registry for Geo-COP and Flood Intelligence; preserve the 85-barangay GeoJSON and existing georeferenced raster layers | Proposed |
+| [043](043-manual-review-validation-workspace.md) | Integrated Manual Review and Validation Workspace: review register, decision register, workshop management, evidence-based closure, document lifecycle and traceability | Proposed |
