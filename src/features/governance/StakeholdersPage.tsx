@@ -2,11 +2,10 @@
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { Users } from 'lucide-react';
 import { db } from '@/lib/db';
 import { tip } from '@/components/Tooltip';
 import { Badge, EmptyState, Input, Loading, Notice, PageHeader } from '@/components/ui';
-import type { ManualGovernanceStakeholder } from '@/types.governance';
+import type { ManualGovernanceStakeholder } from '@/types';
 import { GOVERNANCE_CAVEAT, PRIORITY } from './labels';
 
 export function StakeholdersPage() {
@@ -17,10 +16,10 @@ export function StakeholdersPage() {
   const [q, setQ] = useState('');
 
   const filtered = useMemo(() => {
-    if (!rows) return [];
+    if (!rows) return [] as ManualGovernanceStakeholder[];
     const needle = q.trim().toLowerCase();
     if (!needle) return rows;
-    return rows.filter((s) => {
+    return rows.filter((s: ManualGovernanceStakeholder) => {
       const hay = [s.institution, s.role_in_validation, s.responsibility, s.relevant_chapters]
         .filter(Boolean).join(' ').toLowerCase();
       return hay.includes(needle);
@@ -34,7 +33,6 @@ export function StakeholdersPage() {
       <PageHeader
         title="Stakeholders"
         subtitle="Institutions and proposed validation roles. Designations are not confirmed until verified against the EOC EO and ICS EO."
-        tip="Source matrix from the Validation Tracker. Criticality marks proposed priority of involvement."
       />
       <Notice tone="info">{GOVERNANCE_CAVEAT}</Notice>
 
@@ -57,7 +55,6 @@ export function StakeholdersPage() {
 
       {filtered.length === 0 ? (
         <EmptyState
-          icon={Users}
           title="No stakeholders match"
           body={rows.length === 0
             ? 'Import seed part 40 after applying the migration.'
@@ -65,7 +62,7 @@ export function StakeholdersPage() {
         />
       ) : (
         <ul className="divide-y divide-line rounded-panel border border-line bg-surface">
-          {filtered.map((s) => (
+          {filtered.map((s: ManualGovernanceStakeholder) => (
             <StakeholderRow key={s.id} item={s} />
           ))}
         </ul>

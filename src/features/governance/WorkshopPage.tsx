@@ -1,11 +1,10 @@
 // Validation Workshop Agenda — ADR-043 Slice 1.
 import { Link } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { CalendarDays } from 'lucide-react';
 import { db } from '@/lib/db';
 import { tip } from '@/components/Tooltip';
 import { Badge, EmptyState, Loading, Notice, PageHeader } from '@/components/ui';
-import type { WorkshopSession } from '@/types.governance';
+import type { WorkshopSession } from '@/types';
 import { GOVERNANCE_CAVEAT, WORKSHOP_STATUS } from './labels';
 
 export function WorkshopPage() {
@@ -21,14 +20,13 @@ export function WorkshopPage() {
       <PageHeader
         title="Validation Workshop"
         subtitle="Twelve-session agenda for the Manual validation window. Session times and venue to be confirmed by the Secretariat."
-        tip="Deterministic keys WS-01…WS-12. Outcomes and status updates are recorded here after each session."
       />
       <Notice tone="info">{GOVERNANCE_CAVEAT}</Notice>
 
       <div className="flex flex-wrap gap-2 text-sm">
         <Badge>{sessions.length} sessions</Badge>
-        <Badge tone="ok">{sessions.filter((s) => s.status === 'completed').length} completed</Badge>
-        <Badge>{sessions.filter((s) => s.status === 'planned').length} planned</Badge>
+        <Badge tone="ok">{sessions.filter((s: WorkshopSession) => s.status === 'completed').length} completed</Badge>
+        <Badge>{sessions.filter((s: WorkshopSession) => s.status === 'planned').length} planned</Badge>
       </div>
 
       <div className="flex flex-wrap gap-2 text-sm">
@@ -41,13 +39,12 @@ export function WorkshopPage() {
 
       {sessions.length === 0 ? (
         <EmptyState
-          icon={CalendarDays}
           title="No workshop sessions"
           body="Import seed part 40 after applying the migration."
         />
       ) : (
         <ol className="space-y-3">
-          {sessions.map((s) => (
+          {sessions.map((s: WorkshopSession) => (
             <SessionCard key={s.id} session={s} />
           ))}
         </ol>

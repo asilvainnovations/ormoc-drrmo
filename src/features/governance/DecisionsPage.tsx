@@ -2,11 +2,10 @@
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { Scale } from 'lucide-react';
 import { db } from '@/lib/db';
 import { tip } from '@/components/Tooltip';
 import { Badge, EmptyState, Input, Loading, Notice, PageHeader, Section } from '@/components/ui';
-import type { DecisionStatus, GovernancePriority, OutstandingDecision } from '@/types.governance';
+import type { DecisionStatus, GovernancePriority, OutstandingDecision } from '@/types';
 import { AUTHORITY_STATUS, DECISION_STATUS, GOVERNANCE_CAVEAT, PRIORITY } from './labels';
 
 export function DecisionsPage() {
@@ -16,9 +15,9 @@ export function DecisionsPage() {
   const [priority, setPriority] = useState<GovernancePriority | 'all'>('all');
 
   const filtered = useMemo(() => {
-    if (!items) return [];
+    if (!items) return [] as OutstandingDecision[];
     const needle = q.trim().toLowerCase();
-    return items.filter((d) => {
+    return items.filter((d: OutstandingDecision) => {
       if (status !== 'all' && d.decision_status !== status) return false;
       if (priority !== 'all' && d.priority !== priority) return false;
       if (!needle) return true;
@@ -34,16 +33,15 @@ export function DecisionsPage() {
     <div className="space-y-4">
       <PageHeader
         title="Outstanding Decisions"
-        subtitle="One accountable owner per decision. Decision authority is recorded separately."
-        tip="Source IDs OD-01…OD-18. Recording a formal decision needs a live connection, disposition and reference."
+        subtitle="One accountable owner per decision. Decision authority is recorded separately. Source IDs OD-01…OD-18."
       />
       <Notice tone="info">{GOVERNANCE_CAVEAT}</Notice>
 
       <div className="flex flex-wrap gap-2 text-sm">
         <Badge>{items.length} decisions</Badge>
-        <Badge tone="warn">{items.filter((d) => d.decision_status === 'for_decision').length} for decision</Badge>
-        <Badge tone="danger">
-          {items.filter((d) => d.priority === 'critical_urgent' && d.decision_status !== 'decided').length} critical open
+        <Badge tone="warn">{items.filter((d: OutstandingDecision) => d.decision_status === 'for_decision').length} for decision</Badge>
+        <Badge tone="bad">
+          {items.filter((d: OutstandingDecision) => d.priority === 'critical_urgent' && d.decision_status !== 'decided').length} critical open
         </Badge>
       </div>
 
@@ -89,7 +87,6 @@ export function DecisionsPage() {
 
       {filtered.length === 0 ? (
         <EmptyState
-          icon={Scale}
           title="No decisions match"
           body={items.length === 0
             ? 'Import seed part 40 after applying the migration.'
@@ -97,7 +94,7 @@ export function DecisionsPage() {
         />
       ) : (
         <ul className="divide-y divide-line rounded-panel border border-line bg-surface">
-          {filtered.map((d) => (
+          {filtered.map((d: OutstandingDecision) => (
             <DecisionRow key={d.id} item={d} />
           ))}
         </ul>

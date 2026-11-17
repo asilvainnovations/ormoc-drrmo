@@ -2,11 +2,10 @@
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { Filter, ListChecks } from 'lucide-react';
 import { db } from '@/lib/db';
 import { tip } from '@/components/Tooltip';
 import { Badge, EmptyState, Input, Loading, Notice, PageHeader, Section } from '@/components/ui';
-import type { GovernancePriority, ManualReviewItem, ReviewStatus } from '@/types.governance';
+import type { GovernancePriority, ManualReviewItem, ReviewStatus } from '@/types';
 import { GOVERNANCE_CAVEAT, PRIORITY, REVIEW_STATUS } from './labels';
 
 const STATUS_FILTERS: Array<ReviewStatus | 'all'> = [
@@ -23,9 +22,9 @@ export function ReviewRegisterPage() {
   const [priority, setPriority] = useState<GovernancePriority | 'all'>('all');
 
   const filtered = useMemo(() => {
-    if (!items) return [];
+    if (!items) return [] as ManualReviewItem[];
     const needle = q.trim().toLowerCase();
-    return items.filter((r) => {
+    return items.filter((r: ManualReviewItem) => {
       if (status !== 'all' && r.review_status !== status) return false;
       if (priority !== 'all' && r.priority !== priority) return false;
       if (!needle) return true;
@@ -39,8 +38,8 @@ export function ReviewRegisterPage() {
     if (!items) return null;
     return {
       total: items.length,
-      open: items.filter((r) => r.review_status !== 'closed' && r.review_status !== 'deferred').length,
-      critical: items.filter((r) => r.priority === 'critical_urgent' && r.review_status !== 'closed').length,
+      open: items.filter((r: ManualReviewItem) => r.review_status !== 'closed' && r.review_status !== 'deferred').length,
+      critical: items.filter((r: ManualReviewItem) => r.priority === 'critical_urgent' && r.review_status !== 'closed').length,
     };
   }, [items]);
 
@@ -50,8 +49,7 @@ export function ReviewRegisterPage() {
     <div className="space-y-4">
       <PageHeader
         title="Review Register"
-        subtitle="Manual review items from the Validation Tracker. Close only with disposition and evidence."
-        tip="Stable source IDs VR-001…VR-069. Status changes that close or reopen an item need a live connection."
+        subtitle="Manual review items from the Validation Tracker. Close only with disposition and evidence. Stable source IDs VR-001…VR-069."
       />
 
       <Notice tone="info">{GOVERNANCE_CAVEAT}</Notice>
@@ -60,11 +58,11 @@ export function ReviewRegisterPage() {
         <div className="flex flex-wrap gap-2 text-sm">
           <Badge>{counts.total} items</Badge>
           <Badge tone="warn">{counts.open} open</Badge>
-          <Badge tone="danger">{counts.critical} critical open</Badge>
+          <Badge tone="bad">{counts.critical} critical open</Badge>
         </div>
       )}
 
-      <Section title="Filter" tip="Search by ID, title, chapter or lead office">
+      <Section title="Filter">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
           <label className="flex-1">
             <span className="sr-only">Search</span>
@@ -105,22 +103,15 @@ export function ReviewRegisterPage() {
       </Section>
 
       <div className="flex flex-wrap gap-2 text-sm">
-        <Link className="text-primary underline" to="/governance/decisions" {...tip('Outstanding decisions register')}>
-          Decisions
-        </Link>
+        <Link className="text-primary underline" to="/governance/decisions" {...tip('Outstanding decisions register')}>Decisions</Link>
         <span aria-hidden>·</span>
-        <Link className="text-primary underline" to="/governance/workshop" {...tip('Workshop agenda')}>
-          Workshop
-        </Link>
+        <Link className="text-primary underline" to="/governance/workshop" {...tip('Workshop agenda')}>Workshop</Link>
         <span aria-hidden>·</span>
-        <Link className="text-primary underline" to="/governance/stakeholders" {...tip('Stakeholder matrix')}>
-          Stakeholders
-        </Link>
+        <Link className="text-primary underline" to="/governance/stakeholders" {...tip('Stakeholder matrix')}>Stakeholders</Link>
       </div>
 
       {filtered.length === 0 ? (
         <EmptyState
-          icon={ListChecks}
           title="No review items match"
           body={items.length === 0
             ? 'The Validation Tracker has not been imported yet. Apply seed part 40 after the migration.'
@@ -128,7 +119,7 @@ export function ReviewRegisterPage() {
         />
       ) : (
         <ul className="divide-y divide-line rounded-panel border border-line bg-surface">
-          {filtered.map((r) => (
+          {filtered.map((r: ManualReviewItem) => (
             <ReviewRow key={r.id} item={r} />
           ))}
         </ul>
@@ -144,10 +135,7 @@ function ReviewRow({ item }: { item: ManualReviewItem }) {
       <div className="min-w-0 flex-1">
         <div className="flex flex-wrap items-center gap-2">
           <span className="font-mono text-xs text-muted">{item.source_tracker_id}</span>
-          <span
-            className={`inline-flex rounded-control px-2 py-0.5 text-xs font-medium ${p.chip}`}
-            {...tip(p.tip)}
-          >
+          <span className={`inline-flex rounded-control px-2 py-0.5 text-xs font-medium ${p.chip}`} {...tip(p.tip)}>
             {p.label}
           </span>
           <Badge>{REVIEW_STATUS[item.review_status]}</Badge>
@@ -162,8 +150,7 @@ function ReviewRow({ item }: { item: ManualReviewItem }) {
           </p>
         )}
       </div>
-      <div className="mt-2 flex shrink-0 items-center gap-2 sm:mt-0">
-        <Filter className="h-4 w-4 text-muted" aria-hidden />
+      <div className="mt-2 shrink-0 sm:mt-0">
         <span className="text-xs text-muted">{item.workshop_slot ?? '—'}</span>
       </div>
     </li>

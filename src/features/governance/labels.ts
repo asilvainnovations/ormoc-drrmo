@@ -5,9 +5,9 @@ import type {
   GovernanceDisposition,
   GovernancePriority,
   ReviewStatus,
-  ValidationStatus,
+  ValidationStatusGov,
   WorkshopStatus,
-} from '@/types.governance';
+} from '@/types';
 
 export const PRIORITY: Record<GovernancePriority, { label: string; chip: string; tip: string }> = {
   critical_urgent: {
@@ -36,7 +36,7 @@ export const REVIEW_STATUS: Record<ReviewStatus, string> = {
   deferred: 'Deferred',
 };
 
-export const VALIDATION_STATUS: Record<ValidationStatus, string> = {
+export const VALIDATION_STATUS: Record<ValidationStatusGov, string> = {
   not_started: 'Not started',
   in_progress: 'In progress',
   validated: 'Validated',
