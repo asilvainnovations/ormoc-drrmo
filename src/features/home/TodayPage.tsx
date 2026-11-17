@@ -380,14 +380,13 @@ export function TodayPage() {
             <p className="mt-1 max-w-prose text-muted">{t('today.hero')}</p>
             
             {/* UPDATED: Added target and rel for external static file to preserve app state */}
-            <ButtonAnchor 
+          ``<ButtonAnchor 
               href={USER_GUIDE_URL} 
               variant="primary" 
               icon={BookOpen} 
               tip={USER_GUIDE_TIP} 
               className="mt-4"
-              target="_blank"
-              rel="noopener noreferrer"
+              newTab
             >
               {USER_GUIDE_LABEL}
             </ButtonAnchor>
