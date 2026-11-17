@@ -12,7 +12,7 @@ const STORAGE_KEY = 'mode.lang';
 export const STRINGS = {
   en: {
     'nav.today': 'Today', 'nav.assess': 'Assess', 'nav.protocols': 'Protocols', 'nav.eoc': 'EOC',
-    'nav.library': 'Library', 'nav.vault': 'Vault', 'nav.tools': 'Tools', 'nav.hazardmaps': 'Hazard maps',
+    'nav.library': 'Library', 'nav.vault': 'Vault', 'nav.tools': 'Tools', 'nav.hazardmaps': 'Hazard maps', 'nav.governance': 'Governance',
     'greet.morning': 'Good morning', 'greet.afternoon': 'Good afternoon', 'greet.evening': 'Good evening',
     'today.hero': 'Everything that needs your attention today, in one place.',
     'today.pareto.title': 'Priority indicators',
@@ -31,7 +31,7 @@ export const STRINGS = {
   },
   ceb: {
     'nav.today': 'Karon', 'nav.assess': 'Pagtimbang-timbang', 'nav.protocols': 'Mga Protocol', 'nav.eoc': 'EOC',
-    'nav.library': 'Librarya', 'nav.vault': 'Vault', 'nav.tools': 'Mga Hinagiban', 'nav.hazardmaps': 'Mga Mapa sa Peligro',
+    'nav.library': 'Librarya', 'nav.vault': 'Vault', 'nav.tools': 'Mga Hinagiban', 'nav.hazardmaps': 'Mga Mapa sa Peligro', 'nav.governance': 'Pagdumala',
     'greet.morning': 'Maayong buntag', 'greet.afternoon': 'Maayong hapon', 'greet.evening': 'Maayong gabii',
     'today.hero': 'Tanang kinahanglan nimong atimanon karon, sa usa ka lugar.',
     'today.pareto.title': 'Mga prayoridad nga indikador',

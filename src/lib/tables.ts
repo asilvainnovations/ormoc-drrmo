@@ -118,6 +118,13 @@ export const TABLES: TableConfig[] = [
   { name: 'conversation_threads', pk: 'id', cursor: 'updated_at', write: 'insert',
     omit: [...STAMPS, 'created_by', 'resolved_by', 'resolved_at'] },
   { name: 'conversation_messages', pk: 'id', cursor: 'created_at', write: 'insert', omit: ['created_at', 'author_id'] },
+  // 1.23.0 (ADR-043): Manual governance registers. Stakeholders are reference after seed.
+  { name: 'manual_governance_stakeholders', pk: 'id', cursor: 'updated_at', write: 'none' },
+  { name: 'manual_review_items', pk: 'id', cursor: 'updated_at', write: 'upsert',
+    omit: [...STAMPS, 'closed_by', 'closed_at'] },
+  { name: 'outstanding_decisions', pk: 'id', cursor: 'updated_at', write: 'upsert',
+    omit: [...STAMPS, 'decided_by'] },
+  { name: 'workshop_sessions', pk: 'id', cursor: 'updated_at', write: 'upsert', omit: STAMPS },
 ];
 
 export const TABLE = Object.fromEntries(TABLES.map((t) => [t.name, t])) as Record<string, TableConfig>;

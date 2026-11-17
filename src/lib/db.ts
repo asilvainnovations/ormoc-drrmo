@@ -145,6 +145,11 @@ export class DrrmDB extends Dexie {
   eoc_cap_responses!: Table<T.EocCapResponse, string>;
   conversation_threads!: Table<T.ConversationThread, string>;
   conversation_messages!: Table<T.ConversationMessage, string>;
+  // 1.23.0 Manual Governance (ADR-043)
+  manual_governance_stakeholders!: Table<T.ManualGovernanceStakeholder, string>;
+  manual_review_items!: Table<T.ManualReviewItem, string>;
+  outstanding_decisions!: Table<T.OutstandingDecision, string>;
+  workshop_sessions!: Table<T.WorkshopSession, string>;
 
   constructor(name = 'ormoc-drrm-ops') {
     super(name);
@@ -256,6 +261,13 @@ export class DrrmDB extends Dexie {
       eoc_cap_responses: 'id, cycle_id, item_id, [cycle_id+site]',
       conversation_threads: 'id, parent_id, [parent_kind+parent_id], status',
       conversation_messages: 'id, thread_id, created_at',
+    });
+    // v11 (1.23.0): Manual Review and Validation Workspace (ADR-043 Slice 1). Additive only.
+    this.version(11).stores({
+      manual_governance_stakeholders: 'id, source_key, institution',
+      manual_review_items: 'id, source_tracker_id, review_status, priority, chapter_ref',
+      outstanding_decisions: 'id, source_decision_id, decision_status, priority',
+      workshop_sessions: 'id, source_session_key, session_number, status',
     });
   }
 }
