@@ -1,0 +1,97 @@
+MODE 1.23.0 Slice 1 — Manual Governance and Validation Workspace
+ADR-043 · 17 November 2026
+Handover: MODE-1.23.0-slice1-ADR-043.zip
+
+Prerequisite
+  - main at or after 024dbc9 (package 1.22.0, conversations migration applied)
+  - Tokyo production (or training) has migrations through 20261116003300
+  - Controlled source workbook retained: Ormoc_CDRRMO_EOC_Review_Validation_Tracker_V-2.xlsx
+
+--------------------------------------------------------------------
+1. Merge files into the repo (repo-relative paths)
+--------------------------------------------------------------------
+  supabase/migrations/20261117003400_manual_governance.sql
+  supabase/seed/parts/40_manual_governance.sql
+  src/types.governance.ts          → merge types into src/types.ts (or re-export)
+  src/features/governance/         → entire folder (routes + 4 pages + labels)
+  src/lib/tables.governance.delta.ts  → copy TABLE entries into src/lib/tables.ts
+  src/lib/db.governance.delta.ts      → apply version(11) stores + table props in src/lib/db.ts
+
+  Wire routing (manual edits):
+  - src/App.tsx
+      const GovernanceRoutes = lazy(() => import('@/features/governance/routes'));
+      … inside RequireAuth/AppShell routes:
+      <Route path="governance/*" element={<Suspense fallback={<Loading />}><GovernanceRoutes /></Suspense>} />
+  - src/components/AppShell.tsx
+      Add nav item after Library (or Vault):
+      { to: '/governance', k: 'nav.governance', label: 'Governance', icon: ListChecks,
+        tip: 'Manual review register, outstanding decisions and validation workshop' }
+
+  Optional: bump package.json version to "1.23.0" when this slice is accepted.
+
+--------------------------------------------------------------------
+2. Database
+--------------------------------------------------------------------
+  Apply migration (production only from main, with typed confirmation per City practice):
+    supabase db push   # or your usual migration runner
+    # migration file: 20261117003400_manual_governance.sql
+
+  Apply seed part 40 (idempotent on source IDs):
+    psql "$DATABASE_URL" -f supabase/seed/parts/40_manual_governance.sql
+    # Expected on first run (approx):
+    #   69 review items (VR-001…VR-069)
+    #   18 decisions (OD-01…OD-18)
+    #   12 workshop sessions (WS-01…WS-12)
+    #   29 stakeholders
+    #   1 import_batches row
+
+  Verification queries:
+    select count(*) from public.manual_review_items;          -- 69
+    select count(*) from public.outstanding_decisions;        -- 18
+    select count(*) from public.workshop_sessions;            -- 12
+    select count(*) from public.manual_governance_stakeholders; -- 29
+    select * from public.manual_governance_import_batches order by imported_at desc limit 1;
+
+  Re-run of seed part 40 must not duplicate rows (on conflict do nothing).
+
+--------------------------------------------------------------------
+3. Client
+--------------------------------------------------------------------
+  npm install          # if lockfile unchanged, skip
+  npm run typecheck
+  npm run test
+  npm run build
+
+  Smoke:
+  - Sign in as active user → /governance shows Review Register with 69 items after sync
+  - Filters by status / priority work offline
+  - /governance/decisions, /workshop, /stakeholders render
+  - Closing a review item or recording a decision while offline fails with NeedsConnectionError
+    (authority path not yet wired in UI for Slice 1 — guards are server-side; UI actions next)
+
+--------------------------------------------------------------------
+4. Tests to add (not in this zip — follow-up)
+--------------------------------------------------------------------
+  - supabase/tests: role matrix for select / close-without-disposition / reopen
+  - unit: label maps, filter helpers
+  - e2e: governance route reachable for active user; empty state when seed not applied
+
+--------------------------------------------------------------------
+5. Release discipline
+--------------------------------------------------------------------
+  - Do not tag until typecheck + build + db tests are green and CDRRMO accepts workshop use
+  - When ready: git tag -a v1.23.0 -m "MODE 1.23.0 Manual Governance Slice 1 (ADR-043)"
+  - Create GitHub Release with notes; never use web upload for the tree
+  - Update DEPLOY.md §3 "To 1.23.0"
+
+--------------------------------------------------------------------
+6. Explicit non-goals for this slice
+--------------------------------------------------------------------
+  - No conversation parent_kind extension yet (review_item / outstanding_decision / workshop_session)
+  - No assignment queues, due dates or reminders (WP6)
+  - No document lifecycle dimensions beyond review/validation status (Slice 2)
+  - No hard-coded 85-barangay final denominator (OD-08 still pending)
+  - Stakeholder matrix is proposed roles only — does not grant app roles
+
+DELETE.txt
+  (none — additive only)
