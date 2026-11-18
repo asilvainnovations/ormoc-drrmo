@@ -1,7 +1,7 @@
 import { NavLink, Link, Outlet } from 'react-router-dom';
 import { ScreenErrorBoundary } from '@/components/ErrorBoundary';
 import clsx from 'clsx';
-import { BookOpen, ClipboardCheck, Map as MapIcon, FolderLock, House, ListChecks, RadioTower, Settings, CloudOff, RefreshCw, AlertTriangle, Check, Wrench, type LucideIcon } from 'lucide-react';
+import { BookOpen, ClipboardCheck, Map as MapIcon, FolderLock, House, ListChecks, RadioTower, Settings, CloudOff, RefreshCw, AlertTriangle, Check, Wrench, Scale, type LucideIcon } from 'lucide-react';
 import { LEVEL_INFO } from '@/domain/eoc';
 import { useActiveDeclaration, useEocStatus, useNow, usePending } from '@/lib/hooks';
 import { useSyncState } from '@/lib/sync';
@@ -32,6 +32,8 @@ const NAV: NavItem[] = [
   { to: '/vault', k: 'nav.vault', label: 'Vault', icon: FolderLock, tip: 'Document Vault: laws, guidelines and documents for Document Review', vault: true },
   // Desktop rail only; on phones the Today screen links to Tools (the tab bar holds six).
   { to: '/tools', k: 'nav.tools', label: 'Tools', icon: Wrench, tip: 'ICS exercises, continuity planning, Gawad KALASAG readiness, HazardHunterPH, GeoAnalyticsPH, Zoom Earth and DDRiVE-M', rail: true },
+  // 1.23.0 (ADR-043): Manual governance — rail only so the phone tab bar stays at six.
+  { to: '/governance', k: 'nav.governance', label: 'Governance', icon: Scale, tip: 'Manual review register, outstanding decisions and validation workshop', rail: true },
 ];
 
 /** The signature element: activation level, any declaration in force, and data freshness. */
