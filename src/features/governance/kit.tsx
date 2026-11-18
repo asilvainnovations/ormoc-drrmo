@@ -36,15 +36,15 @@ export function Metric({ label, value, hint, tone }: { label: string; value: Rea
   );
 }
 
-export function BarRow({ label, value, max, tone = 'grey' }: { label: string; value: number; max: number; tone?: 'red' | 'orange' | 'green' | 'grey' }) {
+export function BarRow({ label, value, max, tone = 'grey', display, labelWidth = '8rem', valueWidth = '2rem' }: { label: string; value: number; max: number; tone?: 'red' | 'orange' | 'green' | 'grey'; display?: string; labelWidth?: string; valueWidth?: string }) {
   const fill = { red: 'bg-bad', orange: 'bg-warn', green: 'bg-ok', grey: 'bg-muted/50' }[tone];
   return (
-    <div className="my-3 grid grid-cols-[8rem_1fr_2rem] items-center gap-3 text-xs font-bold text-ink">
+    <div className="my-3 grid items-center gap-3 text-xs font-bold text-ink" style={{ gridTemplateColumns: `${labelWidth} 1fr ${valueWidth}` }}>
       <span>{label}</span>
       <div className="h-2.5 overflow-hidden rounded-full bg-sunken" role="img" aria-label={`${label}: ${value} of ${max}`}>
         <div className={clsx('h-full rounded-full', fill)} style={{ width: `${max ? (100 * value) / max : 0}%` }} />
       </div>
-      <span className="text-right font-data">{value}</span>
+      <span className="text-right font-data">{display ?? value}</span>
     </div>
   );
 }

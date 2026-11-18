@@ -14,7 +14,8 @@ describe('RiskPage — DDRiVE and source-aligned barangay flood exposure',()=>{
   await db.ddrive_barangay_profiles.bulkPut([{psgc:'0803738057',name:'Lao',former_name:null,urban_rural:'Rural',population_2024:4456,population_2020:4374,growth_rate_2020_2024:0.001,households:null,density_per_ha:null,data_quality_flag:null,lat:11.03,lng:124.53,coord_source:null,coord_validation:null,cluster_no:null,cluster_label:null,district_zone:null,assigned_coordinator:null,cluster_validation:null,workbook_rev:'v1.2'} satisfies DdriveBarangayProfile]);
   render(<MemoryRouter><RiskPage/></MemoryRouter>);
   expect(await screen.findByText('Riverine & flash flood')).toBeTruthy();
-  expect(await screen.findByText('H · High')).toBeTruthy();
+  expect((await screen.findAllByText('High')).length).toBeGreaterThan(0);
+  expect(await screen.findByText('H7')).toBeTruthy();                      // the matrix cell the hazard sits in
   expect(await screen.findByText('Lao')).toBeTruthy();
   expect(await screen.findByText(/Flood-prone 4,226 \/ 4,374/)).toBeTruthy();
   expect(await screen.findByText(/96\.616%/)).toBeTruthy();

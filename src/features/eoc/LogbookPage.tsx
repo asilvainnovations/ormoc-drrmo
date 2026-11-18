@@ -11,6 +11,7 @@ import { useToast } from '@/components/Toast';
 import type { LogCategory, LogEntry } from '@/types';
 import { addLog } from './actions';
 import { EOC_TABS, LOG_CATEGORY } from './labels';
+import { QuickLogSheet } from './QuickLogSheet';
 
 export function LogbookPage() {
   const { roles, userId } = useAuth();
@@ -51,7 +52,8 @@ export function LogbookPage() {
             trailing={<Badge tone={r.category === 'correction' ? 'warn' : r.category === 'level_change' ? 'info' : 'neutral'}>{LOG_CATEGORY[r.category]}</Badge>} />
         ))}
       </List>
-      <Sheet open={open} onClose={() => { setOpen(false); setCorrecting(null); }} title={correcting ? 'Correct an entry' : 'New logbook entry'}
+      <QuickLogSheet open={open && !correcting} onClose={() => setOpen(false)} />
+      <Sheet open={!!correcting} onClose={() => { setOpen(false); setCorrecting(null); }} title="Correct an entry"
         footer={<><Button tip="Close without saving" variant="secondary" onClick={() => { setOpen(false); setCorrecting(null); }}>Cancel</Button><Button tip={correcting ? 'Save the correction as a new entry linked to the original' : 'Save the entry. It cannot be edited later, only corrected'} disabled={!text.trim()} onClick={submit}>{correcting ? 'Log correction' : 'Log entry'}</Button></>}>
         {correcting && <p className="rounded-control bg-sunken p-3 text-sm">Correcting: {correcting.entry}</p>}
         {!correcting && <Field label="Category">{(id) => (

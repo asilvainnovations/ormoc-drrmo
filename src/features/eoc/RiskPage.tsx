@@ -1,26 +1,27 @@
 import { useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '@/lib/db';
-import { bandPrefix, hazardChip, riskBand } from '@/domain/ddrive';
+import { hazardChip, riskBand } from '@/domain/ddrive';
 import { getBarangayFloodExposure } from '@/domain/floodExposure';
 import { Badge, Field, Input, List, ListRow, Notice, PageHeader, Section, Select, Tabs } from '@/components/ui';
 import { Sheet } from '@/components/Sheet';
-import { tip } from '@/components/Tooltip';
 import type { DdriveBarangayProfile, DdriveCityRisk, DdriveFlood, DdriveHazards, DdrivePriority, DdriveVulnerability } from '@/types';
-import { BAND_TONE, EOC_TABS, HAZARD_FILTER } from './labels';
+import { EOC_TABS, HAZARD_FILTER } from './labels';
+import { RiskMatrixChart } from './RiskMatrixChart';
+import { LdrrmpRiskProfile } from './LdrrmpRiskProfile';
 
 interface Profile { p:DdriveBarangayProfile; f:DdriveFlood|undefined; h:DdriveHazards|undefined; pr:DdrivePriority|undefined; v:DdriveVulnerability|undefined }
 export function RiskPage() {
   const [q,setQ]=useState(''); const [hazard,setHazard]=useState('all'); const [open,setOpen]=useState<Profile|null>(null);
-  const city=useLiveQuery(async()=>{const [scores,matrix]=await Promise.all([db.ddrive_city_scores.toArray(),db.ddrive_risk_matrix.orderBy('ranking').toArray()]);return scores.map(s=>{const band=riskBand(s.likelihood,s.severity,matrix);return band?{...s,...band}:null;}).filter((x):x is DdriveCityRisk=>x!==null).sort((a,b)=>b.ranking-a.ranking);},[]);
+  const city=useLiveQuery(async()=>{const [scores,matrix]=await Promise.all([db.ddrive_city_scores.toArray(),db.ddrive_risk_matrix.orderBy('ranking').toArray()]);const risks=scores.map(s=>{const band=riskBand(s.likelihood,s.severity,matrix);return band?{...s,...band}:null;}).filter((x):x is DdriveCityRisk=>x!==null).sort((a,b)=>b.ranking-a.ranking);return {risks,matrix};},[]);
   const profiles=useLiveQuery(async():Promise<Profile[]>=>{const [ps,fs,hs,prs,vs]=await Promise.all([db.ddrive_barangay_profiles.orderBy('name').toArray(),db.ddrive_flood.toArray(),db.ddrive_hazards.toArray(),db.ddrive_priority.toArray(),db.ddrive_vulnerability.toArray()]);const f=new Map(fs.map(x=>[x.psgc,x]));const h=new Map(hs.map(x=>[x.psgc,x]));const pr=new Map(prs.map(x=>[x.psgc,x]));const v=new Map(vs.map(x=>[x.psgc,x]));return ps.map(p=>({p,f:f.get(p.psgc),h:h.get(p.psgc),pr:pr.get(p.psgc),v:v.get(p.psgc)}));},[]);
   const word=q.trim().toLowerCase();
   const match=(r:Profile)=>{if(hazard==='all')return true;if(hazard==='flood')return !!(r.f&&hazardChip(r.f.susceptibility_class))||!!getBarangayFloodExposure(r.p.psgc);if(hazard==='priority')return r.pr?.priority_rank!=null;if(hazard==='cluster')return r.p.cluster_no!=null;const col:Partial<Record<string,keyof DdriveHazards>>={rain_landslide:'rain_landslide',eq_landslide:'eq_landslide',liquefaction:'liquefaction',tsunami:'tsunami',storm_surge:'storm_surge'};const key=col[hazard];return !!r.h&&!!key&&!!hazardChip(r.h[key]);};
   const rows=(profiles??[]).filter(r=>(!word||`${r.p.name} ${r.p.former_name??''} ${r.p.district_zone??''}`.toLowerCase().includes(word))&&match(r));
   return <div className="page"><PageHeader title="Risk intelligence" subtitle="DDRiVE — Data-Driven Risk and Vulnerability Estimation. Desk assessment v1.2 (9 Nov 2026); aggregate data only."/><Tabs items={EOC_TABS}/>
     <Notice tone="info" title="Decision support, not a trigger">DDRiVE desk scores and barangay classes guide attention and PDRA discussion. Evacuation and activation decisions follow the Manual's SOPs. A blank field means "not assessed" — never zero.</Notice>
-    <Section title="City risk picture"><List>{(city??[]).map(c=><ListRow key={c.hazard_event} title={<>{c.hazard_event} <Badge tone="neutral" className="ml-2">{c.hazard_family.split(' ')[0]}</Badge></>} meta={`Likelihood ${c.likelihood}/10 × severity ${c.severity}/100 · vulnerability ${c.vulnerability_rating??'—'} · ${c.validation_status??''}`} trailing={<Badge tone={BAND_TONE[c.label]} {...tip(c.evidence_anchor??`${c.label}: ${c.band}`)}>{bandPrefix(c.band)} · {c.label}</Badge>}/>)}</List>
-      {city&&<p className="mt-2 text-xs text-muted" {...tip('Desk scores remain pending DDRiVE working-session validation.')}>Desk scores remain pending working-session validation. Hold any row for its evidence anchor.</p>}</Section>
+    <Section title="City risk picture"><RiskMatrixChart risks={city?.risks??[]} matrix={city?.matrix??[]}/><LdrrmpRiskProfile/>
+      {city&&<p className="mt-3 text-xs text-muted">Desk scores remain pending DDRiVE working-session validation. Select a hazard for its evidence.</p>}</Section>
     <Section title={`Barangay profiles (${rows.length} of ${profiles?.length??0})`}>
       <div className="mb-4 grid gap-3 sm:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]"><Field label="Find a barangay" tip="Name, former name or district">{id=><Input id={id} type="search" value={q} onChange={e=>setQ(e.target.value)} placeholder="e.g. Curva, Balion, west coast"/>}</Field><Field label="Hazard filter">{id=><Select id={id} value={hazard} onChange={e=>setHazard(e.target.value)}>{Object.entries(HAZARD_FILTER).map(([v,l])=><option key={v} value={v}>{l}</option>)}</Select>}</Field></div>
       <List>{rows.map(r=>{const exposure=getBarangayFloodExposure(r.p.psgc);return <ListRow key={r.p.psgc} tip="Open the DDRiVE profile and flood exposure detail" onClick={()=>setOpen(r)} title={<>{r.p.name}{r.p.former_name&&<span className="ml-1 text-sm font-normal text-muted">(was {r.p.former_name})</span>}</>} meta={[`Pop. ${r.p.population_2024??'—'} (2024)`,exposure?`Flood-prone ${exposure.pronePopulation.toLocaleString('en-PH')} / ${exposure.denominator.toLocaleString('en-PH')} · ${exposure.exposurePercent.toFixed(3)}%`:null,r.p.cluster_no?`Cluster ${r.p.cluster_no} (proposed)`:null,r.pr?.priority_rank!=null?`Priority ${r.pr.priority_rank}`:null].filter(Boolean).join(' · ')} trailing={<Badge tone={r.f&&hazardChip(r.f.susceptibility_class)?'warn':'neutral'}>{hazardChip(r.f?.susceptibility_class??null)??(exposure?'Flood exposure reported':r.p.urban_rural??'—')}</Badge>}/>;})}</List>
