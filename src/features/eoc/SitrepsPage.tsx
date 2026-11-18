@@ -1,19 +1,43 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { FileSpreadsheet, Plus, Printer } from 'lucide-react';
+import { FileSpreadsheet, Plus, Printer, Wand2 } from 'lucide-react';
 import { db } from '@/lib/db';
 import { save } from '@/lib/store';
 import { uuid } from '@/lib/ids';
 import { useAuth } from '@/lib/auth';
-import { canChangeLevel, canOperate, currentLevel, cutoffForLevel, evacuationTotals, latestPerBarangay, LEVEL_INFO, sitrepReportWindow } from '@/domain/eoc';
-import { campTotals, latestPerCentre, sitrepCampText } from '@/domain/echo';
+import { canChangeLevel, canOperate, currentLevel, cutoffForLevel, latestPerBarangay, LEVEL_INFO, sitrepReportWindow } from '@/domain/eoc';
+import { campTotals, latestPerCentre } from '@/domain/echo';
+import { composeSitrep, LIFELINE_STATES, LIFELINES, lifelinesText, parseLifelines, type ComposedSitrep, type Lifeline, type LifelineState } from '@/domain/sitrepCompose';
+import { Chips } from './kit';
 import { fmtDateTime, fromLocalInput, toLocalInput } from '@/lib/time';
 import { downloadXlsx } from '@/lib/xlsx';
 import { Badge, Button, EmptyState, Field, Input, List, ListRow, Loading, Notice, PageHeader, Section, Select, Tabs, Textarea } from '@/components/ui';
 import { useToast } from '@/components/Toast';
 import type { Sitrep } from '@/types';
 import { EOC_TABS, SITREP_REPORT_TYPE, SITREP_STATUS } from './labels';
+
+
+/** Gather what the EOC has recorded for this period and compose the SitRep text and figures from it (nothing invented). */
+async function composeFor(period: { activation_id: string | null; period_start: string; period_end: string }): Promise<ComposedSitrep> {
+  const activations = await db.eoc_activations.toArray();
+  const window = sitrepReportWindow(activations, period);
+  const { level } = currentLevel(activations);
+  const names = new Map((await db.barangays.toArray()).map((b) => [b.psgc, b.name]));
+  const latest = latestPerBarangay(await db.barangay_reports.toArray(), window);
+  const hazards = new Map((await db.hazards.toArray()).map((h) => [h.code, h.name]));
+  const act = activations.find((a) => a.id === period.activation_id);
+  const camps = campTotals(latestPerCentre(await db.camp_reports.toArray(), window.from, window.to), new Map((await db.evacuation_centers.toArray()).map((c) => [c.id, c.capacity_persons])));
+  const reqs = await db.resource_requests.toArray();
+  const inPeriod = (iso: string | null) => !!iso && iso >= period.period_start && iso <= period.period_end;
+  return composeSitrep({
+    level, hazardName: act?.hazard_code ? hazards.get(act.hazard_code) ?? act.hazard_code : null, hasActivation: !!act, periodStart: period.period_start, periodEnd: period.period_end,
+    totalBarangays: names.size, latest, names, camps,
+    openRequests: reqs.filter((r) => ['requested', 'approved', 'mobilized'].includes(r.status)),
+    deliveredInPeriod: reqs.filter((r) => inPeriod(r.delivered_at)),
+    log: (await db.logbook_entries.toArray()).filter((l) => inPeriod(l.occurred_at)),
+  });
+}
 
 export function SitrepsPage() {
   const { roles } = useAuth();
@@ -22,12 +46,13 @@ export function SitrepsPage() {
   const create = async () => {
     const { activation } = currentLevel(await db.eoc_activations.toArray());
     const last = rows[0];
-    const s: Sitrep & { _new: true } = { _new: true, id: uuid(), activation_id: activation?.id ?? null, seq: null,
-      period_start: last?.period_end ?? new Date(Date.now() - 6 * 3600_000).toISOString(), period_end: new Date().toISOString(), status: 'draft',
-      situation: null, actions_taken: null, needs: null, affected_families: null, affected_persons: null, evacuated_families: null, evacuated_persons: null,
+    const period = { activation_id: activation?.id ?? null, period_start: last?.period_end ?? new Date(Date.now() - 6 * 3600_000).toISOString(), period_end: new Date().toISOString() };
+    const c = await composeFor(period);
+    const s: Sitrep & { _new: true } = { _new: true, id: uuid(), ...period, seq: null, status: 'draft',
+      situation: c.situation, actions_taken: c.actions_taken, needs: c.needs, affected_families: null, affected_persons: null, evacuated_families: c.evacuated_families, evacuated_persons: c.evacuated_persons,
       dead: null, injured: null, missing: null, submitted_at: null, approved_at: null,
-      report_type: 'during_disaster', incident_type: null, affected_barangays: null, damaged_houses_totally: null, damaged_houses_partially: null,
-      lifelines_status: null, assistance_provided: null, cost_of_assistance: null, version: 1 };
+      report_type: c.report_type, incident_type: c.incident_type, affected_barangays: c.affected_barangays, damaged_houses_totally: null, damaged_houses_partially: null,
+      lifelines_status: null, assistance_provided: c.assistance_provided, cost_of_assistance: null, version: 1 };
     await save('sitreps', s, 'New SitRep draft');
     nav(`/eoc/sitreps/${s.id}`);
   };
@@ -99,24 +124,12 @@ export function SitrepEditor() {
     toast('Excel workbook downloaded.');
   };
 
-  const pullEvac = async () => {
-    // Only this SitRep's event, up to the end of its period (#16).
-    const window = sitrepReportWindow(await db.eoc_activations.toArray(), form);
-    const t = evacuationTotals(latestPerBarangay(await db.barangay_reports.toArray(), window));
-    setForm({ ...form, evacuated_families: t.families, evacuated_persons: t.persons });
-    toast(t.notReported > 0
-      ? `Evacuation totals filled from this event's barangay reports. ${t.notReported} barangay${t.notReported > 1 ? 's have' : ' has'} not reported counts.`
-      : "Evacuation totals filled from this event's barangay reports", 'info');
-  };
-  /** ECHO (1.16.0): add the inside-centre figures as text; the evacuated totals stay from the barangay reports. */
-  const pullCamps = async () => {
-    const window = sitrepReportWindow(await db.eoc_activations.toArray(), form);
-    const t = campTotals(latestPerCentre(await db.camp_reports.toArray(), window.from, window.to),
-      new Map((await db.evacuation_centers.toArray()).map((c) => [c.id, c.capacity_persons])));
-    if (t.centresOpen === 0) { toast('No open centre in ECHO for this period', 'info'); return; }
-    const text = sitrepCampText(t, []).situation;
-    setForm({ ...form, situation: form.situation ? `${form.situation}\n\n${text}` : text });
-    toast('Camp figures added to the situation overview', 'info');
+  /** Re-read the EOC's records and rewrite the composed parts. Lifelines, casualty counts, damage and cost stay as you typed them. */
+  const refresh = async () => {
+    const c = await composeFor(form);
+    setForm({ ...form, situation: c.situation, actions_taken: c.actions_taken, needs: c.needs, assistance_provided: c.assistance_provided, affected_barangays: c.affected_barangays,
+      evacuated_families: c.evacuated_families, evacuated_persons: c.evacuated_persons, incident_type: form.incident_type ?? c.incident_type });
+    toast('Refreshed from the barangay reports, camp reports, requests and logbook', 'info');
   };
   const persist = async (status?: Sitrep['status']) => {
     let seq = form.seq;
@@ -139,6 +152,12 @@ export function SitrepEditor() {
         </>} />
       {s.status === 'approved' && <Notice tone="ok" title="Approved">{`Approved ${fmtDateTime(s.approved_at)}. Issue the next SitRep for new information.`}</Notice>}
       <div className="max-w-3xl">
+        {editable && (
+          <div className="mb-5 flex flex-wrap items-center justify-between gap-3 rounded-sheet border border-sky/40 bg-sky-soft p-4">
+            <p className="max-w-md text-sm text-ink">This report was filled in from the barangay reports, camp reports, requests and logbook. Check it, set the lifelines, add casualties and damage, then submit.</p>
+            <Button tip="Re-read the EOC records and rewrite the situation, actions, needs and evacuee counts" variant="secondary" icon={Wand2} onClick={refresh}>Refresh from live data</Button>
+          </div>
+        )}
         <Section title="Reporting period">
           <div className="grid gap-3 sm:grid-cols-2">
             <Field label="From">{(i) => <Input id={i} type="datetime-local" disabled={!editable} value={toLocalInput(form.period_start)} onChange={(e) => setForm({ ...form, period_start: fromLocalInput(e.target.value) })} />}</Field>
@@ -170,7 +189,7 @@ export function SitrepEditor() {
               <Field label="Damaged houses — partially">{(i) => <Input id={i} type="number" min={0} inputMode="numeric" disabled={!editable} value={num('damaged_houses_partially')}
                 onChange={(e) => setForm({ ...form, damaged_houses_partially: e.target.value === '' ? null : Math.max(0, Number(e.target.value)) })} />}</Field>
             </div>
-            <Field label="Status of lifelines" optional hint="Power, water, communications and road access — the DILG VIII checklist item">{(i) => <Textarea id={i} rows={3} disabled={!editable} value={form.lifelines_status ?? ''} onChange={(e) => setForm({ ...form, lifelines_status: e.target.value || null })} />}</Field>
+            <LifelinesField disabled={!editable} value={form.lifelines_status} onChange={(v) => setForm({ ...form, lifelines_status: v })} />
             <div className="grid gap-3 sm:grid-cols-[1fr_12rem]">
               <Field label="Assistance provided" optional hint="Food and non-food items, services delivered">{(i) => <Textarea id={i} rows={3} disabled={!editable} value={form.assistance_provided ?? ''} onChange={(e) => setForm({ ...form, assistance_provided: e.target.value || null })} />}</Field>
               <Field label="Cost of assistance (PHP)">{(i) => <Input id={i} type="number" min={0} inputMode="numeric" disabled={!editable} value={num('cost_of_assistance')}
@@ -185,8 +204,7 @@ export function SitrepEditor() {
             <Field label="Needs and gaps">{(i) => <Textarea id={i} rows={3} disabled={!editable} value={form.needs ?? ''} onChange={(e) => setForm({ ...form, needs: e.target.value })} />}</Field>
           </div>
         </Section>
-        <Section title="Figures" action={editable && <span className="flex flex-wrap gap-1"><Button tip="Fill the evacuation figures from the latest barangay reports" variant="quiet" onClick={pullEvac}>Fill from barangay reports</Button>
-          <Button tip="Add the inside-evacuation-centre figures from ECHO camp reports to the situation overview" variant="quiet" onClick={pullCamps}>Add ECHO camp figures</Button></span>}>
+        <Section title="Figures">
           <p className="mb-3 text-sm text-muted">Aggregate counts only. Leave blank if not yet known; enter 0 only when confirmed.</p>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
             {COUNTS.map(([k, label]) => (
@@ -204,5 +222,22 @@ export function SitrepEditor() {
         )}
       </div>
     </div>
+  );
+}
+
+function LifelinesField({ value, onChange, disabled }: { value: string | null; onChange: (v: string | null) => void; disabled: boolean }) {
+  const { state, note } = parseLifelines(value);
+  const write = (st: Partial<Record<Lifeline, LifelineState>>, n: string) => onChange(lifelinesText(st, n) || null);
+  return (
+    <fieldset className="space-y-3">
+      <legend className="mb-1 text-sm font-bold">Status of lifelines</legend>
+      {LIFELINES.map((l) => (
+        <div key={l.key} className="grid items-center gap-2 sm:grid-cols-[9rem_1fr]">
+          <span className="text-sm font-semibold">{l.label}</span>
+          <Chips label={l.label} disabled={disabled} value={state[l.key] ?? null} onChange={(v) => write({ ...state, [l.key]: v }, note)} options={LIFELINE_STATES} />
+        </div>
+      ))}
+      <Field label="Details" optional hint="Which roads, which barangays, expected restoration.">{(i) => <Textarea id={i} rows={2} disabled={disabled} value={note} onChange={(e) => write(state, e.target.value)} />}</Field>
+    </fieldset>
   );
 }

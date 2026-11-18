@@ -1,30 +1,129 @@
-import { useMemo, useState } from 'react';
-import { useLiveQuery } from 'dexie-react-hooks';
+// Barangay status as a picture (1.25.0): all 85 barangays as tiles coloured by their latest report, grouped by cluster
+// (this screen replaces the separate Liaison desk). Tap a tile, tap the condition, count evacuees, done.
+import { useEffect, useMemo, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import clsx from 'clsx';
 import { db } from '@/lib/db';
 import { save } from '@/lib/store';
 import { uuid } from '@/lib/ids';
 import { useAuth } from '@/lib/auth';
-import { barangayReportProblem, canOperate, currentLevel, currentReportWindow, cutoffForLevel, latestPerBarangay, parseCount, reportLate } from '@/domain/eoc';
+import { barangayReportProblem, canOperate, currentLevel, parseCount } from '@/domain/eoc';
 import { getBarangayFloodExposure } from '@/domain/floodExposure';
 import { fmtDateTime, relative } from '@/lib/time';
-import { Badge, Button, ChoiceGroup, EmptyState, Field, Input, List, ListRow, Notice, PageHeader, Select, Tabs, Textarea } from '@/components/ui';
+import { Badge, Button, EmptyState, Field, Input, Notice, PageHeader, Tabs, Textarea } from '@/components/ui';
 import { Sheet } from '@/components/Sheet';
 import { useToast } from '@/components/Toast';
-import type { Barangay, BarangayCondition, BarangayReport } from '@/types';
-import { CONDITION, CONDITION_TONE, EOC_TABS } from './labels';
+import type { BarangayCondition, BarangayReport } from '@/types';
+import { COND_LABEL, COND_ORDER, COND_STYLE, Chips, Legend, Stepper, type Cond } from './kit';
+import { BarangayGrid } from './BarangayPicture';
+import { useBarangayPicture, type PictureRow } from './useBarangayPicture';
+import { EOC_TABS } from './labels';
+
+const CHANNELS = [{ value: 'radio', label: 'Radio' }, { value: 'sms', label: 'SMS' }, { value: 'call', label: 'Call' }, { value: 'app', label: 'This app' }, { value: 'in_person', label: 'In person' }];
+const CONDITIONS: BarangayCondition[] = ['normal', 'monitoring', 'affected', 'evacuating', 'isolated'];
+const blank = (channel: string) => ({ condition: 'monitoring' as BarangayCondition, families: '', persons: '', remarks: '', channel });
 
 export function BarangaysPage() {
- const {roles}=useAuth();const toast=useToast();const[q,setQ]=useState('');const[show,setShow]=useState<'all'|'reporting'>('all');const[target,setTarget]=useState<Barangay|null>(null);const[form,setForm]=useState(blankForm('radio'));const[problem,setProblem]=useState<string|null>(null);
- const data=useLiveQuery(async()=>{const brgys=await db.barangays.orderBy('name').toArray();const window=currentReportWindow(await db.eoc_activations.toArray());const latest=new Map<string,BarangayReport>(latestPerBarangay(await db.barangay_reports.toArray(),window).map(r=>[r.barangay_psgc,r]));const{level}=currentLevel(await db.eoc_activations.toArray());const cutoff=cutoffForLevel(await db.sitrep_cutoffs.toArray(),level);return{brgys,latest,window,cutoff};},[]);
- const openFor=(b:Barangay)=>{setForm(blankForm(form.channel));setProblem(null);setTarget(b);};
- const list=useMemo(()=>(data?.brgys??[]).filter(b=>b.name.toLowerCase().includes(q.toLowerCase())).filter(b=>show==='all'||(data!.latest.get(b.psgc)&&data!.latest.get(b.psgc)!.condition!=='normal')),[data,q,show]);
- const report=async()=>{if(!target)return;const p=barangayReportProblem(form);if(p){setProblem(p);return;}const{activation}=currentLevel(await db.eoc_activations.toArray());const count=(v:string)=>{const n=parseCount(v);return typeof n==='number'?n:null;};const r:BarangayReport&{_new:true}={_new:true,id:uuid(),barangay_psgc:target.psgc,activation_id:activation?.id??null,reported_at:new Date().toISOString(),condition:form.condition,families_evacuated:count(form.families),persons_evacuated:count(form.persons),remarks:form.remarks.trim()||null,channel:form.channel,created_at:new Date().toISOString()};await save('barangay_reports',r,`Status report: ${target.name}`);setTarget(null);toast(`Recorded ${target.name}: ${CONDITION[r.condition].toLowerCase()}`);};
- return <div className="page"><PageHeader title="Barangay Status" subtitle="Latest report per barangay. Counts only: no names of evacuees."/><Tabs items={EOC_TABS}/>
- {data&&data.brgys.length>0&&<Notice tone="info">{data.window.kind==='event'?`Showing reports since this activation began, ${fmtDateTime(data.window.from)}. Earlier events are not counted.`:'White level: showing reports from the last 24 hours.'}</Notice>}
- {data&&data.brgys.length===0?<EmptyState title="No barangays loaded" body="An administrator imports the barangay list (PSGC code and name) in Settings, then duty officers can record reports here."/>:<><div className="mb-4 grid gap-3 sm:grid-cols-[1fr_14rem]"><Field label="Find a barangay">{id=><Input id={id} type="search" value={q} onChange={e=>setQ(e.target.value)}/>}</Field><Field label="Show">{id=><Select id={id} value={show} onChange={e=>setShow(e.target.value as 'all'|'reporting')}><option value="all">All barangays</option><option value="reporting">Reporting a condition</option></Select>}</Field></div>
- <List>{list.map(b=>{const r=data!.latest.get(b.psgc);const late=r?reportLate(r.reported_at,data!.cutoff):null;const exposure=getBarangayFloodExposure(b.psgc);return <ListRow tip={canOperate(roles)?`Record a new status report for ${b.name}`:undefined} key={b.psgc} onClick={canOperate(roles)?()=>openFor(b):undefined} title={b.name} meta={[r?`${relative(r.reported_at)}${evacText(r)}${r.remarks?`. ${r.remarks}`:''}`:'No report in this period',exposure?`Flood-prone ${exposure.pronePopulation.toLocaleString('en-PH')} / ${exposure.denominator.toLocaleString('en-PH')} (${exposure.exposurePercent.toFixed(3)}%)`:null].filter(Boolean).join(' · ')} trailing={<span className="flex items-center gap-1.5">{exposure&&<Badge tone="warn">Flood exposure</Badge>}{late?.late&&<Badge tone="warn">Late · due {late.cutoffTime}</Badge>}{r&&<Badge tone={CONDITION_TONE[r.condition]}>{CONDITION[r.condition]}</Badge>}</span>}/>;})}</List></>}
- <Sheet open={!!target} onClose={()=>setTarget(null)} title={`Report: ${target?.name??''}`} footer={<><Button tip="Close without saving" variant="secondary" onClick={()=>setTarget(null)}>Cancel</Button><Button tip="Save this report. It works offline and sends when you reconnect" onClick={report}>Record report</Button></>}>{problem&&<Notice tone="bad">{problem}</Notice>}<ChoiceGroup legend="Condition" value={form.condition} onChange={v=>{setForm({...form,condition:v});setProblem(null);}} columns={2} options={(Object.keys(CONDITION) as BarangayCondition[]).map(c=>({value:c,label:CONDITION[c]}))}/><div className="grid grid-cols-2 gap-3"><Field label="Families evacuated" optional={form.condition!=='evacuating'} hint="Leave blank if not reported">{id=><Input id={id} type="number" min={0} step={1} inputMode="numeric" value={form.families} onChange={e=>{setForm({...form,families:e.target.value});setProblem(null);}}/>}</Field><Field label="Persons evacuated" optional={form.condition!=='evacuating'} hint="Leave blank if not reported">{id=><Input id={id} type="number" min={0} step={1} inputMode="numeric" value={form.persons} onChange={e=>{setForm({...form,persons:e.target.value});setProblem(null);}}/>}</Field></div><Field label="Received by">{id=><Select id={id} value={form.channel} onChange={e=>setForm({...form,channel:e.target.value})}><option value="radio">Radio</option><option value="sms">SMS</option><option value="call">Phone call</option><option value="app">This app</option><option value="in_person">In person</option></Select>}</Field><Field label="Remarks" optional>{id=><Textarea id={id} value={form.remarks} onChange={e=>setForm({...form,remarks:e.target.value})}/>}</Field></Sheet>
- </div>;
+  const { roles } = useAuth();
+  const toast = useToast();
+  const pic = useBarangayPicture();
+  const [params, setParams] = useSearchParams();
+  const [q, setQ] = useState('');
+  const [filter, setFilter] = useState<Cond | null>(null);
+  const [target, setTarget] = useState<PictureRow | null>(null);
+  const [form, setForm] = useState(blank('radio'));
+  const [problem, setProblem] = useState<string | null>(null);
+  const operator = canOperate(roles);
+
+  // Deep link from the Board: /eoc/barangays?b=<psgc> opens that barangay's report.
+  const wanted = params.get('b');
+  useEffect(() => {
+    if (!wanted || !pic || !operator) return;
+    const row = pic.rows.find((r) => r.b.psgc === wanted);
+    if (row) { open(row); setParams({}, { replace: true }); }
+  }, [wanted, pic?.rows.length]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const open = (r: PictureRow) => {
+    setForm({ ...blank(form.channel), condition: r.report && r.cond !== 'silent' ? r.report.condition : 'monitoring' });
+    setProblem(null); setTarget(r);
+  };
+  const rows = useMemo(() => (pic?.rows ?? []).filter((r) => r.b.name.toLowerCase().includes(q.toLowerCase())).filter((r) => !filter || r.cond === filter), [pic, q, filter]);
+
+  const record = async () => {
+    if (!target) return;
+    const p = barangayReportProblem(form);
+    if (p) { setProblem(p); return; }
+    const { activation } = currentLevel(await db.eoc_activations.toArray());
+    const count = (v: string) => { const n = parseCount(v); return typeof n === 'number' ? n : null; };
+    const r: BarangayReport & { _new: true } = { _new: true, id: uuid(), barangay_psgc: target.b.psgc, activation_id: activation?.id ?? null, reported_at: new Date().toISOString(),
+      condition: form.condition, families_evacuated: count(form.families), persons_evacuated: count(form.persons), remarks: form.remarks.trim() || null, channel: form.channel, created_at: new Date().toISOString() };
+    await save('barangay_reports', r, `Status report: ${target.b.name}`);
+    setTarget(null); toast(`${target.b.name}: ${COND_LABEL[r.condition].toLowerCase()}`);
+  };
+
+  const silentPriority = (pic?.rows ?? []).filter((r) => r.cond === 'silent' && r.priority != null).sort((a, b) => a.priority! - b.priority!).slice(0, 6);
+  const num = (s: string) => Number(s) || 0;
+
+  return (
+    <div className="page">
+      <PageHeader title="Barangays" subtitle={pic ? (pic.window.kind === 'event' ? `Latest report per barangay since this activation began, ${fmtDateTime(pic.window.from)}.` : 'White level: latest report per barangay in the last 24 hours.') : ''} />
+      <Tabs items={EOC_TABS} />
+      {pic && pic.rows.length === 0 ? <EmptyState title="No barangays loaded" body="An administrator imports the barangay list (PSGC code and name) in Settings." /> : pic && (
+        <>
+          <div className="mb-4 flex flex-wrap items-center gap-x-6 gap-y-3">
+            <div role="group" aria-label="Filter by condition" className="flex flex-wrap gap-2">
+              {COND_ORDER.map((c) => (
+                <button key={c} type="button" aria-pressed={filter === c} onClick={() => setFilter(filter === c ? null : c)}
+                  className={clsx('flex min-h-tap items-center gap-2 rounded-full border px-3 text-sm font-bold', filter === c ? 'border-ink ring-2 ring-ink' : 'border-line', 'bg-surface')}>
+                  <span className={clsx('inline-block h-3.5 w-3.5 rounded-sm border', COND_STYLE[c])} />{COND_LABEL[c]}<span className="font-data">{pic.counts[c]}</span>
+                </button>
+              ))}
+            </div>
+            <Field label="Find a barangay">{(id) => <Input id={id} type="search" className="w-56" value={q} onChange={(e) => setQ(e.target.value)} />}</Field>
+          </div>
+          {silentPriority.length > 0 && pic.activation && (
+            <Notice tone="warn" title="High-risk barangays still silent">
+              {silentPriority.map((r) => `${r.b.name} (#${r.priority})`).join(', ')}. Call these first; the number is the DDRiVE priority rank.
+            </Notice>
+          )}
+          <BarangayGrid rows={rows} groupByCluster onPick={operator ? open : undefined} />
+          {rows.length === 0 && <p className="py-6 text-center text-muted">No barangay matches.</p>}
+          {!operator && <p className="mt-4 text-sm text-muted">Reports are recorded by the EOC duty team.</p>}
+          <div className="mt-6"><Legend /></div>
+        </>
+      )}
+
+      <Sheet open={!!target} onClose={() => setTarget(null)} title={target ? `${target.b.name}${target.cluster ? ` · ${target.cluster.code}` : ''}` : ''}
+        footer={<><Button tip="Close without saving" variant="secondary" onClick={() => setTarget(null)}>Cancel</Button><Button tip="Save this report. It works offline and sends when you reconnect" onClick={record}>Record report</Button></>}>
+        {target && (
+          <div className="space-y-5">
+            <p className="text-sm text-muted">
+              {target.report ? `Last report ${relative(target.report.reported_at)}: ${COND_LABEL[target.cond].toLowerCase()}.` : 'No report yet in this period.'}
+              {(() => { const f = getBarangayFloodExposure(target.b.psgc); return f ? ` Flood-prone: ${f.pronePopulation.toLocaleString('en-PH')} of ${f.denominator.toLocaleString('en-PH')} people.` : ''; })()}
+              {target.priority != null && <Badge tone="info" className="ml-2">DDRiVE #{target.priority}</Badge>}
+            </p>
+            {problem && <Notice tone="bad">{problem}</Notice>}
+            <div>
+              <p className="mb-2 text-sm font-bold">Condition</p>
+              <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+                {CONDITIONS.map((c) => (
+                  <button key={c} type="button" aria-pressed={form.condition === c} onClick={() => { setForm({ ...form, condition: c, ...(c === 'evacuating' && form.persons === '' ? { families: '0', persons: '0' } : {}) }); setProblem(null); }}
+                    className={clsx('min-h-[3.25rem] rounded-control border text-sm font-extrabold', COND_STYLE[c], form.condition === c ? 'ring-4 ring-ink/70' : 'opacity-80')}>{COND_LABEL[c]}</button>
+                ))}
+              </div>
+            </div>
+            {form.condition === 'evacuating' && (
+              <div className="space-y-3">
+                <div><p className="mb-1 text-sm font-bold">Families evacuated</p><Stepper label="families evacuated" value={num(form.families)} onChange={(n) => setForm({ ...form, families: String(n) })} jumps={[1, 5, 10, 50]} /></div>
+                <div><p className="mb-1 text-sm font-bold">Persons evacuated</p><Stepper label="persons evacuated" value={num(form.persons)} onChange={(n) => setForm({ ...form, persons: String(n) })} jumps={[1, 5, 10, 50]} /></div>
+                <button type="button" className="text-sm font-semibold text-info underline" onClick={() => setForm({ ...form, families: '', persons: '' })}>Counts not reported yet</button>
+              </div>
+            )}
+            <div><p className="mb-2 text-sm font-bold">Received by</p><Chips label="Received by" value={form.channel} onChange={(v) => setForm({ ...form, channel: v })} options={CHANNELS} /></div>
+            <Field label="Remarks" optional>{(id) => <Textarea id={id} rows={2} value={form.remarks} onChange={(e) => setForm({ ...form, remarks: e.target.value })} />}</Field>
+          </div>
+        )}
+      </Sheet>
+    </div>
+  );
 }
-const blankForm=(channel:string)=>({condition:'monitoring' as BarangayCondition,families:'',persons:'',remarks:'',channel});
-function evacText(r:BarangayReport):string{if(r.families_evacuated===null&&r.persons_evacuated===null)return r.condition==='normal'?'':', evacuation counts not reported';if(!r.families_evacuated&&!r.persons_evacuated)return'';return`, ${r.families_evacuated??'not reported'} families / ${r.persons_evacuated??'not reported'} persons evacuated`;}

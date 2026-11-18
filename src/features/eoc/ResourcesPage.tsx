@@ -1,133 +1,151 @@
-// Resource inventory (1.21.0, ADR-039): the read-first screen over the resources table — what the
-// EOC has, where it is and whether it is serviceable (IAT B6.3, B2.5, B6.6). The table's columns
-// are shown as they are; the Chapter 6 fields stay deferred (ADR-032). Editing quantity, location
-// and serviceability is an online action for the operations team, as the table's RLS already allows.
+// What the City has (1.25.0): the inventory as a picture first. Category cards with serviceable ratios, then the NDRRMC minimum
+// equipment list checked against what is recorded, then the full list to search and edit. Adding an item is chips and a number.
 import { useMemo, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
+import clsx from 'clsx';
+import { Plus } from 'lucide-react';
 import { db } from '@/lib/db';
-import { updateOnline } from '@/lib/store';
+import { insertOnline, updateOnline } from '@/lib/store';
+import { uuid } from '@/lib/ids';
 import { useAuth } from '@/lib/auth';
 import { canOperate } from '@/domain/eoc';
-import { Badge, Button, Checkbox, EmptyState, Field, Input, List, ListRow, Notice, PageHeader, Select, Tabs } from '@/components/ui';
+import { categorySummary, DPMS_EQUIPMENT, standardCoverage, type StandardItem } from '@/domain/resourceStandard';
+import { Badge, Button, Checkbox, EmptyState, Field, Input, Notice, PageHeader, Tabs } from '@/components/ui';
 import { Sheet } from '@/components/Sheet';
 import { useToast } from '@/components/Toast';
 import type { Resource, ResourceCategory } from '@/types';
+import { Block, Chips, Stepper } from './kit';
 import { EOC_TABS, RESOURCE_CATEGORY } from './labels';
+
+const CATS = Object.keys(RESOURCE_CATEGORY) as ResourceCategory[];
+const QUICK: { label: string; category: ResourceCategory; unit: string }[] = [
+  { label: 'Rescue boat', category: 'vehicle', unit: 'units' }, { label: 'Ambulance', category: 'medical', unit: 'units' }, { label: 'Dump truck', category: 'heavy_equipment', unit: 'units' },
+  { label: 'Backhoe', category: 'heavy_equipment', unit: 'units' }, { label: 'Generator set', category: 'power', unit: 'units' }, { label: 'Food packs', category: 'relief', unit: 'packs' },
+  { label: 'Tents', category: 'relief', unit: 'units' }, { label: 'Radio (handheld)', category: 'communications', unit: 'units' }, { label: 'Chainsaw', category: 'rescue', unit: 'units' }, { label: 'Life vests', category: 'rescue', unit: 'pcs' },
+];
+type Draft = { id: string | null; name: string; category: ResourceCategory; unit: string; quantity: number; location: string; serviceable: boolean; version: number };
+const blank = (): Draft => ({ id: null, name: '', category: 'other', unit: 'units', quantity: 1, location: '', serviceable: true, version: 1 });
 
 export function ResourcesPage() {
   const { roles } = useAuth();
   const toast = useToast();
+  const canEdit = canOperate(roles);
   const [q, setQ] = useState('');
   const [category, setCategory] = useState<'all' | ResourceCategory>('all');
-  const [barangay, setBarangay] = useState('');
-  const [open, setOpen] = useState<Resource | null>(null);
+  const [draft, setDraft] = useState<Draft | null>(null);
+  const [busy, setBusy] = useState(false);
   const data = useLiveQuery(async () => ({
     rows: (await db.resources.toArray()).sort((a, b) => a.category.localeCompare(b.category) || a.name.localeCompare(b.name)),
-    offices: new Map((await db.offices.toArray()).map((o) => [o.id, o.name])),
-    barangays: (await db.barangays.toArray()).map((b) => b.name).sort((a, b) => a.localeCompare(b)),
+    places: (await db.barangays.orderBy('name').toArray()).map((b) => b.name),
   }), []);
-
+  const rows = data?.rows ?? [];
+  const summary = useMemo(() => categorySummary(rows), [rows]);
+  const coverage = useMemo(() => standardCoverage(rows), [rows]);
   const list = useMemo(() => {
-    const word = q.trim().toLowerCase();
-    return (data?.rows ?? [])
-      .filter((r) => category === 'all' || r.category === category)
-      .filter((r) => !barangay || (r.location_text ?? '').toLowerCase().includes(barangay.toLowerCase()))
-      .filter((r) => !word || r.name.toLowerCase().includes(word) || (r.location_text ?? '').toLowerCase().includes(word));
-  }, [data, q, category, barangay]);
+    const w = q.trim().toLowerCase();
+    return rows.filter((r) => category === 'all' || r.category === category).filter((r) => !w || r.name.toLowerCase().includes(w) || (r.location_text ?? '').toLowerCase().includes(w));
+  }, [rows, q, category]);
+  const gaps = coverage.filter((c) => c.units === 0).length;
 
-  if (!data) return null;
-  const unserviceable = list.filter((r) => !r.is_serviceable).length;
+  const addFromStandard = (s: StandardItem) => setDraft({ ...blank(), name: s.label.replace(/ \(.*\)$/, ''), category: s.category, unit: s.unit });
+  const edit = (r: Resource) => setDraft({ id: r.id, name: r.name, category: r.category, unit: r.unit, quantity: r.quantity, location: r.location_text ?? '', serviceable: r.is_serviceable, version: r.version });
 
-  return (
-    <div className="page">
-      <PageHeader title="Resource inventory" subtitle="Equipment, vehicles and stocks the EOC can draw on (B6.3, B2.5, B6.6). The Chapter 6 fields are still deferred — this shows what the record holds today (ADR-032)." />
-      <Tabs items={EOC_TABS} />
-      {unserviceable > 0 && <Notice tone="warn" title={`${unserviceable} item${unserviceable === 1 ? '' : 's'} not serviceable`}>Check them against the generator and vehicle test logs before the next activation.</Notice>}
-      {data.rows.length === 0 ? (
-        <EmptyState title="No resources recorded" body="Resource records arrive with the operational data. The operations team records equipment, vehicles and stocks here." />
-      ) : (
-        <>
-          <div className="mb-4 grid gap-3 sm:grid-cols-3">
-            <Field label="Find a resource">{(id) => <Input id={id} type="search" value={q} onChange={(e) => setQ(e.target.value)} />}</Field>
-            <Field label="Kind">{(id) => <Select id={id} value={category} onChange={(e) => setCategory(e.target.value as 'all' | ResourceCategory)}>
-              <option value="all">All kinds</option>
-              {(Object.keys(RESOURCE_CATEGORY) as ResourceCategory[]).map((c) => <option key={c} value={c}>{RESOURCE_CATEGORY[c]}</option>)}
-            </Select>}</Field>
-            <Field label="Barangay or place">{(id) => <Select id={id} value={barangay} onChange={(e) => setBarangay(e.target.value)}>
-              <option value="">Everywhere</option>
-              {data.barangays.map((b) => <option key={b} value={b}>{b}</option>)}
-            </Select>}</Field>
-          </div>
-          <List>
-            {list.map((r) => (
-              <ListRow key={r.id} tip="Open this resource" onClick={() => setOpen(r)} title={r.name}
-                meta={`${RESOURCE_CATEGORY[r.category]} · ${r.quantity} ${r.unit}${r.location_text ? ` · ${r.location_text}` : ''}${r.owner_office_id ? ` · ${data.offices.get(r.owner_office_id) ?? ''}` : ''}`}
-                trailing={<Badge tone={r.is_serviceable ? 'ok' : 'bad'}>{r.is_serviceable ? 'Serviceable' : 'Not serviceable'}</Badge>} />
-            ))}
-            {list.length === 0 && <p className="px-3 py-4 text-sm text-muted">Nothing matches this filter.</p>}
-          </List>
-        </>
-      )}
-      <ResourceSheet resource={open} offices={data.offices} canEdit={canOperate(roles)} onClose={() => setOpen(null)}
-        onSaved={() => { setOpen(null); toast('Resource updated.'); }} onError={(m) => toast(m, 'bad')} />
-    </div>
-  );
-}
-
-function ResourceSheet({ resource, offices, canEdit, onClose, onSaved, onError }: {
-  resource: Resource | null; offices: Map<string, string>; canEdit: boolean;
-  onClose: () => void; onSaved: () => void; onError: (m: string) => void;
-}) {
-  const [quantity, setQuantity] = useState(0);
-  const [unit, setUnit] = useState('unit');
-  const [location, setLocation] = useState('');
-  const [serviceable, setServiceable] = useState(true);
-  const [busy, setBusy] = useState(false);
-  const [loaded, setLoaded] = useState<string | null>(null);
-  if (resource && loaded !== resource.id) {
-    setLoaded(resource.id);
-    setQuantity(resource.quantity); setUnit(resource.unit); setLocation(resource.location_text ?? ''); setServiceable(resource.is_serviceable);
-  }
-  if (!resource) return null;
-  const dirty = quantity !== resource.quantity || unit !== resource.unit || location !== (resource.location_text ?? '') || serviceable !== resource.is_serviceable;
-
-  const save = async () => {
+  const commit = async () => {
+    if (!draft || !draft.name.trim()) return;
     setBusy(true);
     try {
-      await updateOnline<Resource>('resources', resource, {
-        quantity: Math.max(0, quantity), unit: unit.trim() || 'unit', location_text: location.trim() || null, is_serviceable: serviceable,
-      }, 'Update the resource');
-      onSaved();
-    } catch (e) { onError(e instanceof Error ? e.message : 'Not saved.'); } finally { setBusy(false); }
+      if (draft.id) {
+        const row = rows.find((x) => x.id === draft.id)!;
+        await updateOnline<Resource>('resources', row, { name: draft.name.trim(), category: draft.category, quantity: draft.quantity, unit: draft.unit.trim() || 'unit', location_text: draft.location.trim() || null, is_serviceable: draft.serviceable }, 'Update the resource');
+        toast('Resource updated');
+      } else {
+        const now = new Date().toISOString();
+        const row: Resource = { id: uuid(), name: draft.name.trim(), category: draft.category, unit: draft.unit.trim() || 'unit', quantity: draft.quantity, owner_office_id: null,
+          location_text: draft.location.trim() || null, is_serviceable: draft.serviceable, version: 1, created_at: now, updated_at: now } as Resource;
+        await insertOnline('resources', row, 'Add a resource');
+        toast(`Added: ${row.name}`);
+      }
+      setDraft(null);
+    } catch (e) { toast(e instanceof Error ? e.message : 'Not saved.', 'bad'); } finally { setBusy(false); }
   };
 
+  const maxLines = Math.max(1, ...summary.map((s) => s.lines));
   return (
-    <Sheet open={!!resource} onClose={onClose} title={resource.name}
-      footer={canEdit ? <>
-        <Button variant="secondary" onClick={onClose} tip="Close without saving">Cancel</Button>
-        <Button variant="primary" busy={busy} disabled={!dirty} onClick={save} tip="Save the quantity, location and serviceability (operations team; needs a connection)">Save</Button>
-      </> : undefined}>
-      <div className="mb-4 flex flex-wrap gap-2">
-        <Badge tone="info">{RESOURCE_CATEGORY[resource.category]}</Badge>
-        <Badge tone={resource.is_serviceable ? 'ok' : 'bad'}>{resource.is_serviceable ? 'Serviceable' : 'Not serviceable'}</Badge>
-      </div>
-      {resource.owner_office_id && <p className="mb-3 text-sm"><span className="text-muted">Owner: </span>{offices.get(resource.owner_office_id) ?? '—'}</p>}
-      {canEdit ? (
-        <div className="space-y-4">
-          <div className="grid grid-cols-2 gap-3">
-            <Field label="Quantity">{(id) => <Input id={id} type="number" min={0} inputMode="numeric" value={quantity} onChange={(e) => setQuantity(Math.max(0, Number(e.target.value) || 0))} />}</Field>
-            <Field label="Unit">{(id) => <Input id={id} value={unit} onChange={(e) => setUnit(e.target.value)} />}</Field>
-          </div>
-          <Field label="Location" optional hint="Where it is kept — a place, barangay or facility name.">{(id) => <Input id={id} value={location} onChange={(e) => setLocation(e.target.value)} />}</Field>
-          <Checkbox checked={serviceable} onChange={() => setServiceable(!serviceable)} tip="Untick when the item is under repair or failed its test">Serviceable and ready to deploy</Checkbox>
-        </div>
-      ) : (
-        <div className="space-y-2 text-sm">
-          <p><span className="text-muted">Quantity: </span>{resource.quantity} {resource.unit}</p>
-          <p><span className="text-muted">Location: </span>{resource.location_text ?? '—'}</p>
-          <p className="text-muted">The operations team keeps this record.</p>
+    <div className="page">
+      <PageHeader title="What the City has" subtitle="Equipment, vehicles and stocks the EOC can draw on, where they are and whether they work."
+        actions={canEdit && <Button tip="Add an item to the inventory (needs a connection)" icon={Plus} onClick={() => setDraft(blank())}>Add item</Button>} />
+      <Tabs items={EOC_TABS} />
+      {rows.length === 0 && <Notice tone="info" title="Nothing recorded yet">The inventory is empty. Add what the CDRRMO holds with the Add item form, or ask an administrator to import the property inventory. The checklist below shows what is still missing against the national minimum.</Notice>}
+
+      {rows.length > 0 && (
+        <div className="mb-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          {summary.map((s) => (
+            <button key={s.category} type="button" onClick={() => setCategory(category === s.category ? 'all' : s.category)} aria-pressed={category === s.category}
+              className={clsx('rounded-sheet border bg-surface p-4 text-left shadow-raised hover:border-sky', category === s.category ? 'border-ink ring-2 ring-ink' : 'border-line')}>
+              <p className="text-[11px] font-extrabold uppercase tracking-wider text-muted">{RESOURCE_CATEGORY[s.category]}</p>
+              <p className="mt-1 font-display text-3xl font-extrabold">{s.units.toLocaleString('en-PH')}<span className="ml-1 text-sm font-bold text-muted">in {s.lines} line{s.lines === 1 ? '' : 's'}</span></p>
+              <div className="mt-2 h-2 overflow-hidden rounded-full bg-sunken"><div className={clsx('h-full rounded-full', s.notServiceable ? 'bg-warn' : 'bg-ok')} style={{ width: `${(100 * s.lines) / maxLines}%` }} /></div>
+              <p className={clsx('mt-1 text-xs font-semibold', s.notServiceable ? 'text-warn' : 'text-ok')}>{s.notServiceable ? `${s.notServiceable} not serviceable` : 'All serviceable'}</p>
+            </button>
+          ))}
         </div>
       )}
-    </Sheet>
+
+      <Block title="National minimum equipment" className="mb-5"
+        action={<span className="text-xs text-muted">NDRRMC Disaster Preparedness Minimum Standards, Vol. 2</span>}>
+        <p className="mb-3 text-sm text-muted">{gaps === 0 ? 'Every item on the minimum list has at least one record.' : `${gaps} of ${DPMS_EQUIPMENT.length} items on the minimum list have no record yet.`} Matching is by item name.</p>
+        <ul className="grid gap-2 md:grid-cols-2">
+          {coverage.map((c) => (
+            <li key={c.item.key} className={clsx('flex items-center justify-between gap-3 rounded-control border px-3 py-2', c.units ? 'border-ok/40 bg-ok-soft' : 'border-warn bg-warn-soft')}>
+              <span className="min-w-0"><span className="block text-sm font-bold">{c.item.label}</span>
+                <span className="text-xs text-muted">{c.units ? `${c.units} recorded, ${c.serviceable} serviceable` : 'Not recorded'}</span></span>
+              {!c.units && canEdit && <Button tip={`Record ${c.item.label}`} variant="secondary" onClick={() => addFromStandard(c.item)}>Add</Button>}
+              {c.units > 0 && <Badge tone={c.serviceable === c.units ? 'ok' : 'warn'}>{c.serviceable === c.units ? 'Ready' : 'Check'}</Badge>}
+            </li>
+          ))}
+        </ul>
+      </Block>
+
+      {rows.length === 0 ? <EmptyState title="No resources recorded" body="Use Add item, or pick from the checklist above." /> : (
+        <Block title={category === 'all' ? 'All items' : RESOURCE_CATEGORY[category]} action={category !== 'all' ? <button type="button" className="text-sm font-semibold text-info underline" onClick={() => setCategory('all')}>Show all</button> : undefined}>
+          <Field label="Find an item or place">{(id) => <Input id={id} type="search" className="mb-3 max-w-sm" value={q} onChange={(e) => setQ(e.target.value)} />}</Field>
+          <ul className="divide-y divide-line">
+            {list.map((r) => (
+              <li key={r.id}>
+                <button type="button" onClick={() => edit(r)} className="flex w-full items-center justify-between gap-3 py-3 text-left hover:bg-sunken">
+                  <span className="min-w-0"><span className="block font-bold">{r.name}</span>
+                    <span className="block truncate text-xs text-muted">{RESOURCE_CATEGORY[r.category]}{r.location_text ? ` · ${r.location_text}` : ''}</span></span>
+                  <span className="flex shrink-0 items-center gap-3"><span className="font-data text-lg font-extrabold">{r.quantity} <span className="text-xs font-semibold text-muted">{r.unit}</span></span>
+                    <Badge tone={r.is_serviceable ? 'ok' : 'bad'}>{r.is_serviceable ? 'Ready' : 'Not serviceable'}</Badge></span>
+                </button>
+              </li>
+            ))}
+            {list.length === 0 && <li className="py-4 text-sm text-muted">Nothing matches.</li>}
+          </ul>
+        </Block>
+      )}
+
+      <Sheet open={!!draft} onClose={() => setDraft(null)} title={draft?.id ? draft.name : 'Add an item'}
+        footer={canEdit ? <><Button tip="Close without saving" variant="secondary" onClick={() => setDraft(null)}>Cancel</Button><Button tip="Save (needs a connection)" busy={busy} disabled={!draft?.name.trim()} onClick={commit}>Save</Button></> : undefined}>
+        {draft && (
+          <div className="space-y-5">
+            {!draft.id && (
+              <div><p className="mb-2 text-sm font-bold">Pick a common item</p>
+                <Chips label="Common items" value={QUICK.some((x) => x.label === draft.name) ? draft.name : null} onChange={(v) => { const x = QUICK.find((i) => i.label === v)!; setDraft({ ...draft, name: x.label, category: x.category, unit: x.unit }); }} options={QUICK.map((x) => ({ value: x.label, label: x.label }))} /></div>
+            )}
+            <Field label="Name">{(id) => <Input id={id} value={draft.name} disabled={!canEdit} onChange={(e) => setDraft({ ...draft, name: e.target.value })} />}</Field>
+            <div><p className="mb-2 text-sm font-bold">Kind</p><Chips label="Kind" value={draft.category} disabled={!canEdit} onChange={(v) => setDraft({ ...draft, category: v })} options={CATS.map((c) => ({ value: c, label: RESOURCE_CATEGORY[c] }))} /></div>
+            <div><p className="mb-2 text-sm font-bold">How many ({draft.unit})</p><Stepper label="quantity" value={draft.quantity} onChange={(n) => setDraft({ ...draft, quantity: n })} jumps={[1, 5, 10, 50, 100]} />
+              <Field label="Unit">{(id) => <Input id={id} className="mt-2 w-40" value={draft.unit} disabled={!canEdit} onChange={(e) => setDraft({ ...draft, unit: e.target.value })} />}</Field></div>
+            <Field label="Where it is kept" optional hint="A barangay, facility or storage site.">{(id) => (
+              <>
+                <Input id={id} list="resource-places" value={draft.location} disabled={!canEdit} onChange={(e) => setDraft({ ...draft, location: e.target.value })} />
+                <datalist id="resource-places">{data?.places.map((p) => <option key={p} value={p} />)}</datalist>
+              </>)}</Field>
+            <Checkbox checked={draft.serviceable} onChange={() => canEdit && setDraft({ ...draft, serviceable: !draft.serviceable })} tip="Untick when under repair or failed its test">Serviceable and ready to deploy</Checkbox>
+          </div>
+        )}
+      </Sheet>
+    </div>
   );
 }

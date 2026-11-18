@@ -1,166 +1,138 @@
-import { tip } from '@/components/Tooltip';
+// EOC Board (1.25.0): the operation as one picture. Alert level, five numbers, the 85 barangays as coloured tiles, and the short
+// list of what needs attention now. Everything else is one tap away in the tabs.
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
 import clsx from 'clsx';
-import { Send } from 'lucide-react';
+import { ClipboardPen } from 'lucide-react';
 import { db } from '@/lib/db';
 import { useAuth } from '@/lib/auth';
 import { useEocStatus, useOnline } from '@/lib/hooks';
-import { canChangeLevel, canOperate, currentReportWindow, evacuationTotals, latestPerBarangay, LEVEL_INFO } from '@/domain/eoc';
+import { canChangeLevel, canOperate, evacuationTotals, LEVEL_INFO } from '@/domain/eoc';
+import { attentionItems, nextSubmission } from '@/domain/boardAttention';
+import { campTotals, latestPerCentre } from '@/domain/echo';
 import { fmtDateTime, fmtTime, relative } from '@/lib/time';
-import { Badge, Button, ChoiceGroup, Field, Input, List, ListRow, Notice, PageHeader, Section, Select, Tabs, Textarea, TextLink } from '@/components/ui';
+import { Badge, Button, ChoiceGroup, Field, Input, PageHeader, Select, Tabs, Textarea } from '@/components/ui';
 import { Sheet } from '@/components/Sheet';
 import { useToast } from '@/components/Toast';
 import type { EocLevel } from '@/types';
-import { campTotals, latestPerCentre } from '@/domain/echo';
-import { addLog, setEocLevel } from './actions';
+import { setEocLevel } from './actions';
 import { EocLocation } from './EocLocation';
-import { CONDITION, CONDITION_TONE, EOC_TABS, LOG_CATEGORY, PRIORITY, REQUEST_STATUS, SITREP_STATUS } from './labels';
+import { QuickLogSheet } from './QuickLogSheet';
+import { Block, Legend, Ring, Tile } from './kit';
+import { BarangayGrid } from './BarangayPicture';
+import { useBarangayPicture } from './useBarangayPicture';
+import { LOG_CATEGORY, EOC_TABS, PRIORITY, REQUEST_STATUS } from './labels';
+
+const TONE = { bad: 'border-bad bg-bad-soft text-bad', warn: 'border-warn bg-warn-soft text-warn', info: 'border-sky/40 bg-sky-soft text-sky' } as const;
 
 export function BoardPage() {
-  const { roles, userId } = useAuth();
+  const { roles } = useAuth();
   const toast = useToast();
   const online = useOnline();
   const { level, activation } = useEocStatus();
-  const [open, setOpen] = useState(false);
-  const [entry, setEntry] = useState('');
+  const [levelOpen, setLevelOpen] = useState(false);
+  const [logOpen, setLogOpen] = useState(false);
+  const pic = useBarangayPicture();
   const data = useLiveQuery(async () => {
-    // Only the current event (or the last 24 hours at White level) counts (#16).
-    const window = currentReportWindow(await db.eoc_activations.toArray());
-    const latest = latestPerBarangay(await db.barangay_reports.toArray(), window);
-    const brgy = new Map((await db.barangays.toArray()).map((b) => [b.psgc, b]));
     const open = (await db.resource_requests.where('status').anyOf('requested', 'approved', 'mobilized').toArray())
-      .sort((a, b) => (a.priority === 'life_safety' ? -1 : 0) - (b.priority === 'life_safety' ? -1 : 0));
+      .sort((a, b) => Number(b.priority === 'life_safety') - Number(a.priority === 'life_safety') || b.requested_at.localeCompare(a.requested_at));
     return {
-      log: (await db.logbook_entries.orderBy('occurred_at').reverse().limit(8).toArray()),
-      latest: latest.map((r) => ({ ...r, name: brgy.get(r.barangay_psgc)?.name ?? r.barangay_psgc })),
-      window,
-      barangayCount: brgy.size,
+      log: await db.logbook_entries.orderBy('occurred_at').reverse().limit(6).toArray(),
       open,
-      sitrep: (await db.sitreps.orderBy('period_end').reverse().first()),
-      // ECHO (1.16.0): the latest camp report per centre in this activation.
-      camps: campTotals(latestPerCentre(await db.camp_reports.toArray(), window.from),
+      camps: campTotals(latestPerCentre(await db.camp_reports.toArray(), (await db.eoc_activations.toArray()).find((a) => a.id === activation?.id)?.started_at ?? new Date(Date.now() - 24 * 3600_000).toISOString()),
         new Map((await db.evacuation_centers.toArray()).map((c) => [c.id, c.capacity_persons]))),
-      // 1.21.0 (ADR-039): the five highest DDRiVE-priority barangays and whether each has reported
-      // in this activation — decision support for the board, never a trigger.
-      priority: (await db.ddrive_priority.toArray())
-        .filter((p) => p.priority_rank != null)
-        .sort((a, b) => a.priority_rank! - b.priority_rank!)
-        .slice(0, 5)
-        .map((p) => ({ psgc: p.psgc, rank: p.priority_rank!, name: brgy.get(p.psgc)?.name ?? p.psgc, reported: latest.some((r) => r.barangay_psgc === p.psgc) })),
     };
-  }, []);
+  }, [activation?.id]);
+
   const operator = canOperate(roles);
   const tone = level === 'white' ? 'bg-lvl-white text-lvl-white-ink' : level === 'blue' ? 'bg-lvl-blue text-on-level' : 'bg-lvl-red text-on-level';
-  const affected = data?.latest.filter((r) => r.condition !== 'normal') ?? [];
-  const evac = evacuationTotals(data?.latest ?? []);
-
-  const log = async () => {
-    if (!entry.trim()) return;
-    await addLog(entry, 'general', userId); setEntry(''); toast('Logged');
-  };
+  const latest = (pic?.rows ?? []).flatMap((r) => (r.report ? [r.report] : []));
+  const evac = evacuationTotals(latest);
+  const total = pic?.rows.length ?? 0;
+  const reporting = total - (pic?.counts.silent ?? 0);
+  const hit = (pic?.counts.affected ?? 0) + (pic?.counts.evacuating ?? 0) + (pic?.counts.isolated ?? 0);
+  const lifeSafety = data?.open.filter((r) => r.priority === 'life_safety').length ?? 0;
+  const attention = attentionItems({
+    activeEvent: !!activation,
+    silentPriority: (pic?.rows ?? []).filter((r) => r.cond === 'silent' && r.priority != null).sort((a, b) => a.priority! - b.priority!).slice(0, 10).map((r) => r.b.name),
+    lifeSafetyAwaiting: data?.open.filter((r) => r.priority === 'life_safety' && r.status === 'requested').length ?? 0,
+    campsOverCapacity: data?.camps.overCapacity ?? 0,
+    evacCountsMissing: evac.notReported,
+    nextSitrep: nextSubmission(pic?.cutoff),
+  });
 
   return (
     <div className="page">
-      <PageHeader title="EOC Operations" subtitle="The alert level, the active incident and what needs doing now. Level changes need a connection and the EOC Manager or CDRRMO Head." />
+      <PageHeader title="EOC Operations" subtitle="Level changes need a connection and the EOC Manager or CDRRMO Head." />
       <Tabs items={EOC_TABS} />
 
-      <section className={clsx('mb-8 rounded-sheet px-5 py-5', tone)} aria-label="Activation level">
-        <p className="text-3xl font-bold">{LEVEL_INFO[level].name} level</p>
-        <p className="mt-1 text-lg">{LEVEL_INFO[level].meaning}</p>
-        {activation && <p className="mt-2 text-sm opacity-90">Since {fmtDateTime(activation.started_at)}. {activation.reason}</p>}
-        {canChangeLevel(roles) && (
-          <div className="mt-4">
-            <Button tip="Raise or lower the EOC alert level (EOC Manager or CDRRMO Head; needs a connection)" variant="secondary" onClick={() => setOpen(true)} className="!border-transparent !bg-surface !text-ink">Change level</Button>
-            {!online && <p className="mt-2 text-sm">Changing the level needs a connection.</p>}
-          </div>
-        )}
+      <section className={clsx('mb-5 flex flex-wrap items-center justify-between gap-4 rounded-sheet px-5 py-4', tone)} aria-label="Activation level">
+        <div>
+          <p className="text-3xl font-extrabold">{LEVEL_INFO[level].name} level</p>
+          <p className="text-base">{LEVEL_INFO[level].meaning}</p>
+          {activation && <p className="mt-1 text-sm opacity-90">Since {fmtDateTime(activation.started_at)}. {activation.reason}</p>}
+        </div>
+        <div className="flex flex-wrap gap-2">
+          {operator && <Button tip="Add a logbook entry with a short form" icon={ClipboardPen} onClick={() => setLogOpen(true)} className="!border-transparent !bg-surface !text-ink">Log</Button>}
+          {canChangeLevel(roles) && <Button tip="Raise or lower the EOC alert level (needs a connection)" variant="secondary" onClick={() => setLevelOpen(true)} className="!border-transparent !bg-surface !text-ink">Change level</Button>}
+          {canChangeLevel(roles) && !online && <p className="w-full text-sm">Changing the level needs a connection.</p>}
+        </div>
       </section>
 
-      <div className="grid gap-8 lg:grid-cols-2 lg:gap-10">
-        <Section title="Logbook" action={<TextLink tip="Open the full EOC logbook" size="sm" to="/eoc/log">All entries</TextLink>}>
-          {operator && (
-            <form className="mb-3 flex gap-2" onSubmit={(e) => { e.preventDefault(); void log(); }}>
-              <label htmlFor="quick-log" className="sr-only">New logbook entry</label>
-              <Input id="quick-log" placeholder="What happened, who decided, what was sent" value={entry} onChange={(e) => setEntry(e.target.value)}
-                {...tip('Type a quick logbook note. The time and your name are added when you log it. No names of affected persons')} />
-              <Button tip="Add this note to the logbook with the current time" type="submit" icon={Send} aria-label="Add to logbook" disabled={!entry.trim()}><span className="hidden sm:inline">Log</span></Button>
-            </form>
-          )}
-          <List>
-            {data?.log.map((l) => <ListRow key={l.id} title={l.entry} meta={`${fmtTime(l.occurred_at)}, ${LOG_CATEGORY[l.category]}`} />)}
-          </List>
-          {data?.log.length === 0 && <p className="text-muted">No entries yet.</p>}
-        </Section>
+      <div className="mb-5 grid grid-cols-2 gap-3 lg:grid-cols-5">
+        <Tile label="Barangays reporting" value={`${reporting}`} hint={`of ${total}${pic?.window.kind === 'event' ? ' this activation' : ' in 24 h'}`} to="/eoc/barangays">
+          <div className="mt-3"><Ring value={reporting} max={total || 1} tone={total && reporting / total < 0.5 && !!activation ? 'warn' : 'ok'} size={56}>{total ? `${Math.round((100 * reporting) / total)}%` : '–'}</Ring></div>
+        </Tile>
+        <Tile label="Hit or isolated" value={hit} tone={hit > 0 ? 'warn' : undefined} hint={`${pic?.counts.isolated ?? 0} isolated · ${pic?.counts.evacuating ?? 0} evacuating`} to="/eoc/barangays" />
+        <Tile label="Evacuated" value={evac.persons.toLocaleString('en-PH')} hint={`persons · ${evac.families.toLocaleString('en-PH')} families${evac.notReported ? ` · ${evac.notReported} not counted` : ''}`} to="/eoc/barangays" />
+        <Tile label="Open requests" value={data?.open.length ?? 0} tone={lifeSafety ? 'bad' : undefined} hint={lifeSafety ? `${lifeSafety} life safety` : 'none life safety'} to="/eoc/requests" />
+        <Tile label="Centres open" value={data?.camps.centresOpen ?? 0} tone={data?.camps.overCapacity ? 'bad' : undefined}
+          hint={data?.camps.centresOpen ? `${data.camps.persons.toLocaleString('en-PH')} persons${data.camps.overCapacity ? ` · ${data.camps.overCapacity} over capacity` : ''}` : 'ECHO camp reports'} to="/tools/echo/dashboard" />
+      </div>
 
-        <Section title="Barangays" action={<TextLink tip="See every barangay and record a status report" size="sm" to="/eoc/barangays">Report status</TextLink>}>
-          {data && data.barangayCount === 0 ? (
-            <Notice tone="info">No barangay list loaded. An administrator imports Ormoc’s 85 barangays with their PSGC codes in Settings.</Notice>
-          ) : (
+      <div className="grid gap-5 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
+        <Block title="Barangay picture" action={<Link to="/eoc/barangays" className="text-sm font-semibold text-info underline">Open</Link>}>
+          {total === 0 ? <p className="text-muted">No barangay list loaded. An administrator imports Ormoc’s 85 barangays in Settings.</p> : (
             <>
-              <p className="mb-2 text-muted">
-                {data?.window.kind === 'event' ? 'This activation' : 'Last 24 hours'}: {affected.length} reporting a condition. Evacuated: {evac.families} families, {evac.persons} persons
-                {evac.notReported > 0 ? ` (counts not reported by ${evac.notReported} barangay${evac.notReported > 1 ? 's' : ''})` : ''}.
-              </p>
-              <List>{affected.slice(0, 8).map((r) => (
-                <ListRow key={r.id} title={r.name} meta={`${relative(r.reported_at)}${r.remarks ? `, ${r.remarks}` : ''}`}
-                  trailing={<Badge tone={CONDITION_TONE[r.condition]}>{CONDITION[r.condition]}</Badge>} />))}
-              </List>
+              <BarangayGrid rows={pic!.rows} linkTo={operator ? (r) => `/eoc/barangays?b=${r.b.psgc}` : undefined} />
+              <div className="mt-4"><Legend counts={pic!.counts} /></div>
             </>
           )}
-        </Section>
+        </Block>
 
-        <Section title="Open resource requests" action={<TextLink tip="See and update all resource requests" size="sm" to="/eoc/requests">All requests</TextLink>}>
-          {data?.open.length === 0 ? <p className="text-muted">None open.</p> : (
-            <List>{data?.open.map((r) => <ListRow tip={`Open the request for ${r.item}`} key={r.id} to="/eoc/requests" title={`${r.quantity} ${r.unit} ${r.item}`} meta={`${r.requesting_party}, ${relative(r.requested_at)}`}
-              trailing={<span className="flex flex-col items-end gap-1"><Badge tone={r.priority === 'life_safety' ? 'bad' : 'neutral'}>{PRIORITY[r.priority]}</Badge><Badge>{REQUEST_STATUS[r.status]}</Badge></span>} />)}</List>
-          )}
-        </Section>
-
-        <Section title="Evacuation centres (ECHO)" action={<TextLink tip="Open the ECHO evacuation and camp dashboard" size="sm" to="/tools/echo/dashboard">ECHO dashboard</TextLink>}>
-          {!data || data.camps.centresOpen === 0 ? <p className="text-muted">No centre reported open in this activation.</p> : (
-            <p>{data.camps.persons.toLocaleString('en-PH')} persons ({data.camps.families.toLocaleString('en-PH')} families) in {data.camps.centresOpen} open centre{data.camps.centresOpen > 1 ? 's' : ''}
-              {data.camps.overCapacity > 0 && <> · <Badge tone="bad">{data.camps.overCapacity} over capacity</Badge></>}
-              {data.camps.waterBelowSphere > 0 && <> · <Badge tone="warn">{data.camps.waterBelowSphere} below 15 L water</Badge></>}
-              {data.camps.personsNotReported > 0 && <span className="block text-sm text-muted">{data.camps.personsNotReported} centre(s) have not reported persons.</span>}</p>
-          )}
-        </Section>
-
-        <Section title="Latest SitRep" action={<TextLink tip="See all situation reports" size="sm" to="/eoc/sitreps">SitReps</TextLink>}>
-          {data?.sitrep ? (
-            <List><ListRow tip="Open the latest situation report" to={`/eoc/sitreps/${data.sitrep.id}`} title={data.sitrep.seq ? `SitRep No. ${data.sitrep.seq}` : 'Draft SitRep'}
-              meta={`Period to ${fmtDateTime(data.sitrep.period_end)}`} trailing={<Badge tone={data.sitrep.status === 'approved' ? 'ok' : data.sitrep.status === 'submitted' ? 'info' : 'neutral'}>{SITREP_STATUS[data.sitrep.status]}</Badge>} /></List>
-          ) : <p className="text-muted">No SitRep yet.</p>}
-        </Section>
-
-        {/* 1.21 (ADR-039): DDRiVE inside the decision — the five highest-priority barangays for the
-            active hazard and whether each has reported. Decision support, never a trigger. */}
-        {data && data.priority.length > 0 && (
-          <Section title="Priority barangays (DDRiVE)" action={<TextLink tip="Open the DDRiVE risk dashboard" size="sm" to="/eoc/risk">Risk</TextLink>}>
-            <p className="mb-2 text-sm text-muted">
-              Highest DDRiVE priority{activation?.hazard_code ? ` · active hazard: ${activation.hazard_code}` : ''}. Check these first when consolidating.
-            </p>
-            <List>
-              {data.priority.map((p) => (
-                <ListRow key={p.psgc} title={p.name} meta={`DDRiVE priority rank ${p.rank}`}
-                  trailing={<Badge tone={p.reported ? 'ok' : 'warn'}>{p.reported ? 'Reported' : 'Silent'}</Badge>} />
-              ))}
-            </List>
-          </Section>
-        )}
-
-        <Section title="EOC capability" action={<TextLink tip="Open the EOC capability assessment board" size="sm" to="/eoc-assessment">Capability board</TextLink>}>
-          {/* 1.20 (ADR-035): cross-link only — the capability board lives at /eoc-assessment. */}
-          <p className="text-sm text-muted">
-            How capable is this EOC itself? The <Link to="/eoc-assessment" {...tip('Open the 154-item capability checklist')} className="font-semibold text-info underline">EOC capability assessment</Link> tracks
-            the 154-item OCD/NDRRMC checklist against the IAT B_EOC evidence. The risk picture stays with DDRiVE on the Risk tab.
-          </p>
-        </Section>
-
-        <EocLocation />
+        <div className="space-y-5">
+          <Block title="Needs attention now">
+            {attention.length === 0 ? <p className="font-semibold text-ok">Nothing flagged. {activation ? 'Keep consolidating.' : 'No active event.'}</p> : (
+              <ul className="space-y-2">{attention.map((a) => (
+                <li key={a.id}><Link to={a.to} className={clsx('block rounded-control border px-3 py-2 text-sm font-bold', TONE[a.tone])}>{a.text}</Link></li>))}
+              </ul>
+            )}
+          </Block>
+          <Block title="Open requests" action={<Link to="/eoc/requests" className="text-sm font-semibold text-info underline">All</Link>}>
+            {data?.open.length ? (
+              <ul className="divide-y divide-line">{data.open.slice(0, 5).map((r) => (
+                <li key={r.id} className="flex items-center justify-between gap-2 py-2 text-sm">
+                  <span className="min-w-0"><span className="font-bold">{r.quantity} {r.unit} {r.item}</span><span className="block truncate text-xs text-muted">{r.requesting_party} · {relative(r.requested_at)}</span></span>
+                  <span className="flex shrink-0 flex-col items-end gap-1"><Badge tone={r.priority === 'life_safety' ? 'bad' : 'neutral'}>{PRIORITY[r.priority]}</Badge><Badge>{REQUEST_STATUS[r.status]}</Badge></span>
+                </li>))}
+              </ul>
+            ) : <p className="text-muted">None open.</p>}
+          </Block>
+          <Block title="Logbook" action={<Link to="/eoc/log" className="text-sm font-semibold text-info underline">All entries</Link>}>
+            {data?.log.length ? (
+              <ul className="divide-y divide-line">{data.log.map((l) => (
+                <li key={l.id} className="py-2 text-sm"><span className="font-data text-xs font-bold text-muted">{fmtTime(l.occurred_at)} · {LOG_CATEGORY[l.category]}</span><span className="block">{l.entry}</span></li>))}
+              </ul>
+            ) : <p className="text-muted">No entries yet.</p>}
+          </Block>
+        </div>
       </div>
-      <LevelSheet open={open} onClose={() => setOpen(false)} current={level} onSubmit={async (lv, reason, hazard, auth) => {
+
+      <div className="mt-5"><EocLocation /></div>
+
+      <QuickLogSheet open={logOpen} onClose={() => setLogOpen(false)} />
+      <LevelSheet open={levelOpen} onClose={() => setLevelOpen(false)} current={level} onSubmit={async (lv, reason, hazard, auth) => {
         await setEocLevel(lv, reason, hazard, auth); toast(`EOC level is now ${LEVEL_INFO[lv].name}`);
       }} />
     </div>

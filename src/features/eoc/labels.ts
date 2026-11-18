@@ -23,18 +23,16 @@ export const REQUEST_STATUS: Record<RequestStatus, string> = {
 };
 export const PRIORITY: Record<string, string> = { life_safety: 'Life safety', urgent: 'Urgent', routine: 'Routine' };
 export const EOC_TABS = [
-  { to: '/eoc', label: 'Board', end: true, tip: 'The EOC at a glance: alert level, latest log, barangays, requests and SitRep' },
+  { to: '/eoc', label: 'Board', end: true, tip: 'The EOC at a glance: alert level, the barangay picture, key numbers and what needs attention' },
   { to: '/eoc/log', label: 'Logbook', tip: 'Time-stamped record of everything that happens. Entries cannot be edited, only corrected' },
-  { to: '/eoc/sitreps', label: 'SitReps', tip: 'Draft, submit and approve situation reports for OCD VIII and the Province' },
-  { to: '/eoc/requests', label: 'Requests', tip: 'Track resource requests from request to demobilization' },
-  { to: '/eoc/resources', label: 'Resources', tip: 'Resource inventory: what the EOC has, where it is and whether it is serviceable (B6.3, B2.5, B6.6)' },
-  { to: '/eoc/barangays', label: 'Barangays', tip: 'Latest status reported by each barangay (counts only, no names)' },
-  { to: '/eoc/liaison', label: 'Barangay liaison', tip: 'Barangay Liaison Desk: reporting and silent barangays by cluster in this activation, ranked by DDRiVE priority' },
-  { to: '/eoc/risk', label: 'Risk', tip: 'Risk intelligence: the DDRiVE desk-assessment picture — city scores and per-barangay hazard profiles' },
-  { to: '/eoc/plans', label: 'Plans and clusters', tip: 'Contingency plans, activating a plan, and which response clusters and modules are on' },
-  { to: '/eoc/roster', label: 'Roster', tip: 'EOC positions and designations, primary and two alternates (B4.2)' },
-  { to: '/eoc/map', label: 'Map', tip: 'Geo-COP: the City basemap, verified reference points and validated layers' },
-  { to: '/eoc/aa', label: 'Anticipatory action', tip: 'PDRA, State of Imminent Disaster declarations, the action checklist and AA funds (RA 12287)' },
+  { to: '/eoc/barangays', label: 'Barangays', tip: 'All 85 barangays by cluster, coloured by their latest report. Tap one to record a status' },
+  { to: '/eoc/requests', label: 'Requests', tip: 'Resource requests from request to delivery' },
+  { to: '/eoc/resources', label: 'Resources', tip: 'What the City has: equipment, vehicles and stocks, checked against the national minimum list' },
+  { to: '/eoc/sitreps', label: 'SitReps', tip: 'Situation reports, pre-filled from the EOC records, for OCD VIII and the Province' },
+  { to: '/eoc/roster', label: 'Roster', tip: 'Who staffs each EOC position: primary and two alternates, with contacts' },
+  { to: '/eoc/map', label: 'Map', tip: 'Geo-COP: hazard map layers, barangay status, reference points and uploaded layers' },
+  { to: '/eoc/risk', label: 'Risk', tip: 'Risk picture: likelihood and severity matrix and the Ten-Year Plan risk profile' },
+  { to: '/eoc/aa', label: 'Anticipatory action', tip: 'PDRA, State of Imminent Disaster, the action checklist and AA funds (RA 12287)' },
 ];
 export const SITREP_STATUS: Record<'draft' | 'submitted' | 'approved', string> = { draft: 'Draft', submitted: 'Submitted', approved: 'Approved' };
 

@@ -9,9 +9,7 @@ import { AaHomePage } from './aa/AaHomePage';
 import { PdraNewPage, PdraViewPage } from './aa/PdraPage';
 import { DeclarationPage } from './aa/DeclarationPage';
 import { FundsPage } from './aa/FundsPage';
-import { PlansPage } from './PlansPage';
 import { RosterPage } from './RosterPage';
-import { LiaisonPage } from './LiaisonPage';
 import { RiskPage } from './RiskPage';
 import { lazy, Suspense } from 'react';
 import { Loading } from '@/components/ui';
@@ -29,9 +27,10 @@ export default function EocRoutes() {
       <Route path="requests" element={<RequestsPage />} />
       <Route path="resources" element={<ResourcesPage />} />
       <Route path="barangays" element={<BarangaysPage />} />
-      <Route path="liaison" element={<LiaisonPage />} />
+      {/* 1.25.0: the cluster view lives on the Barangays screen; old links still work. */}
+      <Route path="liaison" element={<Navigate to="/eoc/barangays" replace />} />
       <Route path="risk" element={<RiskPage />} />
-      <Route path="plans" element={<PlansPage />} />
+      <Route path="plans" element={<Navigate to="/eoc" replace />} />
       <Route path="roster" element={<RosterPage />} />
       <Route path="map" element={<Suspense fallback={<Loading />}><MapPage /></Suspense>} />
       {/* 1.16.0: Hazard maps moved to Assess; old links still work. */}

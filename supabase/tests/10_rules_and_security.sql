@@ -875,16 +875,18 @@ select tests.login('00000000-0000-0000-0000-000000000013');  -- EOC staff
 select tests.expect_ok('EOC staff propose a designation',
   $$insert into public.eoc_designations (id, position_id, rank, person_id) values
     ('d0000000-0000-0000-0000-000000000001', (select id from public.eoc_positions where code = 'EOC-MGR'), 1, '00000000-0000-0000-0000-00000000000d')$$);
-select tests.expect_error('a designation cannot start approved',
-  $$insert into public.eoc_designations (position_id, rank, person_id, status) values
-    ((select id from public.eoc_positions where code = 'EOC-MGR'), 2, '00000000-0000-0000-0000-000000000013', 'approved')$$, '42501');
-select tests.expect_error('only the Head approves a designation',
-  $$update public.eoc_designations set status = 'approved' where id = 'd0000000-0000-0000-0000-000000000001'$$, '42501');
-select tests.login('00000000-0000-0000-0000-000000000011');  -- CDRRMO Head
-select tests.expect_ok('the Head approves it',
+select tests.expect_ok('EOC staff name a person directly, with no account or office',
+  $$insert into public.eoc_designations (id, position_id, rank, designee_position, note, status) values
+    ('d0000000-0000-0000-0000-000000000002', (select id from public.eoc_positions where code = 'EOC-MGR'), 2, 'Juan Dela Cruz, Operations Officer', '0917 000 0000', 'approved')$$);
+select tests.expect_eq('the server stamps who confirmed it', (select (approved_by is not null)::text from public.eoc_designations where id = 'd0000000-0000-0000-0000-000000000002'), 'true');
+select tests.expect_ok('staff confirm a proposal themselves',
   $$update public.eoc_designations set status = 'approved' where id = 'd0000000-0000-0000-0000-000000000001'$$);
-select tests.expect_error('an approved designation is fixed',
-  $$update public.eoc_designations set person_id = '00000000-0000-0000-0000-000000000013' where id = 'd0000000-0000-0000-0000-000000000001'$$, '42501');
+select tests.expect_ok('staff edit a designation in place',
+  $$update public.eoc_designations set designee_position = 'Maria Santos, Planning Officer' where id = 'd0000000-0000-0000-0000-000000000002'$$);
+select tests.expect_ok('staff withdraw a designation',
+  $$update public.eoc_designations set status = 'withdrawn' where id = 'd0000000-0000-0000-0000-000000000002'$$);
+select tests.expect_error('a withdrawn designation stays on record',
+  $$update public.eoc_designations set status = 'approved' where id = 'd0000000-0000-0000-0000-000000000002'$$, '42501');
 select tests.expect_eq('depth view counts it', (select approved::text || '/' || two_deep::text from public.v_eoc_depth where code = 'EOC-MGR'), '1/false');
 
 select tests.login('00000000-0000-0000-0000-000000000013');  -- EOC staff

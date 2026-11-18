@@ -21,6 +21,8 @@ import { ORMOC, basemapReady, baseStyle, ensureProtocol, plainStyle, token } fro
 import { addLayer, addPoint, loadLayer, markOfficial, parseCoord, supersedeLayer, supersedePoint, verifyPoint } from './geo';
 import { CONDITION, EOC_TABS, LAYER_GROUP, LAYER_VALIDATION, POINT_KIND, POINT_STATUS } from './labels';
 import { CITY_REFERENCE_MAPS } from './map/referenceMaps';
+import { HAZARD_MAPS } from './map/hazardMaps';
+import { Slider } from '@/components/ui/slider';
 
 const empty = { type: 'FeatureCollection' as const, features: [] as unknown[] };
 
@@ -37,6 +39,9 @@ export default function MapPage() {
   const [ready, setReady] = useState(false);
   const [baseProblem, setBaseProblem] = useState<string | null>(null);
   const [shown, setShown] = useState<Record<string, boolean>>({});
+  const [hz, setHz] = useState<Record<string, boolean>>({});
+  const [opac, setOpac] = useState<Record<string, number>>({});
+  const [show, setShow] = useState({ barangays: true, points: true });
   const [busy, setBusy] = useState(false);
   const [pointOpen, setPointOpen] = useState(false);
   const [layerOpen, setLayerOpen] = useState(false);
@@ -59,6 +64,8 @@ export default function MapPage() {
     m.addControl(new maplibregl.ScaleControl({unit:'metric'}),'bottom-left');
     m.on('error',(e)=>{if(/pmtiles|404|Failed to fetch|NetworkError/i.test(String(e.error?.message??'')))setBaseProblem('Part of the City basemap could not be read.');});
     m.on('load',()=>{
+      // Hazard sheets (ADR-028): georeferenced images, hidden until switched on, drawn under the operational dots.
+      for(const hm of [...HAZARD_MAPS].reverse()){m.addSource(`hz-${hm.code}`,{type:'image',url:hm.file,coordinates:hm.corners});m.addLayer({id:`hz-${hm.code}`,type:'raster',source:`hz-${hm.code}`,layout:{visibility:'none'},paint:{'raster-opacity':0.75,'raster-fade-duration':0}});}
       m.addSource('barangays',{type:'geojson',data:empty as never});
       m.addLayer({id:'barangays',type:'circle',source:'barangays',paint:{'circle-radius':5,'circle-stroke-width':1,'circle-stroke-color':token('surface'),'circle-color':['match',['get','condition'],'isolated',token('bad'),'affected',token('warn'),'evacuating',token('warn'),'monitoring',token('info'),token('muted')]}});
       m.addSource('points',{type:'geojson',data:empty as never});
@@ -76,6 +83,8 @@ export default function MapPage() {
   const brgyFc=useMemo(()=>({type:'FeatureCollection',features:(data?.barangays??[]).filter((b)=>b.lat!==null&&b.lng!==null).map((b)=>({type:'Feature',geometry:{type:'Point',coordinates:[b.lng,b.lat]},properties:{name:b.name,condition:data?.latest.get(b.psgc)?.condition??''}}))}),[data?.barangays,data?.latest]);
   useEffect(()=>{if(ready)(map.current?.getSource('points') as GeoJSONSource|undefined)?.setData(pointsFc as never);},[ready,pointsFc]);
   useEffect(()=>{if(ready)(map.current?.getSource('barangays') as GeoJSONSource|undefined)?.setData(brgyFc as never);},[ready,brgyFc]);
+  useEffect(()=>{const m=map.current;if(!ready||!m)return;for(const hm of HAZARD_MAPS){const id=`hz-${hm.code}`;if(!m.getLayer(id))continue;m.setLayoutProperty(id,'visibility',hz[hm.code]?'visible':'none');m.setPaintProperty(id,'raster-opacity',(opac[hm.code]??75)/100);}},[ready,hz,opac]);
+  useEffect(()=>{const m=map.current;if(!ready||!m)return;for(const id of ['barangays'])if(m.getLayer(id))m.setLayoutProperty(id,'visibility',show.barangays?'visible':'none');for(const id of ['points','points-label'])if(m.getLayer(id))m.setLayoutProperty(id,'visibility',show.points?'visible':'none');},[ready,show]);
   const toggleLayer=async(l:GeoLayer)=>{
     const m=map.current;if(!m||!ready)return;const id=`layer-${l.id}`;
     if(shown[l.id]){for(const suffix of ['-fill','-line','-pt'])if(m.getLayer(id+suffix))m.removeLayer(id+suffix);if(m.getSource(id))m.removeSource(id);setShown(s=>({...s,[l.id]:false}));return;}
@@ -91,22 +100,43 @@ export default function MapPage() {
   return <div className="page space-y-5">
     <PageHeader title="Geo-COP Map" subtitle="The common operating picture: City hazard-map references, EOC reference points, barangay status and validated GIS layers." />
     <Tabs items={EOC_TABS}/>
-    <Section title="City hazard map library">
-      <p className="mb-3 text-sm text-muted">High-resolution source map displays. Open a map to inspect its full-resolution image. The map's original legend, date, scale and limitations remain part of the source.</p>
-      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">{CITY_REFERENCE_MAPS.map((item)=><a key={item.id} href={item.href} target="_blank" rel="noopener noreferrer" className="overflow-hidden rounded-control border border-line bg-surface hover:border-action">
-        <div className="aspect-[4/3] bg-sunken"><img src={item.href} alt={`${item.title}, Ormoc City`} loading="lazy" decoding="async" className="h-full w-full object-contain"/></div><div className="p-3"><span className="font-semibold">{item.title}</span><Badge className="ml-2">{item.group}</Badge><span className="mt-1 block text-xs text-muted">{item.description}</span></div>
-      </a>)}</div>
-    </Section>
-    {baseProblem&&<Notice tone="warn" title="Basemap not available">{baseProblem} The City reference maps above remain available. Points and overlays still load where possible.</Notice>}
-    <div ref={box} className="h-[60vh] min-h-[22rem] w-full overflow-hidden rounded-control border border-line bg-sunken" role="region" aria-label="Interactive Geo-COP map of Ormoc City"/>
-    <p className="mt-2 text-xs text-muted">Ring colour: green field-verified, ochre pending field validation. Barangay dots show the latest report in this event. Coordinates in WGS 84 (EPSG:4326).</p>
+    {baseProblem&&<Notice tone="warn" title="Basemap not available">{baseProblem} Hazard sheets and points still load where possible.</Notice>}
+    <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_20rem]">
+      <div>
+        <div ref={box} className="h-[68vh] min-h-[24rem] w-full overflow-hidden rounded-control border border-line bg-sunken" role="region" aria-label="Interactive Geo-COP map of Ormoc City"/>
+        <p className="mt-2 text-xs text-muted">Hazard sheets are the City's source maps placed on the map; each shows its own legend and source. Ring colour on points: green field-verified, ochre pending. Barangay dots show the latest report in this event. WGS 84 (EPSG:4326).</p>
+      </div>
+      <aside aria-label="Map layers" className="space-y-4 rounded-sheet border border-line bg-surface p-4 shadow-raised lg:max-h-[68vh] lg:overflow-y-auto">
+        <div>
+          <h2 className="mb-2 text-lg font-extrabold">Hazard maps</h2>
+          <ul className="space-y-3">{HAZARD_MAPS.map((h)=><li key={h.code}>
+            <Checkbox checked={!!hz[h.code]} onChange={()=>setHz((o)=>({...o,[h.code]:!o[h.code]}))} tip={h.note??`${h.source}. Fit error about ${h.accuracy_m} m.`}><span className="font-semibold">{h.title}</span></Checkbox>
+            {hz[h.code]&&<div className="mt-2 space-y-2 pl-7">
+              <div className="flex items-center gap-2"><span className="w-14 text-xs text-muted">Opacity</span><Slider value={[opac[h.code]??75]} min={10} max={100} step={5} thumbLabel={`Opacity of ${h.title}`} thumbTip="Drag to make the sheet more or less see-through" onValueChange={([v])=>setOpac((o)=>({...o,[h.code]:v!}))}/><span className="w-9 text-right text-xs tabular-nums">{opac[h.code]??75}%</span></div>
+              <ul className="flex flex-wrap gap-x-3 gap-y-1 text-xs">{h.legend.map((l)=><li key={l.label} className="flex items-center gap-1.5"><span className="inline-block h-3 w-3 rounded-sm border border-line" style={{background:l.color}}/>{l.label}</li>)}</ul>
+            </div>}
+          </li>)}</ul>
+        </div>
+        <div>
+          <h2 className="mb-2 text-lg font-extrabold">Operations</h2>
+          <ul className="space-y-2">
+            <li><Checkbox checked={show.barangays} onChange={()=>setShow((o)=>({...o,barangays:!o.barangays}))} tip="Dots for each barangay coloured by its latest report">Barangay status</Checkbox></li>
+            <li><Checkbox checked={show.points} onChange={()=>setShow((o)=>({...o,points:!o.points}))} tip="EOC, staging areas and other reference points">Reference points</Checkbox></li>
+          </ul>
+        </div>
+        <div>
+          <div className="mb-2 flex items-center justify-between"><h2 className="text-lg font-extrabold">Uploaded layers</h2>{canLayer&&<Button tip="Add a KML, KMZ or GeoJSON map layer" variant="secondary" onClick={()=>setLayerOpen(true)}>Add</Button>}</div>
+          {(data?.layers??[]).length===0?<p className="text-sm text-muted">None yet. Add a KML, KMZ or GeoJSON file.</p>:<ul className="space-y-2">{data!.layers.map((l)=><li key={l.id}><Checkbox tip={shown[l.id]?'Hide this layer':'Show this layer on the map'} checked={!!shown[l.id]} onChange={()=>void toggleLayer(l)}><span className="font-semibold">{l.title}</span></Checkbox><span className="block pl-7 text-xs text-muted">{LAYER_GROUP[l.layer_group]}. {l.source}{l.issued_on?`, ${fmtDate(l.issued_on)}`:''}. {l.feature_count??0} features.</span><span className="flex flex-wrap items-center gap-1 pl-7 pt-1"><Badge tone={l.validation_status==='official'?'ok':l.validation_status==='field_verified'?'info':'warn'}>{LAYER_VALIDATION[l.validation_status]}</Badge>{l.access_class==='restricted'&&<Badge>Restricted</Badge>}{isHead&&l.validation_status!=='official'&&<Button tip="Mark as official City dataset" variant="quiet" disabled={busy} onClick={()=>authority(()=>markOfficial(l),`${l.title} marked official`)}>Mark official</Button>}{canVerify&&<Button tip="Supersede this layer" variant="quiet" disabled={busy} onClick={()=>authority(()=>supersedeLayer(l),`${l.title} superseded`)}>Supersede</Button>}</span></li>)}</ul>}
+        </div>
+      </aside>
+    </div>
     <Section title="Reference points" action={canCapture&&<Button tip="Add a reference point from a KML file or coordinates" variant="secondary" onClick={()=>setPointOpen(true)}>Add point</Button>}>
       {(data?.points??[]).length===0?<EmptyState title="No reference points yet" body="The EOC point arrives with the EOC structure data (operational file 06)."/>:<List>{data!.points.map((p)=><ListRow key={p.id} tip="Centre the map on this point" onClick={()=>flyTo(p)} title={`${p.name} (${POINT_KIND[p.kind]})`} meta={`${p.lat.toFixed(6)}, ${p.lng.toFixed(6)}. ${p.source}.${p.verified_at?` Verified ${fmtDateTime(p.verified_at)}.`:''}`} trailing={<Badge tone={p.verification_status==='field_verified'?'ok':'warn'}>{POINT_STATUS[p.verification_status]}</Badge>}/>)}</List>}
       {canVerify&&(data?.points??[]).some((p)=>p.verification_status==='pending_field_validation')&&<div className="mt-3 space-y-2">{data!.points.filter((p)=>p.verification_status==='pending_field_validation').map((p)=><div key={p.id} className="flex flex-wrap items-center gap-2 text-sm"><span className="min-w-0 flex-1">{p.name}: after checking on site (EOC-GIS-REF),</span><Button tip="Record field verification" disabled={busy} onClick={()=>authority(()=>verifyPoint(p),`${p.name} field-verified`)}>Record field verification</Button><Button tip="Mark this point as replaced" variant="quiet" disabled={busy} onClick={()=>authority(()=>supersedePoint(p),`${p.name} superseded`)}>Supersede</Button></div>)}</div>}
     </Section>
-    <Section title="Layers" action={canLayer&&<Button tip="Add a KML, KMZ or GeoJSON map layer" variant="secondary" onClick={()=>setLayerOpen(true)}>Add layer</Button>}>
-      {(data?.layers??[]).length===0?<EmptyState title="No uploaded GIS layers yet" body="The static City map library above is available while editable vector layers are prepared."/>:<ul className="space-y-2">{data!.layers.map((l)=><li key={l.id} className="flex flex-wrap items-center gap-2 rounded-control border border-line bg-surface px-3 py-2"><Checkbox tip={shown[l.id]?'Hide this layer':'Show this layer on the map'} checked={!!shown[l.id]} onChange={()=>void toggleLayer(l)}><span className="font-semibold">{l.title}</span></Checkbox><span className="min-w-0 flex-1 text-xs text-muted">{LAYER_GROUP[l.layer_group]}. {l.source}{l.issued_on?`, ${fmtDate(l.issued_on)}`:''}. {l.feature_count??0} features.</span><Badge tone={l.validation_status==='official'?'ok':l.validation_status==='field_verified'?'info':'warn'}>{LAYER_VALIDATION[l.validation_status]}</Badge>{l.access_class==='restricted'&&<Badge>Restricted</Badge>}{isHead&&l.validation_status!=='official'&&<Button tip="Mark as official City dataset" variant="quiet" disabled={busy} onClick={()=>authority(()=>markOfficial(l),`${l.title} marked official`)}>Mark official</Button>}{canVerify&&<Button tip="Supersede this layer" variant="quiet" disabled={busy} onClick={()=>authority(()=>supersedeLayer(l),`${l.title} superseded`)}>Supersede</Button>}</li>)}</ul>}
-    </Section>
+    <details className="rounded-sheet border border-line bg-surface p-4"><summary className="cursor-pointer text-sm font-bold">City source map sheets (full resolution)</summary>
+      <div className="mt-3 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">{CITY_REFERENCE_MAPS.map((item)=><a key={item.id} href={item.href} target="_blank" rel="noopener noreferrer" className="overflow-hidden rounded-control border border-line bg-surface hover:border-sky"><div className="aspect-[4/3] bg-sunken"><img src={item.href} alt={`${item.title}, Ormoc City`} loading="lazy" decoding="async" className="h-full w-full object-contain"/></div><div className="p-3 text-sm font-semibold">{item.title}</div></a>)}</div>
+    </details>
     <PointSheet open={pointOpen} onClose={()=>setPointOpen(false)} onSave={async(p)=>{await addPoint(p,userId);setPointOpen(false);toast(`Point added: ${p.name}`);}}/>
     <LayerSheet open={layerOpen} onClose={()=>setLayerOpen(false)} offices={data?.offices??[]} onSave={async(meta,parsed,file)=>{await addLayer(meta,parsed,file,userId);setLayerOpen(false);toast(`Layer added: ${meta.title}`);}}/>
   </div>;
