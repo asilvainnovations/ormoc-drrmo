@@ -12,7 +12,7 @@ describe('validation workspace', () => {
   it('opens on the overview with tabs, not on a flat list', async () => {
     await db.manual_review_items.put({ id: 'i1', version: 1, source_tracker_id: 'VR-001', title: 'Confirm the EOC order', chapter_ref: 'Ch.1', priority: 'critical_urgent', review_status: 'open', validation_status: 'not_started' } as ManualReviewItem);
     at('/');
-    expect(await screen.findByText('Validation overview')).toBeTruthy();
+    expect(await screen.findByText('Validation workspace')).toBeTruthy();
     expect(screen.getByRole('navigation', { name: 'Validation workspace' })).toBeTruthy();
     expect(await screen.findByText('Validation load')).toBeTruthy();
   });

@@ -1,72 +1,75 @@
 /**
- * Flood intelligence tool — local source-aligned flood exposure plus official
- * external warning and mapping services. This is a static reference data view,
- * not a forecast, warning, evacuation trigger or replacement for PAGASA/CDRRMO.
+ * Flood intelligence: where flooding would hurt Ormoc, from what the City already holds. A map of the 85 barangays
+ * by DDRiVE flood class over the City's flood sheet, a watch list, a benefit-cost screen for flood measures, and the
+ * official warning sources. Reference and planning support only: not a forecast, warning, evacuation trigger or
+ * replacement for PAGASA, the CDRRMO or the approved EOC procedures.
  */
-import { ExternalLink, Waves } from 'lucide-react';
+import { lazy, Suspense, useMemo, useState } from 'react';
+import { ExternalLink } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { Badge, List, Notice, PageHeader, Section } from '@/components/ui';
+import { List, Loading, Notice, PageHeader, Section } from '@/components/ui';
 import { tip } from '@/components/Tooltip';
-import { ORMOC_FLOOD_EXPOSURE, FLOOD_EXPOSURE_AS_OF } from '@/domain/floodExposure';
-import { CITY_REFERENCE_MAPS } from '@/features/eoc/map/referenceMaps';
+import { Chips, Tile } from '@/features/eoc/kit';
+import { classCounts } from '@/domain/floodScreen';
+import { useFloodRows } from './flood/useFloodRows';
+import { BarangayPanel } from './flood/BarangayPanel';
+import { WatchTab } from './flood/WatchTab';
+import { PlanTab } from './flood/PlanTab';
 
-
+// The map library is large; it loads only when this page opens.
+const FloodMap = lazy(() => import('./flood/FloodMap'));
 
 const OUTBOUND = [
-  { name:'PAGASA — Visayas regional forecast', by:'DOST-PAGASA', url:'https://www.pagasa.dost.gov.ph/regional-forecast/visprsd', use:'Official regional forecasts and weather advisories.' },
-  { name:'PAGASA weather', by:'DOST-PAGASA', url:'https://www.pagasa.dost.gov.ph/weather', use:'National weather and tropical cyclone products.' },
-  { name:'HazardHunterPH', by:'GeoRiskPH', url:'https://hazardhunter.georisk.gov.ph/map', use:'Official multi-hazard screening for the Philippines.' },
-  { name:'UP NOAH — Know Your Hazards', by:'UP NOAH Center', url:'https://noah.up.edu.ph/know-your-hazards', use:'Supporting hazard exploration; confirm official advisories before action.' },
-  { name:'Copernicus EMS — On-Demand Mapping', by:'European Union Copernicus Programme', url:'https://mapping.emergency.copernicus.eu/', use:'Satellite-based emergency mapping on institutional request.' },
+  { name: 'PAGASA — Visayas regional forecast', by: 'DOST-PAGASA', url: 'https://www.pagasa.dost.gov.ph/regional-forecast/visprsd', use: 'Official regional forecasts and weather advisories.' },
+  { name: 'PAGASA weather', by: 'DOST-PAGASA', url: 'https://www.pagasa.dost.gov.ph/weather', use: 'National weather and tropical cyclone products.' },
+  { name: 'HazardHunterPH', by: 'GeoRiskPH', url: 'https://hazardhunter.georisk.gov.ph/map', use: 'Official multi-hazard screening for the Philippines.' },
+  { name: 'UP NOAH — Know Your Hazards', by: 'UP NOAH Center', url: 'https://noah.up.edu.ph/know-your-hazards', use: 'Supporting hazard exploration; confirm official advisories before action.' },
+  { name: 'Copernicus EMS — On-Demand Mapping', by: 'European Union Copernicus Programme', url: 'https://mapping.emergency.copernicus.eu/', use: 'Satellite-based emergency mapping on institutional request.' },
 ] as const;
 
-const pct = (value: number) => `${value.toFixed(3)}%`;
+type View = 'map' | 'watch' | 'plan' | 'sources';
+const VIEWS: { value: View; label: string }[] = [{ value: 'map', label: 'Map' }, { value: 'watch', label: 'Watch list' }, { value: 'plan', label: 'Compare measures' }, { value: 'sources', label: 'Official sources' }];
 
 export function FloodIntelligencePage() {
-  const sorted = [...ORMOC_FLOOD_EXPOSURE].sort((a, b) => b.exposurePercent - a.exposurePercent);
+  const data = useFloodRows();
+  const [view, setView] = useState<View>('map');
+  const [selected, setSelected] = useState<string | null>(null);
+  const rows = useMemo(() => data?.rows ?? [], [data]);
+  const counts = useMemo(() => classCounts(rows), [rows]);
+  const by = (c: string) => counts.find((x) => x.cls === c);
+  const top = (by('Very high')?.barangays ?? 0) + (by('High')?.barangays ?? 0);
+  const people = (by('Very high')?.people ?? 0) + (by('High')?.people ?? 0);
+  const unknown = (by('Very high')?.unknown ?? 0) + (by('High')?.unknown ?? 0);
+  const pick = (psgc: string | null) => { setSelected(psgc); if (psgc) setView('map'); };
+
   return (
     <div className="page space-y-5">
-      <PageHeader title="Flood intelligence" back="/tools" subtitle="Ormoc City flood exposure reference, city hazard maps and official warning sources. Static assessment data only; not a live forecast." />
+      <PageHeader title="Flood intelligence" back="/tools" subtitle="Which barangays flood, how many people live there, and what to compare before spending. Reference data, not a live forecast." />
       <Notice tone="warn" title="Operational safety">
-        Follow current PAGASA bulletins, City CDRRMO instructions and approved EOC procedures. A mapped susceptibility class or exposed-population estimate is not, by itself, an evacuation order or declaration threshold.
+        Follow current PAGASA bulletins, City CDRRMO instructions and approved EOC procedures. A flood class or an exposed-population figure is not, by itself, an evacuation order or declaration threshold.
       </Notice>
-      <Section title={`Barangay flood exposure — ${FLOOD_EXPOSURE_AS_OF}`}>
-        <p className="mb-3 text-sm text-muted">Eight reference barangays from the submitted Population_Prone_Flood reports and DDRiVE source records. Denominators follow each source report and are kept distinct from 2024 POPCEN population baselines.</p>
-        <div className="overflow-x-auto rounded-control border border-line">
-          <table className="w-full min-w-[42rem] text-sm">
-            <thead className="bg-sunken text-left"><tr><th className="p-3">Barangay</th><th className="p-3 text-right">Flood-prone</th><th className="p-3 text-right">Report base</th><th className="p-3 text-right">Share</th><th className="p-3">Classes</th></tr></thead>
-            <tbody>{sorted.map((r) => <tr key={r.psgc} className="border-t border-line">
-              <td className="p-3 font-semibold">{r.name}<span className="block text-xs font-normal text-muted">PSGC {r.psgc}</span></td>
-              <td className="p-3 text-right tabular-nums">{r.pronePopulation.toLocaleString('en-PH')}</td>
-              <td className="p-3 text-right tabular-nums">{r.denominator.toLocaleString('en-PH')}</td>
-              <td className="p-3 text-right tabular-nums">{pct(r.exposurePercent)}</td>
-              <td className="p-3"><div className="flex flex-wrap gap-1">{r.classes.map((c) => <Badge key={c.name}>{c.name}: {c.population.toLocaleString('en-PH')}</Badge>)}</div></td>
-            </tr>)}</tbody>
-          </table>
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+        <Tile label="Very high" tone="bad" value={by('Very high')?.barangays ?? 0} hint="barangays" />
+        <Tile label="High" tone="warn" value={by('High')?.barangays ?? 0} hint="barangays" />
+        <Tile label="People in those two classes" value={people.toLocaleString('en-PH')} hint={unknown ? `${unknown} of ${top} barangays have no figure` : `across ${top} barangays`} />
+        <Tile label="Not assessed" value={by('Not assessed')?.barangays ?? 0} hint="barangays without a DDRiVE class" />
+      </div>
+      <Chips value={view} onChange={setView} options={VIEWS} label="Flood intelligence view" />
+
+      {view === 'map' && (
+        <div className="grid gap-4 lg:grid-cols-[1fr_21rem]">
+          <Suspense fallback={<Loading />}><FloodMap rows={rows} selected={selected} onSelect={setSelected} /></Suspense>
+          <BarangayPanel rows={rows} flood={data?.flood ?? new Map()} selected={selected} onSelect={setSelected} />
         </div>
-        <p className="mt-3 text-xs text-muted">Population exposure estimates are not flood depth or inundated land area. Boundary and model validation are recorded in the City's supplied barangay hazard-assessment and boundary reference workbooks.</p>
-      </Section>
-      <Section title="Barangay age and sex detail — Lao">
-        {(() => { const lao = ORMOC_FLOOD_EXPOSURE.find((r) => r.name === 'Lao')!; return <>
-          <p className="mb-2 text-sm text-muted">Source: {lao.source}. Values retain the source's age bands and separate male/female, prone/not-prone columns.</p>
-          <div className="overflow-x-auto rounded-control border border-line"><table className="w-full min-w-[44rem] text-sm">
-            <thead className="bg-sunken"><tr>{['Age group','Male not prone','Male prone','Female not prone','Female prone'].map((h) => <th key={h} className="p-2 text-right first:text-left">{h}</th>)}</tr></thead>
-            <tbody>{lao.ageSex.map((r) => <tr key={r.ageGroup} className="border-t border-line"><td className="p-2">{r.ageGroup}</td>{[r.maleNotProne,r.maleProne,r.femaleNotProne,r.femaleProne].map((v,i)=><td key={i} className="p-2 text-right tabular-nums">{v == null ? '—' : v.toLocaleString('en-PH')}</td>)}</tr>)}</tbody>
-          </table></div>
-        </>; })()}
-        <Notice tone="info" title="Linao age-sex table status">The uploaded Linao file was not a valid XLSX workbook, so the Linao age/sex table is not displayed or inferred. Its flood class and population exposure figures are retained from the supplied DDRiVE assessment source.</Notice>
-      </Section>
-      <Section title="Ormoc City hazard map library">
-        <p className="mb-3 text-sm text-muted">High-resolution display copies of the City-provided map images. Click a map to inspect it at full size. Map dates, legends and limitations remain those printed on each source map.</p>
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {CITY_REFERENCE_MAPS.map((m) => <a key={m.id} href={m.href} target="_blank" rel="noopener noreferrer" className="group overflow-hidden rounded-control border border-line bg-surface hover:border-action">
-            <div className="aspect-[4/3] overflow-hidden bg-sunken"><img src={m.href} alt={`${m.title}, Ormoc City`} loading="lazy" decoding="async" className="h-full w-full object-contain transition-transform group-hover:scale-[1.02]" /></div>
-            <div className="p-3"><span className="font-semibold">{m.title}</span><span className="mt-1 block text-xs text-muted">{m.description}</span><span className="mt-1 block text-xs text-muted">{m.caution}</span><span className="mt-2 inline-flex items-center gap-1 text-xs text-action">Open full map <ExternalLink className="h-3 w-3" aria-hidden /></span></div>
-          </a>)}
-        </div>
-      </Section>
-      <Section title="Official and supporting sources"><List>{OUTBOUND.map((t) => <li key={t.url} className="border-b border-line py-3 last:border-0"><a href={t.url} target="_blank" rel="noopener noreferrer" className="flex items-start gap-2 font-medium text-action hover:underline" {...tip(`Open ${t.name} in a new tab`)}><ExternalLink className="mt-0.5 h-4 w-4 shrink-0" aria-hidden /><span>{t.name}<span className="mt-0.5 block text-xs font-normal text-muted">{t.by}</span><span className="mt-1 block text-sm font-normal text-muted">{t.use}</span></span></a></li>)}</List></Section>
-      <p className="flex items-center gap-2 text-xs text-muted"><Waves className="h-4 w-4" aria-hidden />Map library images are static cartographic references; check issuing agency, map date, scale, legend and limitations before operational use.</p>
+      )}
+      {view === 'watch' && <WatchTab rows={rows} onPick={pick} />}
+      {view === 'plan' && <PlanTab />}
+      {view === 'sources' && (
+        <Section title="Official and supporting sources">
+          <List>{OUTBOUND.map((t) => <li key={t.url} className="border-b border-line py-3 last:border-0"><a href={t.url} target="_blank" rel="noopener noreferrer" className="flex items-start gap-2 font-medium text-action hover:underline" {...tip(`Open ${t.name} in a new tab`)}><ExternalLink className="mt-0.5 h-4 w-4 shrink-0" aria-hidden /><span>{t.name}<span className="mt-0.5 block text-xs font-normal text-muted">{t.by}</span><span className="mt-1 block text-sm font-normal text-muted">{t.use}</span></span></a></li>)}</List>
+          <p className="mt-3 text-sm text-muted">The City's other hazard sheets, with identify and measure tools, are in <Link className="font-medium text-action underline" to="/assess/hazard-maps">Hazard maps</Link>. Flood classes come from DDRiVE and the City's flood sheet (MGB Region VIII, mapped by CPDO-GIS); check each sheet's date and limits before operational use.</p>
+        </Section>
+      )}
       <p><Link className="text-sm font-medium text-action underline" to="/eoc/risk">Open City Risk Intelligence →</Link></p>
     </div>
   );

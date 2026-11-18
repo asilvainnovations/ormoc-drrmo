@@ -110,7 +110,7 @@ describe('FAQ', () => {
     at(<FAQPage />);
     const groups = [...new Set(FAQS.map((f) => f.group))];
     expect(groups).toEqual(['About MODE', 'Authority and emergency operations', 'Accounts and access', 'Offline use, synchronisation and installation',
-      'Assessment, evidence and Manual validation', 'Risk information', 'Privacy and support']);
+      'Assessment, evidence and validation', 'Risk information', 'Privacy and support']);
     for (const g of groups) expect(screen.getByRole('heading', { level: 2, name: g })).toBeTruthy();
     expect(screen.getAllByRole('button', { name: /Does MODE replace the approved Manuals\?/ }).length).toBe(1);
   });

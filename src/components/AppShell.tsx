@@ -33,7 +33,7 @@ const NAV: NavItem[] = [
   // Desktop rail only; on phones the Today screen links to Tools (the tab bar holds six).
   { to: '/tools', k: 'nav.tools', label: 'Tools', icon: Wrench, tip: 'ICS exercises, continuity planning, Gawad KALASAG readiness, HazardHunterPH, GeoAnalyticsPH, Zoom Earth and DDRiVE-M', rail: true },
   // 1.23.0 (ADR-043): Manual governance — rail only so the phone tab bar stays at six.
-  { to: '/governance', k: 'nav.governance', label: 'Governance', icon: Scale, tip: 'Manual review register, outstanding decisions and validation workshop', rail: true },
+  { to: '/governance', k: 'nav.governance', label: 'Validation', icon: Scale, tip: 'Review register, outstanding decisions and the validation workshop', rail: true },
 ];
 
 /** The signature element: activation level, any declaration in force, and data freshness. */

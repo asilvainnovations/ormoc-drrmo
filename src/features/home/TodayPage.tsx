@@ -33,7 +33,7 @@ import type { Indicator, Response } from '@/types';
 import { Separator } from '@/components/ui/separator';
 import { HazardWatch } from './HazardWatch';
 
-const InstitutionalPanels = lazy(() => import('./dashboard/InstitutionalPanels'));
+const ValidationPanel = lazy(() => import('./dashboard/ValidationPanel'));
 
 const GREET_KEYS = ['greet.morning', 'greet.afternoon', 'greet.evening'] as const;
 
@@ -234,7 +234,7 @@ export function TodayPage() {
 
       <HazardWatch />
 
-      {roles.length > 0 && <Suspense fallback={<div className="mb-6 h-40" aria-hidden />}><InstitutionalPanels /></Suspense>}
+      {roles.length > 0 && <Suspense fallback={<div className="mb-6 h-40" aria-hidden />}><ValidationPanel /></Suspense>}
 
       {analytics && (
         <>
