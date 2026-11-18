@@ -30,6 +30,7 @@ const VaultRoutes = lazy(() => import('@/features/vault/routes'));
 const ToolsRoutes = lazy(() => import('@/features/tools/routes'));
 const RaciRoutes = lazy(() => import('@/features/raci/routes'));
 const EocAssessmentRoutes = lazy(() => import('@/features/eoc-assessment/routes'));
+const GovernanceRoutes = lazy(() => import('@/features/governance/routes'));
 
 
 /** /protocols and /protocols/run/:id (before 1.9) open the same place in the DRRM module. */
@@ -111,6 +112,8 @@ export function App() {
               <Route path="raci/*" element={<Suspense fallback={<Loading />}><RaciRoutes /></Suspense>} />
               {/* 1.20 (ADR-035): the EOC capability assessment board. */}
               <Route path="eoc-assessment/*" element={<Suspense fallback={<Loading />}><EocAssessmentRoutes /></Suspense>} />
+              {/* 1.23.0 (ADR-043): Manual Review and Validation Workspace */}
+              <Route path="governance/*" element={<Suspense fallback={<Loading />}><GovernanceRoutes /></Suspense>} />
             </Route>
             <Route path="*" element={<PublicNotFound />} />
           </Routes>
