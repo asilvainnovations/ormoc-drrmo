@@ -1,97 +1,140 @@
-MODE 1.23.0 Slice 1 — Manual Governance and Validation Workspace
-ADR-043 · 17 November 2026
-Handover: MODE-1.23.0-slice1-ADR-043.zip
+MODE 1.23.0 — CONSOLIDATED HANDOVER
+Manual Governance and Validation Workspace
+Prepared: 18 November 2026
 
-Prerequisite
-  - main at or after 024dbc9 (package 1.22.0, conversations migration applied)
-  - Tokyo production (or training) has migrations through 20261116003300
-  - Controlled source workbook retained: Ormoc_CDRRMO_EOC_Review_Validation_Tracker_V-2.xlsx
+This ZIP reconciles the three supplied handovers:
+1. MODE-1.23.0-build-fix-governance.zip
+2. MODE-1.23.0-slice1-ADR-043.zip
+3. MODE-CI-fix-load-reference-data.zip
 
---------------------------------------------------------------------
-1. Merge files into the repo (repo-relative paths)
---------------------------------------------------------------------
-  supabase/migrations/20261117003400_manual_governance.sql
-  supabase/seed/parts/40_manual_governance.sql
-  src/types.governance.ts          → merge types into src/types.ts (or re-export)
-  src/features/governance/         → entire folder (routes + 4 pages + labels)
-  src/lib/tables.governance.delta.ts  → copy TABLE entries into src/lib/tables.ts
-  src/lib/db.governance.delta.ts      → apply version(11) stores + table props in src/lib/db.ts
+IMPORTANT STATUS
+- This is a source handover only. Nothing has been committed, pushed, merged, deployed or applied to Supabase by this packaging step.
+- ADR-043 is included and remains PROPOSED. Obtain the required institutional acceptance before treating the design as an approved governance policy.
+- Do not apply the migration to production until the repository base, migration history, RLS and release checks have been verified.
+- The supplied files do not include the promised automated role-matrix, unit or end-to-end tests. These remain release blockers.
 
-  Wire routing (manual edits):
-  - src/App.tsx
-      const GovernanceRoutes = lazy(() => import('@/features/governance/routes'));
-      … inside RequireAuth/AppShell routes:
-      <Route path="governance/*" element={<Suspense fallback={<Loading />}><GovernanceRoutes /></Suspense>} />
-  - src/components/AppShell.tsx
-      Add nav item after Library (or Vault):
-      { to: '/governance', k: 'nav.governance', label: 'Governance', icon: ListChecks,
-        tip: 'Manual review register, outstanding decisions and validation workshop' }
+A. FILE SELECTION AND MERGE RULES
+1. Use the integrated client files in this ZIP as the canonical Slice 1 client implementation:
+   src/App.tsx
+   src/types.ts
+   src/lib/db.ts
+   src/lib/tables.ts
+   src/lib/i18n.tsx
+   src/components/AppShell.tsx
+   src/features/governance/ReviewRegisterPage.tsx
+   src/features/governance/DecisionsPage.tsx
+   src/features/governance/WorkshopPage.tsx
+   src/features/governance/StakeholdersPage.tsx
+   src/features/governance/labels.ts
+   src/features/governance/routes.tsx
 
-  Optional: bump package.json version to "1.23.0" when this slice is accepted.
+2. These integrated files supersede the original Slice 1 delta instructions. DO NOT separately merge:
+   src/types.governance.ts
+   src/lib/db.governance.delta.ts
+   src/lib/tables.governance.delta.ts
+   Doing so duplicates type declarations and Dexie/table wiring.
 
---------------------------------------------------------------------
-2. Database
---------------------------------------------------------------------
-  Apply migration (production only from main, with typed confirmation per City practice):
-    supabase db push   # or your usual migration runner
-    # migration file: 20261117003400_manual_governance.sql
+3. Apply the database files:
+   supabase/migrations/20261117003400_manual_governance.sql
+   supabase/seed/parts/40_manual_governance.sql
 
-  Apply seed part 40 (idempotent on source IDs):
-    psql "$DATABASE_URL" -f supabase/seed/parts/40_manual_governance.sql
-    # Expected on first run (approx):
-    #   69 review items (VR-001…VR-069)
-    #   18 decisions (OD-01…OD-18)
-    #   12 workshop sessions (WS-01…WS-12)
-    #   29 stakeholders
-    #   1 import_batches row
+4. Replace:
+   scripts/load_reference_data.sh
 
-  Verification queries:
-    select count(*) from public.manual_review_items;          -- 69
-    select count(*) from public.outstanding_decisions;        -- 18
-    select count(*) from public.workshop_sessions;            -- 12
-    select count(*) from public.manual_governance_stakeholders; -- 29
-    select * from public.manual_governance_import_batches order by imported_at desc limit 1;
+5. Add the documentation:
+   docs/adr/043-manual-review-validation-workspace.md
+   docs/implementation/MODE-1.23.0-manual-governance-workspace.md
+   docs/implementation/MODE-1.23.0-slice1-notes.md
+   The ADR index (docs/adr/README.md) must be updated additively in the target repository. Do not replace the existing ADR index with an older copy.
 
-  Re-run of seed part 40 must not duplicate rows (on conflict do nothing).
+B. PRE-FLIGHT — DO NOT SKIP
+1. Work on a dedicated implementation branch; preserve main.
+2. Confirm the target repository is the intended Ormoc MODE repository and inspect:
+   - git status
+   - git log -1
+   - package.json version
+   - current migration_status.sql
+   - current Dexie schema version and table registry
+3. The Slice 1 handover was authored against main at or after commit 024dbc9, package 1.22.0, with Supabase migrations through 20261116003300. If the actual base differs, stop and reconcile rather than blindly overwrite.
+4. Confirm migration 20261117003400_manual_governance.sql is not already applied. Never edit an applied migration; if already applied, prepare a new forward migration for any correction.
+5. Confirm the controlled source workbook is the intended Validation Tracker V-2. The seed expects these source IDs:
+   - 69 review items: VR-001 through VR-069
+   - 18 decisions: OD-01 through OD-18
+   - 12 sessions: WS-01 through WS-12
+   - 29 stakeholder rows: SH-01 through SH-29
+   Counts are reconciliation checks, not hard-coded business rules.
 
---------------------------------------------------------------------
-3. Client
---------------------------------------------------------------------
-  npm install          # if lockfile unchanged, skip
-  npm run typecheck
-  npm run test
-  npm run build
+C. APPLY THE CLIENT AND CI FIX
+1. Copy the 12 integrated client files listed in Section A into the same repo-relative paths.
+2. Replace scripts/load_reference_data.sh with the supplied version.
+3. Update docs/adr/README.md by adding ADR-043 as PROPOSED. Preserve all existing entries.
+4. Review the diff. In particular, confirm:
+   - Governance route is protected inside the authenticated AppShell route tree.
+   - Navigation key nav.governance exists in both English and Cebuano.
+   - Dexie schema version 11 includes the four governance tables.
+   - src/lib/tables.ts registers the four tables in parent-safe sync order.
+   - Server-stamped fields are omitted from client writes.
+   - The governance types are declared once in src/types.ts.
+5. Run:
+   npm run typecheck
+   npm run build
+   Run the repository's unit test command if present. Record exact command and results.
+6. Do not start Slice 2 or Slice 3 until the target branch builds green.
 
-  Smoke:
-  - Sign in as active user → /governance shows Review Register with 69 items after sync
-  - Filters by status / priority work offline
-  - /governance/decisions, /workshop, /stakeholders render
-  - Closing a review item or recording a decision while offline fails with NeedsConnectionError
-    (authority path not yet wired in UI for Slice 1 — guards are server-side; UI actions next)
+D. DATABASE AND SEED SEQUENCE
+1. Review the migration and the SQL diff, including the role-scoped UPDATE RLS policies:
+   - Review items and outstanding decisions: admin, cdrrmo_head, assessor, validator, author.
+   - Formal review closure remains guarded by the database trigger and requires disposition plus closure test.
+   - Formal decision recording remains guarded and requires disposition plus decision reference; only cdrrmo_head/admin may record the formal decision.
+   - Workshop changes remain role-gated.
+2. Run database tests against a non-production test project first. The supplied handover does not include the new role-matrix tests; write and run them before production deployment.
+3. After approval and confirmation of the target environment, apply pending migrations through the normal controlled deployment process. Do not use an ad hoc SQL editor paste if the repository's migration runner is available.
+4. Seed the governance records:
+   Preferred path, if the full reference-data load is intended and all prerequisites are satisfied:
+     bash scripts/load_reference_data.sh
+   This loader iterates all seed parts, including part 40, so do NOT also run part 40 separately.
+   If reference data is already loaded and only this governance seed is required:
+     psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/seed/parts/40_manual_governance.sql
+5. Verify:
+   select count(*) from public.manual_review_items;
+   select count(*) from public.outstanding_decisions;
+   select count(*) from public.workshop_sessions;
+   select count(*) from public.manual_governance_stakeholders;
+   select * from public.manual_governance_import_batches
+     order by imported_at desc limit 1;
+   Expected initial source counts: 69, 18, 12 and 29 respectively. Investigate any variance; do not force counts by inserting fabricated rows.
+6. Re-run the seed once in the test environment and verify no duplicates and no changes to previously controlled decisions or statuses. The seed uses stable source keys and ON CONFLICT DO NOTHING.
 
---------------------------------------------------------------------
-4. Tests to add (not in this zip — follow-up)
---------------------------------------------------------------------
-  - supabase/tests: role matrix for select / close-without-disposition / reopen
-  - unit: label maps, filter helpers
-  - e2e: governance route reachable for active user; empty state when seed not applied
+E. ACCEPTANCE / SMOKE TESTS
+- Active authorised user can open /governance.
+- Review Register, Decisions, Workshop and Stakeholders pages load from Dexie after sync.
+- Search/filter behaviour works; empty states are useful when seed is absent.
+- An active user without an eligible governance role cannot update governance records through direct API calls.
+- Eligible roles can update non-authority fields.
+- Review closure fails without disposition and closure test.
+- Formal decision fails without disposition and decision reference.
+- Only the permitted authority roles can close/reopen/record decisions as defined by the database guards.
+- Offline reads and permitted draft capture behave consistently; formal authority actions require a live connection.
+- Repeated seed does not duplicate rows.
+- RLS and trigger behaviour is verified for every relevant role.
+- No 85-barangay final denominator is introduced; OD-08 remains unresolved pending City masterlist reconciliation.
+- Stakeholder matrix remains proposed reference data and does not grant MODE application roles.
 
---------------------------------------------------------------------
-5. Release discipline
---------------------------------------------------------------------
-  - Do not tag until typecheck + build + db tests are green and CDRRMO accepts workshop use
-  - When ready: git tag -a v1.23.0 -m "MODE 1.23.0 Manual Governance Slice 1 (ADR-043)"
-  - Create GitHub Release with notes; never use web upload for the tree
-  - Update DEPLOY.md §3 "To 1.23.0"
+F. RELEASE GATES
+Do not tag v1.23.0 or describe the milestone as released until:
+- ADR-043 has been accepted through the City's decision process.
+- Typecheck and build pass on the implementation branch.
+- SQL role/security tests, unit tests and relevant integration/e2e tests pass.
+- Migration and seed reconciliation is verified in the intended environment.
+- CDRRMO accepts the workspace for its intended workshop use.
+- DEPLOY.md, README, system design and ADR index are updated.
+- A Git-based pull request is reviewed and merged; release tag and notes are created only after approval.
 
---------------------------------------------------------------------
-6. Explicit non-goals for this slice
---------------------------------------------------------------------
-  - No conversation parent_kind extension yet (review_item / outstanding_decision / workshop_session)
-  - No assignment queues, due dates or reminders (WP6)
-  - No document lifecycle dimensions beyond review/validation status (Slice 2)
-  - No hard-coded 85-barangay final denominator (OD-08 still pending)
-  - Stakeholder matrix is proposed roles only — does not grant app roles
+G. ROLLBACK / RECOVERY
+- Do not manually delete governance rows to reverse a seed.
+- Seed rows are keyed by stable source IDs and are non-destructive on conflict.
+- If the migration fails before commit, resolve the cause and rerun under the migration runner.
+- If a migration has been applied, do not edit it; issue a forward corrective migration.
+- Preserve database backups and migration logs according to the City's approved operational policy.
 
-DELETE.txt
-  (none — additive only)
+END OF HANDOVER
