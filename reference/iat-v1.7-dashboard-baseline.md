@@ -84,3 +84,7 @@ The workbook notes that Part C is scored using the same rubric but reported sepa
 3. The workbook's 125 scored indicators are A+B; Part C is separately scored. Confirm exact NA and blank handling against the detailed indicator sheets before reproducing coverage cards.
 4. These values describe the workbook snapshot, not a live assessment cycle. MODE must query the selected current cycle and display its own source date/version.
 5. Do not hard-code these values in production UI, seed them as new assessment records, or present them as current without verifying the selected assessment cycle and evidence validation state.
+
+## Reconciliation (18 November 2026)
+
+Recomputed from the indicator sheets (A_CDRRMO, B_EOC, C_Interface) of the repository copy `reference/Ormoc_CDRRMO-EOC_Institutional_Assessment_Tool_v1-7.xlsx`. All values above match, including the 79 Mandatory / 46 Good Practice split, 26 of 79 Mandatory indicators rated 3 or 4, and all 22 domain rows. That copy has no cached values on its Dashboard sheet, so recompute from the indicator sheets when building a test fixture.
