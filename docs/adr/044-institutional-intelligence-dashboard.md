@@ -148,3 +148,17 @@ Costs:
 ## Addendum (18 November 2026): two controlled sources
 
 The dashboard draws on two sources, not one: **IAT v1-7** (maturity and gaps) and the **Validation Tracker V-2** (review items, outstanding decisions, workshop sessions, stakeholders; ADR-043). They are shown in separate panels and are never merged into one score. Tracker status never changes an IAT figure. The two connect by Manual chapter, because only 2 of 69 review items name an indicator ID. See `docs/implementation/dashboard-dual-source-addendum.md` for the rules, the chapter bridge, the baselines and the added release gates, and `reference/validation-tracker-v2-dashboard-baseline.md` for the tracker fixture.
+
+## Amendment (18 November 2026): the Dashboard is in the Today page
+
+**Decision by the lead assessor.** The Dashboard is part of `TodayPage` (`/today`, `src/features/home/TodayPage.tsx`), not a separate `/dashboard` route. The public page at `/` is the platform's landing page and is not changed by this ADR.
+
+This replaces the first Decision paragraph ("a dedicated `/dashboard`, while retaining `/today` as the daily action page"), the route list in the role section, and acceptance criteria 1 and 2. Everywhere the handover documents (`docs/implementation/`) say `/dashboard`, read "the Dashboard in `/today`". Nothing else in this ADR changes: the two controlled sources, Part C kept apart from the IMI, no synthetic trends, RLS-respecting aggregates, offline freshness, decision support only.
+
+Consequences to design for when the work starts:
+
+- **One page, two jobs.** `/today` keeps the daily priorities and assigned work and gains the institutional intelligence views. Lead with what needs action; put the analytics in clearly headed sections or tabs so the daily view stays quick on a phone.
+- **Role-aware sections.** Each role sees only the sections its permissions allow (CDRRMO Head, assessment team, EOC staff, unit heads, administrators). Hide a section when the role cannot read its data; do not show an empty or zero panel.
+- **Existing Today content is reviewed first.** The handover's review notes record that the Today "readiness" panel turns a missing index into 0, labels an `answered` delta as "mandatory items met", and uses made-up sparkline sequences. These are fixed or removed before analytics are added, so no figure on the page is invented.
+- **Code size.** The Dashboard views load lazily, so the first load of `/today` does not grow.
+- **Acceptance (replaces 1 and 2).** `/today` is authenticated and role-aware; its daily-action content remains available and is not displaced by the analytics.
