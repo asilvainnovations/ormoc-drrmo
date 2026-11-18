@@ -334,6 +334,17 @@
     font-weight: 600;
   }
 
+
+  /* Sidebar mirrors the app menu: same order, icons, light-blue selection and orange active mark */
+  .open-mode { display:flex; align-items:center; justify-content:center; gap:8px; min-height:44px; margin:0 0 6px; padding:10px 14px; border-radius: var(--radius-control); background: var(--action); color: var(--on-action); font-family: var(--font-display); font-weight:700; font-size:14px; text-decoration:none; }
+  .open-mode:hover { filter: brightness(1.12); }
+  .open-mode:focus-visible, .nav a:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+  .nav a.screen { display:flex; align-items:center; gap:10px; }
+  .nav a.screen .ico { width:18px; height:18px; flex:none; color: var(--sky); }
+  .nav a.screen.active .ico { color: var(--accent); }
+  .nav a.screen .part-num { margin-left:auto; min-width:0; font-size:11px; }
+  .nav a.sub { margin-left:28px; font-size:13px; min-height:32px; }
+
   /* Main */
   main { min-width: 0; }
 
@@ -630,7 +641,7 @@
     <a href="https://www.mode-cddrmo-ormoc.online/settings/sync" target="_blank" rel="noopener" title="Opens Sync and offline data in Settings.">Synced just now</a>
   </span>
   <span style="margin-left:auto; font-family: var(--font-data); color: var(--muted);">
-    MODE v1.22.0 · 17 Nov 2026
+    MODE v1.25.0 · 18 Nov 2026
   </span>
 </div>
 
@@ -650,25 +661,33 @@
       </div>
     </div>
 
-    <div class="nav-title">Start</div>
-    <nav class="nav" aria-label="Table of contents">
-      <a href="#start" class="active"><span class="part-num">—</span>Start here</a>
-    </nav>
+    <a class="open-mode" href="https://www.mode-cddrmo-ormoc.online/today" target="_blank" rel="noopener" title="Open MODE in a new tab">Open MODE</a>
 
-    <div class="nav-title">Guide</div>
-    <nav class="nav">
+    <div class="nav-title">Start</div>
+    <nav class="nav" aria-label="Start">
+      <a href="#start" class="active"><span class="part-num">—</span>Start here</a>
       <a href="#p1"><span class="part-num">1</span>Get in</a>
       <a href="#p2"><span class="part-num">2</span>Find your way around</a>
       <a href="#p3"><span class="part-num">3</span>“I want to…”</a>
-      <a href="#p4"><span class="part-num">4</span>Today</a>
-      <a href="#p5"><span class="part-num">5</span>EOC</a>
-      <a href="#p6"><span class="part-num">6</span>Protocols</a>
-      <a href="#p7"><span class="part-num">7</span>Assess</a>
-      <a href="#p8"><span class="part-num">8</span>Library</a>
-      <a href="#p9"><span class="part-num">9</span>Vault</a>
-      <a href="#p10"><span class="part-num">10</span>Tools</a>
+    </nav>
+
+    <div class="nav-title">Screens, in menu order</div>
+    <nav class="nav" aria-label="Screens in the MODE menu">
+      <a href="#p4" class="screen"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg><span>Today</span><span class="part-num">4</span></a>
+      <a href="#p7" class="screen"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="m9 14 2 2 4-4"/></svg><span>Assess</span><span class="part-num">7</span></a>
+      <a href="#p7-hazard" class="sub"><span class="part-num">↳</span>Hazard maps</a>
+      <a href="#p6" class="screen"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 17 2 2 4-4"/><path d="m3 7 2 2 4-4"/><path d="M13 6h8"/><path d="M13 12h8"/><path d="M13 18h8"/></svg><span>Protocols</span><span class="part-num">6</span></a>
+      <a href="#p5" class="screen"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.9 16.1C1 12.2 1 5.8 4.9 1.9"/><path d="M7.8 4.7a6.14 6.14 0 0 0-.8 7.5"/><circle cx="12" cy="9" r="2"/><path d="M16.2 4.8c2 2 2.26 5.11.8 7.47"/><path d="M19.1 1.9a9.96 9.96 0 0 1 0 14.1"/><path d="M9.5 18h5"/><path d="m8 22 4-11 4 11"/></svg><span>EOC</span><span class="part-num">5</span></a>
+      <a href="#p8" class="screen"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></svg><span>Library</span><span class="part-num">8</span></a>
+      <a href="#p9" class="screen"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="8" height="5" x="14" y="17" rx="1"/><path d="M10 20H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h3.9a2 2 0 0 1 1.69.9l.81 1.2a2 2 0 0 0 1.67.9H20a2 2 0 0 1 2 2v2.5"/><path d="M20 17v-2a2 2 0 1 0-4 0v2"/></svg><span>Vault</span><span class="part-num">9</span></a>
+      <a href="#p10" class="screen"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg><span>Tools</span><span class="part-num">10</span></a>
+      <a href="#p7-validation" class="screen"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/></svg><span>Validation</span><span class="part-num">7.6</span></a>
+      <a href="#p12" class="screen"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg><span>Settings</span><span class="part-num">12</span></a>
+    </nav>
+
+    <div class="nav-title">More</div>
+    <nav class="nav" aria-label="More parts">
       <a href="#p11"><span class="part-num">11</span>RACI &amp; Capability</a>
-      <a href="#p12"><span class="part-num">12</span>Settings</a>
       <a href="#p13"><span class="part-num">13</span>Offline &amp; sync</a>
       <a href="#p14"><span class="part-num">14</span>Who can do what</a>
       <a href="#p15"><span class="part-num">15</span>Walk-throughs</a>
@@ -709,7 +728,7 @@
     <header class="page-header">
       <div>
         <h1>MODE User Guide</h1>
-        <div class="subtitle">For CDRRMO and EOC staff of the City of Ormoc · Plain-language guide · MODE v1.22.0 · 17 Nov 2026</div>
+        <div class="subtitle">For CDRRMO and EOC staff of the City of Ormoc · Plain-language guide · MODE v1.25.0 · 18 Nov 2026</div>
       </div>
       <label class="search" title="Search screens, manual sections, procedures and forms. Works offline.">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
@@ -824,11 +843,13 @@
         <tbody>
           <tr><td><a href="https://www.mode-cddrmo-ormoc.online/today" target="_blank" rel="noopener"><strong>Today</strong></a></td><td>Your daily start page: hazard links, quick buttons, what changed</td><td>4</td></tr>
           <tr><td><a href="https://www.mode-cddrmo-ormoc.online/assess" target="_blank" rel="noopener"><strong>Assess</strong></a></td><td>Score our readiness (the IAT) and view <strong>Hazard maps</strong></td><td>7</td></tr>
+          <tr><td>&nbsp;&nbsp;↳ <a href="https://www.mode-cddrmo-ormoc.online/assess/hazard-maps" target="_blank" rel="noopener"><strong>Hazard maps</strong></a></td><td>Official hazard sheets over the 85 barangays, with a ten-click route to barangay-level assessment</td><td>7.5</td></tr>
           <tr><td><a href="https://www.mode-cddrmo-ormoc.online/drrm/protocols" target="_blank" rel="noopener"><strong>Protocols</strong></a></td><td>Step-by-step procedures to run live or as drills</td><td>6</td></tr>
           <tr><td><a href="https://www.mode-cddrmo-ormoc.online/eoc" target="_blank" rel="noopener"><strong>EOC</strong></a></td><td>Alert level, logbook, SitReps, barangay reports, requests, anticipatory action</td><td>5</td></tr>
           <tr><td><a href="https://www.mode-cddrmo-ormoc.online/library" target="_blank" rel="noopener"><strong>Library</strong></a></td><td>The Manual of Operations, chapter by chapter</td><td>8</td></tr>
           <tr><td><a href="https://www.mode-cddrmo-ormoc.online/vault" target="_blank" rel="noopener"><strong>Vault</strong></a></td><td>Laws, plans, City issuances and records</td><td>9</td></tr>
           <tr><td><a href="https://www.mode-cddrmo-ormoc.online/tools" target="_blank" rel="noopener"><strong>Tools</strong></a></td><td>ECHO, flood intelligence, ICS exercises, continuity plan, Gawad KALASAG, outside hazard websites</td><td>10</td></tr>
+          <tr><td><a href="https://www.mode-cddrmo-ormoc.online/governance" target="_blank" rel="noopener"><strong>Validation</strong></a></td><td>Review register, outstanding decisions, the validation workshop and stakeholders</td><td>7.6</td></tr>
           <tr><td><strong>Appearance</strong></td><td>Light or dark screen</td><td>12</td></tr>
           <tr><td><a href="https://www.mode-cddrmo-ormoc.online/settings" target="_blank" rel="noopener"><strong>Settings</strong></a></td><td>Sync, language, accounts, privacy, sign out</td><td>12</td></tr>
         </tbody>
@@ -1129,9 +1150,29 @@
         <li>A validator confirms it. If the validator changes the score, a <strong>Reason for the change</strong> is required.</li>
       </ol>
 
-      <h3>7.5 Hazard maps</h3>
+      <h3 id="p7-hazard">7.5 Hazard maps</h3>
       <p>Official hazard sheets drawn over the barangays. Use the buttons above the map: <strong>Identify</strong>, <strong>Distance</strong>, <strong>Area</strong>, <strong>My location</strong>, <strong>Clear</strong>, <strong>Export PNG</strong>, <strong>Full screen</strong>, <strong>+/−</strong>.</p>
       <p>The sheets are <em>reference pictures</em>: they do not forecast and do not trigger anything.</p>
+
+      <h4>Barangay-level hazard assessment in ten clicks</h4>
+      <p>The official barangay figures come from <a href="https://geoanalytics.georisk.gov.ph/" target="_blank" rel="noopener"><strong>GeoAnalyticsPH</strong></a> (DOST-PHIVOLCS GeoRiskPH). It opens in its own tab, not inside MODE. No sign-in is needed.</p>
+      <ol class="steps">
+        <li>On <strong>Hazard maps</strong>, press <strong>Continue in GeoAnalyticsPH</strong>.</li>
+        <li><strong>Location:</strong> choose <strong>Region VIII (Eastern Visayas)</strong>.</li>
+        <li>Choose the province, <strong>Leyte</strong>.</li>
+        <li>Choose the municipality, <strong>Ormoc City</strong>.</li>
+        <li>Choose the <strong>barangay</strong>. The old numbered Poblacion barangays still appear there, for example <em>Barangay 10 (Pob.)</em>.</li>
+        <li><strong>Hazard:</strong> choose <strong>Flood</strong>.</li>
+        <li><strong>Exposure:</strong> choose <strong>Demography</strong>, then <strong>Population</strong>. To see schools, health facilities and other institutions, run it again with <strong>Institutional</strong>.</li>
+        <li>Press <strong>Submit</strong> and wait about 20 seconds, until it says the data has loaded.</li>
+        <li>Read <strong>Total Population Prone to Flood</strong> (for example <em>842 out of 977</em>) and the age and sex chart.</li>
+        <li>Download the charts as <strong>PNG</strong> and the table as <strong>Excel</strong>, and send them to the CDRRMO to file as that barangay’s assessment.</li>
+      </ol>
+      <div class="notice tip"><div class="icon" aria-hidden="true">?</div><div><strong>Tip</strong>The first load is slow. A barangay with no report yet shows <em>Not assessed</em> in MODE, never <em>Low</em>. The report is modelled data (DENR-MGB 2018) and still needs field validation.</div></div>
+
+      <h3 id="p7-validation">7.6 Validation</h3>
+      <p><strong>Where:</strong> <a href="https://www.mode-cddrmo-ormoc.online/governance" target="_blank" rel="noopener"><strong>Validation</strong></a> in the side menu (computer only; on a phone open it from the address bar). Five tabs: <strong>Overview</strong>, <strong>Register</strong> (items to review), <strong>Decisions</strong> (one accountable owner each), <strong>Workshop</strong> and <strong>Stakeholders</strong>.</p>
+      <p>Use it to see what the validation workshop of 1–4 December 2026 still has to settle. Drafts stay drafts until the owning office validates them and the CDRRMO Head approves them.</p>
     </section>
 
     <!-- ============== PART 8 ============== -->
@@ -1216,7 +1257,8 @@
 
       <h3>10.2 Flood intelligence</h3>
       <p><strong>Where:</strong> <a href="https://www.mode-cddrmo-ormoc.online/tools/flood-intelligence" target="_blank" rel="noopener"><strong>Tools → Flood intelligence</strong></a>.</p>
-      <p>Shows each barangay’s flood exposure, the City hazard maps and official warning sources. It is <strong>static assessment data, not a live forecast</strong>.</p>
+      <p>A map of the barangays by flood class, a <strong>watch list</strong> ordered by class and people exposed, and a screen to compare flood measures from figures you type in. It is <strong>static assessment data, not a live forecast</strong>.</p>
+      <p>So far <strong>24 of the 85 barangays</strong> have a GeoAnalyticsPH flood report in MODE. The others show <em>Not assessed</em>, which is not the same as low. To add one, follow the ten clicks in 7.5 and send the Excel table to the CDRRMO. The four Poblacion barangays (South, East, West, North) are added up from their old numbered districts and marked partial until every district has a report.</p>
 
       <h3>10.3 ICS Exercise Simulator</h3>
       <p><strong>Where:</strong> <a href="https://www.mode-cddrmo-ormoc.online/tools/ics" target="_blank" rel="noopener"><strong>Tools → ICS Exercise Simulator</strong></a>.</p>
@@ -1262,7 +1304,7 @@
         <tbody>
           <tr><td><strong>Your account</strong></td><td>Your name, position and roles</td><td>everyone</td></tr>
           <tr><td><strong>Appearance</strong></td><td>Light or dark screen</td><td>everyone</td></tr>
-          <tr><td><strong>Language</strong></td><td>English or Sinugboanon (Bisaya). This changes the menus and dashboard only</td><td>everyone</td></tr>
+          <tr><td><strong>Language</strong></td><td>English, Ormocanon (Bisaya) or Filipino (Tagalog). This changes the menus and dashboard only; the Manual stays in English</td><td>everyone</td></tr>
           <tr><td><strong>Sync and offline data</strong></td><td>What is waiting to send, and anything the server refused (Part 13)</td><td>everyone (<a href="https://www.mode-cddrmo-ormoc.online/settings/sync" target="_blank" rel="noopener">/settings/sync</a>)</td></tr>
           <tr><td><strong>Users and roles</strong></td><td>Approve new accounts and grant roles</td><td>system administrator</td></tr>
           <tr><td><strong>Barangay list</strong></td><td>Load the barangays with their PSGC codes</td><td>system administrator</td></tr>
@@ -1433,7 +1475,7 @@
     </section>
 
     <footer>
-      Prepared 17 Nov 2026 from MODE version 1.22.0 · City of Ormoc · CDRRMO · <em>Prepare Before · Respond Together · Recover Stronger · Build Safer Communities</em>
+      Prepared 18 Nov 2026 from MODE version 1.25.0 · City of Ormoc · CDRRMO · <em>Prepare Before · Respond Together · Recover Stronger · Build Safer Communities</em>
     </footer>
   </main>
 </div>
