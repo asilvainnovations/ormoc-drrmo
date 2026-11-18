@@ -39,3 +39,14 @@ Authority action UI (close / decide sheets calling `callOnline`) is intentionall
 3. Map workshop sessions to review items / decisions (link tables).  
 4. SQL role tests and e2e journey.  
 5. Slice 2 document lifecycle dimensions.
+
+
+## Consolidated handover reconciliation (18 November 2026)
+
+The client-side integration files in this handover are taken from `MODE-1.23.0-build-fix-governance.zip`, because that package already merges the governance types, Dexie schema, sync table registry, route and navigation wiring into the existing application files. Do not separately apply `src/types.governance.ts`, `src/lib/db.governance.delta.ts` or `src/lib/tables.governance.delta.ts` from the original Slice 1 zip; those are superseded integration deltas.
+
+The migration's review-item and outstanding-decision UPDATE RLS policies have been tightened to the same role set described by the migration comments: `admin`, `cdrrmo_head`, `assessor`, `validator`, and `author`. The database trigger remains the authority gate for formal closure/decision transitions.
+
+The `scripts/load_reference_data.sh` replacement is included from the CI-fix handover. It verifies both `eoc_assessment_items` from part 38a and `eoc_cap_items` from part 38.
+
+ADR-043 remains **Proposed**. The migration and seed are a development handover, not authorization to apply them to production. The supplied handover does not include SQL role-matrix tests, client unit tests, or end-to-end tests; those remain release blockers.
