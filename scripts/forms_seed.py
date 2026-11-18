@@ -186,6 +186,17 @@ FORMS = [
         f('verification', 'Verification status shown on the map', 'select', True, LOC_STATUS),
         f('audience', 'Released to', 'multiselect', True, ['EOC', 'Executive', 'Partners', 'Public']),
         f('release_approved', 'Release approved by the EOC Manager or authorized information officer', 'checkbox', True)]),
+    ('EOC-PUBDISP-01', 'Public display post log', 'One line per post on the City public display at the main public market and PUV terminal (operated by the EOC; the CDRRMO approves). Proof of use for IAT A6.3.', 'MOO Ch.4', [
+        f('title', 'Message title', 'text', True),
+        f('source', 'Source', 'select', True, ['PAGASA', 'PHIVOLCS', 'MGB', 'NDRRMC / OCD', 'City Government / CDRRMO', 'Other']),
+        f('source_issued_at', 'Time the source was issued', 'datetime', True),
+        f('approved_by', 'Approved by (position)', 'text', True, hint='A position, not a person. The CDRRMO approves every post.'),
+        f('approved', 'Approved before posting', 'checkbox', True),
+        f('posted_at', 'Time posted', 'datetime', True),
+        f('display_status', 'Screen status after posting', 'select', True, ['Displayed correctly', 'Fault noted', 'Screen out of service']),
+        f('taken_down_at', 'Time taken down', 'datetime', hint='Leave blank while it is still up.'),
+        f('fallback', 'Other channels used if the screen was out', 'multiselect', options=['Barangay VHF radio', 'Public address', 'SMS / cell broadcast', 'Social media', 'Barangay officials']),
+        f('evidence_ref', 'Photo or file reference', 'text', hint='Photo of the screen, filed in the Vault or the EOC log. Unverified reports are not posted.')]),
 ]
 
 # Specific forms on existing protocol steps (code, seq) -> form. Every other step gets STEP-RECORD.

@@ -12660,6 +12660,16 @@
    "rev": 1
   },
   {
+   "id": "bb9441e3-a497-559b-8a3a-a0e86f356dca",
+   "code": "EOC-PUBDISP-01",
+   "title": "Public display post log",
+   "purpose": "One line per post on the City public display at the main public market and PUV terminal (operated by the EOC; the CDRRMO approves). Proof of use for IAT A6.3.",
+   "document_id": "eafa0947-d859-57e8-b93e-affd8500f0a5",
+   "schema": "{\"fields\": [{\"key\": \"title\", \"label\": \"Message title\", \"type\": \"text\", \"required\": true}, {\"key\": \"source\", \"label\": \"Source\", \"type\": \"select\", \"required\": true, \"options\": [\"PAGASA\", \"PHIVOLCS\", \"MGB\", \"NDRRMC / OCD\", \"City Government / CDRRMO\", \"Other\"]}, {\"key\": \"source_issued_at\", \"label\": \"Time the source was issued\", \"type\": \"datetime\", \"required\": true}, {\"key\": \"approved_by\", \"label\": \"Approved by (position)\", \"type\": \"text\", \"required\": true, \"hint\": \"A position, not a person. The CDRRMO approves every post.\"}, {\"key\": \"approved\", \"label\": \"Approved before posting\", \"type\": \"checkbox\", \"required\": true}, {\"key\": \"posted_at\", \"label\": \"Time posted\", \"type\": \"datetime\", \"required\": true}, {\"key\": \"display_status\", \"label\": \"Screen status after posting\", \"type\": \"select\", \"required\": true, \"options\": [\"Displayed correctly\", \"Fault noted\", \"Screen out of service\"]}, {\"key\": \"taken_down_at\", \"label\": \"Time taken down\", \"type\": \"datetime\", \"required\": false, \"hint\": \"Leave blank while it is still up.\"}, {\"key\": \"fallback\", \"label\": \"Other channels used if the screen was out\", \"type\": \"multiselect\", \"required\": false, \"options\": [\"Barangay VHF radio\", \"Public address\", \"SMS / cell broadcast\", \"Social media\", \"Barangay officials\"]}, {\"key\": \"evidence_ref\", \"label\": \"Photo or file reference\", \"type\": \"text\", \"required\": false, \"hint\": \"Photo of the screen, filed in the Vault or the EOC log. Unverified reports are not posted.\"}]}",
+   "status": "draft",
+   "rev": 1
+  },
+  {
    "id": "e2242936-9e5c-5da2-8259-255c7dfe5e30",
    "code": "F3-01",
    "title": "Risk information and map request",
