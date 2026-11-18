@@ -1,45 +1,106 @@
-# MODE 1.23.0 — Public Website and PWA Experience Handover
+# MODE: Ormoc City DRRMO & EOC Manual of Operations Development Platform
 
-**Status:** Design and content handover for implementation review  
-**Prepared:** 18 November 2026  
-**Repository:** `asilvainnovations/ormoc-drrmo`  
-**Target branch (proposed):** `feature/mode-1.23.0-public-experience`
+**MODE** stands for *Manual of Operations for the DRRMO and EOC*.
 
-## Purpose
+A mobile-first, offline-capable web app (PWA) for the City Disaster Risk Reduction and Management Office (CDRRMO) and the Emergency Operations Center (EOC) of the City Government of Ormoc. It supports the single Manual of Operations for the CDRRMO and the EOC (five Parts, ten functional areas; ADR-012). The platform has five modules:
 
-Refine the existing public-facing MODE experience so it clearly communicates the platform's institutional purpose, its relationship to the approved CDRRMO and EOC Manuals, the City's resilience direction, and the boundaries of digital decision support. Improve navigation, accessibility, mobile/PWA usability and public information architecture without disturbing the authenticated `/today` workspace.
+- **Assessment.** Runs the Institutional Assessment Tool v1.7 (140 indicators; workbook file v1-7). Scoring is gated by evidence, results are shown by domain and maturity, and gaps feed a prioritised action plan. The assessment team records whether each indicator's evidence was checked against its source (the workbook v1-6 Evidence Validation Status); the check never changes the score.
+- **Library.** Holds the Manual of Operations by Part and functional area: area outlines, drafted chapters and their annexes, SOPs and forms, with version control and approval by the CDRRMO Head. Old chapter codes (MOO Ch.4, EOC Ch.2) still find their new home. Each section traces to the indicators and master requirements MR-01 to MR-18, and to the UNDRR Scorecard and RA 12287 IRR crosswalk.
+- **DRRM: workflows, protocols and forms** (`/drrm`). Turns the Manual's SOPs into steps the CDRRMO can run, live or as drills, with an audit trail. Every step closes on a form. An **SOP** is the controlled Manual text. A **protocol** is a point-of-action checklist for an event or duty shift. A **workflow** is a multi-office management cycle. Every template names its controlling SOP, process owner, policy basis and IAT indicators (ADR-019). 54 templates are drafted for validation: 18 protocols and 36 workflows, including the nine Chapter 3 risk-information and planning workflows, the nine Chapter 4 SOPs (early warning, activation, incident coordination, evacuation, resources, SitReps, deactivation), the twelve Chapter 6 financing SOPs (templates `WF-SOP6-xx`; renumbered from the working Chapter 5, ADR-032) and the proposed Chapter 5/7/8 recovery, M&E and stakeholder templates.
+- **EOC.** Covers the White / Blue / Red alert level, an append-only logbook, SitReps, barangay status (counts only), resource requests, and the EOC's location with map links and a KML placemark.
+- **Anticipatory action (RA 12287 and IRR).** Records the PDRA and the declaration timeline with its legal deadlines. It holds a 29-item MODE checklist derived from the ten sections of IRR Rule IV (the IRR itself sets no count) and enforces the fund cap (no more than 10% of the 70% LDRRMF), the three-day minimum lead time (extendable to five days, RA 12287 Sec. 6(b)), the 30% / 70% graduation beyond and within a lead time of three (3) days for hydrometeorological and geological hazards (IRR Rule V Sec. 2), and automatic lifting when the hazard occurs (RA 12287 Sec. 7).
 
-This is a **handover specification and copy package**, not an implemented code change. It has not been committed, pushed, deployed, or tested against a live environment.
+- **Tools.** Readiness tools and hazard information in one place:
+  - an ICS exercise simulator (individual drills, facilitated tabletops and position drills on six Ormoc scenarios, scored against Philippine ICS doctrine, with a printable after-action review);
+  - a Public Service Continuity Plan workbench (essential functions and business impact analysis, risks, alternate sites, succession, vital records, activation, printable plan);
+  - a Gawad KALASAG Seal readiness self-check (six criteria rated 0 to 3, weighted mean and rating, suggestions from the IAT);
+  - links to HazardHunterPH, GeoAnalyticsPH, Zoom Earth (centered on Ormoc) and DDRiVE-M.
 
-## Source files reviewed
+- **Document Vault.** One register of the laws, guidelines, City issuances, plans and records gathered for Document Review. Each document is linked to the indicators it evidences. The vault includes a Document Review checklist and a catalogue of the cited references, each explained in plain language. It is open to assessors, validators, administrators and CDRRMO staff.
+- **RACI board** (`/raci`). The Manual's RACI matrices — Annex 1-F plus the chapter matrices of Chapters 1-10 — as an interactive, searchable board: every activity shows who is Responsible (navy), Accountable (dark green), Consulted (gold) and Informed (white), linked to the protocol or workflow that carries it out and to the manual review cycle. Activities without exactly one Accountable are flagged for the CDRRMO. The CDRRMO Head adjusts assignments online; everyone reads the board offline (ADR-033).
+- **EOC capability assessment** (`/eoc-assessment`). The 154-item EOC Capability Assessment Checklist (OCD/NDRRMC TWG, Dec 2017) in 15 sections, answered from the IAT v1-7 B_EOC evidence: each item takes its status from the weakest mapped indicator score (Met green, Partially met amber, Largely unmet orange, Not met red, No direct IAT indicator grey), with the evidence, gap and recommended action verbatim and links to the SOP, protocol, workflow or form that closes each gap. The assessment team edits responses online; the CDRRMO Head validates and locks each run. DDRiVE stays the risk-intelligence source — the board links out and never re-scores (ADR-035).
+- **"Where this is done in MODE"** (Assess indicator pages and capability board). Every B_EOC indicator links to the screen, Tool, protocol or workflow where its Recommended Action is done, and the workbook's workshop flags (B2.6/B3.1 score-vs-evidence checks; the B1.2/B2.1–B2.4 Vault documents) appear exactly where the evidence lives — content only, never a score (ADR-036). After an ICS or ECHO exercise the assessment team saves the run record and files it as IAT evidence for B7.2–B7.4 and B2.7 — positions and counts only, never names (ADR-037).
+- **Resource inventory** (`/eoc/resources`). What the EOC has, where it is and whether it is serviceable, with a detail sheet and online edits by the operations team as the table's RLS already allows (ADR-039).
+- **SitReps with the DILG VIII template** (`/eoc/sitreps`). The harmonized report types and fields, reporting times by alert level (Head-editable), a "late" flag on the barangay status view, and an Excel export in the DILG VIII layout — the SitRep stays numbered on submission and locked when approved (ADR-038). The Barangay liaison desk ranks silent barangays by DDRiVE priority and the Board shows the five priority barangays with their reporting state — decision support, never a trigger (ADR-039).
 
-The current repository snapshot was inspected through the supplied source files:
+Public pages (`/`, About, FAQ, Support and the privacy, terms, accessibility and cookie policies) open without an account; the workspace starts at `/today` (ADR-020). Every button, tab, card, link and field has a tooltip. Ctrl+K (⌘K) searches screens, manual sections, procedures and forms, offline too; the appearance follows the device or a chosen Light or Dark theme. The interface uses the in-house primitives and a Radix/shadcn component kit mapped to the City tokens (ADR-023; Settings → Interface components shows each one live). Every cited law or guideline (for example "RA 10121 Sec. 21") opens a short note when tapped.
 
-- `src/features/public/PublicPages.tsx` — public Home, About, FAQ, Support and policy pages.
-- `src/components/AppShell.tsx` — authenticated workspace shell, status band, command palette and mobile tab navigation.
-- `src/lib/i18n.tsx` — current English/Cebuano app translation dictionary and local persistence.
-- `020-public-site-and-today-route.md` — accepted ADR-020 defining public routes and `/today` workspace route.
-- `public-pages-accessibility-pwa.md` — existing accessibility/PWA integration notes and publication blockers.
+It works with no signal. Entries are saved on the device and sent when a connection returns.
 
-The handover deliberately preserves ADR-020's public routes and separation between public pages and authenticated workspace.
+## Accounts
 
-## Package contents
+Anyone can create an account with an email address and a password. The account sees nothing until a system administrator approves it by granting a role (Settings → Users and roles). Invited staff, sign-in links by email and password reset all work too. See [ADR-009](docs/adr/009-open-signup-and-live-data.md).
 
-1. `01-public-web-copy.md` — replacement editorial copy for Home, About, FAQ and Support.
-2. `02-implementation-spec.md` — source-aware UX, navigation, language, search, branding and PWA implementation requirements.
-3. `03-decisions-and-conflicts.md` — existing architecture to preserve, conflicts to reconcile and claims requiring validation.
-4. `04-acceptance-and-qa.md` — functional, accessibility, SEO, security, offline and content acceptance criteria.
-5. `05-implementation-plan.md` — recommended sequence, dependencies and release gates.
+Other City systems can offer **Sign in with MODE**: the platform is the consent screen for the project's OAuth 2.1 / OpenID Connect server (`/oauth/consent`). People see and withdraw the apps they allowed under Settings → Connected apps. Tokens issued to other apps are read-only in the database. See [ADR-010](docs/adr/010-oauth-provider-read-only-clients.md) and DEPLOY.md section 2a.
 
-## Non-negotiable institutional safeguards
+## Run it
 
-- The approved Manual of Operations and EOC Manual remain the authoritative documents. MODE is their digital operational companion, not a substitute.
-- MODE must not be represented as an official warning source, evacuation-order issuer, declaration authority, field command system or automatic legal/financial decision-maker.
-- EOC coordination does not displace the Incident Commander, IMT or established ICS command relationships.
-- Public pages must not expose authenticated records, restricted metadata, private document titles or role-restricted search results.
-- Do not publish privacy, security, accessibility-conformance, hosting, retention or legal-approval claims unless they are verified against the deployed system and approved by the accountable City offices.
-- No unverified quotation, endorsement or implied Mayor approval of MODE is to be published.
+The app always works against a Supabase project; there is no demo mode. Copy `.env.example` to `.env` and fill in `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY` (or `VITE_SUPABASE_ANON_KEY` on older projects), then:
 
-## How to use this package
+```bash
+npm ci
+npm run dev        # http://localhost:5173
+```
 
-Review the copy with CDRRMO leadership and designated City communications/legal/privacy reviewers. Confirm the source facts and publication blockers in `03-decisions-and-conflicts.md`. Implement in a dedicated branch, preserving `main`, then run the acceptance gates in `04-acceptance-and-qa.md` before proposing a pull request.
+For training and validation workshops, use a separate training Supabase project with test accounts, never the production one. A production build without valid settings stops with a message. See [DEPLOY.md](DEPLOY.md) for creating the City-owned project, applying the database, opening sign-up and publishing the app.
+
+## Project layout
+
+```
+src/
+  components/     shared UI primitives, app shell, sheet, toast
+  domain/         rules mirrored from SQL: scoring, anticipatory action, EOC, protocols
+  features/       screens per module (public, iat, library, protocols = DRRM module, eoc, eoc/aa, vault, tools, settings, home)
+  lib/            local database, outbox store, sync engine, auth, time (Asia/Manila), ids
+  styles/         design tokens and base CSS
+supabase/
+  migrations/     schema, RLS, triggers, RPCs, views (apply in order)
+  seed/seed.sql   reference data generated from the IAT v1.1 and Traceability v1.1 workbooks (for psql)
+  seed/parts/     the same data in parts small enough for the Supabase SQL editor
+  seed/operational/ one-time working records: the October 2026 IAT baseline and the Vault register
+  tests/          SQL rule and security suite (plus a local-only Supabase stub)
+scripts/          seed generator, test runners
+reference/        the source workbooks; reference/moo/ holds manual drafts loaded into the Library
+tests/integration supabase-js → PostgREST → Postgres tests
+e2e/              Playwright journeys, accessibility (axe) and offline tests
+docs/             system design, design system, architecture decision records
+```
+
+## Scripts
+
+| Command | What it does |
+|---|---|
+| `npm run dev` | Local development server |
+| `npm run build` | Typecheck and production build to `dist/` |
+| `npm run preview` | Serve the build on port 4173 |
+| `npm test` | Unit tests, including the scoring parity test against SQL |
+| `npm run test:db` | Rebuild a local Postgres database from the migrations and run the 301 rule and security checks. Needs `PGHOST`, `PGPORT` and `PGUSER` for a local superuser |
+| `npm run test:it` | Integration tests through real PostgREST. Needs the same plus `POSTGREST_BIN` (PostgREST 12) |
+| `npm run test:e2e` | Playwright on phone and desktop sizes against the production build, PostgREST and a fresh local database with every migration: sign-up and approval, journeys, axe and offline checks. Needs the same as `test:it` |
+| `python3 scripts/brand_assets.py` | Rebuild the circular seals, banner copies and app icons from the originals in `public/` |
+| `npm run seed:generate` | Regenerate `supabase/seed/seed.sql`, `supabase/seed/parts/` and `src/data/reference.json` from `reference/*.xlsx` and the manual drafts in `reference/moo/` |
+| `python3 scripts/split_manual_docx.py <chapter.docx> --slug chN --prefix MOO_ChN` | Turn a drafted chapter into Library sources in `reference/moo/` and compressed figures in `public/library/<folder>/`. Current folders: `ch1`, `ch1v12` (Chapter 1), `chp2`, `ch2v12` (Chapter 2 drafts and v1.2), `ch3v10` (Chapter 3), `chp4v10`, `chp4v11` (Chapter 4), `chp5v10` (Chapter 5 Recovery), `chp6v11` (Chapter 6 Financing v1.1), `chp7v10` (Chapter 7 M&E), `chp8v10` (Chapter 8 Stakeholder), `introv11` (Introduction v1.1); check that the folder a chapter links to exists. Use a new `--prefix` for each version (the script replaces that prefix's annexes). Then add the chapter to `CHAPTERS` and `LIBRARY_DRAFTS` in `generate_seed.py`, and its SOPs to `scripts/sop_registry.py` |
+| `npm run seed:operational` | Regenerate the one-time `supabase/seed/operational/` files (IAT baseline, Document Vault register) from the IAT workbook |
+| `npm run check` | Typecheck, unit tests and build |
+
+## Changing reference data
+
+When the IAT or the traceability matrix changes:
+
+1. Update the workbook in `reference/`.
+2. Run `npm run seed:generate`.
+3. Run `npm run test:db` and `npm test`. The parity test confirms that the TypeScript and SQL scoring still agree.
+
+Raise `REFERENCE_VERSION` in `src/lib/bootstrap.ts` so devices reload the bundled copy.
+
+## Documents
+
+- [System design](docs/system-design.md): modules, data model, offline sync, security, traceability to MR-01 to MR-18, open items
+- [Design system](docs/design-system.md): tokens, type, primitives, the status band, writing rules
+- [Architecture decision records](docs/adr/README.md)
+- [Deployment and handover](DEPLOY.md)
+- [Security policy and vulnerability reporting](SECURITY.md)
+
+## Ownership
+
+The City Government of Ormoc owns this code and its data. It was prepared under the Manual of Operations for the CDRRMO and EOC engagement by Alvin M. Silva (Cognitio Plus).
