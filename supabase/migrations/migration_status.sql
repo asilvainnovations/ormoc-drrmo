@@ -65,6 +65,13 @@ from (values
   ('20261114003100_indicator_links_training', exists (select 1 from pg_proc
                                                       where proname = 'guard_training_run' and pronamespace = 'app'::regnamespace)),
   ('20261114003200_sitrep_dilg8',             exists (select 1 from pg_class
-                                                      where relname = 'sitrep_cutoffs' and relnamespace = 'public'::regnamespace))
+                                                      where relname = 'sitrep_cutoffs' and relnamespace = 'public'::regnamespace)),
+  -- Added 18 Nov 2026 (CI: "32 of 35 applied"). Two migrations share version 20261114003000; each has its own line.
+  ('20261114003000_eoc_capability',           exists (select 1 from pg_class
+                                                      where relname = 'eoc_cap_items' and relnamespace = 'public'::regnamespace)),
+  ('20261116003300_conversations',            exists (select 1 from pg_proc
+                                                      where proname = 'guard_conversation_thread' and pronamespace = 'app'::regnamespace)),
+  ('20261117003400_manual_governance',        exists (select 1 from pg_proc
+                                                      where proname = 'guard_manual_review_item' and pronamespace = 'app'::regnamespace))
 ) as m(migration, present)
 order by m.migration;
