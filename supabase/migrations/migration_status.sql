@@ -72,6 +72,9 @@ from (values
   ('20261116003300_conversations',            exists (select 1 from pg_proc
                                                       where proname = 'guard_conversation_thread' and pronamespace = 'app'::regnamespace)),
   ('20261117003400_manual_governance',        exists (select 1 from pg_proc
-                                                      where proname = 'guard_manual_review_item' and pronamespace = 'app'::regnamespace))
+                                                      where proname = 'guard_manual_review_item' and pronamespace = 'app'::regnamespace)),
+  ('20261118003500_roster_direct_edit',       exists (select 1 from pg_proc
+                                                      where proname = 'guard_eoc_designation' and pronamespace = 'app'::regnamespace
+                                                        and prosrc like '%roster edits are direct%'))
 ) as m(migration, present)
 order by m.migration;
