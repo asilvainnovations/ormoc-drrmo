@@ -144,3 +144,7 @@ Costs:
 10. Offline views show freshness and never imply live status.
 11. Accessibility, responsive and performance tests pass.
 12. No operational authority is delegated to the dashboard.
+
+## Addendum (18 November 2026): two controlled sources
+
+The dashboard draws on two sources, not one: **IAT v1-7** (maturity and gaps) and the **Validation Tracker V-2** (review items, outstanding decisions, workshop sessions, stakeholders; ADR-043). They are shown in separate panels and are never merged into one score. Tracker status never changes an IAT figure. The two connect by Manual chapter, because only 2 of 69 review items name an indicator ID. See `docs/implementation/dashboard-dual-source-addendum.md` for the rules, the chapter bridge, the baselines and the added release gates, and `reference/validation-tracker-v2-dashboard-baseline.md` for the tracker fixture.
