@@ -1,4 +1,5 @@
 import { Route, Routes } from 'react-router-dom';
+import { OverviewPage } from "./OverviewPage";
 import { ReviewRegisterPage } from './ReviewRegisterPage';
 import { DecisionsPage } from './DecisionsPage';
 import { WorkshopPage } from './WorkshopPage';
@@ -8,7 +9,7 @@ import { StakeholdersPage } from './StakeholdersPage';
 export default function GovernanceRoutes() {
   return (
     <Routes>
-      <Route index element={<ReviewRegisterPage />} />
+      <Route index element={<OverviewPage />} />
       <Route path="reviews" element={<ReviewRegisterPage />} />
       <Route path="decisions" element={<DecisionsPage />} />
       <Route path="workshop" element={<WorkshopPage />} />

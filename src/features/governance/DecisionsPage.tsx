@@ -4,8 +4,9 @@ import { Link } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '@/lib/db';
 import { tip } from '@/components/Tooltip';
-import { Badge, EmptyState, Input, Loading, Notice, PageHeader, Section } from '@/components/ui';
+import { Badge, EmptyState, Input, Loading, Section } from '@/components/ui';
 import type { DecisionStatus, GovernancePriority, OutstandingDecision } from '@/types';
+import { WorkspaceHead } from './kit';
 import { AUTHORITY_STATUS, DECISION_STATUS, GOVERNANCE_CAVEAT, PRIORITY } from './labels';
 
 export function DecisionsPage() {
@@ -31,11 +32,7 @@ export function DecisionsPage() {
 
   return (
     <div className="space-y-4">
-      <PageHeader
-        title="Outstanding Decisions"
-        subtitle="One accountable owner per decision. Decision authority is recorded separately. Source IDs OD-01…OD-18."
-      />
-      <Notice tone="info">{GOVERNANCE_CAVEAT}</Notice>
+      <WorkspaceHead eyebrow="Decision log" title="Outstanding Decisions" subtitle="One accountable owner per decision. Decision authority is recorded separately. Source IDs OD-01…OD-18." />
 
       <div className="flex flex-wrap gap-2 text-sm">
         <Badge>{items.length} decisions</Badge>
@@ -99,6 +96,7 @@ export function DecisionsPage() {
           ))}
         </ul>
       )}
+      <p className="mt-4 text-xs text-muted">{GOVERNANCE_CAVEAT}</p>
     </div>
   );
 }

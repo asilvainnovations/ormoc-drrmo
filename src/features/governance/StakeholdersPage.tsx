@@ -4,8 +4,9 @@ import { Link } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '@/lib/db';
 import { tip } from '@/components/Tooltip';
-import { Badge, EmptyState, Input, Loading, Notice, PageHeader } from '@/components/ui';
+import { Badge, EmptyState, Input, Loading } from '@/components/ui';
 import type { ManualGovernanceStakeholder } from '@/types';
+import { WorkspaceHead } from './kit';
 import { GOVERNANCE_CAVEAT, PRIORITY } from './labels';
 
 export function StakeholdersPage() {
@@ -30,11 +31,7 @@ export function StakeholdersPage() {
 
   return (
     <div className="space-y-4">
-      <PageHeader
-        title="Stakeholders"
-        subtitle="Institutions and proposed validation roles. Designations are not confirmed until verified against the EOC EO and ICS EO."
-      />
-      <Notice tone="info">{GOVERNANCE_CAVEAT}</Notice>
+      <WorkspaceHead eyebrow="Stakeholder matrix" title="Stakeholders" subtitle="Institutions and proposed validation roles. Designations are not confirmed until verified against the EOC EO and ICS EO." />
 
       <Badge>{rows.length} institutions</Badge>
 
@@ -67,6 +64,7 @@ export function StakeholdersPage() {
           ))}
         </ul>
       )}
+      <p className="mt-4 text-xs text-muted">{GOVERNANCE_CAVEAT}</p>
     </div>
   );
 }
