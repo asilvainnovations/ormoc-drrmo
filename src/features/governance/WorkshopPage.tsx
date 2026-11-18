@@ -3,8 +3,9 @@ import { Link } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '@/lib/db';
 import { tip } from '@/components/Tooltip';
-import { Badge, EmptyState, Loading, Notice, PageHeader } from '@/components/ui';
+import { Badge, EmptyState, Loading } from '@/components/ui';
 import type { WorkshopSession } from '@/types';
+import { WorkspaceHead } from './kit';
 import { GOVERNANCE_CAVEAT, WORKSHOP_STATUS } from './labels';
 
 export function WorkshopPage() {
@@ -17,11 +18,7 @@ export function WorkshopPage() {
 
   return (
     <div className="space-y-4">
-      <PageHeader
-        title="Validation Workshop"
-        subtitle="Twelve-session agenda for the Manual validation window. Session times and venue to be confirmed by the Secretariat."
-      />
-      <Notice tone="info">{GOVERNANCE_CAVEAT}</Notice>
+      <WorkspaceHead eyebrow="Workshop agenda" title="Validation Workshop" subtitle="Twelve-session agenda for the Manual validation window. Session times and venue to be confirmed by the Secretariat." />
 
       <div className="flex flex-wrap gap-2 text-sm">
         <Badge>{sessions.length} sessions</Badge>
@@ -49,6 +46,7 @@ export function WorkshopPage() {
           ))}
         </ol>
       )}
+      <p className="mt-4 text-xs text-muted">{GOVERNANCE_CAVEAT}</p>
     </div>
   );
 }

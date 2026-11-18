@@ -1,9 +1,10 @@
+import { lazy, Suspense, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { 
   ClipboardCheck, FolderLock, ListChecks, NotebookPen, Settings, Siren, Users, 
-  Workflow, Wrench, TrendingUp, TrendingDown, Minus, ShieldCheck, AlertCircle,
-  Clock, MapPin, Building2, ArrowUpRight, BookOpen
+  Workflow, Wrench, ShieldCheck, AlertCircle,
+  Clock, Building2, ArrowUpRight, BookOpen
 } from 'lucide-react';
 import { ButtonAnchor, Badge, List, ListRow, Notice, TextLink } from '@/components/ui';
 import { USER_GUIDE_LABEL, USER_GUIDE_TIP, USER_GUIDE_URL } from '@/lib/userGuide';
@@ -32,200 +33,77 @@ import type { Indicator, Response } from '@/types';
 import { Separator } from '@/components/ui/separator';
 import { HazardWatch } from './HazardWatch';
 
+const InstitutionalPanels = lazy(() => import('./dashboard/InstitutionalPanels'));
+
 const GREET_KEYS = ['greet.morning', 'greet.afternoon', 'greet.evening'] as const;
 
-// --- INLINE ANALYTICS COMPONENTS (Uses project design tokens) ---
+// --- OPERATIONAL ANALYTICS (1.24.0) ---
+// Every figure below is counted from rows on this device. Where there is nothing to count the panel says so;
+// it never draws a trend, a zero or an "all clear" that the data does not support.
 
-type TrendDirection = 'up' | 'down' | 'neutral';
+interface ShiftDelta { newLogs: number; newReports: number; openedReqs: number; newSitreps: number; declarationUpdates: number }
 
-function ShiftDeltaStrip({ delta }: { delta: { newLogs: number; newReports: number; openedReqs: number; closedReqs: number; newSitreps: number; eocLevelChanges: number } }) {
+function ShiftDeltaStrip({ delta, since }: { delta: ShiftDelta; since: string }) {
   const metrics = [
-    { label: 'Logbook Entries', value: delta.newLogs, icon: NotebookPen },
-    { label: 'Barangay Reports', value: delta.newReports, icon: Users },
-    { label: 'Requests Opened/Closed', value: `${delta.openedReqs}/${delta.closedReqs}`, icon: ListChecks },
-    { label: 'Sitreps Submitted', value: delta.newSitreps, icon: ClipboardCheck },
-    { label: 'EOC Level Changes', value: delta.eocLevelChanges, icon: Siren, highlight: delta.eocLevelChanges > 0 },
+    { label: 'Logbook entries', value: delta.newLogs, icon: NotebookPen, to: '/eoc/log' },
+    { label: 'Barangay reports', value: delta.newReports, icon: Users, to: '/eoc/barangays' },
+    { label: 'Requests opened', value: delta.openedReqs, icon: ListChecks, to: '/eoc/requests' },
+    { label: 'Sitreps submitted', value: delta.newSitreps, icon: ClipboardCheck, to: '/eoc/sitreps' },
+    { label: 'Declaration updates', value: delta.declarationUpdates, icon: Siren, to: '/eoc/aa', highlight: delta.declarationUpdates > 0 },
   ];
-
   return (
-    <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-6">
-      {metrics.map((m, i) => (
-        <div key={i} className={`relative overflow-hidden rounded-xl border border-sky/20 bg-surface/80 backdrop-blur-md p-4 transition-all hover:bg-surface ${m.highlight ? 'ring-1 ring-bad/50' : ''}`}>
-          <div className="flex items-center justify-between mb-2">
-            <m.icon className={`w-4 h-4 ${m.highlight ? 'text-bad' : 'text-sky'}`} />
-            <ArrowUpRight className="w-3 h-3 text-muted" />
-          </div>
-          <div className="text-2xl font-bold text-ink">{m.value}</div>
-          <div className="text-xs text-muted mt-1">{m.label}</div>
-        </div>
-      ))}
-    </div>
+    <section aria-label="Since your last visit" className="mb-6">
+      <p className="mb-2 text-sm text-muted">Since your last visit, {relative(since, Date.now())}.</p>
+      <div className="grid grid-cols-2 gap-3 md:grid-cols-5">
+        {metrics.map((m) => (
+          <Link key={m.label} to={m.to} {...tip(`Open ${m.label.toLowerCase()}`)} className={`min-h-tap rounded-sheet border border-line bg-surface p-4 transition hover:border-sky ${m.highlight ? 'ring-1 ring-bad/50' : ''}`}>
+            <div className="mb-2 flex items-center justify-between"><m.icon className={`h-4 w-4 ${m.highlight ? 'text-bad' : 'text-sky'}`} aria-hidden /><ArrowUpRight className="h-3 w-3 text-muted" aria-hidden /></div>
+            <div className="font-data text-2xl font-bold text-ink">{m.value}</div>
+            <div className="mt-1 text-xs text-muted">{m.label}</div>
+          </Link>
+        ))}
+      </div>
+    </section>
   );
 }
 
-function Sparkline({ data, color }: { data: number[]; color: string }) {
-  if (!data || data.length === 0) return null;
-  const max = Math.max(...data, 1);
-  const points = data.map((v, i) => `${(i / (data.length - 1)) * 100},${100 - (v / max) * 100}`).join(' ');
+interface Quality { activation: boolean; barangays: number; staleBarangays: number; failedUploads: number; waiting: number; unconfirmedIat: number }
+
+function DataQualityPanel({ q }: { q: Quality }) {
+  const lines: { icon: typeof Clock; tone: string; text: string }[] = [];
+  if (q.activation && q.barangays > 0 && q.staleBarangays > 0) lines.push({ icon: Clock, tone: 'text-warn', text: `${q.staleBarangays} of ${q.barangays} barangays have no report in the last 12 hours of this activation.` });
+  if (q.failedUploads > 0) lines.push({ icon: AlertCircle, tone: 'text-bad', text: `${q.failedUploads} ${q.failedUploads === 1 ? 'change was' : 'changes were'} refused by the server. Open Settings, Sync to retry or discard.` });
+  if (q.waiting > 0) lines.push({ icon: Clock, tone: 'text-muted', text: `${q.waiting} ${q.waiting === 1 ? 'change is' : 'changes are'} waiting to be sent from this device.` });
+  if (q.unconfirmedIat > 0) lines.push({ icon: ShieldCheck, tone: 'text-muted', text: `${q.unconfirmedIat} pre-filled EOC capability answers still need confirming on site.` });
   return (
-    <svg viewBox="0 0 100 100" className="w-full h-12 overflow-visible">
-      <polyline points={points} fill="none" stroke={color} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
+    <Card className="mb-6">
+      <CardHeader className="pb-2"><CardTitle className="flex items-center gap-2 text-lg text-ink"><AlertCircle className="h-5 w-5 text-warn" aria-hidden />Data quality</CardTitle><CardDescription>What may be out of date or unsent on this device.</CardDescription></CardHeader>
+      <CardContent>
+        {lines.length ? <ul className="space-y-2 text-sm">{lines.map((l, i) => <li key={i} className={`flex items-start gap-2 ${l.tone}`}><l.icon className="mt-0.5 h-4 w-4 shrink-0" aria-hidden />{l.text}</li>)}</ul>
+          : <p className="flex items-center gap-2 text-sm text-ok"><ShieldCheck className="h-4 w-4" aria-hidden />Nothing waiting and nothing flagged on this device.</p>}
+        {!q.activation && <p className="mt-2 text-xs text-muted">Barangay report freshness is checked only while the EOC is activated.</p>}
+      </CardContent>
+    </Card>
   );
 }
 
-function OperationalTrendCards({ trends }: { trends: { reports24h: number; reports7d: number; openReqs: number; campOccupancy: number } }) {
-  const cards = [
-    { title: 'Barangay Reports (24h)', value: trends.reports24h, trend: 'neutral' as TrendDirection, data: [2, 4, 3, 5, 4, 6, trends.reports24h], color: 'var(--sky)', link: '/eoc/barangays' },
-    { title: 'Open Resource Requests', value: trends.openReqs, trend: 'neutral' as TrendDirection, data: [5, 4, 6, 5, trends.openReqs, trends.openReqs, trends.openReqs], color: 'var(--warn)', link: '/eoc/logistics' },
-    { title: 'Active Camps (ECHO)', value: trends.campOccupancy, trend: 'neutral' as TrendDirection, data: [1, 1, 2, 2, 3, trends.campOccupancy, trends.campOccupancy], color: 'var(--ok)', link: '/eoc/ccc' },
-  ];
+interface Sites { total: number; fieldVerified: number; pending: number; training: number }
 
+function EvacuationPanel({ sites }: { sites: Sites }) {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-      {cards.map((card, i) => (
-        <Link key={i} to={card.link} className="block group">
-          <div className="rounded-xl border border-sky/10 bg-surface/40 backdrop-blur-md p-4 hover:bg-surface/60 transition-all">
-            <div className="flex justify-between items-start mb-3">
-              <span className="text-sm font-medium text-muted">{card.title}</span>
-              {card.trend === 'up' && <TrendingUp className="w-4 h-4 text-ok" />}
-              {card.trend === 'down' && <TrendingDown className="w-4 h-4 text-bad" />}
-              {card.trend === 'neutral' && <Minus className="w-4 h-4 text-muted" />}
-            </div>
-            <div className="text-3xl font-bold text-ink mb-2">{card.value}</div>
-            <Sparkline data={card.data} color={card.color} />
-            <div className="text-xs text-sky mt-2 group-hover:underline">View full screen →</div>
-          </div>
-        </Link>
-      ))}
-    </div>
-  );
-}
-
-function ReadinessAndQualityPanel({ readiness, dataQuality }: { readiness: any; dataQuality: any }) {
-  return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
-      <div className="rounded-xl border border-sky/20 bg-surface/80 backdrop-blur-md p-5">
-        <div className="flex items-center gap-2 mb-4">
-          <ShieldCheck className="w-5 h-5 text-sky" />
-          <h3 className="text-lg font-semibold text-ink">IAT Readiness Trend</h3>
-        </div>
-        {readiness ? (
-          <div className="space-y-3">
-            <div className="flex justify-between items-end">
-              <div>
-                <div className="text-sm text-muted">Current Maturity Index</div>
-                <div className="text-3xl font-bold text-ink">{readiness.currentScore?.toFixed(2) ?? 'N/A'} <span className="text-sm text-muted">/ 4.0</span></div>
-              </div>
-              <div className={`text-sm font-medium px-2 py-1 rounded ${readiness.delta >= 0 ? 'bg-ok-soft text-ok' : 'bg-bad-soft text-bad'}`}>
-                {readiness.delta !== null ? (readiness.delta >= 0 ? '+' : '') + readiness.delta.toFixed(2) : 'N/A'} vs last cycle
-              </div>
-            </div>
-            <div className="text-sm text-muted">
-              {readiness.metItemsDelta > 0 ? `+${readiness.metItemsDelta}` : readiness.metItemsDelta} mandatory items met since last assessment.
-            </div>
-          </div>
-        ) : <div className="text-muted text-sm">Awaiting historical IAT data...</div>}
-      </div>
-
-      <div className="rounded-xl border border-warn/20 bg-surface/80 backdrop-blur-md p-5">
-        <div className="flex items-center gap-2 mb-4">
-          <AlertCircle className="w-5 h-5 text-warn" />
-          <h3 className="text-lg font-semibold text-ink">Data Quality & Staleness</h3>
-        </div>
-        {dataQuality ? (
-          <ul className="space-y-3 text-sm">
-            {dataQuality.staleBarangays > 0 && (
-              <li className="flex items-center gap-2 text-warn">
-                <Clock className="w-4 h-4" /> {dataQuality.staleBarangays} barangays with no report in &gt;12h
-              </li>
-            )}
-            {dataQuality.syncConflicts > 0 && (
-              <li className="flex items-center gap-2 text-bad">
-                <AlertCircle className="w-4 h-4" /> {dataQuality.syncConflicts} unresolved sync conflicts
-              </li>
-            )}
-            {dataQuality.unconfirmedIat > 0 && (
-              <li className="flex items-center gap-2 text-muted">
-                <ShieldCheck className="w-4 h-4" /> {dataQuality.unconfirmedIat} pre-filled EOC assessment answers unconfirmed
-              </li>
-            )}
-            {dataQuality.staleBarangays === 0 && dataQuality.syncConflicts === 0 && (
-              <li className="text-ok flex items-center gap-2"><ShieldCheck className="w-4 h-4" /> All systems nominal. Data is fresh.</li>
-            )}
-          </ul>
-        ) : <div className="text-muted text-sm">Scanning local data integrity...</div>}
-      </div>
-    </div>
-  );
-}
-
-function HazardContextAndEvacuationPanel({ hazardContext, evacuationSites }: { hazardContext: any; evacuationSites: any }) {
-  return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
-      <div className="rounded-xl border border-sky/20 bg-surface/80 backdrop-blur-md p-5">
-        <div className="flex items-center justify-between mb-3">
-          <div className="flex items-center gap-2">
-            <MapPin className="w-5 h-5 text-sky" />
-            <h3 className="text-lg font-semibold text-ink">Hazard Context (DDRiVE)</h3>
-          </div>
-          <span className="text-[10px] uppercase tracking-wider font-bold text-muted bg-sunken px-2 py-1 rounded">
-            Decision Support Only (ADR-024)
-          </span>
-        </div>
-        {hazardContext ? (
-          <div className="space-y-3">
-            <div className="flex justify-between items-center p-3 bg-bad-soft/50 border border-bad/20 rounded-lg">
-              <div>
-                <div className="text-sm font-medium text-bad">Unreported High-Risk Barangays</div>
-                <div className="text-xs text-muted">No report in last 12h</div>
-              </div>
-              <div className="text-2xl font-bold text-bad">{hazardContext.unreportedHighRisk} <span className="text-sm text-muted">/ {hazardContext.totalHighRisk}</span></div>
-            </div>
-            {hazardContext.unreportedHighRisk > 0 && (
-              <div className="text-sm text-ink">
-                Examples: <span className="font-medium">{hazardContext.unreportedNames.join(', ') || 'None'}</span>
-              </div>
-            )}
-            <p className="text-xs text-muted italic mt-2">
-              * Cross-referenced with DDRiVE 2026-11-09 flood susceptibility layers. Not an automatic trigger.
-            </p>
-          </div>
-        ) : <div className="text-muted text-sm">Loading hazard cross-reference...</div>}
-      </div>
-
-      <div className="rounded-xl border border-sky/20 bg-surface/80 backdrop-blur-md p-5">
-        <div className="flex items-center gap-2 mb-3">
-          <Building2 className="w-5 h-5 text-ok" />
-          <h3 className="text-lg font-semibold text-ink">Evacuation Centers (LDRRMP/CDP)</h3>
-        </div>
-        {evacuationSites ? (
-          <div className="space-y-3">
-            <div className="flex justify-between text-sm">
-              <span className="text-muted">Total Registered Sites</span>
-              <span className="text-ink font-bold">{evacuationSites.total}</span>
-            </div>
-            {evacuationSites.atRisk > 0 ? (
-              <div className="p-3 bg-warn-soft/50 border border-warn/20 rounded-lg">
-                <div className="flex items-center gap-2 mb-1">
-                  <AlertCircle className="w-4 h-4 text-warn" />
-                  <span className="text-sm font-medium text-warn">{evacuationSites.atRisk} Sites Require Attention</span>
-                </div>
-                <ul className="text-xs text-ink space-y-1 ml-6 list-disc">
-                  {evacuationSites.atRiskNames.map((name: string, i: number) => (
-                    <li key={i}>{name} <span className="text-muted">(e.g., high-liquefaction / pending retrofit)</span></li>
-                  ))}
-                </ul>
-              </div>
-            ) : (
-              <div className="text-sm text-ok flex items-center gap-2">
-                <Building2 className="w-4 h-4" /> All registered sites cleared for current hazard profile.
-              </div>
-            )}
-          </div>
-        ) : <div className="text-muted text-sm">Loading LDRRMP/CDP site data...</div>}
-      </div>
-    </div>
+    <Card className="mb-6">
+      <CardHeader className="flex-row items-start justify-between space-y-0 pb-2">
+        <div><CardTitle className="flex items-center gap-2 text-lg text-ink"><Building2 className="h-5 w-5 text-ok" aria-hidden />Evacuation centres</CardTitle><CardDescription>How many registered sites have been verified in the field.</CardDescription></div>
+        <TextLink tip="Open the evacuation centre register" size="sm" to="/tools/echo/camps">Open</TextLink>
+      </CardHeader>
+      <CardContent>
+        {sites.total === 0 ? <p className="text-muted">No centres registered on this device yet.</p> : <>
+          <p className="text-sm text-ink"><span className="font-data text-2xl font-bold">{sites.fieldVerified}</span> of {sites.total} field-verified</p>
+          <p className="mt-1 text-sm text-muted">{sites.pending} pending field validation{sites.training > 0 && `, ${sites.training} training entries`}. A site that is not verified is not cleared for use.</p>
+          <Progress className="mt-3" value={(100 * sites.fieldVerified) / sites.total} aria-label="Centres field-verified" />
+        </>}
+      </CardContent>
+    </Card>
   );
 }
 
@@ -237,97 +115,49 @@ export function TodayPage() {
   const now = useNow();
   const decl = useActiveDeclaration();
 
-  // Inline analytics query: safely checks for table existence and uses `db as any` to bypass strict schema errors
-  const analytics = useLiveQuery(async () => {
+  // "Since your last visit": read once when the page opens, then stamp the visit. Never written inside the live query,
+  // which re-runs on every change and would reset the window each time.
+  const [since] = useState(() => {
+    const fallback = new Date(Date.now() - 8 * 3_600_000).toISOString();
     try {
-      const currentTime = Date.now();
-      const lastVisit = Number(localStorage.getItem('lastTodayVisit') || (currentTime - 28800000));
-      localStorage.setItem('lastTodayVisit', currentTime.toString());
+      const last = localStorage.getItem('lastTodayVisit');
+      localStorage.setItem('lastTodayVisit', new Date().toISOString());
+      return last ?? fallback;
+    } catch { return fallback; }
+  });
 
-      const dbAny = db as any;
-
-      // 1. Shift Delta
-      const newLogs = await db.logbook_entries.where('occurred_at').above(lastVisit).count();
-      const newReports = dbAny.barangay_reports ? await dbAny.barangay_reports.where('submitted_at').above(lastVisit).count() : 0;
-      const openedReqs = dbAny.resource_requests ? await dbAny.resource_requests.where('status').equals('open').filter((r: any) => Number(r.created_at || 0) > lastVisit).count() : 0;
-      const closedReqs = dbAny.resource_requests ? await dbAny.resource_requests.where('status').equals('closed').filter((r: any) => Number(r.updated_at || 0) > lastVisit).count() : 0;
-      const newSitreps = dbAny.sitreps ? await dbAny.sitreps.where('created_at').above(lastVisit).count() : 0;
-      const eocLevelChanges = dbAny.declarations ? await dbAny.declarations.where('updated_at').above(lastVisit).count() : 0;
-
-      // 2. Trends
-      const dayAgo = currentTime - 86400000;
-      const reports24h = dbAny.barangay_reports ? await dbAny.barangay_reports.where('submitted_at').above(dayAgo).count() : 0;
-      const openReqsTotal = dbAny.resource_requests ? await dbAny.resource_requests.where('status').equals('open').count() : 0;
-      const campOccupancy = dbAny.evacuation_centers ? await dbAny.evacuation_centers.where('status').equals('active').count() : 0;
-
-      // 3. Readiness Trend
-      const cycles = await db.assessment_cycles.orderBy('cycle_year').reverse().limit(2).toArray();
-      let readinessTrend = null;
-      if (cycles.length >= 2 && cycles[0] && cycles[1]) {
-        const current = cycles[0];
-        const previous = cycles[1];
-        const currentIndicators = await db.iat_indicators.toArray();
-        const currentDomains = await db.iat_domains.toArray();
-        const currentResponses = await db.responses.where('cycle_id').equals(current.id).toArray();
-        const previousResponses = await db.responses.where('cycle_id').equals(previous.id).toArray();
-        
-        const currentRes = cycleResults(currentIndicators, currentDomains, currentResponses);
-        const previousRes = cycleResults(currentIndicators, currentDomains, previousResponses);
-        
-        readinessTrend = {
-          currentScore: currentRes?.imi?.maturityIndex ?? null,
-          previousScore: previousRes?.imi?.maturityIndex ?? null,
-          delta: (currentRes?.imi?.maturityIndex ?? 0) - (previousRes?.imi?.maturityIndex ?? 0),
-          metItemsDelta: (currentRes?.answered ?? 0) - (previousRes?.answered ?? 0)
-        };
-      }
-
-      // 4. Data Quality
-      const staleThreshold = currentTime - 43200000; // 12 hours
-      let staleBarangays = 0;
-      if (dbAny.barangay_reports) {
-        const reported = await dbAny.barangay_reports.where('submitted_at').above(staleThreshold).toArray();
-        const uniqueReported = new Set(reported.map((r: any) => r.psgc || r.barangay || r.id)).size;
-        staleBarangays = Math.max(0, 85 - uniqueReported);
-      }
-      const syncConflicts = dbAny.sync_conflicts ? await dbAny.sync_conflicts.count() : 0;
-      const unconfirmedIat = await db.responses.where('provenance').equals('prefilled_iat').count();
-
-      // 5. Hazard Context (DDRiVE)
-      let unreportedHighRisk = 0;
-      let unreportedNames: string[] = [];
-      if (dbAny.barangay_hazard_profiles) {
-        const highRisk = await dbAny.barangay_hazard_profiles.where('flood_susceptibility').anyOf(['High', 'High-Very High', 'Very High']).toArray();
-        const recentReports = await dbAny.barangay_reports.where('submitted_at').above(staleThreshold).toArray();
-        const reportedCodes = new Set(recentReports.map((r: any) => r.psgc || r.barangay || r.id));
-        const unreported = highRisk.filter((b: any) => !reportedCodes.has(b.psgc || b.barangay || b.id));
-        unreportedHighRisk = unreported.length;
-        unreportedNames = unreported.slice(0, 3).map((b: any) => b.barangay_name || b.name);
-      }
-
-      // 6. Evacuation Sites
-      let atRiskSites = 0;
-      let atRiskNames: string[] = [];
-      if (dbAny.evacuation_centers) {
-        const sites = await dbAny.evacuation_centers.toArray();
-        const atRisk = sites.filter((s: any) => s.hazard_flag === 'high-liquefaction' || s.retrofit_status === 'pending');
-        atRiskSites = atRisk.length;
-        atRiskNames = atRisk.map((s: any) => s.name);
-      }
-
-      return {
-        shiftDelta: { newLogs, newReports, openedReqs, closedReqs, newSitreps, eocLevelChanges },
-        trends: { reports24h, reports7d: reports24h, openReqs: openReqsTotal, campOccupancy },
-        readinessTrend,
-        dataQuality: { staleBarangays, oldestOutbox: null, syncConflicts, unconfirmedIat },
-        hazardContext: { totalHighRisk: 0, unreportedHighRisk, unreportedNames },
-        evacuationSites: { total: dbAny.evacuation_centers ? await dbAny.evacuation_centers.count() : 0, atRisk: atRiskSites, atRiskNames }
-      };
-    } catch (e) {
-      console.error("Analytics query failed:", e);
-      return null;
+  const analytics = useLiveQuery(async () => {
+    const staleBefore = new Date(Date.now() - 12 * 3_600_000).toISOString();
+    const activation = await db.eoc_activations.filter((a) => !a.ended_at).first();
+    const shiftDelta: ShiftDelta = {
+      newLogs: await db.logbook_entries.where('occurred_at').above(since).count(),
+      newReports: await db.barangay_reports.where('reported_at').above(since).count(),
+      openedReqs: await db.resource_requests.where('requested_at').above(since).count(),
+      newSitreps: await db.sitreps.filter((r) => !!r.submitted_at && r.submitted_at > since).count(),
+      declarationUpdates: await db.declarations.filter((d) => (d.updated_at ?? '') > since).count(),
+    };
+    const barangays = await db.barangays.count();
+    let staleBarangays = 0;
+    if (activation && barangays > 0) {
+      const fresh = new Set((await db.barangay_reports.where('reported_at').above(staleBefore).filter((r) => r.activation_id === activation.id).toArray()).map((r) => r.barangay_psgc));
+      staleBarangays = Math.max(0, barangays - fresh.size);
     }
-  }, []);
+    const queued = await db.outbox.toArray();
+    const quality: Quality = {
+      activation: !!activation, barangays, staleBarangays,
+      failedUploads: queued.filter((o) => !!o.lastError).length,
+      waiting: queued.filter((o) => !o.lastError).length,
+      unconfirmedIat: await db.eoc_assessment_responses.filter((r) => r.provenance === 'prefilled_iat').count(),
+    };
+    const centres = await db.evacuation_centers.toArray();
+    const sites: Sites = {
+      total: centres.length,
+      fieldVerified: centres.filter((c) => c.verification_status === 'field_verified').length,
+      pending: centres.filter((c) => c.verification_status === 'pending_field_validation').length,
+      training: centres.filter((c) => c.verification_status === 'training').length,
+    };
+    return { shiftDelta, quality, sites };
+  }, [since]);
 
   const data = useLiveQuery(async () => {
     const cycle = (await db.assessment_cycles.orderBy('cycle_year').reverse().toArray()).find((c) => c.status !== 'archived');
@@ -380,7 +210,7 @@ export function TodayPage() {
             <p className="mt-1 max-w-prose text-muted">{t('today.hero')}</p>
             
             {/* UPDATED: Added target and rel for external static file to preserve app state */}
-          ``<ButtonAnchor 
+            <ButtonAnchor 
               href={USER_GUIDE_URL} 
               variant="primary" 
               icon={BookOpen} 
@@ -404,16 +234,14 @@ export function TodayPage() {
 
       <HazardWatch />
 
-      {/* --- OPERATIONAL ANALYTICS --- */}
+      {roles.length > 0 && <Suspense fallback={<div className="mb-6 h-40" aria-hidden />}><InstitutionalPanels /></Suspense>}
+
       {analytics && (
         <>
-          <ShiftDeltaStrip delta={analytics.shiftDelta} />
-          <OperationalTrendCards trends={analytics.trends} />
-          <ReadinessAndQualityPanel readiness={analytics.readinessTrend} dataQuality={analytics.dataQuality} />
-          <HazardContextAndEvacuationPanel hazardContext={analytics.hazardContext} evacuationSites={analytics.evacuationSites} />
+          <ShiftDeltaStrip delta={analytics.shiftDelta} since={since} />
+          <div className="grid gap-4 lg:grid-cols-2"><DataQualityPanel q={analytics.quality} /><EvacuationPanel sites={analytics.sites} /></div>
         </>
       )}
-      {/* --------------------------- */}
 
       {decl && (
         <Link to={`/eoc/aa/d/${decl.id}`} {...tip('Open the declaration: next legal step, anticipatory action checklist and funds')} className="mb-6 block rounded-sheet border-2 border-bad bg-bad-soft p-4 hover:opacity-95">
