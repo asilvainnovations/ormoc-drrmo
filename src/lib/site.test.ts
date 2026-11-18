@@ -7,6 +7,8 @@ describe('public site settings', () => {
     expect(SITE.supportEmail).toBe('mode-support@asilvainnovations.com');
     expect(SITE.dpoEmail).toMatch(/@/);
     expect(SITE.npcRegistration).toBeNull();
+    expect(SITE.cityWebsite).toBe('https://ormoc.gov.ph/');
+    expect(SITE.dpoEmail).toBe('cdrrmo.ormoccity@gmail.com');   // the CDRRMO's one mailbox (ADR-045)
     expect(POLICY.lastReviewed).toBe('10 November 2026');
     expect(policyApproved()).toBe(true);
     expect(POLICY.effective).toBe('9 November 2026');
