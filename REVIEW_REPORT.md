@@ -62,7 +62,7 @@ These are source reconciliation counts, not application constants. The import ba
 3. **Automated tests are absent from the supplied handovers:** SQL role-matrix tests, governance unit tests and e2e tests are explicitly deferred in Slice 1 notes. They remain release blockers.
 4. **Migration compatibility is unverified against the live database:** Confirm `app_role`, `app.track`, `app.touch_row`, profile references, prior migration state and policies in the actual target environment.
 5. **Seed provenance:** The seed identifies the source workbook as `Ormoc_CDRRMO_EOC_Review_Validation_Tracker_V-2.xlsx` dated 12 November 2026. Verify this is the controlled workbook version intended for the workshop before importing.
-6. **No 85-barangay finalization:** OD-08 remains an outstanding decision. The handover does not settle the 85/110 masterlist question.
+6. **No 85-barangay finalization:** OD-08 remains an outstanding decision. The handover does not settle the 85 and pre-merger masterlist question.
 7. **No production operation performed:** No branch, PR, commit, database migration, seed, release tag or deployment was created by this review.
 
 ## Suggested next action

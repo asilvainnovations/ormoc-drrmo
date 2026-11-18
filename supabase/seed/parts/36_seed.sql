@@ -157,7 +157,7 @@ insert into public.protocol_steps (id,template_id,seq,instruction,is_critical,re
 ('dc575c03-bbb5-5e10-a35a-6fe5af07358f'::uuid,'7ff2c261-e05f-5d3a-9699-ff0b584a84c1'::uuid,6,'Integrate city-wide; coordinate with the alternate EOC',true,false,null,'STEP-RECORD'),
 ('4fb17c21-6d76-5987-97e3-849c323a858e'::uuid,'7ff2c261-e05f-5d3a-9699-ff0b584a84c1'::uuid,7,'Approve and exercise',true,false,null,'STEP-RECORD'),
 ('c4830d49-38e7-5839-944c-9d1f3e01c7e0'::uuid,'7ff2c261-e05f-5d3a-9699-ff0b584a84c1'::uuid,8,'Review and update; close corrective actions',false,false,null,'F3-11'),
-('5d2f04e4-ab73-5ce4-8693-30cef9b598a3'::uuid,'3d22ea60-9da2-50c2-889c-f70876393abf'::uuid,1,'Confirm the master list (85 barangays, PSA PSGC) and the 110-to-85 crosswalk',true,false,null,'STEP-RECORD'),
+('5d2f04e4-ab73-5ce4-8693-30cef9b598a3'::uuid,'3d22ea60-9da2-50c2-889c-f70876393abf'::uuid,1,'Confirm the master list (85 barangays, PSA PSGC) and the pre-merger-to-85 crosswalk',true,false,null,'STEP-RECORD'),
 ('14a97c5d-880a-5cfd-83f3-d70b49eec28f'::uuid,'3d22ea60-9da2-50c2-889c-f70876393abf'::uuid,2,'Call for current plans with the official template and tool',true,false,null,'STEP-RECORD'),
 ('27edea80-e267-5685-bdaf-bdb5c2ff84cf'::uuid,'3d22ea60-9da2-50c2-889c-f70876393abf'::uuid,3,'Screen completeness',false,false,null,'STEP-RECORD'),
 ('d217980a-d4c8-5b93-9bb0-bd53f9f4095a'::uuid,'3d22ea60-9da2-50c2-889c-f70876393abf'::uuid,4,'Conduct the quality assessment with the official tool',true,false,null,'STEP-RECORD'),

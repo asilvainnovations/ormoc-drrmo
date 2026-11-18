@@ -215,7 +215,7 @@ The October 2026 assessment used four methods. Each indicator was scored under t
 
 - **Planning and funding.** The Council approved the DRRM 10-Year Plan (Res. No. 01 s.2023), and EO No. 2022-00020 created the DRRM Plan Technical Working Group. The flood control and drainage master plan was funded in 2023 (Res. Nos. 03, 04 and 07 s.2023; about PHP 11.0 M), but no output was sighted.
 
-- **Records control.** The files of CDRRMC Res. Nos. 03 and 04 s.2022 contain each other's text; the CCCM Executive Order is filed as No. 263 but the scan reads 243; SP Res. No. 2021-357 still cites 110 barangays. These findings support GOV-02 and GOV-08.
+- **Records control.** The files of CDRRMC Res. Nos. 03 and 04 s.2022 contain each other's text; the CCCM Executive Order is filed as No. 263 but the scan reads 243; SP Res. No. 2021-357 still cites the pre-merger barangay list. These findings support GOV-02 and GOV-08.
 
 ## 1.4 Staff Perspectives on DRRM Planning and Budgeting
 

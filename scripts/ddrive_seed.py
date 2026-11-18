@@ -141,6 +141,67 @@ def write_parts(header: list[str], statements: list[str], check: str, out_dir: P
     return paths
 
 
+# Newer field assessments (flood-prone population reports per barangay) supersede sheet 04 of the v1.x workbook.
+FLOOD_DIR = ROOT / 'reference' / 'flood-assessment'
+# City Ordinance 052 s.2021 (ratified 8 Oct 2022): the numbered Poblacion districts now sit in four barangays.
+MERGED = {'0803738091': ('Barangay North', [29]), '0803738115': ('Barangay East', [9, 10, 11, 16, 18, 25, 28]),
+          '0803738116': ('Barangay South', [1, 2, 3, 4, 5, 6, 7, 8, 12, 13, 15, 17, 23, 27]),
+          '0803738117': ('Barangay West', [14, 19, 20, 21, 22, 24, 26])}
+CLASS_ORDER = ['Low', 'Moderate', 'High', 'Very High']
+
+
+def flood_rows_from_update(base_rows):
+    """Sheet 04 of the newest file in reference/flood-assessment, with the four merged Poblacion barangays rolled up
+    from their district worksheets. Falls back to the v1.x rows when there is no newer file."""
+    files = sorted(FLOOD_DIR.glob('*Hazard_Assessment*.xlsx'))
+    if not files:
+        return base_rows, None
+    new = openpyxl.load_workbook(files[-1], data_only=True)
+    out = [dict(r) for r in rows(new['04_Flood_Assessment'])]
+    for r in out:
+        e, b = r.get('Population Potentially Exposed'), r.get('Exposure Base Population')
+        if r.get('Population Exposure (%)') is None and isinstance(e, (int, float)) and isinstance(b, (int, float)) and b:
+            r['Population Exposure (%)'] = e / b
+    by_psgc = {norm_psgc(r.get('PSGC 10-Digit Code')): r for r in out}
+    seen = {}
+    for ws in new.worksheets:
+        m = re.fullmatch(r'Bgy - (\d+) \(Pob\.\)', ws.title)
+        if not m:
+            continue
+        n, exposed, base, classes = int(m.group(1)), None, None, set()
+        for row in ws.iter_rows(values_only=True):
+            a = row[0]
+            if a == 'Population reported as flood-prone':
+                mm = re.search(r'([\d,]+) out of ([\d,]+)', str(row[1]))
+                if mm:
+                    exposed, base = int(mm.group(1).replace(',', '')), int(mm.group(2).replace(',', ''))
+            elif a in CLASS_ORDER and isinstance(row[1], (int, float)) and row[1] > 0:
+                classes.add(a)
+        if exposed is not None:
+            seen[n] = (exposed, base, classes)
+    for psgc, (name, districts) in MERGED.items():
+        got = {d: seen[d] for d in districts if d in seen}
+        if not got:
+            continue
+        e, b = sum(v[0] for v in got.values()), sum(v[1] for v in got.values())
+        cl = sorted({c for v in got.values() for c in v[2]}, key=CLASS_ORDER.index)
+        cls = 'Not assessed' if not cl else cl[0] if len(cl) == 1 else f'{cl[0]}–{cl[-1]} (mixed classes)'
+        missing = [d for d in districts if d not in got]
+        row = by_psgc.get(psgc) or {'PSGC 10-Digit Code': psgc, 'Barangay Name': name}
+        row.update({
+            'Flood Susceptibility Class': cls,
+            'Flood Hazard Source & Vintage': f'Rolled up from {len(got)} of {len(districts)} former Barangay District worksheets (City Ord. 052 s.2021); GeoAnalyticsPH reports of 16-17 Nov 2026',
+            'Population Potentially Exposed': e, 'Exposure Base Population': b, 'Exposure Base Year': 'Source report totals',
+            'Population Exposure (%)': e / b if b else None,
+            'Data Confidence': 'Partial roll-up' if missing else 'Roll-up of all district reports',
+            'Validation Status': ('Pending crosswalk validation; no report yet for Barangay District ' + ', '.join(map(str, missing))) if missing else 'Pending crosswalk validation',
+        })
+        by_psgc[psgc] = row
+        if row not in out:
+            out.append(row)
+    return out, files[-1]
+
+
 def main() -> None:
     src = Path(sys.argv[1]) if len(sys.argv) > 1 else next(
         (p for p in sorted((ROOT / 'reference').glob('Ormoc-City-Barangays_Hazard-Assessment_*.xlsx'))), None)
@@ -198,16 +259,19 @@ def main() -> None:
                      text(c.get('Validation Status')), W])
     stmts.extend(upserts('ddrive_barangay_profiles', prof_cols, data, 'psgc'))
 
-    def per_barangay(sheet, mapping, table):
+    def per_barangay(sheet, mapping, table, source_rows=None):
         # mapping: (workbook header, SQL column, reader). The workbook headers carry spaces,
         # '&', '%' and '/' - they read the cell, but the SQL statement uses the column name.
         d = []
-        resolved = [(resolve_psgc(r, sheet), r) for r in rows(wb[sheet])]
+        resolved = [(resolve_psgc(r, sheet), r) for r in (source_rows if source_rows is not None else rows(wb[sheet]))]
         for psgc, r in sorted(resolved, key=lambda x: x[0]):
             d.append([psgc] + [fn(r.get(head)) for head, _col, fn in mapping])
         stmts.extend(upserts(table, ['psgc'] + [m[1] for m in mapping], d, 'psgc'))
 
-    # 04 -> ddrive_flood
+    # 04 -> ddrive_flood (newest field assessments when present)
+    flood_src, flood_file = flood_rows_from_update(list(rows(wb['04_Flood_Assessment'])))
+    if flood_file:
+        sql.append(f'-- Flood sheet 04 from: {flood_file.name}')
     per_barangay('04_Flood_Assessment', [
         ('Flood Susceptibility Class', 'susceptibility_class', text),
         ('Flood Hazard Source & Vintage', 'hazard_source', text),
@@ -221,7 +285,7 @@ def main() -> None:
         ('Flood Depth / Inundation Scenario', 'depth_scenario', text),
         ('Data Confidence', 'confidence', text),
         ('Validation Status', 'validation_status', text),
-    ], 'ddrive_flood')
+    ], 'ddrive_flood', source_rows=flood_src)
 
     # 05-08
     per_barangay('05_Multi_Hazard_Profile', [

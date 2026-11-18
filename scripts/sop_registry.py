@@ -222,7 +222,7 @@ CH3_WORKFLOWS = [
         'Yearly BDRRMP cycle; DILG call for plans; a new plan period.',
         'BDRRMC/Barangay Development Council (plan owner); CDRRMO (city reviewer)',
         ['RA 10121 Sec. 12(c)(6)', 'DILG MC 2025-035 (Listo si KAP)'], ['A3.7'],
-        [('Confirm the master list (85 barangays, PSA PSGC) and the 110-to-85 crosswalk', True, False, None, None),
+        [('Confirm the master list (85 barangays, PSA PSGC) and the pre-merger-to-85 crosswalk', True, False, None, None),
          ('Call for current plans with the official template and tool', True, False, None, None),
          ('Screen completeness', False, False, None, None),
          ('Conduct the quality assessment with the official tool', True, False, None, None),
