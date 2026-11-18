@@ -382,15 +382,15 @@ export default function HazardMapPage() {
             <p className="max-w-prose text-sm text-muted">GeoAnalyticsPH, from DOST-PHIVOLCS GeoRiskPH, gives the official barangay-level analysis: population prone and safe by sex and age, affected facilities and land area for each hazard. It opens on its own site, not inside MODE. Do the barangay-level hazard assessment there in ten clicks:</p>
             <ol className="mt-2 max-w-prose list-decimal space-y-0.5 pl-5 text-sm text-ink">
               <li>Open GeoAnalyticsPH with the button below.</li>
-              <li>Choose Region VIII (Eastern Visayas).</li>
-              <li>Choose the province (Leyte).</li>
-              <li>Choose the City of Ormoc.</li>
-              <li>Choose the barangay{found?.barangay ? <> (here: <strong>{found.barangay.name}</strong>)</> : ''}.</li>
-              <li>Pick the hazard (flood first).</li>
-              <li>Select Submit.</li>
-              <li>Read the population prone and safe, by sex and age.</li>
-              <li>Save the report (PDF or Excel, if offered).</li>
-              <li>Send it to the CDRRMO to file as that barangay's assessment.</li>
+              <li>Location: choose Region VIII (Eastern Visayas).</li>
+              <li>Choose the province, Leyte.</li>
+              <li>Choose the municipality, Ormoc City.</li>
+              <li>Choose the barangay{found?.barangay ? <> (here: <strong>{found.barangay.name}</strong>)</> : ''}. The former numbered Poblacion barangays still appear there as "Barangay 10 (Pob.)" and so on.</li>
+              <li>Hazard: choose Flood.</li>
+              <li>Exposure: choose Demography, then the type Population.</li>
+              <li>Select Submit and wait about 20 seconds, until it says the data has loaded.</li>
+              <li>Read "Total Population Prone to Flood" (for example 842 out of 977) and the age and sex chart.</li>
+              <li>Save the chart from its menu (PNG, JPEG or SVG) and send it to the CDRRMO to file as that barangay's assessment.</li>
             </ol>
             <div className="mt-3 flex flex-wrap gap-2">
               <ButtonAnchor href={GEOANALYTICS_URL} icon={ExternalLink} tip="Open GeoAnalyticsPH in a new tab">Continue in GeoAnalyticsPH</ButtonAnchor>
