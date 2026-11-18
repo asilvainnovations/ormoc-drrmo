@@ -229,8 +229,8 @@ create policy mri_insert on public.manual_review_items
   with check (app.has_any_role(array['admin','cdrrmo_head','assessor','validator','author']::public.app_role[]));
 create policy mri_update on public.manual_review_items
   for update to authenticated
-  using (app.is_active_user())
-  with check (app.is_active_user());
+  using (app.has_any_role(array['admin','cdrrmo_head','assessor','validator','author']::public.app_role[]))
+  with check (app.has_any_role(array['admin','cdrrmo_head','assessor','validator','author']::public.app_role[]));
 create policy mri_delete on public.manual_review_items
   for delete to authenticated using (false);
 
@@ -246,8 +246,8 @@ create policy od_insert on public.outstanding_decisions
   with check (app.has_any_role(array['admin','cdrrmo_head','assessor','validator','author']::public.app_role[]));
 create policy od_update on public.outstanding_decisions
   for update to authenticated
-  using (app.is_active_user())
-  with check (app.is_active_user());
+  using (app.has_any_role(array['admin','cdrrmo_head','assessor','validator','author']::public.app_role[]))
+  with check (app.has_any_role(array['admin','cdrrmo_head','assessor','validator','author']::public.app_role[]));
 create policy od_delete on public.outstanding_decisions
   for delete to authenticated using (false);
 
