@@ -12,7 +12,7 @@ const STORAGE_KEY = 'mode.lang';
 export const STRINGS = {
   en: {
     'nav.today': 'Today', 'nav.assess': 'Assess', 'nav.protocols': 'Protocols', 'nav.eoc': 'EOC',
-    'nav.library': 'Library', 'nav.vault': 'Vault', 'nav.tools': 'Tools', 'nav.hazardmaps': 'Hazard maps', 'nav.governance': 'Governance',
+    'nav.library': 'Library', 'nav.vault': 'Vault', 'nav.tools': 'Tools', 'nav.hazardmaps': 'Hazard maps', 'nav.governance': 'Validation',
     'greet.morning': 'Good morning', 'greet.afternoon': 'Good afternoon', 'greet.evening': 'Good evening',
     'today.hero': 'Everything that needs your attention today, in one place.',
     'today.pareto.title': 'Priority indicators',
