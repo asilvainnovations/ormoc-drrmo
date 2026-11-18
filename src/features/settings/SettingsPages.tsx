@@ -20,14 +20,15 @@ import { useToast } from '@/components/Toast';
 import type { Barangay, Role } from '@/types';
 import { PRODUCT } from '@/lib/product';
 
-/** 1.17 (ADR-031): Cebuano (Bisaya) or English for the navigation and dashboard chrome, per device.
+/** 1.17 (ADR-031): Ormocanon (Bisaya), Filipino (Tagalog) or English for the navigation and dashboard chrome, per device.
  * The manual, legal texts and tooltips stay in English so citations remain exact. */
 function LanguageRow() {
   const [lang, setLang] = useLang();
   const t = useT();
-  const choices: { value: Lang; label: string; labelKey: 'lang.en' | 'lang.ceb' }[] = [
+  const choices: { value: Lang; label: string; labelKey: 'lang.en' | 'lang.ceb' | 'lang.fil' }[] = [
     { value: 'en', label: 'English', labelKey: 'lang.en' },
-    { value: 'ceb', label: 'Cebuano (Bisaya)', labelKey: 'lang.ceb' },
+    { value: 'ceb', label: 'Ormocanon (Bisaya)', labelKey: 'lang.ceb' },
+    { value: 'fil', label: 'Filipino (Tagalog)', labelKey: 'lang.fil' },
   ];
   return (
     <div className="mb-3 rounded-control border border-line bg-surface px-3 py-2">

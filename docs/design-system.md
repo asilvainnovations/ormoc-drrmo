@@ -156,7 +156,7 @@ On phones it takes two lines with short labels. It is never truncated mid-word.
 
 - Name things in CDRRMO vocabulary: "logbook", "SitRep", "PDRA", "EO", "barangay", "LDRRMF".
 - Plain language first: short sentences, one idea per card, no buzzwords; say what the user gets ("See what needs work today", not "Access the readiness module").
-- Cebuano (Bisaya) is offered for navigation and dashboard chrome (Settings → This device → Language). The manual, legal citations, tooltips and protocols stay in English so citations remain exact (ADR-031); add a key to both languages in `src/lib/i18n.tsx` — the parity test fails the build if they drift.
+- Ormocanon (Bisaya) and Filipino (Tagalog) are offered, besides English, for navigation and dashboard chrome (Settings → This device → Language). The manual, legal citations, tooltips and protocols stay in English so citations remain exact (ADR-031); add a key to both languages in `src/lib/i18n.tsx` — the parity test fails the build if they drift.
 - Buttons say what happens. The toast echoes the same verb ("Submit for validation" → "A1.1 submitted for validation").
 - Errors say what happened and what to do. They do not apologise.
 - Times show in Manila time (`Asia/Manila`) as "15 Oct 2026, 14:05" and "in 3 h 20 min".
