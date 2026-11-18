@@ -8,7 +8,7 @@ import { useSyncState } from '@/lib/sync';
 import { duration, fmtTime, relative } from '@/lib/time';
 import { hoursBetween } from '@/domain/aa';
 import { useAuth } from '@/lib/auth';
-// 1.17 (ADR-031): nav labels translate to Cebuano; tooltips stay English so help text stays exact.
+// 1.17 (ADR-031): nav labels translate to Ormocanon (Bisaya) or Filipino; tooltips stay English so help text stays exact.
 import { useT, type StringKey } from '@/lib/i18n';
 import { canUseVault } from '@/features/vault/access';
 import { tip } from './Tooltip';
