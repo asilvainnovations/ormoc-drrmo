@@ -35,7 +35,7 @@ create table if not exists public.ddrive_barangay_profiles (
   former_name              text,
   urban_rural              text,
   population_2024          integer,                -- PSA 2024 POPCEN; null only if the source itself is missing
-  population_2020          integer,              -- 2020 CPH (110-barangay configuration, see source register)
+  population_2020          integer,              -- 2020 CPH (the pre-merger barangay configuration, see source register)
   growth_rate_2020_2024  numeric,               -- annual growth rate, fraction (0.0236 = 2.36%/yr)
   households               integer,
   density_per_ha           numeric,

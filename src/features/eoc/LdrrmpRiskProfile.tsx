@@ -1,15 +1,13 @@
 // The Plan's own risk profile beside the DDRiVE matrix: what each hazard could cost, and how flood risk narrows to the
 // barangays that need investment first. Figures live in src/data/ldrrmpRisk.ts with their page references.
-import { FLOOD_CRITICAL, LDRRMP_SOURCE, POTENTIAL_DAMAGES_BN } from '@/data/ldrrmpRisk';
+import { LDRRMP_SOURCE, POTENTIAL_DAMAGES_BN } from '@/data/ldrrmpRisk';
 import { BarRow, Metric } from '@/features/governance/kit';
 import { useFloodRows } from '@/features/tools/flood/useFloodRows';
 import { classCounts } from '@/domain/floodScreen';
 
-const n = (v: number) => v.toLocaleString('en-PH');
 
 export function LdrrmpRiskProfile() {
   const max = Math.max(...POTENTIAL_DAMAGES_BN.map((h) => h.billion));
-  const f = FLOOD_CRITICAL;
   const data = useFloodRows();
   const rows = data?.rows ?? [];
   const counts = classCounts(rows);
@@ -34,14 +32,7 @@ export function LdrrmpRiskProfile() {
           <Metric label="High" value={by('High')} tone="bad" hint="barangays" />
           <Metric label="Moderate or low" value={by('Moderate') + by('Low')} hint="barangays" />
         </div>
-        <p className="mt-2 text-xs text-muted">A blank is "not assessed", never "low". Counts come from the current 85-barangay list, so they do not add up to the Plan's figures below.</p>
-        <h4 className="mt-4 text-sm font-bold text-ink">As printed in the Plan (earlier 110-barangay scheme)</h4>
-        <p className="mb-1 text-xs text-muted">Kept for reference. They count barangays under the old scheme and cannot be converted to the 85 barangays one for one.</p>
-        <ul className="list-disc pl-5 text-xs text-muted">
-          <li>{f.exposed} barangays exposed to flood; {f.highOrVeryHigh} with high or very high exposure.</li>
-          <li>{f.critical} critical ({n(f.criticalPopulation)} people), of which {f.over1bn} with over ₱1B damage ({n(f.over1bnPopulation)} people).</li>
-          <li>Critical means high or very high exposure with at least 50% of the barangay population in the exposed area.</li>
-        </ul>
+        <p className="mt-2 text-xs text-muted">A blank is "not assessed", never "low". Barangays are added as their flood assessments are loaded.</p>
       </div>
       <p className="text-xs text-muted lg:col-span-2">Source: {LDRRMP_SOURCE}. The official text governs.</p>
     </div>

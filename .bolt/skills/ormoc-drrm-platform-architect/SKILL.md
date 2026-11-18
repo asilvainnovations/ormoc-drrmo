@@ -170,7 +170,7 @@ All scores and evidence-validation statuses remain **provisional pending the val
 
 ### 3.1 Current Barangay And Population Reference
 
-The latest supplied Barangay-Level Hazards Assessment workbook uses an **85-barangay PSGC reference as of 31 July 2025** and reports an official **2024 POPCEN city population of 238,545** as of 1 July 2024. The workbook's 85-row 2024 barangay population column sums exactly to 238,545. The 2020 CPH city total is 230,998, but its per-barangay data largely follows the older 110-barangay configuration. The four new/consolidated Poblacion barangays do not have official 85-configuration 2020 counts in the workbook; do not invent or proportionally allocate them.
+The latest supplied Barangay-Level Hazards Assessment workbook uses an **85-barangay PSGC reference as of 31 July 2025** and reports an official **2024 POPCEN city population of 238,545** as of 1 July 2024. The workbook's 85-row 2024 barangay population column sums exactly to 238,545. The 2020 CPH city total is 230,998, but its per-barangay data largely follows the older the pre-merger barangay configuration. The four new/consolidated Poblacion barangays do not have official 85-configuration 2020 counts in the workbook; do not invent or proportionally allocate them.
 
 The consolidated Manual and source workbook still note that the CPDO, City Secretary and DILG City LGOO must sign off the City masterlist/crosswalk. Therefore:
 
@@ -433,7 +433,7 @@ Before handing over a design, code change, data update or release, confirm:
 - [ ] Change is mapped to MR requirement(s), IAT indicator(s), Manual chapter/SOP and legal source where applicable.
 - [ ] Draft/proposed/validated/approved/effective status is explicit and correct.
 - [ ] IAT v1.7 rules and baseline values are used; Part C remains separate; evidence validation is distinct from scoring.
-- [ ] Barangay joins use canonical PSGC and approved aliases; 85/110 legacy crosswalk caveat is visible until signed off.
+- [ ] Barangay joins use canonical PSGC and approved aliases; 85 and pre-merger legacy crosswalk caveat is visible until signed off.
 - [ ] Hazard source vintage, denominator, method, confidence, QA status and missingness are preserved.
 - [ ] Static map images are not treated as georeferenced overlays; hazard references are not presented as live warnings.
 - [ ] SQL/RLS/guards, TypeScript parity, Dexie sync, role permissions and audit trail are implemented where required.

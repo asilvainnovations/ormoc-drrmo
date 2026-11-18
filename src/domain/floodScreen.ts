@@ -18,7 +18,9 @@ export interface FloodRow {
 
 /** DDRiVE text to one of the flood classes. A blank is "Not assessed", never "Low". */
 export function floodClassOf(text: string | null | undefined): FloodClass {
-  const c = classify(text);
+  // A mixed range such as "Low–High (mixed classes)" counts at its highest class, so the barangay is never understated.
+  const range = /(?:very high|high|moderate|low)[^–-]*[–-]\s*(very high|high|moderate|low)/i.exec(text ?? '');
+  const c = classify(range ? range[1] : text);
   return (c in CLASS_RANK ? c : 'Other') as FloodClass;
 }
 

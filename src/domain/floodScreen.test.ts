@@ -71,3 +71,13 @@ describe('benefit-cost screen', () => {
     expect(missingAssumptions(a)).toEqual([]);
   });
 });
+
+describe('mixed flood classes', () => {
+  it('count at the highest class in the range', () => {
+    expect(floodClassOf('Low–High (mixed classes)')).toBe('High');
+    expect(floodClassOf('Moderate–High (mixed classes)')).toBe('High');
+    expect(floodClassOf('High–Very High')).toBe('Very high');
+    expect(floodClassOf('Moderate')).toBe('Moderate');
+    expect(floodClassOf('Not assessed')).toBe('Not assessed');
+  });
+});
