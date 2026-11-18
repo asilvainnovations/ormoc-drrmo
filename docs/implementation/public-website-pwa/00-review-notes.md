@@ -47,6 +47,8 @@ Still open per the code: `npcRegistration` is null (NPC registration), and the h
 
 "1.23.0" is now claimed three times: the governance workspace (ADR-043, migration `20261117003400`), the dashboard (ADR-044) and this handover. `package.json` is still 1.22.0. Choose one sequence before any branch is cut.
 
+**Resolved 18 Nov 2026** by the lead assessor; see ADR-045: contacts (3.1) as in `site.ts`, NPC registration not enforced, policies stay as approved (3.2). Release number (3.3) is still open.
+
 ## 4. Things to do differently when implementing
 
 - Use `USER_GUIDE_URL` from `src/lib/userGuide.ts` for the User Guide link instead of a literal path. Its tooltip says the guide "works offline once loaded"; test that against the service-worker cache before keeping the claim.

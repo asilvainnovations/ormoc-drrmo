@@ -16,11 +16,21 @@ test.describe('public pages, signed out', () => {
     }
   });
 
-  test('policies say they are drafts until the City approves them, and give the City as controller', async ({ page }) => {
+  test('policies show the City approval snapshot, and give the City as controller', async ({ page }) => {
     await page.goto('/policies/privacy');
-    await expect(page.getByText('Draft, not yet approved.')).toBeVisible();
+    await expect(page.getByText(/In effect from 9 November 2026\. Approved by City Legal Office and City Data Protection Officer/)).toBeVisible();
     await expect(page.getByText(/City Government of Ormoc, through the City Disaster Risk Reduction/).first()).toBeVisible();
     await expect(page.getByText(/Tokyo, Japan \(ap-northeast-1\)/)).toBeVisible();
+  });
+
+  test('the header sends the City seal to the City website and offers the User Guide', async ({ page }) => {
+    await page.goto('/');
+    const header = page.getByRole('banner');
+    await expect(header.getByRole('link', { name: /City Government of Ormoc website/ })).toHaveAttribute('target', '_blank');
+    await expect(header.getByRole('link', { name: /Ormoc City CDRRMO, MODE home/ })).toHaveAttribute('href', '/');
+    await expect(header.getByRole('link', { name: /MODE User Guide/ })).toHaveAttribute('href', /mode-user-guide\.html$/);
+    const guide = await page.request.get('/mode-user-guide.html');
+    expect(guide.ok()).toBe(true);
   });
 
   test('the workspace is not indexed and still asks for an account', async ({ page }) => {
