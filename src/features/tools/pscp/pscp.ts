@@ -110,7 +110,7 @@ export function pscpChecks(p: Pscp): string[] {
     else if (f.rtoHours > f.mtpdHours) out.push(`${f.name}: the RTO (${f.rtoHours} h) is longer than the MTPD (${f.mtpdHours} h). Recovery must come before the disruption becomes intolerable.`);
     if (f.priority === 1 && (f.minStaff ?? 0) < 1) out.push(`${f.name}: a mission-critical function needs a minimum staff number.`);
   }
-  if (!p.sites.some((s) => s.kind === 'alternate' && s.address.trim())) out.push('Designate an alternate site with an address (IAT B2.7).');
+  if (!p.sites.some((s) => s.kind === 'alternate' && s.address.trim())) out.push('Optional: name an alternate site with an address if the PSCP shows the need (IAT B2.7; Memo 131 s.2018 says an alternate EOC "may be established, as needed").');
   for (const s of p.succession) if (!s.first.trim() || !s.second.trim()) out.push(`Orders of succession for ${s.position || 'a position'} need at least two successors.`);
   if (!p.team.every((m) => m.position.trim())) out.push('Every Continuity Management Team role needs a position.');
   for (const r of p.risks) if (riskScore(r) >= 15 && !r.treatment.trim()) out.push(`${r.hazard}: high risk without a treatment.`);

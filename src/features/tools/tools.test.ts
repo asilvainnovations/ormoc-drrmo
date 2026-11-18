@@ -86,7 +86,7 @@ describe('PSCP workbench', () => {
   it('starts from a consistent CDRRMO draft, apart from what the City must supply', () => {
     const c = pscpChecks(starterPscp());
     expect(c.some((x) => /RTO .* longer than the MTPD/.test(x))).toBe(false);
-    expect(c).toEqual(expect.arrayContaining(['Designate an alternate site with an address (IAT B2.7).', 'Schedule the next test or exercise.']));
+    expect(c).toEqual(expect.arrayContaining(['Optional: name an alternate site with an address if the PSCP shows the need (IAT B2.7; Memo 131 s.2018 says an alternate EOC "may be established, as needed").', 'Schedule the next test or exercise.']));
   });
   it('flags a recovery time beyond the tolerable disruption', () => {
     const p = starterPscp(); p.functions[0]!.rtoHours = 10; p.functions[0]!.mtpdHours = 2;
