@@ -387,10 +387,10 @@ export default function HazardMapPage() {
               <li>Choose the municipality, Ormoc City.</li>
               <li>Choose the barangay{found?.barangay ? <> (here: <strong>{found.barangay.name}</strong>)</> : ''}. The former numbered Poblacion barangays still appear there as "Barangay 10 (Pob.)" and so on.</li>
               <li>Hazard: choose Flood.</li>
-              <li>Exposure: choose Demography, then the type Population.</li>
+              <li>Exposure: choose Demography, then Population, for the people prone to the hazard. Run it again with Institutional to see which schools, health facilities and other institutions in the barangay are exposed.</li>
               <li>Select Submit and wait about 20 seconds, until it says the data has loaded.</li>
               <li>Read "Total Population Prone to Flood" (for example 842 out of 977) and the age and sex chart.</li>
-              <li>Save the chart from its menu (PNG, JPEG or SVG) and send it to the CDRRMO to file as that barangay's assessment.</li>
+              <li>Download the charts as PNG and the table as Excel, and send them to the CDRRMO to file as that barangay's assessment.</li>
             </ol>
             <div className="mt-3 flex flex-wrap gap-2">
               <ButtonAnchor href={GEOANALYTICS_URL} icon={ExternalLink} tip="Open GeoAnalyticsPH in a new tab">Continue in GeoAnalyticsPH</ButtonAnchor>
