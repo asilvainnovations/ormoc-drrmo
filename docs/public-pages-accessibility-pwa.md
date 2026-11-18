@@ -15,7 +15,7 @@
 7. Confirm `manifest.start_url` remains appropriate for the public root and test install/standalone behaviour.
 
 ## Publication blockers
-Replace TO_CONFIRM placeholders: general support email, DPO email, business address, NPC registration reference (only if applicable), policy effective/approval dates and accountable policy owner. Confirm real monitored support channels. Verify Supabase hosting/backup/subprocessor/support locations, production third-party network requests, cookies/storage/IndexedDB/service worker behaviour, retention schedules, controller/processor roles and breach escalation duties.
+Updated 18 Nov 2026 (ADR-045). Closed: support address (`mode-support@asilvainnovations.com`), DPO and CDRRMO address (`cdrrmo.ormoccity@gmail.com`), business address, policy effective date, approval and owner (City Legal Office and DPO, snapshot of 10 Nov 2026). Not enforced: the NPC registration reference (shown only if the City sets it). Still to re-verify before any policy edit: Supabase hosting, backup and subprocessor locations, production third-party network requests, cookies, storage, IndexedDB and service-worker behaviour, retention schedules, controller and processor roles and breach escalation duties.
 
 ## Acceptance
 Run `npm run typecheck`, `npm test`, `npm run build`. Test root public access, `/today` authentication, OAuth consent and deep routes. Test keyboard-only navigation, focus order, headings, landmarks, 200% zoom, form labels/errors, screen reader announcements and axe. Manually test NVDA/Firefox, VoiceOver/Safari and TalkBack/Chrome. Test PWA install support, iOS manual installation directions, installed detection, offline launch and safe update prompts.

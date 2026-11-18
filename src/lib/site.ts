@@ -15,12 +15,14 @@ export const SITE = {
   tagline: `${PRODUCT.expansion}, Ormoc City`,
   /** Canonical origin for SEO (https://…, no trailing slash). The City's domain since 8 Nov 2026. */
   url: (val('VITE_SITE_URL', 'https://www.mode-cddrmo-ormoc.online') ?? '').replace(/\/$/, ''),
-  /** Platform support: the developer's mailbox, confirmed monitored on 8 Nov 2026. */
+  /** Technical support for the platform: the developer's mailbox, confirmed monitored on 8 Nov 2026. */
   supportEmail: val('VITE_SUPPORT_EMAIL', 'mode-support@asilvainnovations.com')!,
-  /** Data protection contact for the City's records (CDRRMO). */
+  /** The CDRRMO has one mailbox. It is the Data Protection Officer's address and the office's contact (ADR-045, 18 Nov 2026). */
   dpoEmail: val('VITE_DPO_EMAIL', 'cdrrmo.ormoccity@gmail.com')!,
+  /** The City Government's website, opened in a new tab from the City seal in the public header. */
+  cityWebsite: val('VITE_CITY_WEBSITE', 'https://ormoc.gov.ph/')!,
   address: val('VITE_BUSINESS_ADDRESS', 'New Ormoc City Hall, Anubing St., Brgy. Cogon, Ormoc City, Leyte')!,
-  /** NPC registration reference, only if the City's registration applies to this system. */
+  /** NPC registration reference. Not required to publish (ADR-045): shown only when the City sets it. */
   npcRegistration: val('VITE_NPC_REGISTRATION', null),
   /** Personal information controller for the City's records. */
   controller: 'City Government of Ormoc, through the City Disaster Risk Reduction and Management Office (CDRRMO)',
