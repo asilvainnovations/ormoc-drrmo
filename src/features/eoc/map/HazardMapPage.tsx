@@ -1,6 +1,6 @@
 // Assess → Hazard maps (ADR-028; moved from the EOC module in 1.16.0, ADR-030): the City's official hazard sheets over the barangays, with the QGIS tools the EOC
 // uses — layers, opacity and order, categorised barangay colouring, identify, measure, coordinates, exposure summary
-// and a PNG export that carries title, sources and accuracy. Barangay-level analysis is GeoAnalyticsPH, embedded. Sheets are pictures fitted to their own grid: read them
+// and a PNG export that carries title, sources and accuracy. Barangay-level analysis is GeoAnalyticsPH, opened on its own site. Sheets are pictures fitted to their own grid: read them
 // at barangay level, never for a site decision. Nothing here sets a hazard threshold.
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
@@ -61,7 +61,6 @@ export default function HazardMapPage() {
   const places = useLiveQuery(async () => (await db.geo_reference_points.toArray()).filter((x) => x.verification_status !== 'superseded')
     .map((x) => ({ id: x.id, name: x.name, kind: POINT_KIND[x.kind], lat: x.lat, lng: x.lng, status: POINT_STATUS[x.verification_status] })), []);
   const [locProblem, setLocProblem] = useState<string | null>(null);
-  const [geoOpen, setGeoOpen] = useState(false);
 
   // ---------------------------------------------------------------- boundaries (static file, cached offline)
   useEffect(() => {
@@ -380,18 +379,22 @@ export default function HazardMapPage() {
         </div>
         <div className="space-y-4 lg:col-span-2 2xl:col-span-1">
           <Section title="Barangay hazard assessment (GeoAnalyticsPH)">
-            <p className="max-w-prose text-sm text-muted">GeoAnalyticsPH, from DOST-PHIVOLCS GeoRiskPH, gives the official barangay-level analysis: population prone and safe by sex and age, affected facilities and land area for each hazard. In its map choose Region VIII (Eastern Visayas), then the province, City of Ormoc and the barangay{found?.barangay ? <> (here: <strong className="text-ink">{found.barangay.name}</strong>)</> : ''}, pick a hazard and select Submit.</p>
+            <p className="max-w-prose text-sm text-muted">GeoAnalyticsPH, from DOST-PHIVOLCS GeoRiskPH, gives the official barangay-level analysis: population prone and safe by sex and age, affected facilities and land area for each hazard. It opens on its own site, not inside MODE. Do the barangay-level hazard assessment there in ten clicks:</p>
+            <ol className="mt-2 max-w-prose list-decimal space-y-0.5 pl-5 text-sm text-ink">
+              <li>Open GeoAnalyticsPH with the button below.</li>
+              <li>Choose Region VIII (Eastern Visayas).</li>
+              <li>Choose the province (Leyte).</li>
+              <li>Choose the City of Ormoc.</li>
+              <li>Choose the barangay{found?.barangay ? <> (here: <strong>{found.barangay.name}</strong>)</> : ''}.</li>
+              <li>Pick the hazard (flood first).</li>
+              <li>Select Submit.</li>
+              <li>Read the population prone and safe, by sex and age.</li>
+              <li>Save the report (PDF or Excel, if offered).</li>
+              <li>Send it to the CDRRMO to file as that barangay's assessment.</li>
+            </ol>
             <div className="mt-3 flex flex-wrap gap-2">
-              {!geoOpen && <Button variant="secondary" tip="Load GeoAnalyticsPH inside this page (it uses data; it is a separate site)" onClick={() => setGeoOpen(true)}>Show GeoAnalyticsPH here</Button>}
-              <ButtonAnchor href={GEOANALYTICS_URL} icon={ExternalLink} tip="Open GeoAnalyticsPH in a new tab">Open in a new tab</ButtonAnchor>
+              <ButtonAnchor href={GEOANALYTICS_URL} icon={ExternalLink} tip="Open GeoAnalyticsPH in a new tab">Continue in GeoAnalyticsPH</ButtonAnchor>
             </div>
-            {geoOpen && (
-              <>
-                <iframe src={GEOANALYTICS_URL} title="GeoAnalyticsPH barangay hazard assessment" className="mt-3 h-[75vh] min-h-[520px] w-full rounded-card border border-line bg-surface"
-                  allow="geolocation" referrerPolicy="strict-origin-when-cross-origin" loading="lazy" />
-                <p className="mt-2 text-xs text-muted">If the frame stays blank or asks you to sign in, GeoAnalyticsPH may not allow use inside another site: use Open in a new tab.</p>
-              </>
-            )}
           </Section>
         </div>
       </div>
