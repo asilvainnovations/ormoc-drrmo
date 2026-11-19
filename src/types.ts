@@ -85,7 +85,8 @@ export interface ManualCorrection extends Versioned {
 }
 export type ProtocolCategory = 'daily_operations' | 'warning' | 'eoc' | 'anticipatory_action' | 'council' | 'reporting' | 'recovery'
   | 'governance' | 'workforce' | 'budget' | 'response_clusters' | 'geospatial'
-  | 'risk_information' | 'risk_planning' | 'contingency_planning' | 'continuity';
+  | 'risk_information' | 'risk_planning' | 'contingency_planning' | 'continuity'
+  | 'learning' | 'partnerships';  // 1.29.0 (ADR-046): Ch.7 and Ch.8 workflows
 export interface ProtocolTemplate extends Versioned {
   code: string; title: string; purpose: string | null; trigger_text: string | null; document_id: string | null;
   owner_role: Role; category: ProtocolCategory; status: 'draft' | 'approved' | 'retired'; template_rev: number;

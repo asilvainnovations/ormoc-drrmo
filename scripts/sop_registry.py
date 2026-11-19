@@ -11,7 +11,7 @@ plus, per step, the form the step is closed on (forms_seed.STEP_FORMS / the step
 Chapter 3 v1.0 (8 Nov 2026) adds nine workflows WF-SOP3-01..09 and the Chapter 3 forms F3-01..F3-11
 (Annexes 3-B to 3-L). Privacy (RA 10173): forms hold institutional records and aggregate counts only.
 """
-from forms_seed import f
+from forms_seed import f, HAZARD_OPTS
 
 PROTOCOL_CATEGORIES = {'daily_operations', 'warning', 'eoc', 'anticipatory_action', 'reporting', 'recovery'}
 # Everything else is a workflow (normal-operations management cycle).
@@ -783,3 +783,153 @@ CH8_PROCEDURES = [  # MOO Ch.8 Stakeholder Engagement and Institutional Partners
 META.update({p['code']: p['meta'] for p in CH5REC_PROCEDURES + CH7_PROCEDURES + CH8_PROCEDURES})
 for p_ in [p for p in CH6_PROCEDURES if 'meta' in p]:  # 1.18: SOP 6-12 appended after the CH6 META loop
     META[p_['code']] = p_.pop('meta')
+
+# --- 1.29.0 (ADR-046): thematic placement and the missing Manual forms ----------------------------------------
+# Placement follows NDRRMP 2020-2030 (four thematic pillars; Pillar 3 "Disaster Response and Early Recovery",
+# Outcome 13 response operations incl. ICS and relief, Outcome 14 forecast-based early action, Outcome 15 SitReps)
+# and Table 9 of the Ormoc City DRRM 10-Year Plan 2023-2032 (EWS and LDRRMF under Prevention and Mitigation;
+# LDRRMC/O strengthening and simulation exercises under Preparedness; ICS, forecast-based early action and CCCM
+# under Response and Early Recovery; PDNA under Rehabilitation and Recovery).
+# Ch.7 workflows leave 'governance' for 'learning'; Ch.8 workflows for 'partnerships'. Both sit under Preparedness.
+RECATEGORISE = {
+    'WF-SOP7-01': 'learning', 'PR-AAR': 'learning', 'WF-SOP7-05': 'learning', 'WF-SOP7-07': 'learning',
+    'WF-SOP7-08': 'learning', 'WF-SOP7-09': 'learning',
+    'WF-SOP8-01': 'partnerships', 'WF-SOP8-02': 'partnerships', 'WF-SOP8-04': 'partnerships',
+    'WF-SOP8-07': 'partnerships', 'WF-SOP8-08': 'partnerships',
+}
+# kind is no longer read off the category for these two: SOP 7-04 runs at the point of action (an AAR),
+# SOP 5-01 is an annual management cycle (a workflow), whatever its code prefix suggests.
+KIND_OVERRIDE = {'PR-AAR': 'protocol', 'WF-REC-FRAMEWORK': 'workflow'}
+for p_ in CH5REC_PROCEDURES + CH7_PROCEDURES + CH8_PROCEDURES:
+    if p_['code'] in RECATEGORISE: p_['category'] = RECATEGORISE[p_['code']]
+    if p_['code'] in KIND_OVERRIDE: p_['kind'] = KIND_OVERRIDE[p_['code']]
+
+_PRIORITY = ['High', 'Medium', 'Low']
+_LOOP = ['Single-loop (fix the instance)', 'Double-loop (change the rule, plan or design)']
+_CAPA_STATUS = ['Open', 'Planned', 'In progress', 'Implemented', 'Closed – effective', 'Reopened']
+_PARTNER_TYPE = ['National agency', 'Province or other LGU', 'Civil society organisation', 'Private sector', 'Academe',
+                 'Faith-based group', 'Utility', 'International organisation', 'Other']
+
+# The forms that steps of Chapters 5, 6 (SOP 6-12), 7 and 8 already name but that had no template, so those steps
+# fell back to STEP-RECORD. Fields follow each chapter's forms register and annexes (Ch.5 Table of forms;
+# Ch.7 Annex 7-B and 7-E; Ch.8 Annexes 8-B to 8-D). Institutional records only; positions, never personal names.
+CH578_FORMS = [
+    ('LOG-F03', 'Resource inventory and commitment entry', 'Chapter 6 LOG-F03 (SOPs 6-06 and 6-12). One item or commitment per entry; blank means not reported.', 'MOO Ch.6', [
+        f('holder', 'Holder', 'select', True, ['City office', 'Barangay (BDRRMC)', 'Partner (agreement)', 'Supplier (framework agreement)']),
+        f('item', 'Item, team or service', 'text', True), f('quantity', 'Quantity', 'integer', True, min=0),
+        f('serviceable', 'Serviceable', 'select', True, ['Serviceable', 'Needs repair', 'Unserviceable', 'Not checked']),
+        f('location', 'Location or barangay', 'text', True),
+        f('agreement_ref', 'Agreement reference (partner or supplier)', 'text', hint='Required for partner and supplier entries'),
+        f('activation_trigger', 'Activation trigger', 'text'), f('contact_position', 'Contact (position)', 'text', True, hint='Position, not a personal name'),
+        f('last_confirmed', 'Last confirmed or tested', 'date', True)]),
+    ('ME-F01', 'LDRRMP M&E matrix entry', 'Chapter 7 ME-F01 (SOP 7-01; Annex 7-B), aligned with Form 5D of the 10-Year Plan. One row per indicator.', 'MOO Ch.7', [
+        f('indicator_code', 'Code', 'text', True), f('result_level', 'Result level', 'select', True, ['Impact', 'Outcome', 'Output', 'Input and process']),
+        f('definition', 'Indicator and definition', 'textarea', True, hint='What is counted, how, and what is excluded'),
+        f('unit', 'Unit and disaggregation', 'text', True, hint='Sex, age, disability and barangay where relevant'),
+        f('baseline', 'Baseline (value, year, source)', 'text', True, hint='Or the dated plan to establish one'),
+        f('targets', 'Targets by year to 2032', 'textarea', True), f('source_method', 'Data source and method', 'text', True),
+        f('frequency', 'Frequency', 'select', True, ['Quarterly', 'Annual', 'Per event']),
+        f('responsible_office', 'Responsible office', 'text', True),
+        f('framework_codes', 'Framework codes', 'text', hint='Ten Essentials; NDRRMP outcome; DILG pillar; Sendai target; IAT indicator'),
+        f('current_status', 'Current value and status', 'select', options=['On track', 'Off track', 'Not reported'])]),
+    ('ME-F02', 'Annual LDRRMP progress and results report', 'Chapter 7 ME-F02 (SOP 7-01). Each January for the previous year; to the CDRRMC and the LDC.', 'MOO Ch.7', [
+        f('year', 'Year reported', 'integer', True, min=2023),
+        f('indicators_reported', 'Indicators with a value', 'integer', True, min=0), f('indicators_total', 'Indicators in the matrix', 'integer', True, min=0),
+        f('summary', 'Results against targets', 'textarea', True), f('ppa_status', 'PPA status', 'textarea'),
+        f('consistency_note', 'AIP consistency note', 'textarea', hint='NDRRMC Memo No. 147, s. 2017'),
+        f('capa_refs', 'Gaps sent to the CAPA register', 'text'), f('cdrrmc_resolution', 'CDRRMC resolution approving the report', 'text')]),
+    ('ME-F03', 'After-action review report', 'Chapter 7 ME-F03 (SOP 7-04), full or focused form. Receives ER-F06 from Chapter 4, SOP 4-09.', 'MOO Ch.7', [
+        f('form_type', 'Form', 'select', True, ['Full AAR', 'Focused AAR (near miss or procedural failure)']),
+        f('event', 'Event and dates', 'text', True), f('facilitator', 'Facilitator (position; held no command role)', 'text', True),
+        f('timeline_sources', 'Timeline sources', 'textarea', True, hint='Warning product IDs, logbook, SitReps, ER-F06, resource requests'),
+        f('expected_vs_actual', 'What was expected and what happened', 'textarea', True),
+        f('findings', 'Findings with evidence and causes', 'textarea', True),
+        f('keep_change', 'What to keep and what to change', 'textarea', True),
+        f('capa_entries', 'CAPA entries opened (ME-F05)', 'text')]),
+    ('ME-F04', 'Exercise evaluation report', 'Chapter 7 ME-F04 (SOP 7-04), full or short form. Within 15 days of a functional or full-scale exercise; 7 days of a tabletop or drill.', 'MOO Ch.7', [
+        f('form_type', 'Form', 'select', True, ['Full (functional or full-scale exercise)', 'Short (tabletop or drill)']),
+        f('exercise', 'Exercise, scenario and date', 'text', True), f('objectives', 'Objectives tested', 'textarea', True),
+        f('participants', 'Participating offices and partners', 'textarea'),
+        f('met', 'Objectives met', 'select', True, ['All', 'Partly', 'None']),
+        f('findings', 'Findings with evidence', 'textarea', True), f('capa_entries', 'CAPA entries opened (ME-F05)', 'text')]),
+    ('ME-F05', 'Corrective and preventive action (CAPA) register entry', 'Chapter 7 ME-F05 (SOPs 7-03 to 7-09). Root cause, verification and effectiveness review per Ch.1 Table 1.23.', 'MOO Ch.7', [
+        f('source', 'Source', 'select', True, ['AAR', 'Exercise', 'IAT', 'Validation', 'COA observation', 'Data breach', 'Lesson', 'Other']),
+        f('problem', 'Problem statement and risk consequence', 'textarea', True),
+        f('priority', 'Priority', 'select', True, _PRIORITY), f('root_cause', 'Root cause', 'textarea'),
+        f('action', 'Action', 'textarea', True), f('responsible', 'Responsible office', 'text', True), f('target_date', 'Target date', 'date', True),
+        f('loop', 'Type of learning', 'select', options=_LOOP), f('status', 'Status', 'select', True, _CAPA_STATUS),
+        f('effectiveness_evidence', 'Effectiveness evidence', 'textarea', hint='Evidence, not assertion; the CDRRMC closes High items')]),
+    ('ME-F06', 'Reporting calendar and compliance tracker entry', 'Chapter 7 ME-F06 (sec. 10; SOP 7-06). Confirmed each January with the issuing agency.', 'MOO Ch.7', [
+        f('report', 'Report', 'text', True), f('recipient', 'Recipient body', 'text', True), f('basis', 'Legal or policy basis', 'text'),
+        f('due', 'Due date', 'date', True), f('submitted', 'Submitted on', 'date'),
+        f('status', 'Status', 'select', True, ['Not due', 'Submitted on time', 'Submitted late', 'Missed'])]),
+    ('ME-F07', 'Disaster event and loss record', 'Chapter 7 ME-F07 (SOP 7-07; Annex 7-E). Aggregates only; every figure carries its source (RA 10173).', 'MOO Ch.7', [
+        f('event', 'Event name and hazard', 'text', True), f('hazard', 'Hazard', 'select', True, HAZARD_OPTS),
+        f('start_date', 'Start date', 'date', True), f('barangays_affected', 'Barangays affected', 'integer', min=0, max=85),
+        f('deaths', 'Deaths', 'integer', min=0), f('missing', 'Missing', 'integer', min=0), f('injured', 'Injured', 'integer', min=0),
+        f('families_affected', 'Families affected', 'integer', min=0), f('persons_affected', 'Persons affected', 'integer', min=0),
+        f('damage_php', 'Damage (PHP)', 'number', min=0), f('sources', 'Sources of the figures', 'textarea', True, hint='Final SitRep, DROMIC, RDANA, PDNA'),
+        f('version_note', 'Version and what changed', 'text')]),
+    ('ME-F08', 'Lessons and peer-learning register entry', 'Chapter 7 ME-F08 (SOP 7-08). Without a proposed change it is an observation, not yet a lesson.', 'MOO Ch.7', [
+        f('source', 'Source', 'select', True, ['AAR', 'Exercise', 'IAT', 'Peer exchange', 'Network event', 'Other']),
+        f('lesson', 'Lesson', 'textarea', True), f('change', 'Change proposed', 'textarea', True),
+        f('change_type', 'What changes', 'multiselect', True, ['Plan', 'Form', 'Procedure (Manual)', 'Training', 'MODE rule', 'Other']),
+        f('decision', 'CDRRMO Head decision', 'select', options=['Adopt', 'Refer to the CDRRMC or the Mayor', 'Not adopted']),
+        f('capa_ref', 'CAPA entry (ME-F05)', 'text')]),
+    ('ME-F09', 'DRRM data inventory, sharing register and breach log', 'Chapter 7 ME-F09 (SOP 7-09), parts A to C. The DPO reviews; NPC notice within 72 hours of knowledge of a breach.', 'MOO Ch.7', [
+        f('part', 'Part', 'select', True, ['A. Data inventory', 'B. Data-sharing register', 'C. Breach log']),
+        f('item', 'Form, system or dataset', 'text', True), f('purpose', 'Purpose', 'text', True), f('office', 'Office', 'text', True),
+        f('personal_data', 'Holds personal data', 'checkbox'), f('retention', 'Retention period', 'text'),
+        f('agreement_ref', 'Data-sharing agreement (part B)', 'text'),
+        f('breach_known_at', 'Breach known at (part C)', 'datetime'), f('npc_notified_at', 'NPC notified at (part C)', 'datetime'),
+        f('dpo_review', 'DPO reviewed', 'checkbox')]),
+    ('PTN-F01', 'Partner register entry', 'Chapter 8 PTN-F01 (SOPs 8-01, 8-02, 8-07, 8-08). Reviewed every year at the partner forum.', 'MOO Ch.8', [
+        f('partner', 'Organisation', 'text', True), f('partner_type', 'Type', 'select', True, _PARTNER_TYPE),
+        f('agreement', 'Agreement', 'select', True, ['MOA or MOU', 'Mutual aid agreement', 'Framework agreement', 'Coordination only']),
+        f('agreement_ref', 'Agreement reference and authority', 'text', hint='SP resolution; signing date'),
+        f('roles', 'Roles before, during and after events', 'textarea', True), f('resources', 'Resources committed (also on LOG-F03)', 'textarea'),
+        f('activation_trigger', 'Activation trigger', 'text'), f('contact_position', 'Contact (position)', 'text', True),
+        f('review_date', 'Next review', 'date', True)]),
+    ('PTN-F02', 'Partnership proposal and justification', 'Chapter 8 PTN-F02 (SOP 8-01). No term may transfer legal authority.', 'MOO Ch.8', [
+        f('partner', 'Proposed partner', 'text', True), f('need', 'Need and value to the City', 'textarea', True),
+        f('basis', 'Plan, AAR or IAT gap cited', 'text', True),
+        f('instrument', 'Instrument needed', 'select', True, ['Written agreement', 'Coordination is enough']),
+        f('legal_review', 'City Legal Office review filed', 'checkbox')]),
+    ('PTN-F03', 'Mutual aid or augmentation request and status', 'Chapter 8 PTN-F03 (SOPs 8-02, 8-03, 8-08), inbound and outbound. Specific enough to act on.', 'MOO Ch.8', [
+        f('direction', 'Direction', 'select', True, ['Outbound request (City asks)', 'Inbound request (City is asked)', 'Assistance sent to another LGU']),
+        f('route', 'Route', 'select', True, ['Mutual aid agreement', 'Province (PDRRMO)', 'OCD VIII / national agency', 'Other LGU']),
+        f('resource', 'Resource and quantity', 'textarea', True), f('location', 'Where needed', 'text', True),
+        f('needed_by', 'Needed by', 'datetime', True), f('committed', 'City resources already committed', 'textarea'),
+        f('approved_by', 'Approved by (position)', 'text', True), f('sent_at', 'Sent at', 'datetime'),
+        f('status', 'Status', 'select', True, ['Sent', 'Acknowledged', 'In transit', 'Delivered', 'Declined', 'Demobilised'])]),
+    ('PTN-F04', 'Part C interface agreement', 'Chapter 8 PTN-F04 (SOP 8-04; Annex 8-C). Approved by the City Administrator.', 'MOO Ch.8', [
+        f('lead_office', 'Lead office', 'text', True), f('indicators', 'Part C indicators owned', 'text', True, hint='IAT v1.7 codes, e.g. C1.2'),
+        f('focal', 'Focal persons and alternates (positions)', 'text', True), f('actions', 'Actions for the year', 'textarea', True),
+        f('information', 'Information exchanged', 'textarea', True), f('event_role', 'Role in events', 'textarea'),
+        f('approved_on', 'Approved on', 'date')]),
+    ('PTN-F05', 'Annual interface review record', 'Chapter 8 PTN-F05 (SOP 8-04). Before the IAT cycle; self-scoring validated by another office.', 'MOO Ch.8', [
+        f('lead_office', 'Lead office', 'text', True), f('year', 'Year', 'integer', True, min=2026),
+        f('actions_done', 'Actions completed', 'textarea', True), f('self_score_note', 'Self-scoring and validation', 'textarea'),
+        f('reported_to_cdrrmc', 'Interface Index reported to the CDRRMC', 'checkbox')]),
+    ('PTN-F06', 'Critical facility restoration-priority list and utility arrangement', 'Chapter 8 PTN-F06 (SOP 8-05). Agreed by the offices concerned; contacts tested before the season.', 'MOO Ch.8', [
+        f('facility', 'Facility', 'text', True),
+        f('facility_type', 'Type', 'select', True, ['Hospital or health centre', 'EOC or alternate EOC', 'Evacuation centre', 'Water pump', 'Communications site', 'Other']),
+        f('priority', 'Restoration priority', 'integer', True, min=1), f('utility', 'Utility', 'text', True),
+        f('arrangement', 'Arrangement', 'multiselect', options=['Priority restoration', 'Status reporting', 'Standby generation', 'Cell-on-wheels', 'Water tanker']),
+        f('contact_tested', 'Contacts tested on', 'date')]),
+    ('PTN-F07', 'CDRRMC partner seat review', 'Chapter 8 PTN-F07 (SOP 8-06). Against RA 10121 Sec. 11 and the CDRRMC EO.', 'MOO Ch.8', [
+        f('seat', 'Seat', 'select', True, ['CSO', 'Private sector', 'Academe']),
+        f('status', 'Status', 'select', True, ['Filled and active', 'Inactive', 'Vacant', 'Not accredited']),
+        f('organisation', 'Organisation', 'text'), f('attendance', 'Meetings attended in the last year', 'integer', min=0),
+        f('accreditation_ref', 'SP accreditation reference', 'text'), f('term_review', 'Term and review date', 'text')]),
+    ('REC-F01', 'Pre-disaster recovery framework register', 'Chapter 5 REC-F01 (SOP 5-01). Gaps are "not reported", not zero.', 'MOO Ch.5', [
+        f('version', 'Version', 'text', True), f('adopted_on', 'Adoption date', 'date'), f('resolution', 'CDRRMC resolution', 'text'),
+        f('review_date', 'Next review', 'date', True), f('contingency_plans', 'Attached contingency plans', 'text'),
+        f('gaps', 'Open gaps', 'textarea')]),
+    ('REC-F03', 'PDNA decision, team and approval record', 'Chapter 5 REC-F03 (SOP 5-02). Every figure states its source.', 'MOO Ch.5', [
+        f('trigger', 'Trigger met', 'multiselect', True, ['Damage in two or more barangays', 'State of Calamity declared', 'National assistance needed']),
+        f('decision', 'CDRRMC decision', 'select', True, ['City PDNA', 'Rapid Damage Estimation first', 'No PDNA']),
+        f('reasons', 'Reasons', 'textarea', True), f('scope', 'Scope and sectors', 'textarea'),
+        f('team', 'Team by sector (positions)', 'textarea'), f('ocd_support', 'OCD VIII support requested', 'checkbox'),
+        f('approved_on', 'Approved by the CDRRMC on', 'date'), f('transmittal', 'Transmittal to RDRRMC VIII', 'text')]),
+]

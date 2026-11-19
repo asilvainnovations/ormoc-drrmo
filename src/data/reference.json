@@ -12533,8 +12533,8 @@
    "id": "4abad9a2-4347-58f3-bc20-d34862057d66",
    "code": "BUD-F01",
    "title": "LDRRMF thematic split",
-   "purpose": "MOO Ch.1 sec. 1.4 and Ch.2 sec. 2.16.2: how the investment plan splits across thematic areas.",
-   "document_id": "f379ea8e-ae82-5eb6-9887-f700227215ce",
+   "purpose": "Chapter 6 FIN-F02 (SOP 6-01; formerly Ch.2 sec. 2.16.2): how the investment plan splits across thematic areas.",
+   "document_id": "d61fc0e9-7136-5375-ab68-40132bc8dd3c",
    "schema": "{\"fields\": [{\"key\": \"fiscal_year\", \"label\": \"Fiscal year\", \"type\": \"integer\", \"required\": true, \"min\": 2020}, {\"key\": \"total_php\", \"label\": \"Total LDRRMF (PHP)\", \"type\": \"number\", \"required\": true, \"min\": 0}, {\"key\": \"prevention_pct\", \"label\": \"Prevention and mitigation (% of the 70%)\", \"type\": \"number\", \"required\": true, \"min\": 0}, {\"key\": \"preparedness_pct\", \"label\": \"Preparedness (% of the 70%)\", \"type\": \"number\", \"required\": true, \"min\": 0}, {\"key\": \"response_pct\", \"label\": \"Response (% of the 70%)\", \"type\": \"number\", \"required\": true, \"min\": 0}, {\"key\": \"recovery_pct\", \"label\": \"Recovery and rehabilitation (% of the 70%)\", \"type\": \"number\", \"required\": true, \"min\": 0}, {\"key\": \"aa_line_php\", \"label\": \"Anticipatory action line (PHP)\", \"type\": \"number\", \"required\": false, \"min\": 0}, {\"key\": \"tagged\", \"label\": \"Every line tagged to an LDRRMP/CDP PPA\", \"type\": \"checkbox\", \"required\": true}]}",
    "status": "draft",
    "rev": 1
@@ -12543,8 +12543,8 @@
    "id": "97e4f411-ff60-5aa6-9afa-ce27a305039b",
    "code": "BUD-F02",
    "title": "Quarterly results-and-finance report",
-   "purpose": "Ch.2 sec. 2.16.2 step 7: one report that every division feeds.",
-   "document_id": "f379ea8e-ae82-5eb6-9887-f700227215ce",
+   "purpose": "Chapter 6 FIN-F03 (SOP 6-02; formerly Ch.2 sec. 2.16.2 step 7): one report that every division feeds.",
+   "document_id": "d61fc0e9-7136-5375-ab68-40132bc8dd3c",
    "schema": "{\"fields\": [{\"key\": \"quarter\", \"label\": \"Quarter\", \"type\": \"select\", \"required\": true, \"options\": [\"Q1\", \"Q2\", \"Q3\", \"Q4\"]}, {\"key\": \"obligation_rate_pct\", \"label\": \"Obligation rate (%)\", \"type\": \"number\", \"required\": true, \"min\": 0}, {\"key\": \"results\", \"label\": \"Results against the LDRRMP\", \"type\": \"textarea\", \"required\": true}, {\"key\": \"issues\", \"label\": \"Issues and proposed realignments\", \"type\": \"textarea\", \"required\": false}]}",
    "status": "draft",
    "rev": 1
@@ -12966,6 +12966,196 @@
    "purpose": "Chapter 6 FIN-F11 (SOP 6-10); feeds Chapter 7.",
    "document_id": "d61fc0e9-7136-5375-ab68-40132bc8dd3c",
    "schema": "{\"fields\": [{\"key\": \"reference\", \"label\": \"AOM or AAR reference\", \"type\": \"text\", \"required\": true}, {\"key\": \"finding\", \"label\": \"Finding\", \"type\": \"textarea\", \"required\": true}, {\"key\": \"action\", \"label\": \"Corrective action\", \"type\": \"textarea\", \"required\": true}, {\"key\": \"owner\", \"label\": \"Accountable office\", \"type\": \"text\", \"required\": true}, {\"key\": \"due\", \"label\": \"Due date\", \"type\": \"date\", \"required\": true}, {\"key\": \"status\", \"label\": \"Status\", \"type\": \"select\", \"required\": true, \"options\": [\"Open\", \"Replied\", \"Implemented\", \"Closed by COA\", \"Not implemented\"]}]}",
+   "status": "draft",
+   "rev": 1
+  },
+  {
+   "id": "b7191e58-bcca-572b-ae4e-40518fa9c2ae",
+   "code": "LOG-F03",
+   "title": "Resource inventory and commitment entry",
+   "purpose": "Chapter 6 LOG-F03 (SOPs 6-06 and 6-12). One item or commitment per entry; blank means not reported.",
+   "document_id": "d61fc0e9-7136-5375-ab68-40132bc8dd3c",
+   "schema": "{\"fields\": [{\"key\": \"holder\", \"label\": \"Holder\", \"type\": \"select\", \"required\": true, \"options\": [\"City office\", \"Barangay (BDRRMC)\", \"Partner (agreement)\", \"Supplier (framework agreement)\"]}, {\"key\": \"item\", \"label\": \"Item, team or service\", \"type\": \"text\", \"required\": true}, {\"key\": \"quantity\", \"label\": \"Quantity\", \"type\": \"integer\", \"required\": true, \"min\": 0}, {\"key\": \"serviceable\", \"label\": \"Serviceable\", \"type\": \"select\", \"required\": true, \"options\": [\"Serviceable\", \"Needs repair\", \"Unserviceable\", \"Not checked\"]}, {\"key\": \"location\", \"label\": \"Location or barangay\", \"type\": \"text\", \"required\": true}, {\"key\": \"agreement_ref\", \"label\": \"Agreement reference (partner or supplier)\", \"type\": \"text\", \"required\": false, \"hint\": \"Required for partner and supplier entries\"}, {\"key\": \"activation_trigger\", \"label\": \"Activation trigger\", \"type\": \"text\", \"required\": false}, {\"key\": \"contact_position\", \"label\": \"Contact (position)\", \"type\": \"text\", \"required\": true, \"hint\": \"Position, not a personal name\"}, {\"key\": \"last_confirmed\", \"label\": \"Last confirmed or tested\", \"type\": \"date\", \"required\": true}]}",
+   "status": "draft",
+   "rev": 1
+  },
+  {
+   "id": "beee6ad0-4e36-5883-8ed8-f95a6ecd3ea6",
+   "code": "ME-F01",
+   "title": "LDRRMP M&E matrix entry",
+   "purpose": "Chapter 7 ME-F01 (SOP 7-01; Annex 7-B), aligned with Form 5D of the 10-Year Plan. One row per indicator.",
+   "document_id": "aec20d50-301b-57ce-87d4-64154502a0ef",
+   "schema": "{\"fields\": [{\"key\": \"indicator_code\", \"label\": \"Code\", \"type\": \"text\", \"required\": true}, {\"key\": \"result_level\", \"label\": \"Result level\", \"type\": \"select\", \"required\": true, \"options\": [\"Impact\", \"Outcome\", \"Output\", \"Input and process\"]}, {\"key\": \"definition\", \"label\": \"Indicator and definition\", \"type\": \"textarea\", \"required\": true, \"hint\": \"What is counted, how, and what is excluded\"}, {\"key\": \"unit\", \"label\": \"Unit and disaggregation\", \"type\": \"text\", \"required\": true, \"hint\": \"Sex, age, disability and barangay where relevant\"}, {\"key\": \"baseline\", \"label\": \"Baseline (value, year, source)\", \"type\": \"text\", \"required\": true, \"hint\": \"Or the dated plan to establish one\"}, {\"key\": \"targets\", \"label\": \"Targets by year to 2032\", \"type\": \"textarea\", \"required\": true}, {\"key\": \"source_method\", \"label\": \"Data source and method\", \"type\": \"text\", \"required\": true}, {\"key\": \"frequency\", \"label\": \"Frequency\", \"type\": \"select\", \"required\": true, \"options\": [\"Quarterly\", \"Annual\", \"Per event\"]}, {\"key\": \"responsible_office\", \"label\": \"Responsible office\", \"type\": \"text\", \"required\": true}, {\"key\": \"framework_codes\", \"label\": \"Framework codes\", \"type\": \"text\", \"required\": false, \"hint\": \"Ten Essentials; NDRRMP outcome; DILG pillar; Sendai target; IAT indicator\"}, {\"key\": \"current_status\", \"label\": \"Current value and status\", \"type\": \"select\", \"required\": false, \"options\": [\"On track\", \"Off track\", \"Not reported\"]}]}",
+   "status": "draft",
+   "rev": 1
+  },
+  {
+   "id": "41003415-6b0f-5b98-a74f-e0db5f1cc434",
+   "code": "ME-F02",
+   "title": "Annual LDRRMP progress and results report",
+   "purpose": "Chapter 7 ME-F02 (SOP 7-01). Each January for the previous year; to the CDRRMC and the LDC.",
+   "document_id": "aec20d50-301b-57ce-87d4-64154502a0ef",
+   "schema": "{\"fields\": [{\"key\": \"year\", \"label\": \"Year reported\", \"type\": \"integer\", \"required\": true, \"min\": 2023}, {\"key\": \"indicators_reported\", \"label\": \"Indicators with a value\", \"type\": \"integer\", \"required\": true, \"min\": 0}, {\"key\": \"indicators_total\", \"label\": \"Indicators in the matrix\", \"type\": \"integer\", \"required\": true, \"min\": 0}, {\"key\": \"summary\", \"label\": \"Results against targets\", \"type\": \"textarea\", \"required\": true}, {\"key\": \"ppa_status\", \"label\": \"PPA status\", \"type\": \"textarea\", \"required\": false}, {\"key\": \"consistency_note\", \"label\": \"AIP consistency note\", \"type\": \"textarea\", \"required\": false, \"hint\": \"NDRRMC Memo No. 147, s. 2017\"}, {\"key\": \"capa_refs\", \"label\": \"Gaps sent to the CAPA register\", \"type\": \"text\", \"required\": false}, {\"key\": \"cdrrmc_resolution\", \"label\": \"CDRRMC resolution approving the report\", \"type\": \"text\", \"required\": false}]}",
+   "status": "draft",
+   "rev": 1
+  },
+  {
+   "id": "6045195e-b296-504b-bb84-eaa1e6a6e63c",
+   "code": "ME-F03",
+   "title": "After-action review report",
+   "purpose": "Chapter 7 ME-F03 (SOP 7-04), full or focused form. Receives ER-F06 from Chapter 4, SOP 4-09.",
+   "document_id": "aec20d50-301b-57ce-87d4-64154502a0ef",
+   "schema": "{\"fields\": [{\"key\": \"form_type\", \"label\": \"Form\", \"type\": \"select\", \"required\": true, \"options\": [\"Full AAR\", \"Focused AAR (near miss or procedural failure)\"]}, {\"key\": \"event\", \"label\": \"Event and dates\", \"type\": \"text\", \"required\": true}, {\"key\": \"facilitator\", \"label\": \"Facilitator (position; held no command role)\", \"type\": \"text\", \"required\": true}, {\"key\": \"timeline_sources\", \"label\": \"Timeline sources\", \"type\": \"textarea\", \"required\": true, \"hint\": \"Warning product IDs, logbook, SitReps, ER-F06, resource requests\"}, {\"key\": \"expected_vs_actual\", \"label\": \"What was expected and what happened\", \"type\": \"textarea\", \"required\": true}, {\"key\": \"findings\", \"label\": \"Findings with evidence and causes\", \"type\": \"textarea\", \"required\": true}, {\"key\": \"keep_change\", \"label\": \"What to keep and what to change\", \"type\": \"textarea\", \"required\": true}, {\"key\": \"capa_entries\", \"label\": \"CAPA entries opened (ME-F05)\", \"type\": \"text\", \"required\": false}]}",
+   "status": "draft",
+   "rev": 1
+  },
+  {
+   "id": "929407d4-f96e-5c01-b553-e28328a76b14",
+   "code": "ME-F04",
+   "title": "Exercise evaluation report",
+   "purpose": "Chapter 7 ME-F04 (SOP 7-04), full or short form. Within 15 days of a functional or full-scale exercise; 7 days of a tabletop or drill.",
+   "document_id": "aec20d50-301b-57ce-87d4-64154502a0ef",
+   "schema": "{\"fields\": [{\"key\": \"form_type\", \"label\": \"Form\", \"type\": \"select\", \"required\": true, \"options\": [\"Full (functional or full-scale exercise)\", \"Short (tabletop or drill)\"]}, {\"key\": \"exercise\", \"label\": \"Exercise, scenario and date\", \"type\": \"text\", \"required\": true}, {\"key\": \"objectives\", \"label\": \"Objectives tested\", \"type\": \"textarea\", \"required\": true}, {\"key\": \"participants\", \"label\": \"Participating offices and partners\", \"type\": \"textarea\", \"required\": false}, {\"key\": \"met\", \"label\": \"Objectives met\", \"type\": \"select\", \"required\": true, \"options\": [\"All\", \"Partly\", \"None\"]}, {\"key\": \"findings\", \"label\": \"Findings with evidence\", \"type\": \"textarea\", \"required\": true}, {\"key\": \"capa_entries\", \"label\": \"CAPA entries opened (ME-F05)\", \"type\": \"text\", \"required\": false}]}",
+   "status": "draft",
+   "rev": 1
+  },
+  {
+   "id": "1ad2a8ef-dfb0-592f-9112-ad8aa20adf35",
+   "code": "ME-F05",
+   "title": "Corrective and preventive action (CAPA) register entry",
+   "purpose": "Chapter 7 ME-F05 (SOPs 7-03 to 7-09). Root cause, verification and effectiveness review per Ch.1 Table 1.23.",
+   "document_id": "aec20d50-301b-57ce-87d4-64154502a0ef",
+   "schema": "{\"fields\": [{\"key\": \"source\", \"label\": \"Source\", \"type\": \"select\", \"required\": true, \"options\": [\"AAR\", \"Exercise\", \"IAT\", \"Validation\", \"COA observation\", \"Data breach\", \"Lesson\", \"Other\"]}, {\"key\": \"problem\", \"label\": \"Problem statement and risk consequence\", \"type\": \"textarea\", \"required\": true}, {\"key\": \"priority\", \"label\": \"Priority\", \"type\": \"select\", \"required\": true, \"options\": [\"High\", \"Medium\", \"Low\"]}, {\"key\": \"root_cause\", \"label\": \"Root cause\", \"type\": \"textarea\", \"required\": false}, {\"key\": \"action\", \"label\": \"Action\", \"type\": \"textarea\", \"required\": true}, {\"key\": \"responsible\", \"label\": \"Responsible office\", \"type\": \"text\", \"required\": true}, {\"key\": \"target_date\", \"label\": \"Target date\", \"type\": \"date\", \"required\": true}, {\"key\": \"loop\", \"label\": \"Type of learning\", \"type\": \"select\", \"required\": false, \"options\": [\"Single-loop (fix the instance)\", \"Double-loop (change the rule, plan or design)\"]}, {\"key\": \"status\", \"label\": \"Status\", \"type\": \"select\", \"required\": true, \"options\": [\"Open\", \"Planned\", \"In progress\", \"Implemented\", \"Closed – effective\", \"Reopened\"]}, {\"key\": \"effectiveness_evidence\", \"label\": \"Effectiveness evidence\", \"type\": \"textarea\", \"required\": false, \"hint\": \"Evidence, not assertion; the CDRRMC closes High items\"}]}",
+   "status": "draft",
+   "rev": 1
+  },
+  {
+   "id": "ea2002fc-bb48-54cb-9279-6f7c8ae1f4aa",
+   "code": "ME-F06",
+   "title": "Reporting calendar and compliance tracker entry",
+   "purpose": "Chapter 7 ME-F06 (sec. 10; SOP 7-06). Confirmed each January with the issuing agency.",
+   "document_id": "aec20d50-301b-57ce-87d4-64154502a0ef",
+   "schema": "{\"fields\": [{\"key\": \"report\", \"label\": \"Report\", \"type\": \"text\", \"required\": true}, {\"key\": \"recipient\", \"label\": \"Recipient body\", \"type\": \"text\", \"required\": true}, {\"key\": \"basis\", \"label\": \"Legal or policy basis\", \"type\": \"text\", \"required\": false}, {\"key\": \"due\", \"label\": \"Due date\", \"type\": \"date\", \"required\": true}, {\"key\": \"submitted\", \"label\": \"Submitted on\", \"type\": \"date\", \"required\": false}, {\"key\": \"status\", \"label\": \"Status\", \"type\": \"select\", \"required\": true, \"options\": [\"Not due\", \"Submitted on time\", \"Submitted late\", \"Missed\"]}]}",
+   "status": "draft",
+   "rev": 1
+  },
+  {
+   "id": "2f83bb04-7e96-592c-8096-4d272f194c4b",
+   "code": "ME-F07",
+   "title": "Disaster event and loss record",
+   "purpose": "Chapter 7 ME-F07 (SOP 7-07; Annex 7-E). Aggregates only; every figure carries its source (RA 10173).",
+   "document_id": "aec20d50-301b-57ce-87d4-64154502a0ef",
+   "schema": "{\"fields\": [{\"key\": \"event\", \"label\": \"Event name and hazard\", \"type\": \"text\", \"required\": true}, {\"key\": \"hazard\", \"label\": \"Hazard\", \"type\": \"select\", \"required\": true, \"options\": [\"Tropical cyclone\", \"Storm surge\", \"Riverine flood\", \"Flash flood\", \"Rain-induced landslide\", \"Drought (El Nino)\", \"Extreme heat\", \"Earthquake\", \"Tsunami\", \"Industrial / geothermal incident\", \"Disease outbreak\", \"Other\"]}, {\"key\": \"start_date\", \"label\": \"Start date\", \"type\": \"date\", \"required\": true}, {\"key\": \"barangays_affected\", \"label\": \"Barangays affected\", \"type\": \"integer\", \"required\": false, \"min\": 0, \"max\": 85}, {\"key\": \"deaths\", \"label\": \"Deaths\", \"type\": \"integer\", \"required\": false, \"min\": 0}, {\"key\": \"missing\", \"label\": \"Missing\", \"type\": \"integer\", \"required\": false, \"min\": 0}, {\"key\": \"injured\", \"label\": \"Injured\", \"type\": \"integer\", \"required\": false, \"min\": 0}, {\"key\": \"families_affected\", \"label\": \"Families affected\", \"type\": \"integer\", \"required\": false, \"min\": 0}, {\"key\": \"persons_affected\", \"label\": \"Persons affected\", \"type\": \"integer\", \"required\": false, \"min\": 0}, {\"key\": \"damage_php\", \"label\": \"Damage (PHP)\", \"type\": \"number\", \"required\": false, \"min\": 0}, {\"key\": \"sources\", \"label\": \"Sources of the figures\", \"type\": \"textarea\", \"required\": true, \"hint\": \"Final SitRep, DROMIC, RDANA, PDNA\"}, {\"key\": \"version_note\", \"label\": \"Version and what changed\", \"type\": \"text\", \"required\": false}]}",
+   "status": "draft",
+   "rev": 1
+  },
+  {
+   "id": "59808c80-75c4-5bc8-a2b9-e2672dc94aaf",
+   "code": "ME-F08",
+   "title": "Lessons and peer-learning register entry",
+   "purpose": "Chapter 7 ME-F08 (SOP 7-08). Without a proposed change it is an observation, not yet a lesson.",
+   "document_id": "aec20d50-301b-57ce-87d4-64154502a0ef",
+   "schema": "{\"fields\": [{\"key\": \"source\", \"label\": \"Source\", \"type\": \"select\", \"required\": true, \"options\": [\"AAR\", \"Exercise\", \"IAT\", \"Peer exchange\", \"Network event\", \"Other\"]}, {\"key\": \"lesson\", \"label\": \"Lesson\", \"type\": \"textarea\", \"required\": true}, {\"key\": \"change\", \"label\": \"Change proposed\", \"type\": \"textarea\", \"required\": true}, {\"key\": \"change_type\", \"label\": \"What changes\", \"type\": \"multiselect\", \"required\": true, \"options\": [\"Plan\", \"Form\", \"Procedure (Manual)\", \"Training\", \"MODE rule\", \"Other\"]}, {\"key\": \"decision\", \"label\": \"CDRRMO Head decision\", \"type\": \"select\", \"required\": false, \"options\": [\"Adopt\", \"Refer to the CDRRMC or the Mayor\", \"Not adopted\"]}, {\"key\": \"capa_ref\", \"label\": \"CAPA entry (ME-F05)\", \"type\": \"text\", \"required\": false}]}",
+   "status": "draft",
+   "rev": 1
+  },
+  {
+   "id": "63574fd3-00af-5e5f-b21f-7c1b162e9b66",
+   "code": "ME-F09",
+   "title": "DRRM data inventory, sharing register and breach log",
+   "purpose": "Chapter 7 ME-F09 (SOP 7-09), parts A to C. The DPO reviews; NPC notice within 72 hours of knowledge of a breach.",
+   "document_id": "aec20d50-301b-57ce-87d4-64154502a0ef",
+   "schema": "{\"fields\": [{\"key\": \"part\", \"label\": \"Part\", \"type\": \"select\", \"required\": true, \"options\": [\"A. Data inventory\", \"B. Data-sharing register\", \"C. Breach log\"]}, {\"key\": \"item\", \"label\": \"Form, system or dataset\", \"type\": \"text\", \"required\": true}, {\"key\": \"purpose\", \"label\": \"Purpose\", \"type\": \"text\", \"required\": true}, {\"key\": \"office\", \"label\": \"Office\", \"type\": \"text\", \"required\": true}, {\"key\": \"personal_data\", \"label\": \"Holds personal data\", \"type\": \"checkbox\", \"required\": false}, {\"key\": \"retention\", \"label\": \"Retention period\", \"type\": \"text\", \"required\": false}, {\"key\": \"agreement_ref\", \"label\": \"Data-sharing agreement (part B)\", \"type\": \"text\", \"required\": false}, {\"key\": \"breach_known_at\", \"label\": \"Breach known at (part C)\", \"type\": \"datetime\", \"required\": false}, {\"key\": \"npc_notified_at\", \"label\": \"NPC notified at (part C)\", \"type\": \"datetime\", \"required\": false}, {\"key\": \"dpo_review\", \"label\": \"DPO reviewed\", \"type\": \"checkbox\", \"required\": false}]}",
+   "status": "draft",
+   "rev": 1
+  },
+  {
+   "id": "9b3378b1-7fb6-56d0-a729-74d004cccd72",
+   "code": "PTN-F01",
+   "title": "Partner register entry",
+   "purpose": "Chapter 8 PTN-F01 (SOPs 8-01, 8-02, 8-07, 8-08). Reviewed every year at the partner forum.",
+   "document_id": "cb5fb5fd-5044-57b7-84fe-dff921b0c759",
+   "schema": "{\"fields\": [{\"key\": \"partner\", \"label\": \"Organisation\", \"type\": \"text\", \"required\": true}, {\"key\": \"partner_type\", \"label\": \"Type\", \"type\": \"select\", \"required\": true, \"options\": [\"National agency\", \"Province or other LGU\", \"Civil society organisation\", \"Private sector\", \"Academe\", \"Faith-based group\", \"Utility\", \"International organisation\", \"Other\"]}, {\"key\": \"agreement\", \"label\": \"Agreement\", \"type\": \"select\", \"required\": true, \"options\": [\"MOA or MOU\", \"Mutual aid agreement\", \"Framework agreement\", \"Coordination only\"]}, {\"key\": \"agreement_ref\", \"label\": \"Agreement reference and authority\", \"type\": \"text\", \"required\": false, \"hint\": \"SP resolution; signing date\"}, {\"key\": \"roles\", \"label\": \"Roles before, during and after events\", \"type\": \"textarea\", \"required\": true}, {\"key\": \"resources\", \"label\": \"Resources committed (also on LOG-F03)\", \"type\": \"textarea\", \"required\": false}, {\"key\": \"activation_trigger\", \"label\": \"Activation trigger\", \"type\": \"text\", \"required\": false}, {\"key\": \"contact_position\", \"label\": \"Contact (position)\", \"type\": \"text\", \"required\": true}, {\"key\": \"review_date\", \"label\": \"Next review\", \"type\": \"date\", \"required\": true}]}",
+   "status": "draft",
+   "rev": 1
+  },
+  {
+   "id": "429277ad-fb8a-5739-b4e8-cf1c42351b1e",
+   "code": "PTN-F02",
+   "title": "Partnership proposal and justification",
+   "purpose": "Chapter 8 PTN-F02 (SOP 8-01). No term may transfer legal authority.",
+   "document_id": "cb5fb5fd-5044-57b7-84fe-dff921b0c759",
+   "schema": "{\"fields\": [{\"key\": \"partner\", \"label\": \"Proposed partner\", \"type\": \"text\", \"required\": true}, {\"key\": \"need\", \"label\": \"Need and value to the City\", \"type\": \"textarea\", \"required\": true}, {\"key\": \"basis\", \"label\": \"Plan, AAR or IAT gap cited\", \"type\": \"text\", \"required\": true}, {\"key\": \"instrument\", \"label\": \"Instrument needed\", \"type\": \"select\", \"required\": true, \"options\": [\"Written agreement\", \"Coordination is enough\"]}, {\"key\": \"legal_review\", \"label\": \"City Legal Office review filed\", \"type\": \"checkbox\", \"required\": false}]}",
+   "status": "draft",
+   "rev": 1
+  },
+  {
+   "id": "5bae011b-2280-5899-b554-9539bfb53ced",
+   "code": "PTN-F03",
+   "title": "Mutual aid or augmentation request and status",
+   "purpose": "Chapter 8 PTN-F03 (SOPs 8-02, 8-03, 8-08), inbound and outbound. Specific enough to act on.",
+   "document_id": "cb5fb5fd-5044-57b7-84fe-dff921b0c759",
+   "schema": "{\"fields\": [{\"key\": \"direction\", \"label\": \"Direction\", \"type\": \"select\", \"required\": true, \"options\": [\"Outbound request (City asks)\", \"Inbound request (City is asked)\", \"Assistance sent to another LGU\"]}, {\"key\": \"route\", \"label\": \"Route\", \"type\": \"select\", \"required\": true, \"options\": [\"Mutual aid agreement\", \"Province (PDRRMO)\", \"OCD VIII / national agency\", \"Other LGU\"]}, {\"key\": \"resource\", \"label\": \"Resource and quantity\", \"type\": \"textarea\", \"required\": true}, {\"key\": \"location\", \"label\": \"Where needed\", \"type\": \"text\", \"required\": true}, {\"key\": \"needed_by\", \"label\": \"Needed by\", \"type\": \"datetime\", \"required\": true}, {\"key\": \"committed\", \"label\": \"City resources already committed\", \"type\": \"textarea\", \"required\": false}, {\"key\": \"approved_by\", \"label\": \"Approved by (position)\", \"type\": \"text\", \"required\": true}, {\"key\": \"sent_at\", \"label\": \"Sent at\", \"type\": \"datetime\", \"required\": false}, {\"key\": \"status\", \"label\": \"Status\", \"type\": \"select\", \"required\": true, \"options\": [\"Sent\", \"Acknowledged\", \"In transit\", \"Delivered\", \"Declined\", \"Demobilised\"]}]}",
+   "status": "draft",
+   "rev": 1
+  },
+  {
+   "id": "2c1871ce-2830-55dd-b4ef-3e26939f591a",
+   "code": "PTN-F04",
+   "title": "Part C interface agreement",
+   "purpose": "Chapter 8 PTN-F04 (SOP 8-04; Annex 8-C). Approved by the City Administrator.",
+   "document_id": "cb5fb5fd-5044-57b7-84fe-dff921b0c759",
+   "schema": "{\"fields\": [{\"key\": \"lead_office\", \"label\": \"Lead office\", \"type\": \"text\", \"required\": true}, {\"key\": \"indicators\", \"label\": \"Part C indicators owned\", \"type\": \"text\", \"required\": true, \"hint\": \"IAT v1.7 codes, e.g. C1.2\"}, {\"key\": \"focal\", \"label\": \"Focal persons and alternates (positions)\", \"type\": \"text\", \"required\": true}, {\"key\": \"actions\", \"label\": \"Actions for the year\", \"type\": \"textarea\", \"required\": true}, {\"key\": \"information\", \"label\": \"Information exchanged\", \"type\": \"textarea\", \"required\": true}, {\"key\": \"event_role\", \"label\": \"Role in events\", \"type\": \"textarea\", \"required\": false}, {\"key\": \"approved_on\", \"label\": \"Approved on\", \"type\": \"date\", \"required\": false}]}",
+   "status": "draft",
+   "rev": 1
+  },
+  {
+   "id": "fce49518-226c-564e-b5fb-6581ca40c58b",
+   "code": "PTN-F05",
+   "title": "Annual interface review record",
+   "purpose": "Chapter 8 PTN-F05 (SOP 8-04). Before the IAT cycle; self-scoring validated by another office.",
+   "document_id": "cb5fb5fd-5044-57b7-84fe-dff921b0c759",
+   "schema": "{\"fields\": [{\"key\": \"lead_office\", \"label\": \"Lead office\", \"type\": \"text\", \"required\": true}, {\"key\": \"year\", \"label\": \"Year\", \"type\": \"integer\", \"required\": true, \"min\": 2026}, {\"key\": \"actions_done\", \"label\": \"Actions completed\", \"type\": \"textarea\", \"required\": true}, {\"key\": \"self_score_note\", \"label\": \"Self-scoring and validation\", \"type\": \"textarea\", \"required\": false}, {\"key\": \"reported_to_cdrrmc\", \"label\": \"Interface Index reported to the CDRRMC\", \"type\": \"checkbox\", \"required\": false}]}",
+   "status": "draft",
+   "rev": 1
+  },
+  {
+   "id": "e43bfa23-3db1-5056-99fc-7a6bc646f9b6",
+   "code": "PTN-F06",
+   "title": "Critical facility restoration-priority list and utility arrangement",
+   "purpose": "Chapter 8 PTN-F06 (SOP 8-05). Agreed by the offices concerned; contacts tested before the season.",
+   "document_id": "cb5fb5fd-5044-57b7-84fe-dff921b0c759",
+   "schema": "{\"fields\": [{\"key\": \"facility\", \"label\": \"Facility\", \"type\": \"text\", \"required\": true}, {\"key\": \"facility_type\", \"label\": \"Type\", \"type\": \"select\", \"required\": true, \"options\": [\"Hospital or health centre\", \"EOC or alternate EOC\", \"Evacuation centre\", \"Water pump\", \"Communications site\", \"Other\"]}, {\"key\": \"priority\", \"label\": \"Restoration priority\", \"type\": \"integer\", \"required\": true, \"min\": 1}, {\"key\": \"utility\", \"label\": \"Utility\", \"type\": \"text\", \"required\": true}, {\"key\": \"arrangement\", \"label\": \"Arrangement\", \"type\": \"multiselect\", \"required\": false, \"options\": [\"Priority restoration\", \"Status reporting\", \"Standby generation\", \"Cell-on-wheels\", \"Water tanker\"]}, {\"key\": \"contact_tested\", \"label\": \"Contacts tested on\", \"type\": \"date\", \"required\": false}]}",
+   "status": "draft",
+   "rev": 1
+  },
+  {
+   "id": "748cb9c0-b438-5a9a-b200-acb902716437",
+   "code": "PTN-F07",
+   "title": "CDRRMC partner seat review",
+   "purpose": "Chapter 8 PTN-F07 (SOP 8-06). Against RA 10121 Sec. 11 and the CDRRMC EO.",
+   "document_id": "cb5fb5fd-5044-57b7-84fe-dff921b0c759",
+   "schema": "{\"fields\": [{\"key\": \"seat\", \"label\": \"Seat\", \"type\": \"select\", \"required\": true, \"options\": [\"CSO\", \"Private sector\", \"Academe\"]}, {\"key\": \"status\", \"label\": \"Status\", \"type\": \"select\", \"required\": true, \"options\": [\"Filled and active\", \"Inactive\", \"Vacant\", \"Not accredited\"]}, {\"key\": \"organisation\", \"label\": \"Organisation\", \"type\": \"text\", \"required\": false}, {\"key\": \"attendance\", \"label\": \"Meetings attended in the last year\", \"type\": \"integer\", \"required\": false, \"min\": 0}, {\"key\": \"accreditation_ref\", \"label\": \"SP accreditation reference\", \"type\": \"text\", \"required\": false}, {\"key\": \"term_review\", \"label\": \"Term and review date\", \"type\": \"text\", \"required\": false}]}",
+   "status": "draft",
+   "rev": 1
+  },
+  {
+   "id": "b062a514-9ab6-5449-a06d-3945ecbe0272",
+   "code": "REC-F01",
+   "title": "Pre-disaster recovery framework register",
+   "purpose": "Chapter 5 REC-F01 (SOP 5-01). Gaps are \"not reported\", not zero.",
+   "document_id": "d7190e43-31f8-55d7-b646-04574073dedf",
+   "schema": "{\"fields\": [{\"key\": \"version\", \"label\": \"Version\", \"type\": \"text\", \"required\": true}, {\"key\": \"adopted_on\", \"label\": \"Adoption date\", \"type\": \"date\", \"required\": false}, {\"key\": \"resolution\", \"label\": \"CDRRMC resolution\", \"type\": \"text\", \"required\": false}, {\"key\": \"review_date\", \"label\": \"Next review\", \"type\": \"date\", \"required\": true}, {\"key\": \"contingency_plans\", \"label\": \"Attached contingency plans\", \"type\": \"text\", \"required\": false}, {\"key\": \"gaps\", \"label\": \"Open gaps\", \"type\": \"textarea\", \"required\": false}]}",
+   "status": "draft",
+   "rev": 1
+  },
+  {
+   "id": "5e3dbec4-4704-5f9d-838c-ded59b974f1c",
+   "code": "REC-F03",
+   "title": "PDNA decision, team and approval record",
+   "purpose": "Chapter 5 REC-F03 (SOP 5-02). Every figure states its source.",
+   "document_id": "d7190e43-31f8-55d7-b646-04574073dedf",
+   "schema": "{\"fields\": [{\"key\": \"trigger\", \"label\": \"Trigger met\", \"type\": \"multiselect\", \"required\": true, \"options\": [\"Damage in two or more barangays\", \"State of Calamity declared\", \"National assistance needed\"]}, {\"key\": \"decision\", \"label\": \"CDRRMC decision\", \"type\": \"select\", \"required\": true, \"options\": [\"City PDNA\", \"Rapid Damage Estimation first\", \"No PDNA\"]}, {\"key\": \"reasons\", \"label\": \"Reasons\", \"type\": \"textarea\", \"required\": true}, {\"key\": \"scope\", \"label\": \"Scope and sectors\", \"type\": \"textarea\", \"required\": false}, {\"key\": \"team\", \"label\": \"Team by sector (positions)\", \"type\": \"textarea\", \"required\": false}, {\"key\": \"ocd_support\", \"label\": \"OCD VIII support requested\", \"type\": \"checkbox\", \"required\": false}, {\"key\": \"approved_on\", \"label\": \"Approved by the CDRRMC on\", \"type\": \"date\", \"required\": false}, {\"key\": \"transmittal\", \"label\": \"Transmittal to RDRRMC VIII\", \"type\": \"text\", \"required\": false}]}",
    "status": "draft",
    "rev": 1
   }
@@ -13877,7 +14067,7 @@
    "category": "recovery",
    "status": "draft",
    "template_rev": 1,
-   "kind": "protocol",
+   "kind": "workflow",
    "sop_ref": "SOP 5-01 (MOO Ch.5 v1.0)",
    "process_owner": "CDRRMO Head; CDRRMO Research and Planning with CPDO (technical lead)",
    "policy_refs": [
@@ -13922,7 +14112,7 @@
    "trigger_text": "Approval of a new or revised LDRRMP (indicator set); each December (data call); each January (report).",
    "document_id": "aec20d50-301b-57ce-87d4-64154502a0ef",
    "owner_role": "cdrrmo_head",
-   "category": "governance",
+   "category": "learning",
    "status": "draft",
    "template_rev": 1,
    "kind": "workflow",
@@ -13946,7 +14136,7 @@
    "trigger_text": "Any AAR trigger in Ch.7 sec. 8; the hot wash and ER-F06 from Chapter 4, SOP 4-09.",
    "document_id": "aec20d50-301b-57ce-87d4-64154502a0ef",
    "owner_role": "cdrrmo_head",
-   "category": "recovery",
+   "category": "learning",
    "status": "draft",
    "template_rev": 1,
    "kind": "protocol",
@@ -13971,7 +14161,7 @@
    "trigger_text": "A new finding from any source in Ch.7 Figure 7.2.",
    "document_id": "aec20d50-301b-57ce-87d4-64154502a0ef",
    "owner_role": "cdrrmo_head",
-   "category": "governance",
+   "category": "learning",
    "status": "draft",
    "template_rev": 1,
    "kind": "workflow",
@@ -13994,7 +14184,7 @@
    "trigger_text": "Final SitRep of an event; completion of RDANA, DROMIC or PDNA; the back-loading plan; each January and July.",
    "document_id": "aec20d50-301b-57ce-87d4-64154502a0ef",
    "owner_role": "cdrrmo_head",
-   "category": "governance",
+   "category": "learning",
    "status": "draft",
    "template_rev": 1,
    "kind": "workflow",
@@ -14018,7 +14208,7 @@
    "trigger_text": "An approved AAR or IAT result; a peer exchange or network event; a change in law; the annual lessons review each February.",
    "document_id": "aec20d50-301b-57ce-87d4-64154502a0ef",
    "owner_role": "cdrrmo_head",
-   "category": "governance",
+   "category": "learning",
    "status": "draft",
    "template_rev": 1,
    "kind": "workflow",
@@ -14042,7 +14232,7 @@
    "trigger_text": "A new form or data flow; a new data-sharing need; the annual review; a suspected breach.",
    "document_id": "aec20d50-301b-57ce-87d4-64154502a0ef",
    "owner_role": "cdrrmo_head",
-   "category": "governance",
+   "category": "learning",
    "status": "draft",
    "template_rev": 1,
    "kind": "workflow",
@@ -14065,7 +14255,7 @@
    "trigger_text": "A need identified in a contingency plan, AAR or IAT gap; a partner's offer; an agreement nearing its end; the annual review.",
    "document_id": "cb5fb5fd-5044-57b7-84fe-dff921b0c759",
    "owner_role": "cdrrmo_head",
-   "category": "governance",
+   "category": "partnerships",
    "status": "draft",
    "template_rev": 1,
    "kind": "workflow",
@@ -14088,7 +14278,7 @@
    "trigger_text": "Agreement: annual plan or a gap found in an AAR. Activation: City capacity exceeded or about to be; a request from a partner LGU.",
    "document_id": "cb5fb5fd-5044-57b7-84fe-dff921b0c759",
    "owner_role": "cdrrmo_head",
-   "category": "governance",
+   "category": "partnerships",
    "status": "draft",
    "template_rev": 1,
    "kind": "workflow",
@@ -14162,7 +14352,7 @@
    "trigger_text": "Adoption of this chapter; change of a lead office; the annual review before the IAT cycle.",
    "document_id": "cb5fb5fd-5044-57b7-84fe-dff921b0c759",
    "owner_role": "cdrrmo_head",
-   "category": "governance",
+   "category": "partnerships",
    "status": "draft",
    "template_rev": 1,
    "kind": "workflow",
@@ -14246,7 +14436,7 @@
    "trigger_text": "Each year before the typhoon season (proposed: April or May).",
    "document_id": "cb5fb5fd-5044-57b7-84fe-dff921b0c759",
    "owner_role": "cdrrmo_head",
-   "category": "governance",
+   "category": "partnerships",
    "status": "draft",
    "template_rev": 1,
    "kind": "workflow",
@@ -14269,7 +14459,7 @@
    "trigger_text": "A request from, or a disaster in, another LGU.",
    "document_id": "cb5fb5fd-5044-57b7-84fe-dff921b0c759",
    "owner_role": "cdrrmo_head",
-   "category": "governance",
+   "category": "partnerships",
    "status": "draft",
    "template_rev": 1,
    "kind": "workflow",
@@ -16794,7 +16984,7 @@
    "is_critical": true,
    "requires_note": false,
    "due_offset_minutes": null,
-   "form_code": "STEP-RECORD"
+   "form_code": "LOG-F03"
   },
   {
    "id": "c1bcf59a-e04a-533c-ab91-b452f112d014",
@@ -16844,7 +17034,7 @@
    "is_critical": true,
    "requires_note": true,
    "due_offset_minutes": null,
-   "form_code": "STEP-RECORD"
+   "form_code": "REC-F01"
   },
   {
    "id": "e0ca30ff-4df7-5c0b-9a7c-8154df070048",
@@ -16904,7 +17094,7 @@
    "is_critical": true,
    "requires_note": true,
    "due_offset_minutes": null,
-   "form_code": "STEP-RECORD"
+   "form_code": "REC-F03"
   },
   {
    "id": "933e6a2b-214c-590a-a48c-55fda027430c",
@@ -16974,7 +17164,7 @@
    "is_critical": true,
    "requires_note": true,
    "due_offset_minutes": null,
-   "form_code": "STEP-RECORD"
+   "form_code": "ME-F01"
   },
   {
    "id": "99cf02cf-0366-5713-b84f-58f66be104c5",
@@ -17004,7 +17194,7 @@
    "is_critical": true,
    "requires_note": true,
    "due_offset_minutes": null,
-   "form_code": "STEP-RECORD"
+   "form_code": "ME-F02"
   },
   {
    "id": "4c2f27e4-9ebd-5144-adf5-e7ba71e3fbd8",
@@ -17044,7 +17234,7 @@
    "is_critical": true,
    "requires_note": true,
    "due_offset_minutes": null,
-   "form_code": "STEP-RECORD"
+   "form_code": "ME-F03"
   },
   {
    "id": "6af9ea37-9b2b-5b2d-a66b-8137a0867839",
@@ -17064,7 +17254,7 @@
    "is_critical": true,
    "requires_note": true,
    "due_offset_minutes": null,
-   "form_code": "STEP-RECORD"
+   "form_code": "ME-F04"
   },
   {
    "id": "86b7b5e7-28a2-589a-8278-e8f24ff51536",
@@ -17074,7 +17264,7 @@
    "is_critical": false,
    "requires_note": true,
    "due_offset_minutes": null,
-   "form_code": "STEP-RECORD"
+   "form_code": "ME-F05"
   },
   {
    "id": "64db3687-6926-57a1-8f17-bc00ec3a5df7",
@@ -17114,7 +17304,7 @@
    "is_critical": true,
    "requires_note": true,
    "due_offset_minutes": null,
-   "form_code": "STEP-RECORD"
+   "form_code": "ME-F07"
   },
   {
    "id": "d5a2b439-7f0d-512c-9069-e3e4fc317891",
@@ -17154,7 +17344,7 @@
    "is_critical": false,
    "requires_note": true,
    "due_offset_minutes": null,
-   "form_code": "STEP-RECORD"
+   "form_code": "ME-F08"
   },
   {
    "id": "14d3818f-3c8c-5cf2-8c24-a0369b341d58",
@@ -17194,7 +17384,7 @@
    "is_critical": true,
    "requires_note": true,
    "due_offset_minutes": null,
-   "form_code": "STEP-RECORD"
+   "form_code": "ME-F09"
   },
   {
    "id": "1b6da2b5-1dfc-5b88-8ac9-369e03679fd6",
@@ -17244,7 +17434,7 @@
    "is_critical": true,
    "requires_note": true,
    "due_offset_minutes": null,
-   "form_code": "STEP-RECORD"
+   "form_code": "PTN-F02"
   },
   {
    "id": "9949af60-221f-5790-ac35-b1ab823d2730",
@@ -17274,7 +17464,7 @@
    "is_critical": true,
    "requires_note": true,
    "due_offset_minutes": null,
-   "form_code": "STEP-RECORD"
+   "form_code": "PTN-F01"
   },
   {
    "id": "f59dacda-c3b6-58a1-9327-64e4c3b6995b",
@@ -17304,7 +17494,7 @@
    "is_critical": false,
    "requires_note": false,
    "due_offset_minutes": null,
-   "form_code": "STEP-RECORD"
+   "form_code": "PTN-F01"
   },
   {
    "id": "f0d8ab86-58db-50e7-b5e5-433cf8a7ba44",
@@ -17324,7 +17514,7 @@
    "is_critical": true,
    "requires_note": true,
    "due_offset_minutes": null,
-   "form_code": "STEP-RECORD"
+   "form_code": "PTN-F03"
   },
   {
    "id": "3a0ec964-1958-5ac1-92f8-881b563c85fc",
@@ -17374,7 +17564,7 @@
    "is_critical": true,
    "requires_note": true,
    "due_offset_minutes": null,
-   "form_code": "STEP-RECORD"
+   "form_code": "PTN-F03"
   },
   {
    "id": "835ebc27-7adc-5646-ad2d-9bcc86f9fc43",
@@ -17414,7 +17604,7 @@
    "is_critical": true,
    "requires_note": true,
    "due_offset_minutes": null,
-   "form_code": "STEP-RECORD"
+   "form_code": "PTN-F04"
   },
   {
    "id": "2e86f516-499d-54c2-a959-0486d12cb45b",
@@ -17434,7 +17624,7 @@
    "is_critical": true,
    "requires_note": true,
    "due_offset_minutes": null,
-   "form_code": "STEP-RECORD"
+   "form_code": "PTN-F05"
   },
   {
    "id": "e106eac3-2a5f-5d09-b388-b47b877e96dc",
@@ -17444,7 +17634,7 @@
    "is_critical": true,
    "requires_note": true,
    "due_offset_minutes": null,
-   "form_code": "STEP-RECORD"
+   "form_code": "PTN-F06"
   },
   {
    "id": "303461c6-410d-5b2f-b43a-46e4174b2490",
@@ -17474,7 +17664,7 @@
    "is_critical": true,
    "requires_note": true,
    "due_offset_minutes": null,
-   "form_code": "STEP-RECORD"
+   "form_code": "PTN-F07"
   },
   {
    "id": "b9d6828a-55cd-59ad-91a2-1532114c2820",
@@ -17534,7 +17724,7 @@
    "is_critical": true,
    "requires_note": true,
    "due_offset_minutes": null,
-   "form_code": "STEP-RECORD"
+   "form_code": "PTN-F01"
   },
   {
    "id": "4969cad3-fa6d-5923-ab6a-80b03d3c75a4",
@@ -17574,7 +17764,7 @@
    "is_critical": false,
    "requires_note": false,
    "due_offset_minutes": null,
-   "form_code": "STEP-RECORD"
+   "form_code": "PTN-F03"
   }
  ],
  "aa_action_templates": [

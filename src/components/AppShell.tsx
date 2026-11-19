@@ -1,7 +1,8 @@
 import { NavLink, Link, Outlet } from 'react-router-dom';
+import { useCallback, useEffect, useState } from 'react';
 import { ScreenErrorBoundary } from '@/components/ErrorBoundary';
 import clsx from 'clsx';
-import { BookOpen, ClipboardCheck, Map as MapIcon, FolderLock, House, ListChecks, RadioTower, Settings, CloudOff, RefreshCw, AlertTriangle, Check, Wrench, Scale, type LucideIcon } from 'lucide-react';
+import { BookOpen, ClipboardCheck, Map as MapIcon, FolderLock, House, ListChecks, RadioTower, Settings, CloudOff, RefreshCw, AlertTriangle, Check, Wrench, Scale, PanelLeftClose, PanelLeftOpen, type LucideIcon } from 'lucide-react';
 import { LEVEL_INFO } from '@/domain/eoc';
 import { useActiveDeclaration, useEocStatus, useNow, usePending } from '@/lib/hooks';
 import { useSyncState } from '@/lib/sync';
@@ -14,7 +15,8 @@ import { canUseVault } from '@/features/vault/access';
 import { tip } from './Tooltip';
 import { CommandPalette } from './CommandPalette';
 import { ThemeToggle } from './ThemeToggle';
-import { BrandLockup } from './Brand';
+import { BrandLockup, Seal } from './Brand';
+import { NotificationBell } from '@/features/notifications/NotificationBell';
 
 type NavItem = {
   to: string; k: StringKey; label: string; icon: LucideIcon; end?: boolean; tip: string;
@@ -26,15 +28,35 @@ const NAV: NavItem[] = [
   { to: '/assess', k: 'nav.assess', label: 'Assess', icon: ClipboardCheck, tip: 'Institutional Assessment Tool: score indicators with evidence and plan improvements',
     // 1.16.0 (ADR-030): Hazard maps sit in Assess, just below the IAT.
     sub: [{ to: '/assess/hazard-maps', k: 'nav.hazardmaps', label: 'Hazard maps', icon: MapIcon, tip: 'Official hazard sheets over the 85 barangays, full width or full screen' }] },
-  { to: '/protocols', k: 'nav.protocols', label: 'Protocols', icon: ListChecks, tip: 'Step-by-step CDRRMO procedures you can run live or as drills' },
+  // 1.23.0 (ADR-043): Manual governance — rail only so the phone tab bar stays at six. 1.29.0: placed below Assess.
+  { to: '/governance', k: 'nav.governance', label: 'Validation', icon: Scale, tip: 'Review register, outstanding decisions and the validation workshop', rail: true },
+  // 1.29.0 (ADR-046): "Protocols" becomes "DRRM" — workflows, protocols and forms by thematic area.
+  { to: '/drrm', k: 'nav.protocols', label: 'DRRM', icon: ListChecks, tip: 'DRRM workflows, protocols and forms by thematic area, to run live or as drills' },
   { to: '/eoc', k: 'nav.eoc', label: 'EOC', icon: RadioTower, tip: 'Emergency Operations Center: level, logbook, SitReps, requests and anticipatory action' },
   { to: '/library', k: 'nav.library', label: 'Library', icon: BookOpen, tip: 'The Manual of Operations and EOC Manual, with traceability to the indicators' },
   { to: '/vault', k: 'nav.vault', label: 'Vault', icon: FolderLock, tip: 'Document Vault: laws, guidelines and documents for Document Review', vault: true },
   // Desktop rail only; on phones the Today screen links to Tools (the tab bar holds six).
   { to: '/tools', k: 'nav.tools', label: 'Tools', icon: Wrench, tip: 'ICS exercises, continuity planning, Gawad KALASAG readiness, HazardHunterPH, GeoAnalyticsPH, Zoom Earth and DDRiVE-M', rail: true },
-  // 1.23.0 (ADR-043): Manual governance — rail only so the phone tab bar stays at six.
-  { to: '/governance', k: 'nav.governance', label: 'Validation', icon: Scale, tip: 'Review register, outstanding decisions and the validation workshop', rail: true },
 ];
+
+/** 1.29.0 (ADR-046): the desktop rail folds to icons to give the page more width. The choice stays on this device;
+ *  Ctrl+B (Cmd+B on a Mac) toggles it. Storage can be unavailable, so reads and writes are guarded. */
+const RAIL_KEY = 'mode.rail.collapsed';
+function useRailCollapsed(): [boolean, () => void] {
+  const [collapsed, setCollapsed] = useState(() => { try { return window.localStorage.getItem(RAIL_KEY) === '1'; } catch { return false; } });
+  const toggle = useCallback(() => setCollapsed((c) => {
+    try { window.localStorage.setItem(RAIL_KEY, c ? '0' : '1'); } catch { /* session only */ }
+    return !c;
+  }), []);
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && !e.altKey && !e.shiftKey && e.key.toLowerCase() === 'b') { e.preventDefault(); toggle(); }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [toggle]);
+  return [collapsed, toggle];
+}
 
 /** The signature element: activation level, any declaration in force, and data freshness. */
 export function StatusBand() {
@@ -74,6 +96,7 @@ export function StatusBand() {
           )}
         </Link>
         <CommandPalette className="shrink-0 self-start text-ink sm:self-center lg:w-56" compact={false} />
+        <NotificationBell className="self-start sm:self-center" />
         <Link to="/settings/sync" aria-label={`Sync: ${syncText}`} {...tip('Sync status. Open to see what is waiting to send or needs your attention')} className="inline-flex min-h-tap shrink-0 items-center gap-1.5 self-start rounded-control px-2 font-data text-sm font-semibold sm:self-center">
           <SyncIcon className={clsx('h-4 w-4', sync.status === 'syncing' && 'animate-spin')} aria-hidden />
           <span className="sm:hidden">{syncShort}</span><span className="hidden sm:inline">{syncText}</span>
@@ -88,29 +111,41 @@ export function AppShell() {
   const { has } = useAuth();
   const nav = NAV.filter((n) => !n.vault || canUseVault(has));
   const tabs = nav.filter((n) => !n.rail);
+  const [collapsed, toggleRail] = useRailCollapsed();
+  const ToggleIcon = collapsed ? PanelLeftOpen : PanelLeftClose;
   return (
-    <div className="min-h-dvh lg:pl-60 print:pl-0">
+    <div className={clsx('min-h-dvh print:pl-0 lg:transition-[padding] lg:duration-200 motion-reduce:transition-none', collapsed ? 'lg:pl-16' : 'lg:pl-60')} data-rail={collapsed ? 'collapsed' : 'expanded'}>
       <div className="app-backdrop" aria-hidden />
       <a href="#main" {...tip('Skip the menu and go to the page content')} className="sr-only focus:not-sr-only focus:fixed focus:left-2 focus:top-2 focus:z-50 focus:rounded-control focus:bg-surface focus:px-3 focus:py-2">Skip to content</a>
-      {/* Desktop rail */}
-      <nav aria-label="Main" className="fixed inset-y-0 left-0 z-40 hidden w-60 flex-col border-r border-line bg-surface lg:flex print:!hidden">
-        <div className="border-b border-line px-4 pb-4 pt-5">
-          <BrandLockup size={44} stacked product />
+      {/* Desktop rail; folds to icons (1.29.0) */}
+      <nav aria-label="Main" className={clsx('fixed inset-y-0 left-0 z-40 hidden flex-col border-r border-line bg-surface lg:flex print:!hidden lg:transition-[width] lg:duration-200 motion-reduce:transition-none',
+        collapsed ? 'w-16' : 'w-60')}>
+        <div className={clsx('border-b border-line', collapsed ? 'flex flex-col items-center gap-2 px-2 pb-3 pt-4' : 'relative px-4 pb-4 pt-5')}>
+          {collapsed ? <Seal kind="cdrrmo" size={36} /> : <BrandLockup size={44} stacked product />}
+          <button type="button" onClick={toggleRail} aria-expanded={!collapsed} aria-label={collapsed ? 'Expand the side panel' : 'Collapse the side panel'}
+            {...tip(collapsed ? 'Expand the side panel to show the labels (Ctrl+B)' : 'Collapse the side panel to icons and widen the page (Ctrl+B)')}
+            className={clsx('inline-flex min-h-tap min-w-tap items-center justify-center rounded-control text-muted hover:bg-sky-soft/60 hover:text-ink', !collapsed && 'absolute right-2 top-2')}>
+            <ToggleIcon className="h-5 w-5" aria-hidden />
+          </button>
         </div>
-        <ul className="flex-1 space-y-1 px-3 pt-3">
+        <ul className={clsx('flex-1 space-y-1 overflow-y-auto pt-3', collapsed ? 'px-2' : 'px-3')}>
           {nav.map(({ to, k, icon: Icon, end, tip: t, sub }) => (
             <li key={to}>
-              <NavLink to={to} end={end} {...tip(t)} className={({ isActive }) => clsx('flex min-h-tap items-center gap-3 rounded-control border-l-4 px-3 font-semibold',
-                isActive ? 'border-accent bg-sky-soft text-ink' : 'border-transparent text-ink hover:bg-sky-soft/60')}>
-                <Icon className="h-5 w-5" aria-hidden />{tNav(k)}
+              <NavLink to={to} end={end} {...tip(collapsed ? `${tNav(k)}: ${t}` : t)} aria-label={collapsed ? tNav(k) : undefined}
+                className={({ isActive }) => clsx('flex min-h-tap items-center gap-3 rounded-control border-l-4 font-semibold',
+                  collapsed ? 'justify-center px-0' : 'px-3',
+                  isActive ? 'border-accent bg-sky-soft text-ink' : 'border-transparent text-ink hover:bg-sky-soft/60')}>
+                <Icon className="h-5 w-5 shrink-0" aria-hidden />{!collapsed && tNav(k)}
               </NavLink>
               {sub && (
                 <ul className="mt-1 space-y-1">
                   {sub.map((c) => (
                     <li key={c.to}>
-                      <NavLink to={c.to} {...tip(c.tip)} className={({ isActive }) => clsx('flex min-h-tap items-center gap-3 rounded-control border-l-4 pl-9 pr-3 text-sm font-semibold',
-                        isActive ? 'border-accent bg-sky-soft text-ink' : 'border-transparent text-muted hover:bg-sky-soft/60 hover:text-ink')}>
-                        <c.icon className="h-4 w-4" aria-hidden />{tNav(c.k)}
+                      <NavLink to={c.to} {...tip(collapsed ? `${tNav(c.k)}: ${c.tip}` : c.tip)} aria-label={collapsed ? tNav(c.k) : undefined}
+                        className={({ isActive }) => clsx('flex min-h-tap items-center gap-3 rounded-control border-l-4 text-sm font-semibold',
+                          collapsed ? 'justify-center px-0' : 'pl-9 pr-3',
+                          isActive ? 'border-accent bg-sky-soft text-ink' : 'border-transparent text-muted hover:bg-sky-soft/60 hover:text-ink')}>
+                        <c.icon className="h-4 w-4 shrink-0" aria-hidden />{!collapsed && tNav(c.k)}
                       </NavLink>
                     </li>
                   ))}
@@ -119,11 +154,13 @@ export function AppShell() {
             </li>
           ))}
         </ul>
-        <div className="space-y-1 px-3 pb-4">
-          <ThemeToggle withLabel className="w-full justify-start px-3" />
-          <NavLink to="/settings" {...tip('Sync, users and roles, barangay list, about and privacy, sign out')} className={({ isActive }) => clsx('flex min-h-tap items-center gap-3 rounded-control border-l-4 px-3 font-semibold',
-            isActive ? 'border-accent bg-sky-soft text-ink' : 'border-transparent text-ink hover:bg-sky-soft/60')}>
-            <Settings className="h-5 w-5" aria-hidden />Settings
+        <div className={clsx('space-y-1 pb-4', collapsed ? 'px-2' : 'px-3')}>
+          <ThemeToggle withLabel={!collapsed} className={clsx('w-full', collapsed ? 'justify-center px-0' : 'justify-start px-3')} />
+          <NavLink to="/settings" {...tip('Sync, notifications, users and roles, barangay list, about and privacy, sign out')} aria-label={collapsed ? 'Settings' : undefined}
+            className={({ isActive }) => clsx('flex min-h-tap items-center gap-3 rounded-control border-l-4 font-semibold',
+              collapsed ? 'justify-center px-0' : 'px-3',
+              isActive ? 'border-accent bg-sky-soft text-ink' : 'border-transparent text-ink hover:bg-sky-soft/60')}>
+            <Settings className="h-5 w-5 shrink-0" aria-hidden />{!collapsed && 'Settings'}
           </NavLink>
         </div>
       </nav>

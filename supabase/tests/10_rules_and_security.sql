@@ -940,7 +940,23 @@ select tests.expect_eq('the nine Chapter 3 workflows are loaded with their forms
   '9 19');
 select tests.expect_eq('kinds split incident protocols from management workflows',
   (select string_agg(kind || ':' || n, ' ' order by kind) from (select kind, count(*) n from public.protocol_templates group by kind) k),
-  'protocol:21 workflow:33');
+  'protocol:20 workflow:34');  -- 1.29.0: SOP 5-01 (WF-REC-FRAMEWORK) is a workflow
+-- 1.29.0 (ADR-046): Ch.7 and Ch.8 workflows have their own categories; every step that names a Manual form records on it.
+select tests.expect_eq('Chapter 7 sits in learning and Chapter 8 in partnerships',
+  (select string_agg(category || ':' || n, ' ' order by category) from (select category, count(*) n from public.protocol_templates
+     where category in ('learning','partnerships','governance') group by category) k),
+  'learning:6 partnerships:5');
+select tests.expect_eq('the after-action review stays a protocol; the recovery framework is a workflow',
+  (select string_agg(code || ':' || kind, ' ' order by code) from public.protocol_templates where code in ('PR-AAR','WF-REC-FRAMEWORK')),
+  'PR-AAR:protocol WF-REC-FRAMEWORK:workflow');
+select tests.expect_eq('the Chapter 5-8 forms named on steps exist and the steps record on them',
+  (select count(distinct s.form_code)::text from public.protocol_steps s
+     where s.form_code ~ '^(ME|PTN|REC)-F' or s.form_code = 'LOG-F03'),
+  '18');  -- ME-F06 (reporting calendar) is built but no step names it yet
+select tests.expect_eq('the budget forms point to Chapter 6',
+  (select string_agg(distinct d.code, ',') from public.form_templates f join public.moo_documents d on d.id = f.document_id
+     where f.code in ('BUD-F01','BUD-F02')),
+  'Chapter 6');
 -- 1.18 (ADR-032): the financing chapter is Chapter 6 v1.1 (renumbered from Ch.5); SOP 6-12 joins SOPs 6-01..6-10.
 select tests.expect_eq('Chapter 6 financing runs on ten templates (budget cycle, SOPs 6-03..6-10, 6-12) with their FIN forms',
   (select count(distinct t.code)::text || ' ' || count(*) filter (where s.form_code like 'FIN-%')::text

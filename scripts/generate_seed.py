@@ -847,7 +847,8 @@ def main():
     from sop_registry import CH4_FORMS, CH4_PROTOCOLS  # 1.11.0: Chapter 4 v1.1
     from sop_registry import CH6_FORMS, CH6_PROCEDURES  # 1.18: Chapter 6 v1.1 (renumbered from Ch.5 v1.0)
     from sop_registry import CH5REC_PROCEDURES, CH7_PROCEDURES, CH8_PROCEDURES  # 1.18: Chapters 5 (recovery), 7 and 8
-    FORMS = FORMS + CH3_FORMS + CH4_FORMS + CH6_FORMS
+    from sop_registry import CH578_FORMS  # 1.29.0 (ADR-046): the forms those chapters' steps already name
+    FORMS = FORMS + CH3_FORMS + CH4_FORMS + CH6_FORMS + CH578_FORMS
     WORKFLOWS = (WORKFLOWS + CH3_WORKFLOWS + CH4_PROTOCOLS + CH6_PROCEDURES
                  + CH5REC_PROCEDURES + CH7_PROCEDURES + CH8_PROCEDURES)
     known_inds = {i['id'] for i in out['indicators']}
@@ -868,7 +869,7 @@ def main():
         tpls.append(dict(id=tid, code=p['code'], title=p['title'], purpose=p['purpose'], trigger_text=p['trigger'],
                          document_id=doc_home(p['doc']), owner_role=p['owner_role'], category=p['category'],
                          status='draft', template_rev=1,
-                         kind='protocol' if p['category'] in PROTOCOL_CATEGORIES else 'workflow',
+                         kind=p.get('kind') or ('protocol' if p['category'] in PROTOCOL_CATEGORIES else 'workflow'),
                          sop_ref=sop_ref, process_owner=owner, policy_refs=refs, indicator_ids=inds))
         for seq, st in enumerate(p['steps'], 1):
             instr, crit, note, due = st[:4]
@@ -1052,7 +1053,7 @@ def statements(o):
     return st
 
 
-CHECK_SQL = """-- Expected: 140 | 18 | 935 | 71 | 36 | 250 | 29 | 10 | 140 | 59
+CHECK_SQL = """-- Expected: 140 | 18 | 935 | 71 | 54 | 329 | 29 | 10 | 140 | 79
 select (select count(*) from public.iat_indicators)         as indicators,
        (select count(*) from public.master_requirements)    as requirements,
        (select count(*) from public.indicator_requirements) as indicator_links,
