@@ -77,6 +77,12 @@ export interface MooVersion extends Versioned {
   status: 'draft' | 'in_review' | 'approved' | 'rejected'; author?: string | null; approved_by?: string | null; approved_at?: string | null; review_note?: string | null;
 }
 export interface MooDocumentIndicator { document_id: string; indicator_id: string }
+/** 1.27.0: one chapter correction, as logged by apply_manual_correction (append-only). */
+export type CorrectionAction = 'add' | 'delete' | 'revise' | 'figure';
+export interface ManualCorrection extends Versioned {
+  document_id: string; version_id: string; section_title: string; action: CorrectionAction; before_md: string; after_md: string;
+  reason: string; figure_path: string | null; review_item_id: string | null; corrected_by: string | null; created_at?: string;
+}
 export type ProtocolCategory = 'daily_operations' | 'warning' | 'eoc' | 'anticipatory_action' | 'council' | 'reporting' | 'recovery'
   | 'governance' | 'workforce' | 'budget' | 'response_clusters' | 'geospatial'
   | 'risk_information' | 'risk_planning' | 'contingency_planning' | 'continuity';

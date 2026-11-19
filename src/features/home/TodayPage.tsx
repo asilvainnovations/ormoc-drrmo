@@ -12,11 +12,12 @@ import { db } from '@/lib/db';
 import { useAuth } from '@/lib/auth';
 import { useActiveDeclaration, useNow } from '@/lib/hooks';
 import { cycleResults } from '@/domain/scoring';
-import { priorityTiers } from '@/domain/dashboard';
+import { actionSummary, freshness, latestStamp, priorityTiers, todaySections, type ActionSummary } from '@/domain/dashboard';
+import { useSyncState } from '@/lib/sync';
 import { statusCounts } from '@/domain/eoc_assessment';
 import { nextDeadline } from '@/domain/aa';
 import { canOperate } from '@/domain/eoc';
-import { duration, fmtDateTime, fmtLongDate, fmtTime, manilaHour, relative } from '@/lib/time';
+import { duration, fmtDate, fmtDateTime, fmtLongDate, fmtTime, manilaHour, relative } from '@/lib/time';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -37,6 +38,11 @@ import { HazardWatch } from './HazardWatch';
 const ValidationPanel = lazy(() => import('./dashboard/ValidationPanel'));
 
 const GREET_KEYS = ['greet.morning', 'greet.afternoon', 'greet.evening'] as const;
+
+/** ADR-044 criterion 8: every figure says where it comes from and how recent its source is. */
+function SourceLine({ source, asOf }: { source: string; asOf?: string | null }) {
+  return <p className="mt-3 text-xs text-muted">Source: {source}{asOf !== undefined && <> · {asOf ? `last change ${fmtDateTime(asOf)}` : 'no records on this device yet'}</>}</p>;
+}
 
 // --- OPERATIONAL ANALYTICS (1.24.0) ---
 // Every figure below is counted from rows on this device. Where there is nothing to count the panel says so;
@@ -83,12 +89,13 @@ function DataQualityPanel({ q }: { q: Quality }) {
         {lines.length ? <ul className="space-y-2 text-sm">{lines.map((l, i) => <li key={i} className={`flex items-start gap-2 ${l.tone}`}><l.icon className="mt-0.5 h-4 w-4 shrink-0" aria-hidden />{l.text}</li>)}</ul>
           : <p className="flex items-center gap-2 text-sm text-ok"><ShieldCheck className="h-4 w-4" aria-hidden />Nothing waiting and nothing flagged on this device.</p>}
         {!q.activation && <p className="mt-2 text-xs text-muted">Barangay report freshness is checked only while the EOC is activated.</p>}
+        <SourceLine source="this device's unsent changes and the current activation's barangay reports" />
       </CardContent>
     </Card>
   );
 }
 
-interface Sites { total: number; fieldVerified: number; pending: number; training: number }
+interface Sites { total: number; fieldVerified: number; pending: number; training: number; asOf: string | null }
 
 function EvacuationPanel({ sites }: { sites: Sites }) {
   return (
@@ -103,6 +110,7 @@ function EvacuationPanel({ sites }: { sites: Sites }) {
           <p className="mt-1 text-sm text-muted">{sites.pending} pending field validation{sites.training > 0 && `, ${sites.training} training entries`}. A site that is not verified is not cleared for use.</p>
           <Progress className="mt-3" value={(100 * sites.fieldVerified) / sites.total} aria-label="Centres field-verified" />
         </>}
+        <SourceLine source="ECHO evacuation-centre inventory" asOf={sites.asOf} />
       </CardContent>
     </Card>
   );
@@ -156,6 +164,7 @@ export function TodayPage() {
       fieldVerified: centres.filter((c) => c.verification_status === 'field_verified').length,
       pending: centres.filter((c) => c.verification_status === 'pending_field_validation').length,
       training: centres.filter((c) => c.verification_status === 'training').length,
+      asOf: latestStamp(centres),
     };
     return { shiftDelta, quality, sites };
   }, [since]);
@@ -164,6 +173,7 @@ export function TodayPage() {
     const cycle = (await db.assessment_cycles.orderBy('cycle_year').reverse().toArray()).find((c) => c.status !== 'archived');
     const res = cycle ? cycleResults(await db.iat_indicators.toArray(), await db.iat_domains.toArray(), await db.responses.where('cycle_id').equals(cycle.id).toArray()) : null;
     const responses: Response[] = cycle ? await db.responses.where('cycle_id').equals(cycle.id).toArray() : [];
+    const actions = cycle ? await db.actions.where('cycle_id').equals(cycle.id).toArray() : [];
     const byId = new Map((await db.iat_indicators.toArray()).map((i) => [i.id, i]));
     const priority = PRIORITY_INDICATORS.map((p) => ({ ...p, indicator: byId.get(p.id) }))
       .filter((p): p is typeof p & { indicator: Indicator } => !!p.indicator)
@@ -180,9 +190,15 @@ export function TodayPage() {
       raciIssues: countAccountableIssues(await db.raci_activities.toArray(), await db.raci_assignments.toArray()),
       raciActivities: await db.raci_activities.count(),
       eocCap: await eocCapabilitySummary(),
+      actions: actionSummary(actions, new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Manila' })),
+      stamps: { iat: latestStamp(responses), actions: latestStamp(actions), raci: latestStamp(await db.raci_assignments.toArray()),
+        manual: latestStamp([...(await db.protocol_templates.toArray()), ...(await db.form_templates.toArray()), ...(await db.moo_documents.toArray())]) },
     };
   }, [decl?.id]);
 
+  const sections = todaySections(roles);
+  const sync = useSyncState();
+  const fresh = freshness(sync.lastSyncAt, typeof navigator === 'undefined' ? true : navigator.onLine, now.getTime());
   const hour = manilaHour(now);
   const dl = decl ? nextDeadline(decl, now) : null;
   
@@ -235,12 +251,16 @@ export function TodayPage() {
 
       <HazardWatch />
 
-      {roles.length > 0 && <Suspense fallback={<div className="mb-6 h-40" aria-hidden />}><ValidationPanel /></Suspense>}
+      {roles.length > 0 && <p role="status" className={`mb-4 rounded-control px-3 py-2 text-sm ${fresh.tone === 'ok' ? 'bg-ok-soft text-ink' : fresh.tone === 'info' ? 'bg-info-soft text-ink' : fresh.tone === 'warn' ? 'bg-warn-soft text-ink' : 'bg-bad-soft text-ink'}`}>
+        {fresh.label} <Link to="/settings/sync" {...tip('Open Sync to see what is waiting and to sync now')} className="font-semibold underline-offset-4 hover:underline">Sync</Link>
+      </p>}
+
+      {sections.validation && <Suspense fallback={<div className="mb-6 h-40" aria-hidden />}><ValidationPanel /></Suspense>}
 
       {analytics && (
         <>
           <ShiftDeltaStrip delta={analytics.shiftDelta} since={since} />
-          <div className="grid gap-4 lg:grid-cols-2"><DataQualityPanel q={analytics.quality} /><EvacuationPanel sites={analytics.sites} /></div>
+          <div className="grid gap-4 lg:grid-cols-2"><DataQualityPanel q={analytics.quality} />{sections.evacuation && <EvacuationPanel sites={analytics.sites} />}</div>
         </>
       )}
 
@@ -287,7 +307,7 @@ export function TodayPage() {
             {!data ? <TodaySkeleton /> : data.log.length ? <List>{data.log.map((l) => <ListRow key={l.id} title={l.entry} meta={fmtTime(l.occurred_at)} />)}</List> : <p className="text-muted">No entries yet.</p>}
           </CardContent>
         </Card>
-        <Card>
+        {sections.assessment && <Card>
           <CardHeader className="flex-row items-start justify-between space-y-0 pb-2">
             <div><CardTitle className="text-lg text-ink">Institutional assessment</CardTitle><CardDescription>Scoring progress of the current cycle.</CardDescription></div>
             <TextLink tip="See all assessment cycles" size="sm" to="/assess">All cycles</TextLink>
@@ -296,14 +316,17 @@ export function TodayPage() {
             {!data ? <TodaySkeleton /> : data.cycle && data.res ? (
               <Link to={`/assess/${data.cycle.id}`} {...tip('Open this assessment cycle')} className="block rounded-control p-1 hover:bg-sky-soft/60">
                 <p className="font-semibold text-ink">{data.cycle.name} <Badge className="ml-1">{CYCLE_STATUS[data.cycle.status]}</Badge></p>
-                <p className="mb-3 text-sm text-muted">{data.res.answered} of {data.res.total} answered{data.res.imi.maturityIndex !== null && `. Maturity ${data.res.imi.maturityIndex.toFixed(2)}, ${data.res.imi.band}`}</p>
+                <p className="text-sm text-muted">{data.res.imi.scored + data.res.interface.scored} scored · {data.res.imi.notApplicable + data.res.interface.notApplicable} N/A · {data.res.imi.unscored + data.res.interface.unscored} not yet scored, of {data.res.total}</p>
+                <p className="mb-3 text-sm text-muted">{data.res.imi.maturityIndex !== null ? `Maturity (Parts A+B) ${data.res.imi.maturityIndex.toFixed(2)}, ${data.res.imi.band}` : 'Maturity: not scored yet'}{data.res.imi.mandatoryScored > 0 && ` · Mandatory items at 3 or 4: ${data.res.imi.mandatoryMet} of ${data.res.imi.mandatoryScored} scored`}</p>
                 <Progress value={data.res.total ? (100 * data.res.answered) / data.res.total : 0} aria-label="Indicators answered" />
               </Link>
             ) : <p className="text-muted">No assessment cycle yet.</p>}
+            {data?.cycle && <SourceLine source={`IAT, ${data.cycle.name}. Maturity covers Parts A and B only; Part C is reported apart`} asOf={data.stamps.iat} />}
           </CardContent>
-        </Card>
-        <ManualReadiness data={data} />
-        <Card>
+        </Card>}
+        {sections.actions && <ActionsCard data={data} />}
+        {sections.manual && <ManualReadiness data={data} />}
+        {sections.raci && <Card>
           <CardHeader className="flex-row items-start justify-between space-y-0 pb-2">
             <div><CardTitle className="text-lg text-ink">RACI board</CardTitle><CardDescription>Who does what, from MOO Annex 1-F.</CardDescription></div>
             <TextLink tip="Open the interactive RACI board" size="sm" to="/raci">Open</TextLink>
@@ -317,9 +340,10 @@ export function TodayPage() {
                 </p>
               </Link>
             )}
+            {data && <SourceLine source="RACI board (MOO Annex 1-F and chapter matrices)" asOf={data.stamps.raci} />}
           </CardContent>
-        </Card>
-        <Card>
+        </Card>}
+        {sections.eocCapability && <Card>
           <CardHeader className="flex-row items-start justify-between space-y-0 pb-2">
             <div><CardTitle className="text-lg text-ink">EOC capability</CardTitle><CardDescription>The 154-item OCD/NDRRMC checklist against the IAT B_EOC evidence.</CardDescription></div>
             <TextLink tip="Open the EOC capability assessment board" size="sm" to="/eoc-assessment">Open</TextLink>
@@ -336,10 +360,11 @@ export function TodayPage() {
                 <Progress value={data.eocCap.total ? (100 * data.eocCap.counts.met) / data.eocCap.total : 0} variant={data.eocCap.counts.met === data.eocCap.total && data.eocCap.total ? 'success' : 'default'} aria-label="Checklist items met" />
               </Link>
             )}
+            {data?.eocCap && <SourceLine source={`EOC Capability Assessment Checklist, ${data.eocCap.run.title}`} asOf={data.eocCap.run.updated_at ?? data.eocCap.run.created_at ?? null} />}
           </CardContent>
-        </Card>
+        </Card>}
       </div>
-      <ParetoCard data={data} t={t} />
+      {sections.assessment && <ParetoCard data={data} t={t} />}
     </div>
   );
 }
@@ -391,6 +416,7 @@ function ParetoCard({ data, t }: { data?: { cycle?: { id: string; name: string }
                 <Progress value={total ? (100 * met) / total : 0} variant={met === total && total > 0 ? 'success' : 'default'} aria-label={`Priority tier ${tier} met`} />
               </div>
             ))}
+            <SourceLine source={`IAT, ${data.cycle.name}: the priority indicators of ADR-031`} asOf={latestStamp(data.priority.map((p) => p.response ?? {}))} />
             {unmet.length > 0 && <>
               <Separator />
               <List>
@@ -409,7 +435,7 @@ function TodaySkeleton() {
 }
 
 /** How much of the Manual is ready to use: approved templates and forms, drafted chapters (1.11.0). */
-function ManualReadiness({ data }: { data?: { templates: { status: string; kind?: string; category: string }[]; forms: { status: string }[]; docs: { kind: string; chapter_no?: number | null }[] } }) {
+function ManualReadiness({ data }: { data?: { templates: { status: string; kind?: string; category: string }[]; forms: { status: string }[]; docs: { kind: string; chapter_no?: number | null }[]; stamps: { manual: string | null } } }) {
   if (!data) return <Card><CardContent className="pt-6"><TodaySkeleton /></CardContent></Card>;
   const protocols = data.templates.filter((t) => !templateIsWorkflow(t as never));
   const workflows = data.templates.filter((t) => templateIsWorkflow(t as never));
@@ -432,6 +458,35 @@ function ManualReadiness({ data }: { data?: { templates: { status: string; kind?
             <Progress value={r.total ? (100 * r.approved) / r.total : 0} variant={r.approved === r.total && r.total ? 'success' : 'default'} aria-label={`${r.label} approved`} />
           </Link>
         ))}
+        <SourceLine source="Library and DRRM module: protocol and form templates, Manual chapters" asOf={data.stamps.manual} />
+      </CardContent>
+    </Card>
+  );
+}
+
+/** ADR-044 section 5: the corrective actions of the current IAT cycle. Dropped actions leave the count; an action with
+ *  no target date is never called overdue. */
+function ActionsCard({ data }: { data?: { cycle?: { id: string; name: string }; actions: ActionSummary; stamps: { actions: string | null } } }) {
+  if (!data) return <Card><CardContent className="pt-6"><TodaySkeleton /></CardContent></Card>;
+  const a = data.actions;
+  return (
+    <Card>
+      <CardHeader className="flex-row items-start justify-between space-y-0 pb-2">
+        <div><CardTitle className="text-lg text-ink">Corrective actions</CardTitle><CardDescription>The IAT action plan: what is done, overdue or still unassigned.</CardDescription></div>
+        {data.cycle && <TextLink tip="Open the action plan of the current cycle" size="sm" to={`/assess/${data.cycle.id}/actions`}>Action plan</TextLink>}
+      </CardHeader>
+      <CardContent>
+        {!data.cycle ? <p className="text-muted">No assessment cycle yet.</p> : a.total === 0 ? <p className="text-muted">No corrective actions recorded for this cycle yet.</p> : <>
+          <div className="mb-1 flex items-baseline justify-between gap-2 text-sm"><span className="font-semibold text-ink">{a.done} of {a.total} done</span><span className="font-data text-muted">{a.ongoing} ongoing · {a.notStarted} not started{a.dropped > 0 && ` · ${a.dropped} dropped`}</span></div>
+          <Progress value={(100 * a.done) / a.total} variant={a.done === a.total ? 'success' : 'default'} aria-label="Corrective actions done" />
+          <div className="mt-3 grid grid-cols-3 gap-2 text-center">
+            <div className="rounded-control bg-sunken/60 p-2"><p className={`font-data text-xl font-bold ${a.overdue ? 'text-bad' : 'text-ink'}`}>{a.overdue}</p><p className="text-xs text-muted">overdue</p></div>
+            <div className="rounded-control bg-sunken/60 p-2"><p className={`font-data text-xl font-bold ${a.noOwner ? 'text-warn' : 'text-ink'}`}>{a.noOwner}</p><p className="text-xs text-muted">no office or person</p></div>
+            <div className="rounded-control bg-sunken/60 p-2"><p className="font-data text-xl font-bold text-ink">{a.noDate}</p><p className="text-xs text-muted">no target date</p></div>
+          </div>
+          {a.overdueList.length > 0 && <List className="mt-3">{a.overdueList.slice(0, 3).map((x) => <ListRow key={x.id} tip="Open this indicator and its action" to={`/assess/${data.cycle!.id}/i/${encodeURIComponent(x.indicator_id)}`} title={`${x.indicator_id}: ${x.action}`} meta={`Target ${fmtDate(x.target_date)}`} />)}</List>}
+        </>}
+        {data.cycle && <SourceLine source={`IAT action plan, ${data.cycle.name}`} asOf={data.stamps.actions} />}
       </CardContent>
     </Card>
   );

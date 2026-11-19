@@ -9,7 +9,8 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { tip } from '@/components/Tooltip';
 import { db } from '@/lib/db';
 import { fmtLongDate } from '@/lib/time';
-import { trackerSnapshot } from '@/domain/dashboard';
+import { latestStamp, trackerSnapshot } from '@/domain/dashboard';
+import { fmtDateTime } from '@/lib/time';
 import { Ring } from '@/features/eoc/kit';
 
 function Figure({ label, value, hint, tone }: { label: string; value: string; hint?: string; tone?: 'bad' | 'warn' }) {
@@ -23,7 +24,10 @@ function Figure({ label, value, hint, tone }: { label: string; value: string; hi
 }
 
 export default function ValidationPanel() {
-  const d = useLiveQuery(async () => trackerSnapshot(await db.manual_review_items.toArray(), await db.outstanding_decisions.toArray(), await db.workshop_sessions.toArray()), []);
+  const d = useLiveQuery(async () => {
+    const [items, decisions, sessions] = await Promise.all([db.manual_review_items.toArray(), db.outstanding_decisions.toArray(), db.workshop_sessions.toArray()]);
+    return { ...trackerSnapshot(items, decisions, sessions), asOf: latestStamp([...items, ...decisions, ...sessions]) };
+  }, []);
   const empty = d && d.items.total + d.decisions.total + d.sessions.total === 0;
   const pct = d && d.items.total ? Math.round((100 * d.items.closed) / d.items.total) : 0;
   return (
@@ -59,6 +63,7 @@ export default function ValidationPanel() {
             </p>
           </div>
         )}
+        {d && !empty && <p className="mt-3 text-xs text-muted">Source: Validation Tracker register (review items, decisions, sessions); scored separately from the institutional assessment · last change {d.asOf ? fmtDateTime(d.asOf) : 'not recorded'}</p>}
       </CardContent>
     </Card>
   );

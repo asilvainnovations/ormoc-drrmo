@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { indexDelta, iatSnapshot, trackerSnapshot, priorityTiers } from './dashboard';
+import { actionSummary, freshness, indexDelta, iatSnapshot, latestStamp, priorityTiers, todaySections, trackerSnapshot } from './dashboard';
 import type { Domain, Indicator, ManualReviewItem, OutstandingDecision, Response, WorkshopSession } from '@/types';
 
 const dom = (code: string, part: 'A' | 'B' | 'C', sort: number): Domain => ({ code, part, name: code, scope: '', functional_area: '', platform_module: '', sort });
@@ -82,5 +82,32 @@ describe('priority tiers on Today (ADR-044 principle 4)', () => {
     const { rows, needsWork } = priorityTiers(items);
     expect(rows[0]).toEqual({ tier: 1, total: 4, met: 1, unscored: 2 });
     expect(needsWork.map((p) => p.id)).toEqual(['A1.2']);
+  });
+});
+
+describe('Today sections, freshness and corrective actions (ADR-044, 1.27.0)', () => {
+  it('shows each role the panels its work needs and a viewer only the published summaries', () => {
+    expect(todaySections(['duty_officer'])).toMatchObject({ evacuation: true, eocCapability: true, assessment: false, validation: false, actions: false });
+    expect(todaySections(['validator'])).toMatchObject({ assessment: true, validation: true, actions: true, evacuation: false });
+    expect(todaySections(['viewer'])).toMatchObject({ manual: true, raci: true, validation: false, assessment: false, evacuation: false, actions: false });
+    expect(todaySections([])).toMatchObject({ manual: false, raci: false });
+  });
+  it('never presents device data as live', () => {
+    const now = Date.parse('2026-11-19T12:00:00Z');
+    expect(freshness(null, true, now).tone).toBe('warn');
+    expect(freshness('2026-11-19T11:55:00Z', true, now)).toEqual({ label: 'Figures are from this device, last synced 5 min ago.', tone: 'ok' });
+    expect(freshness('2026-11-19T11:55:00Z', false, now).label).toMatch(/not live/);
+    expect(freshness('2026-11-17T11:00:00Z', true, now).tone).toBe('warn');
+  });
+  it('takes the latest stamp among rows', () => {
+    expect(latestStamp([{ updated_at: '2026-11-18T01:00:00Z' }, { created_at: '2026-11-19T01:00:00Z' }, {}])).toBe('2026-11-19T01:00:00Z');
+    expect(latestStamp([])).toBeNull();
+  });
+  it('counts corrective actions without treating a missing date as overdue', () => {
+    const a = (id: string, status: 'not_started' | 'ongoing' | 'done' | 'dropped', target_date: string | null, office: string | null = 'x') =>
+      ({ id, version: 1, cycle_id: 'c', indicator_id: 'A1.1', action: id, responsible_office_id: office, responsible_person: null, target_date, budget_source: null, status });
+    const s = actionSummary([a('1', 'not_started', '2026-11-01'), a('2', 'ongoing', null, null), a('3', 'done', '2026-10-01'), a('4', 'dropped', '2026-10-01')], '2026-11-19');
+    expect(s).toMatchObject({ total: 3, open: 2, done: 1, dropped: 1, overdue: 1, noOwner: 1, noDate: 1 });
+    expect(s.overdueList.map((x) => x.id)).toEqual(['1']);
   });
 });

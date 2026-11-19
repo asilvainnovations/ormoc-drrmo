@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { FilePen } from 'lucide-react';
+import { FilePen, PencilLine } from 'lucide-react';
 import { db } from '@/lib/db';
 import { save } from '@/lib/store';
 import { uuid } from '@/lib/ids';
@@ -12,6 +12,7 @@ import { Sheet } from '@/components/Sheet';
 import { useToast } from '@/components/Toast';
 import type { MooVersion } from '@/types';
 import { Markdown } from './Markdown';
+import { CORRECTION_ROLES, CorrectionSheet, CorrectionsLog } from './Corrections';
 import { DOC_STATUS } from './labels';
 import { APPROVAL, StatusBadge } from '@/components/StatusBadge';
 
@@ -33,11 +34,14 @@ export function DocumentPage() {
   const [viewId, setViewId] = useState<string | null>(null);
   const [edit, setEdit] = useState<{ label: string; body: string; note: string } | null>(null);
   const [reviewNote, setReviewNote] = useState('');
+  const [correcting, setCorrecting] = useState(false);
   if (!data) return <Loading />;
   const { doc, versions } = data;
   const isAuthor = has('author', 'cdrrmo_head');
+  // 1.27.0: reviewers correct the newest version; they read it by default, like authors.
+  const canCorrect = has(...CORRECTION_ROLES);
   const current = versions.find((v) => v.id === doc.current_version_id);
-  const shown = versions.find((v) => v.id === viewId) ?? (isAuthor ? versions[0] : current) ?? current;
+  const shown = versions.find((v) => v.id === viewId) ?? (isAuthor || canCorrect ? versions[0] : current) ?? current;
 
   const startEdit = () => {
     const base = versions[0];
@@ -60,7 +64,10 @@ export function DocumentPage() {
     <div className="page">
       <PageHeader title={`${doc.code} ${doc.title}`} back="/library"
         subtitle={<span className="flex flex-wrap items-center gap-2"><StatusBadge status={doc.status} />{doc.summary}</span>}
-        actions={isAuthor && <Button tip="Write a new draft version of this section. Published versions stay unchanged" icon={FilePen} onClick={startEdit}>New version</Button>} />
+        actions={(isAuthor || canCorrect) && <div className="flex flex-wrap gap-2">
+          {canCorrect && versions[0] && <Button tip="Add, delete or revise text, or add or replace a figure, in one section. Every correction is logged" icon={PencilLine} onClick={() => setCorrecting(true)}>Correct this chapter</Button>}
+          {isAuthor && <Button variant="secondary" tip="Write a new draft version of this section. Published versions stay unchanged" icon={FilePen} onClick={startEdit}>New version</Button>}
+        </div>} />
       <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_20rem] lg:gap-10">
         <article>
           {shown ? (
@@ -83,6 +90,9 @@ export function DocumentPage() {
           ) : <p className="text-muted">No approved text yet.</p>}
         </article>
         <aside className="space-y-6">
+          <Section title="Corrections log">
+            <CorrectionsLog documentId={doc.id} />
+          </Section>
           <Section title="Versions">
             <List>{versions.map((v) => <ListRow tip="Show this version" key={v.id} onClick={() => setViewId(v.id)} title={v.label} meta={v.change_note ?? undefined}
               trailing={<StatusBadge status={v.status} />} />)}</List>
@@ -113,6 +123,7 @@ export function DocumentPage() {
           </Section>
         </aside>
       </div>
+      {correcting && versions[0] && <CorrectionSheet open={correcting} onClose={() => setCorrecting(false)} doc={doc} base={versions[0]} />}
       <Sheet open={!!edit} onClose={() => setEdit(null)} title={`New version of ${doc.code}`}
         footer={<><Button tip="Close without saving" variant="secondary" onClick={() => setEdit(null)}>Cancel</Button><Button tip="Save as a draft version" disabled={!edit?.label.trim()} onClick={persist}>Save draft</Button></>}>
         {edit && <>
