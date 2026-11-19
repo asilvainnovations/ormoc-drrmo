@@ -1,0 +1,3635 @@
+{
+ "source": "Ormoc_City_Barangay_Level_Hazard_Assessment_Updated_2026-11-20_v4.xlsx",
+ "records": [
+  {
+   "psgc": "0803738092",
+   "name": "Airport",
+   "source": "Ormoc_City_Barangay_Level_Hazard_Assessment_Updated_2026-11-20_v4.xlsx, worksheet \"Bgy - Airport\" (GeoAnalyticsPH report)",
+   "ageSexStatus": "available",
+   "reportedAt": "November 05, 2026 9:05:02 pm",
+   "pronePopulation": 853,
+   "denominator": 879,
+   "exposurePercent": 97.042,
+   "classes": [
+    {
+     "name": "Not prone",
+     "population": 26
+    },
+    {
+     "name": "Moderate",
+     "population": 853
+    }
+   ],
+   "ageSex": [
+    {
+     "ageGroup": "Under 5",
+     "maleNotProne": 1,
+     "maleProne": 47,
+     "femaleNotProne": 2,
+     "femaleProne": 50
+    },
+    {
+     "ageGroup": "5-9",
+     "maleNotProne": 1,
+     "maleProne": 45,
+     "femaleNotProne": 1,
+     "femaleProne": 48
+    },
+    {
+     "ageGroup": "10-14",
+     "maleNotProne": 1,
+     "maleProne": 33,
+     "femaleNotProne": 1,
+     "femaleProne": 47
+    },
+    {
+     "ageGroup": "15-19",
+     "maleNotProne": 1,
+     "maleProne": 34,
+     "femaleNotProne": 1,
+     "femaleProne": 39
+    },
+    {
+     "ageGroup": "20-24",
+     "maleNotProne": 1,
+     "maleProne": 32,
+     "femaleNotProne": 1,
+     "femaleProne": 27
+    },
+    {
+     "ageGroup": "25-29",
+     "maleNotProne": 1,
+     "maleProne": 30,
+     "femaleNotProne": 1,
+     "femaleProne": 29
+    },
+    {
+     "ageGroup": "30-34",
+     "maleNotProne": 1,
+     "maleProne": 35,
+     "femaleNotProne": 1,
+     "femaleProne": 31
+    },
+    {
+     "ageGroup": "35-39",
+     "maleNotProne": 1,
+     "maleProne": 25,
+     "femaleNotProne": 1,
+     "femaleProne": 35
+    },
+    {
+     "ageGroup": "40-44",
+     "maleNotProne": 1,
+     "maleProne": 29,
+     "femaleNotProne": 1,
+     "femaleProne": 27
+    },
+    {
+     "ageGroup": "45-49",
+     "maleNotProne": 1,
+     "maleProne": 22,
+     "femaleNotProne": 1,
+     "femaleProne": 26
+    },
+    {
+     "ageGroup": "50-54",
+     "maleNotProne": 1,
+     "maleProne": 19,
+     "femaleNotProne": 1,
+     "femaleProne": 23
+    },
+    {
+     "ageGroup": "55-59",
+     "maleNotProne": null,
+     "maleProne": 17,
+     "femaleNotProne": 1,
+     "femaleProne": 17
+    },
+    {
+     "ageGroup": "60-64",
+     "maleNotProne": null,
+     "maleProne": 16,
+     "femaleNotProne": null,
+     "femaleProne": 13
+    },
+    {
+     "ageGroup": "65-69",
+     "maleNotProne": null,
+     "maleProne": 10,
+     "femaleNotProne": null,
+     "femaleProne": 12
+    },
+    {
+     "ageGroup": "70-74",
+     "maleNotProne": null,
+     "maleProne": 13,
+     "femaleNotProne": null,
+     "femaleProne": 10
+    },
+    {
+     "ageGroup": "75-79",
+     "maleNotProne": null,
+     "maleProne": 6,
+     "femaleNotProne": null,
+     "femaleProne": 2
+    },
+    {
+     "ageGroup": "80+",
+     "maleNotProne": null,
+     "maleProne": 4,
+     "femaleNotProne": null,
+     "femaleProne": 2
+    }
+   ],
+   "notes": "The source age table counts 855 prone against the report's 853 (source rounding); both kept as reported."
+  },
+  {
+   "psgc": "0803738001",
+   "name": "Alegria",
+   "source": "Ormoc_City_Barangay_Level_Hazard_Assessment_Updated_2026-11-20_v4.xlsx, worksheet \"Bgy - Alegria\" (GeoAnalyticsPH report)",
+   "ageSexStatus": "available",
+   "reportedAt": "November 05, 2026 11:31:46 pm",
+   "pronePopulation": 842,
+   "denominator": 977,
+   "exposurePercent": 86.182,
+   "classes": [
+    {
+     "name": "Not prone",
+     "population": 135
+    },
+    {
+     "name": "High",
+     "population": 842
+    }
+   ],
+   "ageSex": [
+    {
+     "ageGroup": "Under 5",
+     "maleNotProne": 4,
+     "maleProne": 23,
+     "femaleNotProne": 6,
+     "femaleProne": 38
+    },
+    {
+     "ageGroup": "5-9",
+     "maleNotProne": 4,
+     "maleProne": 24,
+     "femaleNotProne": 4,
+     "femaleProne": 22
+    },
+    {
+     "ageGroup": "10-14",
+     "maleNotProne": 4,
+     "maleProne": 28,
+     "femaleNotProne": 6,
+     "femaleProne": 41
+    },
+    {
+     "ageGroup": "15-19",
+     "maleNotProne": 6,
+     "maleProne": 38,
+     "femaleNotProne": 6,
+     "femaleProne": 38
+    },
+    {
+     "ageGroup": "20-24",
+     "maleNotProne": 9,
+     "maleProne": 58,
+     "femaleNotProne": 8,
+     "femaleProne": 48
+    },
+    {
+     "ageGroup": "25-29",
+     "maleNotProne": 7,
+     "maleProne": 41,
+     "femaleNotProne": 8,
+     "femaleProne": 51
+    },
+    {
+     "ageGroup": "30-34",
+     "maleNotProne": 5,
+     "maleProne": 28,
+     "femaleNotProne": 5,
+     "femaleProne": 30
+    },
+    {
+     "ageGroup": "35-39",
+     "maleNotProne": 5,
+     "maleProne": 28,
+     "femaleNotProne": 3,
+     "femaleProne": 18
+    },
+    {
+     "ageGroup": "40-44",
+     "maleNotProne": 4,
+     "maleProne": 24,
+     "femaleNotProne": 4,
+     "femaleProne": 24
+    },
+    {
+     "ageGroup": "45-49",
+     "maleNotProne": 5,
+     "maleProne": 28,
+     "femaleNotProne": 3,
+     "femaleProne": 22
+    },
+    {
+     "ageGroup": "50-54",
+     "maleNotProne": 4,
+     "maleProne": 26,
+     "femaleNotProne": 3,
+     "femaleProne": 16
+    },
+    {
+     "ageGroup": "55-59",
+     "maleNotProne": 3,
+     "maleProne": 22,
+     "femaleNotProne": 4,
+     "femaleProne": 22
+    },
+    {
+     "ageGroup": "60-64",
+     "maleNotProne": 3,
+     "maleProne": 16,
+     "femaleNotProne": 3,
+     "femaleProne": 18
+    },
+    {
+     "ageGroup": "65-69",
+     "maleNotProne": 3,
+     "maleProne": 22,
+     "femaleNotProne": 2,
+     "femaleProne": 10
+    },
+    {
+     "ageGroup": "70-74",
+     "maleNotProne": 2,
+     "maleProne": 12,
+     "femaleNotProne": 1,
+     "femaleProne": 7
+    },
+    {
+     "ageGroup": "75-79",
+     "maleNotProne": 1,
+     "maleProne": 5,
+     "femaleNotProne": null,
+     "femaleProne": null
+    },
+    {
+     "ageGroup": "80+",
+     "maleNotProne": 1,
+     "maleProne": 9,
+     "femaleNotProne": 1,
+     "femaleProne": 3
+    }
+   ],
+   "notes": "The source age table counts 840 prone against the report's 842 (source rounding); both kept as reported."
+  },
+  {
+   "psgc": "0803738004",
+   "name": "Bantigue",
+   "source": "Ormoc_City_Barangay_Level_Hazard_Assessment_Updated_2026-11-20_v4.xlsx, worksheet \"Bgy - Bantigue\" (GeoAnalyticsPH report)",
+   "ageSexStatus": "available",
+   "reportedAt": "November 20, 2026 4:18:38 am",
+   "pronePopulation": 1762,
+   "denominator": 3134,
+   "exposurePercent": 56.222,
+   "classes": [
+    {
+     "name": "Not prone",
+     "population": 1372
+    },
+    {
+     "name": "Low",
+     "population": 612
+    },
+    {
+     "name": "Moderate",
+     "population": 596
+    },
+    {
+     "name": "High",
+     "population": 408
+    },
+    {
+     "name": "Very High",
+     "population": 146
+    }
+   ],
+   "ageSex": [
+    {
+     "ageGroup": "Under 5",
+     "maleNotProne": 86,
+     "maleProne": 110,
+     "femaleNotProne": 77,
+     "femaleProne": 99
+    },
+    {
+     "ageGroup": "5-9",
+     "maleNotProne": 84,
+     "maleProne": 107,
+     "femaleNotProne": 73,
+     "femaleProne": 94
+    },
+    {
+     "ageGroup": "10-14",
+     "maleNotProne": 59,
+     "maleProne": 75,
+     "femaleNotProne": 75,
+     "femaleProne": 97
+    },
+    {
+     "ageGroup": "15-19",
+     "maleNotProne": 67,
+     "maleProne": 87,
+     "femaleNotProne": 73,
+     "femaleProne": 93
+    },
+    {
+     "ageGroup": "20-24",
+     "maleNotProne": 56,
+     "maleProne": 72,
+     "femaleNotProne": 68,
+     "femaleProne": 87
+    },
+    {
+     "ageGroup": "25-29",
+     "maleNotProne": 50,
+     "maleProne": 64,
+     "femaleNotProne": 59,
+     "femaleProne": 75
+    },
+    {
+     "ageGroup": "30-34",
+     "maleNotProne": 46,
+     "maleProne": 59,
+     "femaleNotProne": 46,
+     "femaleProne": 60
+    },
+    {
+     "ageGroup": "35-39",
+     "maleNotProne": 35,
+     "maleProne": 46,
+     "femaleNotProne": 39,
+     "femaleProne": 50
+    },
+    {
+     "ageGroup": "40-44",
+     "maleNotProne": 43,
+     "maleProne": 55,
+     "femaleNotProne": 42,
+     "femaleProne": 55
+    },
+    {
+     "ageGroup": "45-49",
+     "maleNotProne": 35,
+     "maleProne": 46,
+     "femaleNotProne": 41,
+     "femaleProne": 52
+    },
+    {
+     "ageGroup": "50-54",
+     "maleNotProne": 25,
+     "maleProne": 32,
+     "femaleNotProne": 28,
+     "femaleProne": 37
+    },
+    {
+     "ageGroup": "55-59",
+     "maleNotProne": 24,
+     "maleProne": 30,
+     "femaleNotProne": 22,
+     "femaleProne": 28
+    },
+    {
+     "ageGroup": "60-64",
+     "maleNotProne": 22,
+     "maleProne": 29,
+     "femaleNotProne": 17,
+     "femaleProne": 21
+    },
+    {
+     "ageGroup": "65-69",
+     "maleNotProne": 14,
+     "maleProne": 19,
+     "femaleNotProne": 14,
+     "femaleProne": 17
+    },
+    {
+     "ageGroup": "70-74",
+     "maleNotProne": 15,
+     "maleProne": 19,
+     "femaleNotProne": 10,
+     "femaleProne": 12
+    },
+    {
+     "ageGroup": "75-79",
+     "maleNotProne": 11,
+     "maleProne": 15,
+     "femaleNotProne": 4,
+     "femaleProne": 5
+    },
+    {
+     "ageGroup": "80+",
+     "maleNotProne": 6,
+     "maleProne": 7,
+     "femaleNotProne": 6,
+     "femaleProne": 8
+    }
+   ]
+  },
+  {
+   "psgc": "0803738115",
+   "name": "Barangay East",
+   "source": "Ormoc_City_Barangay_Level_Hazard_Assessment_Updated_2026-11-20_v4.xlsx: sum of the reports for former Barangay Districts 9, 10, 11, 16, 18, 25, 28 (City Ord. 052 s.2021; CDP Vol. 1, Table 1)",
+   "reportedAt": "District reports, November 16, 2026, November 17, 2026",
+   "pronePopulation": 2444,
+   "denominator": 2444,
+   "exposurePercent": 100.0,
+   "classes": [
+    {
+     "name": "High",
+     "population": 2444
+    }
+   ],
+   "ageSex": [
+    {
+     "ageGroup": "Under 5",
+     "maleNotProne": null,
+     "maleProne": 101,
+     "femaleNotProne": null,
+     "femaleProne": 117
+    },
+    {
+     "ageGroup": "5-9",
+     "maleNotProne": null,
+     "maleProne": 105,
+     "femaleNotProne": null,
+     "femaleProne": 96
+    },
+    {
+     "ageGroup": "10-14",
+     "maleNotProne": null,
+     "maleProne": 101,
+     "femaleNotProne": null,
+     "femaleProne": 124
+    },
+    {
+     "ageGroup": "15-19",
+     "maleNotProne": null,
+     "maleProne": 95,
+     "femaleNotProne": null,
+     "femaleProne": 94
+    },
+    {
+     "ageGroup": "20-24",
+     "maleNotProne": null,
+     "maleProne": 147,
+     "femaleNotProne": null,
+     "femaleProne": 117
+    },
+    {
+     "ageGroup": "25-29",
+     "maleNotProne": null,
+     "maleProne": 132,
+     "femaleNotProne": null,
+     "femaleProne": 119
+    },
+    {
+     "ageGroup": "30-34",
+     "maleNotProne": null,
+     "maleProne": 77,
+     "femaleNotProne": null,
+     "femaleProne": 94
+    },
+    {
+     "ageGroup": "35-39",
+     "maleNotProne": null,
+     "maleProne": 83,
+     "femaleNotProne": null,
+     "femaleProne": 83
+    },
+    {
+     "ageGroup": "40-44",
+     "maleNotProne": null,
+     "maleProne": 76,
+     "femaleNotProne": null,
+     "femaleProne": 76
+    },
+    {
+     "ageGroup": "45-49",
+     "maleNotProne": null,
+     "maleProne": 61,
+     "femaleNotProne": null,
+     "femaleProne": 63
+    },
+    {
+     "ageGroup": "50-54",
+     "maleNotProne": null,
+     "maleProne": 59,
+     "femaleNotProne": null,
+     "femaleProne": 60
+    },
+    {
+     "ageGroup": "55-59",
+     "maleNotProne": null,
+     "maleProne": 48,
+     "femaleNotProne": null,
+     "femaleProne": 43
+    },
+    {
+     "ageGroup": "60-64",
+     "maleNotProne": null,
+     "maleProne": 47,
+     "femaleNotProne": null,
+     "femaleProne": 42
+    },
+    {
+     "ageGroup": "65-69",
+     "maleNotProne": null,
+     "maleProne": 44,
+     "femaleNotProne": null,
+     "femaleProne": 28
+    },
+    {
+     "ageGroup": "70-74",
+     "maleNotProne": null,
+     "maleProne": 18,
+     "femaleNotProne": null,
+     "femaleProne": 24
+    },
+    {
+     "ageGroup": "75-79",
+     "maleNotProne": null,
+     "maleProne": 26,
+     "femaleNotProne": null,
+     "femaleProne": 10
+    },
+    {
+     "ageGroup": "80+",
+     "maleNotProne": null,
+     "maleProne": 27,
+     "femaleNotProne": null,
+     "femaleProne": 7
+    }
+   ],
+   "ageSexStatus": "available",
+   "notes": "Sum of 7 district reports; age bands kept as reported."
+  },
+  {
+   "psgc": "0803738091",
+   "name": "Barangay North",
+   "source": "Ormoc_City_Barangay_Level_Hazard_Assessment_Updated_2026-11-20_v4.xlsx: sum of the reports for former Barangay Districts 29 (City Ord. 052 s.2021; CDP Vol. 1, Table 1)",
+   "reportedAt": "District reports, November 17, 2026",
+   "pronePopulation": 3355,
+   "denominator": 4131,
+   "exposurePercent": 81.215,
+   "classes": [
+    {
+     "name": "Not prone",
+     "population": 776
+    },
+    {
+     "name": "Moderate",
+     "population": 675
+    },
+    {
+     "name": "High",
+     "population": 2680
+    }
+   ],
+   "ageSex": [
+    {
+     "ageGroup": "Under 5",
+     "maleNotProne": 51,
+     "maleProne": 218,
+     "femaleNotProne": 53,
+     "femaleProne": 227
+    },
+    {
+     "ageGroup": "5-9",
+     "maleNotProne": 44,
+     "maleProne": 191,
+     "femaleNotProne": 51,
+     "femaleProne": 223
+    },
+    {
+     "ageGroup": "10-14",
+     "maleNotProne": 41,
+     "maleProne": 175,
+     "femaleNotProne": 41,
+     "femaleProne": 176
+    },
+    {
+     "ageGroup": "15-19",
+     "maleNotProne": 40,
+     "maleProne": 171,
+     "femaleNotProne": 37,
+     "femaleProne": 160
+    },
+    {
+     "ageGroup": "20-24",
+     "maleNotProne": 32,
+     "maleProne": 138,
+     "femaleNotProne": 34,
+     "femaleProne": 145
+    },
+    {
+     "ageGroup": "25-29",
+     "maleNotProne": 33,
+     "maleProne": 144,
+     "femaleNotProne": 36,
+     "femaleProne": 158
+    },
+    {
+     "ageGroup": "30-34",
+     "maleNotProne": 28,
+     "maleProne": 123,
+     "femaleNotProne": 29,
+     "femaleProne": 123
+    },
+    {
+     "ageGroup": "35-39",
+     "maleNotProne": 27,
+     "maleProne": 116,
+     "femaleNotProne": 28,
+     "femaleProne": 119
+    },
+    {
+     "ageGroup": "40-44",
+     "maleNotProne": 14,
+     "maleProne": 63,
+     "femaleNotProne": 23,
+     "femaleProne": 99
+    },
+    {
+     "ageGroup": "45-49",
+     "maleNotProne": 15,
+     "maleProne": 66,
+     "femaleNotProne": 21,
+     "femaleProne": 91
+    },
+    {
+     "ageGroup": "50-54",
+     "maleNotProne": 15,
+     "maleProne": 65,
+     "femaleNotProne": 12,
+     "femaleProne": 53
+    },
+    {
+     "ageGroup": "55-59",
+     "maleNotProne": 12,
+     "maleProne": 53,
+     "femaleNotProne": 14,
+     "femaleProne": 60
+    },
+    {
+     "ageGroup": "60-64",
+     "maleNotProne": 10,
+     "maleProne": 41,
+     "femaleNotProne": 12,
+     "femaleProne": 52
+    },
+    {
+     "ageGroup": "65-69",
+     "maleNotProne": 7,
+     "maleProne": 32,
+     "femaleNotProne": 6,
+     "femaleProne": 25
+    },
+    {
+     "ageGroup": "70-74",
+     "maleNotProne": 4,
+     "maleProne": 16,
+     "femaleNotProne": 2,
+     "femaleProne": 9
+    },
+    {
+     "ageGroup": "75-79",
+     "maleNotProne": 1,
+     "maleProne": 6,
+     "femaleNotProne": 1,
+     "femaleProne": 2
+    },
+    {
+     "ageGroup": "80+",
+     "maleNotProne": 2,
+     "maleProne": 11,
+     "femaleNotProne": 1,
+     "femaleProne": 3
+    }
+   ],
+   "ageSexStatus": "available",
+   "notes": "Sum of 1 district report; age bands kept as reported. The source age table counts 3,354 prone against the report's 3,355 (source rounding); both kept as reported."
+  },
+  {
+   "psgc": "0803738117",
+   "name": "Barangay West",
+   "source": "Ormoc_City_Barangay_Level_Hazard_Assessment_Updated_2026-11-20_v4.xlsx: sum of the reports for former Barangay Districts 14, 19, 20, 21, 22, 24, 26 (City Ord. 052 s.2021; CDP Vol. 1, Table 1)",
+   "reportedAt": "District reports, November 17, 2026, November 20, 2026",
+   "pronePopulation": 2863,
+   "denominator": 2863,
+   "exposurePercent": 100.0,
+   "classes": [
+    {
+     "name": "High",
+     "population": 2863
+    }
+   ],
+   "ageSex": [
+    {
+     "ageGroup": "Under 5",
+     "maleNotProne": null,
+     "maleProne": 138,
+     "femaleNotProne": null,
+     "femaleProne": 143
+    },
+    {
+     "ageGroup": "5-9",
+     "maleNotProne": null,
+     "maleProne": 108,
+     "femaleNotProne": null,
+     "femaleProne": 128
+    },
+    {
+     "ageGroup": "10-14",
+     "maleNotProne": null,
+     "maleProne": 108,
+     "femaleNotProne": null,
+     "femaleProne": 117
+    },
+    {
+     "ageGroup": "15-19",
+     "maleNotProne": null,
+     "maleProne": 132,
+     "femaleNotProne": null,
+     "femaleProne": 140
+    },
+    {
+     "ageGroup": "20-24",
+     "maleNotProne": null,
+     "maleProne": 166,
+     "femaleNotProne": null,
+     "femaleProne": 141
+    },
+    {
+     "ageGroup": "25-29",
+     "maleNotProne": null,
+     "maleProne": 138,
+     "femaleNotProne": null,
+     "femaleProne": 131
+    },
+    {
+     "ageGroup": "30-34",
+     "maleNotProne": null,
+     "maleProne": 102,
+     "femaleNotProne": null,
+     "femaleProne": 105
+    },
+    {
+     "ageGroup": "35-39",
+     "maleNotProne": null,
+     "maleProne": 91,
+     "femaleNotProne": null,
+     "femaleProne": 105
+    },
+    {
+     "ageGroup": "40-44",
+     "maleNotProne": null,
+     "maleProne": 87,
+     "femaleNotProne": null,
+     "femaleProne": 90
+    },
+    {
+     "ageGroup": "45-49",
+     "maleNotProne": null,
+     "maleProne": 78,
+     "femaleNotProne": null,
+     "femaleProne": 74
+    },
+    {
+     "ageGroup": "50-54",
+     "maleNotProne": null,
+     "maleProne": 68,
+     "femaleNotProne": null,
+     "femaleProne": 64
+    },
+    {
+     "ageGroup": "55-59",
+     "maleNotProne": null,
+     "maleProne": 50,
+     "femaleNotProne": null,
+     "femaleProne": 68
+    },
+    {
+     "ageGroup": "60-64",
+     "maleNotProne": null,
+     "maleProne": 57,
+     "femaleNotProne": null,
+     "femaleProne": 34
+    },
+    {
+     "ageGroup": "65-69",
+     "maleNotProne": null,
+     "maleProne": 50,
+     "femaleNotProne": null,
+     "femaleProne": 41
+    },
+    {
+     "ageGroup": "70-74",
+     "maleNotProne": null,
+     "maleProne": 29,
+     "femaleNotProne": null,
+     "femaleProne": 27
+    },
+    {
+     "ageGroup": "75-79",
+     "maleNotProne": null,
+     "maleProne": 17,
+     "femaleNotProne": null,
+     "femaleProne": 9
+    },
+    {
+     "ageGroup": "80+",
+     "maleNotProne": null,
+     "maleProne": 16,
+     "femaleNotProne": null,
+     "femaleProne": 11
+    }
+   ],
+   "ageSexStatus": "available",
+   "notes": "Sum of 7 district reports; age bands kept as reported."
+  },
+  {
+   "psgc": "0803738005",
+   "name": "Batuan",
+   "source": "Ormoc_City_Barangay_Level_Hazard_Assessment_Updated_2026-11-20_v4.xlsx, worksheet \"Bgy - Batuan\" (GeoAnalyticsPH report)",
+   "ageSexStatus": "available",
+   "reportedAt": "November 16, 2026 8:55:02 pm",
+   "pronePopulation": 632,
+   "denominator": 670,
+   "exposurePercent": 94.328,
+   "classes": [
+    {
+     "name": "Not prone",
+     "population": 38
+    },
+    {
+     "name": "High",
+     "population": 632
+    }
+   ],
+   "ageSex": [
+    {
+     "ageGroup": "Under 5",
+     "maleNotProne": 2,
+     "maleProne": 37,
+     "femaleNotProne": 2,
+     "femaleProne": 27
+    },
+    {
+     "ageGroup": "5-9",
+     "maleNotProne": 2,
+     "maleProne": 25,
+     "femaleNotProne": 2,
+     "femaleProne": 29
+    },
+    {
+     "ageGroup": "10-14",
+     "maleNotProne": 2,
+     "maleProne": 30,
+     "femaleNotProne": 2,
+     "femaleProne": 27
+    },
+    {
+     "ageGroup": "15-19",
+     "maleNotProne": 2,
+     "maleProne": 31,
+     "femaleNotProne": 2,
+     "femaleProne": 32
+    },
+    {
+     "ageGroup": "20-24",
+     "maleNotProne": 2,
+     "maleProne": 34,
+     "femaleNotProne": 2,
+     "femaleProne": 37
+    },
+    {
+     "ageGroup": "25-29",
+     "maleNotProne": 2,
+     "maleProne": 30,
+     "femaleNotProne": 2,
+     "femaleProne": 32
+    },
+    {
+     "ageGroup": "30-34",
+     "maleNotProne": 2,
+     "maleProne": 26,
+     "femaleNotProne": 2,
+     "femaleProne": 26
+    },
+    {
+     "ageGroup": "35-39",
+     "maleNotProne": 1,
+     "maleProne": 15,
+     "femaleNotProne": 1,
+     "femaleProne": 21
+    },
+    {
+     "ageGroup": "40-44",
+     "maleNotProne": 1,
+     "maleProne": 9,
+     "femaleNotProne": 1,
+     "femaleProne": 20
+    },
+    {
+     "ageGroup": "45-49",
+     "maleNotProne": 2,
+     "maleProne": 25,
+     "femaleNotProne": 1,
+     "femaleProne": 17
+    },
+    {
+     "ageGroup": "50-54",
+     "maleNotProne": 1,
+     "maleProne": 16,
+     "femaleNotProne": 1,
+     "femaleProne": 13
+    },
+    {
+     "ageGroup": "55-59",
+     "maleNotProne": 1,
+     "maleProne": 8,
+     "femaleNotProne": 1,
+     "femaleProne": 13
+    },
+    {
+     "ageGroup": "60-64",
+     "maleNotProne": 1,
+     "maleProne": 11,
+     "femaleNotProne": 1,
+     "femaleProne": 8
+    },
+    {
+     "ageGroup": "65-69",
+     "maleNotProne": null,
+     "maleProne": 7,
+     "femaleNotProne": null,
+     "femaleProne": 4
+    },
+    {
+     "ageGroup": "70-74",
+     "maleNotProne": null,
+     "maleProne": 3,
+     "femaleNotProne": null,
+     "femaleProne": 6
+    },
+    {
+     "ageGroup": "75-79",
+     "maleNotProne": null,
+     "maleProne": 7,
+     "femaleNotProne": null,
+     "femaleProne": 2
+    },
+    {
+     "ageGroup": "80+",
+     "maleNotProne": null,
+     "maleProne": null,
+     "femaleNotProne": null,
+     "femaleProne": 1
+    }
+   ],
+   "notes": "The source age table counts 629 prone against the report's 632 (source rounding); both kept as reported."
+  },
+  {
+   "psgc": "0803738110",
+   "name": "Bayog",
+   "source": "Ormoc_City_Barangay_Level_Hazard_Assessment_Updated_2026-11-20_v4.xlsx, worksheet \"Bgy - Bayog\" (GeoAnalyticsPH report)",
+   "ageSexStatus": "available",
+   "reportedAt": "November 20, 2026 4:21:04 am",
+   "pronePopulation": 1477,
+   "denominator": 1477,
+   "exposurePercent": 100.0,
+   "classes": [
+    {
+     "name": "Moderate",
+     "population": 280
+    },
+    {
+     "name": "High",
+     "population": 1197
+    }
+   ],
+   "ageSex": [
+    {
+     "ageGroup": "Under 5",
+     "maleNotProne": null,
+     "maleProne": 83,
+     "femaleNotProne": null,
+     "femaleProne": 78
+    },
+    {
+     "ageGroup": "5-9",
+     "maleNotProne": null,
+     "maleProne": 97,
+     "femaleNotProne": null,
+     "femaleProne": 97
+    },
+    {
+     "ageGroup": "10-14",
+     "maleNotProne": null,
+     "maleProne": 82,
+     "femaleNotProne": null,
+     "femaleProne": 101
+    },
+    {
+     "ageGroup": "15-19",
+     "maleNotProne": null,
+     "maleProne": 71,
+     "femaleNotProne": null,
+     "femaleProne": 83
+    },
+    {
+     "ageGroup": "20-24",
+     "maleNotProne": null,
+     "maleProne": 52,
+     "femaleNotProne": null,
+     "femaleProne": 67
+    },
+    {
+     "ageGroup": "25-29",
+     "maleNotProne": null,
+     "maleProne": 55,
+     "femaleNotProne": null,
+     "femaleProne": 55
+    },
+    {
+     "ageGroup": "30-34",
+     "maleNotProne": null,
+     "maleProne": 39,
+     "femaleNotProne": null,
+     "femaleProne": 45
+    },
+    {
+     "ageGroup": "35-39",
+     "maleNotProne": null,
+     "maleProne": 38,
+     "femaleNotProne": null,
+     "femaleProne": 44
+    },
+    {
+     "ageGroup": "40-44",
+     "maleNotProne": null,
+     "maleProne": 42,
+     "femaleNotProne": null,
+     "femaleProne": 58
+    },
+    {
+     "ageGroup": "45-49",
+     "maleNotProne": null,
+     "maleProne": 27,
+     "femaleNotProne": null,
+     "femaleProne": 42
+    },
+    {
+     "ageGroup": "50-54",
+     "maleNotProne": null,
+     "maleProne": 29,
+     "femaleNotProne": null,
+     "femaleProne": 24
+    },
+    {
+     "ageGroup": "55-59",
+     "maleNotProne": null,
+     "maleProne": 19,
+     "femaleNotProne": null,
+     "femaleProne": 27
+    },
+    {
+     "ageGroup": "60-64",
+     "maleNotProne": null,
+     "maleProne": 24,
+     "femaleNotProne": null,
+     "femaleProne": 24
+    },
+    {
+     "ageGroup": "65-69",
+     "maleNotProne": null,
+     "maleProne": 22,
+     "femaleNotProne": null,
+     "femaleProne": 15
+    },
+    {
+     "ageGroup": "70-74",
+     "maleNotProne": null,
+     "maleProne": 9,
+     "femaleNotProne": null,
+     "femaleProne": 12
+    },
+    {
+     "ageGroup": "75-79",
+     "maleNotProne": null,
+     "maleProne": 8,
+     "femaleNotProne": null,
+     "femaleProne": 2
+    },
+    {
+     "ageGroup": "80+",
+     "maleNotProne": null,
+     "maleProne": 5,
+     "femaleNotProne": null,
+     "femaleProne": 1
+    }
+   ]
+  },
+  {
+   "psgc": "0803738012",
+   "name": "Can-adieng",
+   "source": "Ormoc_City_Barangay_Level_Hazard_Assessment_Updated_2026-11-20_v4.xlsx, worksheet \"Bgy - Can-adieng\" (GeoAnalyticsPH report)",
+   "ageSexStatus": "available",
+   "reportedAt": "November 16, 2026 8:56:25 pm",
+   "pronePopulation": 1302,
+   "denominator": 2466,
+   "exposurePercent": 52.798,
+   "classes": [
+    {
+     "name": "Not prone",
+     "population": 1164
+    },
+    {
+     "name": "Moderate",
+     "population": 446
+    },
+    {
+     "name": "High",
+     "population": 856
+    }
+   ],
+   "ageSex": [
+    {
+     "ageGroup": "Under 5",
+     "maleNotProne": 50,
+     "maleProne": 55,
+     "femaleNotProne": 49,
+     "femaleProne": 54
+    },
+    {
+     "ageGroup": "5-9",
+     "maleNotProne": 46,
+     "maleProne": 51,
+     "femaleNotProne": 48,
+     "femaleProne": 53
+    },
+    {
+     "ageGroup": "10-14",
+     "maleNotProne": 37,
+     "maleProne": 42,
+     "femaleNotProne": 51,
+     "femaleProne": 58
+    },
+    {
+     "ageGroup": "15-19",
+     "maleNotProne": 55,
+     "maleProne": 61,
+     "femaleNotProne": 50,
+     "femaleProne": 55
+    },
+    {
+     "ageGroup": "20-24",
+     "maleNotProne": 70,
+     "maleProne": 78,
+     "femaleNotProne": 58,
+     "femaleProne": 65
+    },
+    {
+     "ageGroup": "25-29",
+     "maleNotProne": 52,
+     "maleProne": 58,
+     "femaleNotProne": 46,
+     "femaleProne": 52
+    },
+    {
+     "ageGroup": "30-34",
+     "maleNotProne": 42,
+     "maleProne": 46,
+     "femaleNotProne": 51,
+     "femaleProne": 56
+    },
+    {
+     "ageGroup": "35-39",
+     "maleNotProne": 31,
+     "maleProne": 35,
+     "femaleNotProne": 39,
+     "femaleProne": 43
+    },
+    {
+     "ageGroup": "40-44",
+     "maleNotProne": 35,
+     "maleProne": 39,
+     "femaleNotProne": 32,
+     "femaleProne": 36
+    },
+    {
+     "ageGroup": "45-49",
+     "maleNotProne": 31,
+     "maleProne": 35,
+     "femaleNotProne": 30,
+     "femaleProne": 33
+    },
+    {
+     "ageGroup": "50-54",
+     "maleNotProne": 33,
+     "maleProne": 37,
+     "femaleNotProne": 36,
+     "femaleProne": 40
+    },
+    {
+     "ageGroup": "55-59",
+     "maleNotProne": 29,
+     "maleProne": 32,
+     "femaleNotProne": 26,
+     "femaleProne": 30
+    },
+    {
+     "ageGroup": "60-64",
+     "maleNotProne": 20,
+     "maleProne": 23,
+     "femaleNotProne": 23,
+     "femaleProne": 25
+    },
+    {
+     "ageGroup": "65-69",
+     "maleNotProne": 24,
+     "maleProne": 27,
+     "femaleNotProne": 14,
+     "femaleProne": 16
+    },
+    {
+     "ageGroup": "70-74",
+     "maleNotProne": 14,
+     "maleProne": 15,
+     "femaleNotProne": 12,
+     "femaleProne": 13
+    },
+    {
+     "ageGroup": "75-79",
+     "maleNotProne": 9,
+     "maleProne": 10,
+     "femaleNotProne": 5,
+     "femaleProne": 6
+    },
+    {
+     "ageGroup": "80+",
+     "maleNotProne": 12,
+     "maleProne": 13,
+     "femaleNotProne": 7,
+     "femaleProne": 7
+    }
+   ],
+   "notes": "The source age table counts 1,299 prone against the report's 1,302 (source rounding); both kept as reported."
+  },
+  {
+   "psgc": "0803738016",
+   "name": "Cogon Combado",
+   "source": "Ormoc_City_Barangay_Level_Hazard_Assessment_Updated_2026-11-20_v4.xlsx, worksheet \"Bgy - Cogon Combado\" (GeoAnalyticsPH report)",
+   "ageSexStatus": "available",
+   "reportedAt": "November 16, 2026 9:02:22 pm",
+   "pronePopulation": 5130,
+   "denominator": 5852,
+   "exposurePercent": 87.662,
+   "classes": [
+    {
+     "name": "Not prone",
+     "population": 722
+    },
+    {
+     "name": "Moderate",
+     "population": 3529
+    },
+    {
+     "name": "High",
+     "population": 1601
+    }
+   ],
+   "ageSex": [
+    {
+     "ageGroup": "Under 5",
+     "maleNotProne": 30,
+     "maleProne": 215,
+     "femaleNotProne": 32,
+     "femaleProne": 224
+    },
+    {
+     "ageGroup": "5-9",
+     "maleNotProne": 30,
+     "maleProne": 211,
+     "femaleNotProne": 32,
+     "femaleProne": 225
+    },
+    {
+     "ageGroup": "10-14",
+     "maleNotProne": 30,
+     "maleProne": 214,
+     "femaleNotProne": 36,
+     "femaleProne": 257
+    },
+    {
+     "ageGroup": "15-19",
+     "maleNotProne": 35,
+     "maleProne": 248,
+     "femaleNotProne": 36,
+     "femaleProne": 252
+    },
+    {
+     "ageGroup": "20-24",
+     "maleNotProne": 36,
+     "maleProne": 252,
+     "femaleNotProne": 37,
+     "femaleProne": 266
+    },
+    {
+     "ageGroup": "25-29",
+     "maleNotProne": 32,
+     "maleProne": 224,
+     "femaleNotProne": 32,
+     "femaleProne": 224
+    },
+    {
+     "ageGroup": "30-34",
+     "maleNotProne": 27,
+     "maleProne": 196,
+     "femaleNotProne": 28,
+     "femaleProne": 200
+    },
+    {
+     "ageGroup": "35-39",
+     "maleNotProne": 25,
+     "maleProne": 174,
+     "femaleNotProne": 25,
+     "femaleProne": 179
+    },
+    {
+     "ageGroup": "40-44",
+     "maleNotProne": 21,
+     "maleProne": 147,
+     "femaleNotProne": 20,
+     "femaleProne": 141
+    },
+    {
+     "ageGroup": "45-49",
+     "maleNotProne": 21,
+     "maleProne": 148,
+     "femaleNotProne": 17,
+     "femaleProne": 122
+    },
+    {
+     "ageGroup": "50-54",
+     "maleNotProne": 15,
+     "maleProne": 106,
+     "femaleNotProne": 19,
+     "femaleProne": 136
+    },
+    {
+     "ageGroup": "55-59",
+     "maleNotProne": 17,
+     "maleProne": 120,
+     "femaleNotProne": 14,
+     "femaleProne": 96
+    },
+    {
+     "ageGroup": "60-64",
+     "maleNotProne": 13,
+     "maleProne": 92,
+     "femaleNotProne": 14,
+     "femaleProne": 97
+    },
+    {
+     "ageGroup": "65-69",
+     "maleNotProne": 12,
+     "maleProne": 88,
+     "femaleNotProne": 8,
+     "femaleProne": 58
+    },
+    {
+     "ageGroup": "70-74",
+     "maleNotProne": 8,
+     "maleProne": 60,
+     "femaleNotProne": 6,
+     "femaleProne": 40
+    },
+    {
+     "ageGroup": "75-79",
+     "maleNotProne": 4,
+     "maleProne": 31,
+     "femaleNotProne": 3,
+     "femaleProne": 21
+    },
+    {
+     "ageGroup": "80+",
+     "maleNotProne": 6,
+     "maleProne": 40,
+     "femaleNotProne": 3,
+     "femaleProne": 24
+    }
+   ],
+   "notes": "The source age table counts 5,128 prone against the report's 5,130 (source rounding); both kept as reported."
+  },
+  {
+   "psgc": "0803738018",
+   "name": "Curva",
+   "source": "Ormoc_City_Barangay_Level_Hazard_Assessment_Updated_2026-11-20_v4.xlsx, worksheet \"Bgy - Curva\" (GeoAnalyticsPH report)",
+   "ageSexStatus": "available",
+   "reportedAt": "November 08, 2026 3:47:14 pm",
+   "pronePopulation": 2354,
+   "denominator": 3309,
+   "exposurePercent": 71.139,
+   "classes": [
+    {
+     "name": "Not prone",
+     "population": 955
+    },
+    {
+     "name": "Low",
+     "population": 1646
+    },
+    {
+     "name": "Moderate",
+     "population": 503
+    },
+    {
+     "name": "High",
+     "population": 205
+    }
+   ],
+   "ageSex": [
+    {
+     "ageGroup": "Under 5",
+     "maleNotProne": 48,
+     "maleProne": 120,
+     "femaleNotProne": 59,
+     "femaleProne": 147
+    },
+    {
+     "ageGroup": "5-9",
+     "maleNotProne": 47,
+     "maleProne": 117,
+     "femaleNotProne": 62,
+     "femaleProne": 153
+    },
+    {
+     "ageGroup": "10-14",
+     "maleNotProne": 44,
+     "maleProne": 107,
+     "femaleNotProne": 52,
+     "femaleProne": 128
+    },
+    {
+     "ageGroup": "15-19",
+     "maleNotProne": 46,
+     "maleProne": 114,
+     "femaleNotProne": 47,
+     "femaleProne": 116
+    },
+    {
+     "ageGroup": "20-24",
+     "maleNotProne": 44,
+     "maleProne": 108,
+     "femaleNotProne": 44,
+     "femaleProne": 107
+    },
+    {
+     "ageGroup": "25-29",
+     "maleNotProne": 39,
+     "maleProne": 98,
+     "femaleNotProne": 35,
+     "femaleProne": 87
+    },
+    {
+     "ageGroup": "30-34",
+     "maleNotProne": 29,
+     "maleProne": 71,
+     "femaleNotProne": 33,
+     "femaleProne": 83
+    },
+    {
+     "ageGroup": "35-39",
+     "maleNotProne": 27,
+     "maleProne": 67,
+     "femaleNotProne": 30,
+     "femaleProne": 74
+    },
+    {
+     "ageGroup": "40-44",
+     "maleNotProne": 30,
+     "maleProne": 73,
+     "femaleNotProne": 30,
+     "femaleProne": 73
+    },
+    {
+     "ageGroup": "45-49",
+     "maleNotProne": 25,
+     "maleProne": 60,
+     "femaleNotProne": 24,
+     "femaleProne": 58
+    },
+    {
+     "ageGroup": "50-54",
+     "maleNotProne": 18,
+     "maleProne": 46,
+     "femaleNotProne": 22,
+     "femaleProne": 53
+    },
+    {
+     "ageGroup": "55-59",
+     "maleNotProne": 19,
+     "maleProne": 48,
+     "femaleNotProne": 19,
+     "femaleProne": 47
+    },
+    {
+     "ageGroup": "60-64",
+     "maleNotProne": 14,
+     "maleProne": 36,
+     "femaleNotProne": 15,
+     "femaleProne": 36
+    },
+    {
+     "ageGroup": "65-69",
+     "maleNotProne": 11,
+     "maleProne": 28,
+     "femaleNotProne": 9,
+     "femaleProne": 21
+    },
+    {
+     "ageGroup": "70-74",
+     "maleNotProne": 9,
+     "maleProne": 22,
+     "femaleNotProne": 5,
+     "femaleProne": 12
+    },
+    {
+     "ageGroup": "75-79",
+     "maleNotProne": 6,
+     "maleProne": 16,
+     "femaleNotProne": 5,
+     "femaleProne": 12
+    },
+    {
+     "ageGroup": "80+",
+     "maleNotProne": 5,
+     "maleProne": 13,
+     "femaleNotProne": 2,
+     "femaleProne": 4
+    }
+   ],
+   "notes": "The source age table counts 2,355 prone against the report's 2,354 (source rounding); both kept as reported."
+  },
+  {
+   "psgc": "0803738106",
+   "name": "Guintigui-an",
+   "source": "Ormoc_City_Barangay_Level_Hazard_Assessment_Updated_2026-11-20_v4.xlsx, worksheet \"Bgy - Guintigui-an\" (GeoAnalyticsPH report)",
+   "ageSexStatus": "available",
+   "reportedAt": "November 17, 2026 1:40:07 am",
+   "pronePopulation": 2684,
+   "denominator": 2684,
+   "exposurePercent": 100.0,
+   "classes": [
+    {
+     "name": "Moderate",
+     "population": 1621
+    },
+    {
+     "name": "High",
+     "population": 1063
+    }
+   ],
+   "ageSex": [
+    {
+     "ageGroup": "Under 5",
+     "maleNotProne": null,
+     "maleProne": 146,
+     "femaleNotProne": null,
+     "femaleProne": 166
+    },
+    {
+     "ageGroup": "5-9",
+     "maleNotProne": null,
+     "maleProne": 157,
+     "femaleNotProne": null,
+     "femaleProne": 157
+    },
+    {
+     "ageGroup": "10-14",
+     "maleNotProne": null,
+     "maleProne": 143,
+     "femaleNotProne": null,
+     "femaleProne": 125
+    },
+    {
+     "ageGroup": "15-19",
+     "maleNotProne": null,
+     "maleProne": 127,
+     "femaleNotProne": null,
+     "femaleProne": 127
+    },
+    {
+     "ageGroup": "20-24",
+     "maleNotProne": null,
+     "maleProne": 126,
+     "femaleNotProne": null,
+     "femaleProne": 123
+    },
+    {
+     "ageGroup": "25-29",
+     "maleNotProne": null,
+     "maleProne": 95,
+     "femaleNotProne": null,
+     "femaleProne": 128
+    },
+    {
+     "ageGroup": "30-34",
+     "maleNotProne": null,
+     "maleProne": 85,
+     "femaleNotProne": null,
+     "femaleProne": 98
+    },
+    {
+     "ageGroup": "35-39",
+     "maleNotProne": null,
+     "maleProne": 79,
+     "femaleNotProne": null,
+     "femaleProne": 87
+    },
+    {
+     "ageGroup": "40-44",
+     "maleNotProne": null,
+     "maleProne": 92,
+     "femaleNotProne": null,
+     "femaleProne": 86
+    },
+    {
+     "ageGroup": "45-49",
+     "maleNotProne": null,
+     "maleProne": 55,
+     "femaleNotProne": null,
+     "femaleProne": 77
+    },
+    {
+     "ageGroup": "50-54",
+     "maleNotProne": null,
+     "maleProne": 42,
+     "femaleNotProne": null,
+     "femaleProne": 64
+    },
+    {
+     "ageGroup": "55-59",
+     "maleNotProne": null,
+     "maleProne": 41,
+     "femaleNotProne": null,
+     "femaleProne": 38
+    },
+    {
+     "ageGroup": "60-64",
+     "maleNotProne": null,
+     "maleProne": 48,
+     "femaleNotProne": null,
+     "femaleProne": 33
+    },
+    {
+     "ageGroup": "65-69",
+     "maleNotProne": null,
+     "maleProne": 34,
+     "femaleNotProne": null,
+     "femaleProne": 32
+    },
+    {
+     "ageGroup": "70-74",
+     "maleNotProne": null,
+     "maleProne": 19,
+     "femaleNotProne": null,
+     "femaleProne": 17
+    },
+    {
+     "ageGroup": "75-79",
+     "maleNotProne": null,
+     "maleProne": 12,
+     "femaleNotProne": null,
+     "femaleProne": 5
+    },
+    {
+     "ageGroup": "80+",
+     "maleNotProne": null,
+     "maleProne": 11,
+     "femaleNotProne": null,
+     "femaleProne": 9
+    }
+   ]
+  },
+  {
+   "psgc": "0803738003",
+   "name": "Labrador (Balion)",
+   "source": "Ormoc_City_Barangay_Level_Hazard_Assessment_Updated_2026-11-20_v4.xlsx, worksheet \"Bgy - Labrador (Balion)\" (GeoAnalyticsPH report)",
+   "ageSexStatus": "available",
+   "reportedAt": "November 16, 2026 9:14:35 pm",
+   "pronePopulation": 2273,
+   "denominator": 2273,
+   "exposurePercent": 100.0,
+   "classes": [
+    {
+     "name": "Moderate",
+     "population": 175
+    },
+    {
+     "name": "High",
+     "population": 2098
+    }
+   ],
+   "ageSex": [
+    {
+     "ageGroup": "Under 5",
+     "maleNotProne": null,
+     "maleProne": 134,
+     "femaleNotProne": null,
+     "femaleProne": 120
+    },
+    {
+     "ageGroup": "5-9",
+     "maleNotProne": null,
+     "maleProne": 142,
+     "femaleNotProne": null,
+     "femaleProne": 158
+    },
+    {
+     "ageGroup": "10-14",
+     "maleNotProne": null,
+     "maleProne": 122,
+     "femaleNotProne": null,
+     "femaleProne": 115
+    },
+    {
+     "ageGroup": "15-19",
+     "maleNotProne": null,
+     "maleProne": 114,
+     "femaleNotProne": null,
+     "femaleProne": 96
+    },
+    {
+     "ageGroup": "20-24",
+     "maleNotProne": null,
+     "maleProne": 91,
+     "femaleNotProne": null,
+     "femaleProne": 81
+    },
+    {
+     "ageGroup": "25-29",
+     "maleNotProne": null,
+     "maleProne": 100,
+     "femaleNotProne": null,
+     "femaleProne": 103
+    },
+    {
+     "ageGroup": "30-34",
+     "maleNotProne": null,
+     "maleProne": 79,
+     "femaleNotProne": null,
+     "femaleProne": 66
+    },
+    {
+     "ageGroup": "35-39",
+     "maleNotProne": null,
+     "maleProne": 66,
+     "femaleNotProne": null,
+     "femaleProne": 90
+    },
+    {
+     "ageGroup": "40-44",
+     "maleNotProne": null,
+     "maleProne": 46,
+     "femaleNotProne": null,
+     "femaleProne": 66
+    },
+    {
+     "ageGroup": "45-49",
+     "maleNotProne": null,
+     "maleProne": 56,
+     "femaleNotProne": null,
+     "femaleProne": 52
+    },
+    {
+     "ageGroup": "50-54",
+     "maleNotProne": null,
+     "maleProne": 43,
+     "femaleNotProne": null,
+     "femaleProne": 55
+    },
+    {
+     "ageGroup": "55-59",
+     "maleNotProne": null,
+     "maleProne": 30,
+     "femaleNotProne": null,
+     "femaleProne": 33
+    },
+    {
+     "ageGroup": "60-64",
+     "maleNotProne": null,
+     "maleProne": 35,
+     "femaleNotProne": null,
+     "femaleProne": 30
+    },
+    {
+     "ageGroup": "65-69",
+     "maleNotProne": null,
+     "maleProne": 38,
+     "femaleNotProne": null,
+     "femaleProne": 35
+    },
+    {
+     "ageGroup": "70-74",
+     "maleNotProne": null,
+     "maleProne": 21,
+     "femaleNotProne": null,
+     "femaleProne": 23
+    },
+    {
+     "ageGroup": "75-79",
+     "maleNotProne": null,
+     "maleProne": 8,
+     "femaleNotProne": null,
+     "femaleProne": 9
+    },
+    {
+     "ageGroup": "80+",
+     "maleNotProne": null,
+     "maleProne": 10,
+     "femaleNotProne": null,
+     "femaleProne": 6
+    }
+   ]
+  },
+  {
+   "psgc": "0803738057",
+   "name": "Lao",
+   "source": "Ormoc_City_Barangay_Level_Hazard_Assessment_Updated_2026-11-20_v4.xlsx, worksheet \"Bgy - Lao\" (GeoAnalyticsPH report)",
+   "ageSexStatus": "available",
+   "reportedAt": "November 17, 2026 2:40:52 am",
+   "pronePopulation": 4226,
+   "denominator": 4374,
+   "exposurePercent": 96.616,
+   "classes": [
+    {
+     "name": "Not prone",
+     "population": 148
+    },
+    {
+     "name": "High",
+     "population": 1050
+    },
+    {
+     "name": "Very High",
+     "population": 3176
+    }
+   ],
+   "ageSex": [
+    {
+     "ageGroup": "Under 5",
+     "maleNotProne": 6,
+     "maleProne": 159,
+     "femaleNotProne": 8,
+     "femaleProne": 231
+    },
+    {
+     "ageGroup": "5-9",
+     "maleNotProne": 8,
+     "maleProne": 221,
+     "femaleNotProne": 8,
+     "femaleProne": 222
+    },
+    {
+     "ageGroup": "10-14",
+     "maleNotProne": 8,
+     "maleProne": 223,
+     "femaleNotProne": 8,
+     "femaleProne": 218
+    },
+    {
+     "ageGroup": "15-19",
+     "maleNotProne": 7,
+     "maleProne": 208,
+     "femaleNotProne": 7,
+     "femaleProne": 210
+    },
+    {
+     "ageGroup": "20-24",
+     "maleNotProne": 6,
+     "maleProne": 179,
+     "femaleNotProne": 7,
+     "femaleProne": 194
+    },
+    {
+     "ageGroup": "25-29",
+     "maleNotProne": 6,
+     "maleProne": 171,
+     "femaleNotProne": 6,
+     "femaleProne": 175
+    },
+    {
+     "ageGroup": "30-34",
+     "maleNotProne": 5,
+     "maleProne": 148,
+     "femaleNotProne": 5,
+     "femaleProne": 136
+    },
+    {
+     "ageGroup": "35-39",
+     "maleNotProne": 5,
+     "maleProne": 130,
+     "femaleNotProne": 5,
+     "femaleProne": 131
+    },
+    {
+     "ageGroup": "40-44",
+     "maleNotProne": 5,
+     "maleProne": 131,
+     "femaleNotProne": 4,
+     "femaleProne": 123
+    },
+    {
+     "ageGroup": "45-49",
+     "maleNotProne": 4,
+     "maleProne": 107,
+     "femaleNotProne": 4,
+     "femaleProne": 125
+    },
+    {
+     "ageGroup": "50-54",
+     "maleNotProne": 4,
+     "maleProne": 101,
+     "femaleNotProne": 4,
+     "femaleProne": 108
+    },
+    {
+     "ageGroup": "55-59",
+     "maleNotProne": 2,
+     "maleProne": 69,
+     "femaleNotProne": 3,
+     "femaleProne": 91
+    },
+    {
+     "ageGroup": "60-64",
+     "maleNotProne": 3,
+     "maleProne": 84,
+     "femaleNotProne": 2,
+     "femaleProne": 69
+    },
+    {
+     "ageGroup": "65-69",
+     "maleNotProne": 2,
+     "maleProne": 60,
+     "femaleNotProne": 1,
+     "femaleProne": 40
+    },
+    {
+     "ageGroup": "70-74",
+     "maleNotProne": 1,
+     "maleProne": 38,
+     "femaleNotProne": 1,
+     "femaleProne": 37
+    },
+    {
+     "ageGroup": "75-79",
+     "maleNotProne": 1,
+     "maleProne": 27,
+     "femaleNotProne": null,
+     "femaleProne": 14
+    },
+    {
+     "ageGroup": "80+",
+     "maleNotProne": 1,
+     "maleProne": 27,
+     "femaleNotProne": 1,
+     "femaleProne": 19
+    }
+   ]
+  },
+  {
+   "psgc": "0803738099",
+   "name": "Leondoni",
+   "source": "Ormoc_City_Barangay_Level_Hazard_Assessment_Updated_2026-11-20_v4.xlsx, worksheet \"Bgy - Leondoni\" (GeoAnalyticsPH report)",
+   "ageSexStatus": "available",
+   "reportedAt": "November 09, 2026 6:13:57 pm",
+   "pronePopulation": 259,
+   "denominator": 934,
+   "exposurePercent": 27.73,
+   "classes": [
+    {
+     "name": "Not prone",
+     "population": 675
+    },
+    {
+     "name": "Moderate",
+     "population": 40
+    },
+    {
+     "name": "High",
+     "population": 219
+    }
+   ],
+   "ageSex": [
+    {
+     "ageGroup": "Under 5",
+     "maleNotProne": 38,
+     "maleProne": 15,
+     "femaleNotProne": 48,
+     "femaleProne": 18
+    },
+    {
+     "ageGroup": "5-9",
+     "maleNotProne": 43,
+     "maleProne": 16,
+     "femaleNotProne": 49,
+     "femaleProne": 19
+    },
+    {
+     "ageGroup": "10-14",
+     "maleNotProne": 38,
+     "maleProne": 15,
+     "femaleNotProne": 46,
+     "femaleProne": 18
+    },
+    {
+     "ageGroup": "15-19",
+     "maleNotProne": 27,
+     "maleProne": 11,
+     "femaleNotProne": 33,
+     "femaleProne": 13
+    },
+    {
+     "ageGroup": "20-24",
+     "maleNotProne": 21,
+     "maleProne": 8,
+     "femaleNotProne": 27,
+     "femaleProne": 11
+    },
+    {
+     "ageGroup": "25-29",
+     "maleNotProne": 20,
+     "maleProne": 7,
+     "femaleNotProne": 20,
+     "femaleProne": 7
+    },
+    {
+     "ageGroup": "30-34",
+     "maleNotProne": 17,
+     "maleProne": 7,
+     "femaleNotProne": 24,
+     "femaleProne": 9
+    },
+    {
+     "ageGroup": "35-39",
+     "maleNotProne": 21,
+     "maleProne": 8,
+     "femaleNotProne": 17,
+     "femaleProne": 6
+    },
+    {
+     "ageGroup": "40-44",
+     "maleNotProne": 20,
+     "maleProne": 7,
+     "femaleNotProne": 15,
+     "femaleProne": 6
+    },
+    {
+     "ageGroup": "45-49",
+     "maleNotProne": 9,
+     "maleProne": 4,
+     "femaleNotProne": 22,
+     "femaleProne": 9
+    },
+    {
+     "ageGroup": "50-54",
+     "maleNotProne": 14,
+     "maleProne": 5,
+     "femaleNotProne": 15,
+     "femaleProne": 6
+    },
+    {
+     "ageGroup": "55-59",
+     "maleNotProne": 18,
+     "maleProne": 7,
+     "femaleNotProne": 13,
+     "femaleProne": 5
+    },
+    {
+     "ageGroup": "60-64",
+     "maleNotProne": 9,
+     "maleProne": 3,
+     "femaleNotProne": 9,
+     "femaleProne": 4
+    },
+    {
+     "ageGroup": "65-69",
+     "maleNotProne": 9,
+     "maleProne": 4,
+     "femaleNotProne": 9,
+     "femaleProne": 4
+    },
+    {
+     "ageGroup": "70-74",
+     "maleNotProne": 7,
+     "maleProne": 2,
+     "femaleNotProne": 7,
+     "femaleProne": 2
+    },
+    {
+     "ageGroup": "75-79",
+     "maleNotProne": 1,
+     "maleProne": 1,
+     "femaleNotProne": 3,
+     "femaleProne": 1
+    },
+    {
+     "ageGroup": "80+",
+     "maleNotProne": 2,
+     "maleProne": 1,
+     "femaleNotProne": 3,
+     "femaleProne": 1
+    }
+   ],
+   "notes": "The source age table counts 260 prone against the report's 259 (source rounding); both kept as reported."
+  },
+  {
+   "psgc": "0803738059",
+   "name": "Liloan",
+   "source": "Ormoc_City_Barangay_Level_Hazard_Assessment_Updated_2026-11-20_v4.xlsx, worksheet \"Bgy - Liloan\" (GeoAnalyticsPH report)",
+   "ageSexStatus": "available",
+   "reportedAt": "November 10, 2026 3:22:45 am",
+   "pronePopulation": 10434,
+   "denominator": 10434,
+   "exposurePercent": 100.0,
+   "classes": [
+    {
+     "name": "Low",
+     "population": 3
+    },
+    {
+     "name": "Moderate",
+     "population": 5133
+    },
+    {
+     "name": "High",
+     "population": 5298
+    }
+   ],
+   "ageSex": [
+    {
+     "ageGroup": "Under 5",
+     "maleNotProne": null,
+     "maleProne": 669,
+     "femaleNotProne": null,
+     "femaleProne": 702
+    },
+    {
+     "ageGroup": "5-9",
+     "maleNotProne": null,
+     "maleProne": 596,
+     "femaleNotProne": null,
+     "femaleProne": 686
+    },
+    {
+     "ageGroup": "10-14",
+     "maleNotProne": null,
+     "maleProne": 589,
+     "femaleNotProne": null,
+     "femaleProne": 571
+    },
+    {
+     "ageGroup": "15-19",
+     "maleNotProne": null,
+     "maleProne": 452,
+     "femaleNotProne": null,
+     "femaleProne": 477
+    },
+    {
+     "ageGroup": "20-24",
+     "maleNotProne": null,
+     "maleProne": 445,
+     "femaleNotProne": null,
+     "femaleProne": 472
+    },
+    {
+     "ageGroup": "25-29",
+     "maleNotProne": null,
+     "maleProne": 406,
+     "femaleNotProne": null,
+     "femaleProne": 425
+    },
+    {
+     "ageGroup": "30-34",
+     "maleNotProne": null,
+     "maleProne": 371,
+     "femaleNotProne": null,
+     "femaleProne": 359
+    },
+    {
+     "ageGroup": "35-39",
+     "maleNotProne": null,
+     "maleProne": 310,
+     "femaleNotProne": null,
+     "femaleProne": 351
+    },
+    {
+     "ageGroup": "40-44",
+     "maleNotProne": null,
+     "maleProne": 283,
+     "femaleNotProne": null,
+     "femaleProne": 319
+    },
+    {
+     "ageGroup": "45-49",
+     "maleNotProne": null,
+     "maleProne": 205,
+     "femaleNotProne": null,
+     "femaleProne": 237
+    },
+    {
+     "ageGroup": "50-54",
+     "maleNotProne": null,
+     "maleProne": 179,
+     "femaleNotProne": null,
+     "femaleProne": 196
+    },
+    {
+     "ageGroup": "55-59",
+     "maleNotProne": null,
+     "maleProne": 174,
+     "femaleNotProne": null,
+     "femaleProne": 176
+    },
+    {
+     "ageGroup": "60-64",
+     "maleNotProne": null,
+     "maleProne": 155,
+     "femaleNotProne": null,
+     "femaleProne": 127
+    },
+    {
+     "ageGroup": "65-69",
+     "maleNotProne": null,
+     "maleProne": 115,
+     "femaleNotProne": null,
+     "femaleProne": 113
+    },
+    {
+     "ageGroup": "70-74",
+     "maleNotProne": null,
+     "maleProne": 85,
+     "femaleNotProne": null,
+     "femaleProne": 70
+    },
+    {
+     "ageGroup": "75-79",
+     "maleNotProne": null,
+     "maleProne": 34,
+     "femaleNotProne": null,
+     "femaleProne": 21
+    },
+    {
+     "ageGroup": "80+",
+     "maleNotProne": null,
+     "maleProne": 42,
+     "femaleNotProne": null,
+     "femaleProne": 22
+    }
+   ]
+  },
+  {
+   "psgc": "0803738060",
+   "name": "Linao",
+   "source": "Ormoc_City_Barangay_Level_Hazard_Assessment_Updated_2026-11-20_v4.xlsx, worksheet \"Bgy - Linao\" (GeoAnalyticsPH report)",
+   "ageSexStatus": "source-record-pending",
+   "reportedAt": "GeoAnalyticsPH auto-generated report, 9 Nov 2026 6:17 pm (GeoRiskPH method; DENR-MGB 2018 flood hazard layer)",
+   "pronePopulation": 8210,
+   "denominator": 8210,
+   "exposurePercent": 100.0,
+   "classes": [
+    {
+     "name": "High",
+     "population": 6399
+    },
+    {
+     "name": "Very High",
+     "population": 1811
+    }
+   ],
+   "ageSex": []
+  },
+  {
+   "psgc": "0803738069",
+   "name": "Matica-a",
+   "source": "Ormoc_City_Barangay_Level_Hazard_Assessment_Updated_2026-11-20_v4.xlsx, worksheet \"Bgy - Matica-a\" (GeoAnalyticsPH report)",
+   "ageSexStatus": "available",
+   "reportedAt": "November 17, 2026 1:47:06 am",
+   "pronePopulation": 3754,
+   "denominator": 3777,
+   "exposurePercent": 99.391,
+   "classes": [
+    {
+     "name": "Not prone",
+     "population": 23
+    },
+    {
+     "name": "Moderate",
+     "population": 2731
+    },
+    {
+     "name": "High",
+     "population": 1023
+    }
+   ],
+   "ageSex": [
+    {
+     "ageGroup": "Under 5",
+     "maleNotProne": 1,
+     "maleProne": 193,
+     "femaleNotProne": 1,
+     "femaleProne": 221
+    },
+    {
+     "ageGroup": "5-9",
+     "maleNotProne": 1,
+     "maleProne": 203,
+     "femaleNotProne": 1,
+     "femaleProne": 233
+    },
+    {
+     "ageGroup": "10-14",
+     "maleNotProne": 1,
+     "maleProne": 210,
+     "femaleNotProne": 1,
+     "femaleProne": 225
+    },
+    {
+     "ageGroup": "15-19",
+     "maleNotProne": 1,
+     "maleProne": 183,
+     "femaleNotProne": 1,
+     "femaleProne": 190
+    },
+    {
+     "ageGroup": "20-24",
+     "maleNotProne": 1,
+     "maleProne": 125,
+     "femaleNotProne": 1,
+     "femaleProne": 165
+    },
+    {
+     "ageGroup": "25-29",
+     "maleNotProne": 1,
+     "maleProne": 137,
+     "femaleNotProne": 1,
+     "femaleProne": 141
+    },
+    {
+     "ageGroup": "30-34",
+     "maleNotProne": 1,
+     "maleProne": 101,
+     "femaleNotProne": 1,
+     "femaleProne": 128
+    },
+    {
+     "ageGroup": "35-39",
+     "maleNotProne": 1,
+     "maleProne": 121,
+     "femaleNotProne": 1,
+     "femaleProne": 127
+    },
+    {
+     "ageGroup": "40-44",
+     "maleNotProne": 1,
+     "maleProne": 91,
+     "femaleNotProne": 1,
+     "femaleProne": 108
+    },
+    {
+     "ageGroup": "45-49",
+     "maleNotProne": 1,
+     "maleProne": 83,
+     "femaleNotProne": 1,
+     "femaleProne": 105
+    },
+    {
+     "ageGroup": "50-54",
+     "maleNotProne": null,
+     "maleProne": 68,
+     "femaleNotProne": null,
+     "femaleProne": 68
+    },
+    {
+     "ageGroup": "55-59",
+     "maleNotProne": null,
+     "maleProne": 83,
+     "femaleNotProne": null,
+     "femaleProne": 67
+    },
+    {
+     "ageGroup": "60-64",
+     "maleNotProne": null,
+     "maleProne": 74,
+     "femaleNotProne": null,
+     "femaleProne": 71
+    },
+    {
+     "ageGroup": "65-69",
+     "maleNotProne": null,
+     "maleProne": 56,
+     "femaleNotProne": null,
+     "femaleProne": 47
+    },
+    {
+     "ageGroup": "70-74",
+     "maleNotProne": null,
+     "maleProne": 40,
+     "femaleNotProne": null,
+     "femaleProne": 37
+    },
+    {
+     "ageGroup": "75-79",
+     "maleNotProne": null,
+     "maleProne": 14,
+     "femaleNotProne": null,
+     "femaleProne": 6
+    },
+    {
+     "ageGroup": "80+",
+     "maleNotProne": null,
+     "maleProne": 18,
+     "femaleNotProne": null,
+     "femaleProne": 18
+    }
+   ],
+   "notes": "The source age table counts 3,757 prone against the report's 3,754 (source rounding); both kept as reported."
+  },
+  {
+   "psgc": "0803738073",
+   "name": "Naungan",
+   "source": "Ormoc_City_Barangay_Level_Hazard_Assessment_Updated_2026-11-20_v4.xlsx, worksheet \"Bgy - Naungan\" (GeoAnalyticsPH report)",
+   "ageSexStatus": "available",
+   "reportedAt": "November 16, 2026 8:27:40 pm",
+   "pronePopulation": 3247,
+   "denominator": 3935,
+   "exposurePercent": 82.516,
+   "classes": [
+    {
+     "name": "Not prone",
+     "population": 688
+    },
+    {
+     "name": "High",
+     "population": 303
+    },
+    {
+     "name": "Very High",
+     "population": 2944
+    }
+   ],
+   "ageSex": [
+    {
+     "ageGroup": "Under 5",
+     "maleNotProne": 39,
+     "maleProne": 183,
+     "femaleNotProne": 38,
+     "femaleProne": 180
+    },
+    {
+     "ageGroup": "5-9",
+     "maleNotProne": 38,
+     "maleProne": 178,
+     "femaleNotProne": 37,
+     "femaleProne": 176
+    },
+    {
+     "ageGroup": "10-14",
+     "maleNotProne": 30,
+     "maleProne": 142,
+     "femaleNotProne": 33,
+     "femaleProne": 156
+    },
+    {
+     "ageGroup": "15-19",
+     "maleNotProne": 34,
+     "maleProne": 162,
+     "femaleNotProne": 38,
+     "femaleProne": 179
+    },
+    {
+     "ageGroup": "20-24",
+     "maleNotProne": 33,
+     "maleProne": 157,
+     "femaleNotProne": 35,
+     "femaleProne": 168
+    },
+    {
+     "ageGroup": "25-29",
+     "maleNotProne": 27,
+     "maleProne": 125,
+     "femaleNotProne": 30,
+     "femaleProne": 142
+    },
+    {
+     "ageGroup": "30-34",
+     "maleNotProne": 23,
+     "maleProne": 106,
+     "femaleNotProne": 27,
+     "femaleProne": 129
+    },
+    {
+     "ageGroup": "35-39",
+     "maleNotProne": 21,
+     "maleProne": 98,
+     "femaleNotProne": 20,
+     "femaleProne": 94
+    },
+    {
+     "ageGroup": "40-44",
+     "maleNotProne": 18,
+     "maleProne": 83,
+     "femaleNotProne": 22,
+     "femaleProne": 104
+    },
+    {
+     "ageGroup": "45-49",
+     "maleNotProne": 16,
+     "maleProne": 73,
+     "femaleNotProne": 17,
+     "femaleProne": 78
+    },
+    {
+     "ageGroup": "50-54",
+     "maleNotProne": 12,
+     "maleProne": 57,
+     "femaleNotProne": 13,
+     "femaleProne": 59
+    },
+    {
+     "ageGroup": "55-59",
+     "maleNotProne": 12,
+     "maleProne": 55,
+     "femaleNotProne": 15,
+     "femaleProne": 69
+    },
+    {
+     "ageGroup": "60-64",
+     "maleNotProne": 11,
+     "maleProne": 51,
+     "femaleNotProne": 10,
+     "femaleProne": 45
+    },
+    {
+     "ageGroup": "65-69",
+     "maleNotProne": 8,
+     "maleProne": 38,
+     "femaleNotProne": 8,
+     "femaleProne": 36
+    },
+    {
+     "ageGroup": "70-74",
+     "maleNotProne": 8,
+     "maleProne": 36,
+     "femaleNotProne": 7,
+     "femaleProne": 32
+    },
+    {
+     "ageGroup": "75-79",
+     "maleNotProne": 4,
+     "maleProne": 19,
+     "femaleNotProne": 3,
+     "femaleProne": 13
+    },
+    {
+     "ageGroup": "80+",
+     "maleNotProne": 3,
+     "maleProne": 13,
+     "femaleNotProne": 2,
+     "femaleProne": 7
+    }
+   ],
+   "notes": "The source age table counts 3,243 prone against the report's 3,247 (source rounding); both kept as reported."
+  },
+  {
+   "psgc": "0803738079",
+   "name": "Sabang Bao",
+   "source": "Ormoc_City_Barangay_Level_Hazard_Assessment_Updated_2026-11-20_v4.xlsx, worksheet \"Bgy - Sabang Bao\" (GeoAnalyticsPH report)",
+   "ageSexStatus": "available",
+   "reportedAt": "November 16, 2026 9:19:27 pm",
+   "pronePopulation": 2302,
+   "denominator": 2302,
+   "exposurePercent": 100.0,
+   "classes": [
+    {
+     "name": "Low",
+     "population": 17
+    },
+    {
+     "name": "Moderate",
+     "population": 82
+    },
+    {
+     "name": "High",
+     "population": 2203
+    }
+   ],
+   "ageSex": [
+    {
+     "ageGroup": "Under 5",
+     "maleNotProne": null,
+     "maleProne": 131,
+     "femaleNotProne": null,
+     "femaleProne": 120
+    },
+    {
+     "ageGroup": "5-9",
+     "maleNotProne": null,
+     "maleProne": 107,
+     "femaleNotProne": null,
+     "femaleProne": 120
+    },
+    {
+     "ageGroup": "10-14",
+     "maleNotProne": null,
+     "maleProne": 113,
+     "femaleNotProne": null,
+     "femaleProne": 129
+    },
+    {
+     "ageGroup": "15-19",
+     "maleNotProne": null,
+     "maleProne": 102,
+     "femaleNotProne": null,
+     "femaleProne": 136
+    },
+    {
+     "ageGroup": "20-24",
+     "maleNotProne": null,
+     "maleProne": 91,
+     "femaleNotProne": null,
+     "femaleProne": 106
+    },
+    {
+     "ageGroup": "25-29",
+     "maleNotProne": null,
+     "maleProne": 84,
+     "femaleNotProne": null,
+     "femaleProne": 80
+    },
+    {
+     "ageGroup": "30-34",
+     "maleNotProne": null,
+     "maleProne": 70,
+     "femaleNotProne": null,
+     "femaleProne": 73
+    },
+    {
+     "ageGroup": "35-39",
+     "maleNotProne": null,
+     "maleProne": 74,
+     "femaleNotProne": null,
+     "femaleProne": 64
+    },
+    {
+     "ageGroup": "40-44",
+     "maleNotProne": null,
+     "maleProne": 56,
+     "femaleNotProne": null,
+     "femaleProne": 65
+    },
+    {
+     "ageGroup": "45-49",
+     "maleNotProne": null,
+     "maleProne": 58,
+     "femaleNotProne": null,
+     "femaleProne": 56
+    },
+    {
+     "ageGroup": "50-54",
+     "maleNotProne": null,
+     "maleProne": 42,
+     "femaleNotProne": null,
+     "femaleProne": 55
+    },
+    {
+     "ageGroup": "55-59",
+     "maleNotProne": null,
+     "maleProne": 59,
+     "femaleNotProne": null,
+     "femaleProne": 50
+    },
+    {
+     "ageGroup": "60-64",
+     "maleNotProne": null,
+     "maleProne": 50,
+     "femaleNotProne": null,
+     "femaleProne": 50
+    },
+    {
+     "ageGroup": "65-69",
+     "maleNotProne": null,
+     "maleProne": 36,
+     "femaleNotProne": null,
+     "femaleProne": 27
+    },
+    {
+     "ageGroup": "70-74",
+     "maleNotProne": null,
+     "maleProne": 24,
+     "femaleNotProne": null,
+     "femaleProne": 22
+    },
+    {
+     "ageGroup": "75-79",
+     "maleNotProne": null,
+     "maleProne": 13,
+     "femaleNotProne": null,
+     "femaleProne": 12
+    },
+    {
+     "ageGroup": "80+",
+     "maleNotProne": null,
+     "maleProne": 18,
+     "femaleNotProne": null,
+     "femaleProne": 9
+    }
+   ]
+  },
+  {
+   "psgc": "0803738082",
+   "name": "San Isidro",
+   "source": "Ormoc_City_Barangay_Level_Hazard_Assessment_Updated_2026-11-20_v4.xlsx, worksheet \"Bgy - San Isidro\" (GeoAnalyticsPH report)",
+   "ageSexStatus": "available",
+   "reportedAt": "November 20, 2026 4:27:26 am",
+   "pronePopulation": 4779,
+   "denominator": 6210,
+   "exposurePercent": 76.957,
+   "classes": [
+    {
+     "name": "Not prone",
+     "population": 1431
+    },
+    {
+     "name": "Moderate",
+     "population": 1559
+    },
+    {
+     "name": "High",
+     "population": 2600
+    },
+    {
+     "name": "Very High",
+     "population": 620
+    }
+   ],
+   "ageSex": [
+    {
+     "ageGroup": "Under 5",
+     "maleNotProne": 59,
+     "maleProne": 197,
+     "femaleNotProne": 70,
+     "femaleProne": 235
+    },
+    {
+     "ageGroup": "5-9",
+     "maleNotProne": 67,
+     "maleProne": 222,
+     "femaleNotProne": 69,
+     "femaleProne": 230
+    },
+    {
+     "ageGroup": "10-14",
+     "maleNotProne": 57,
+     "maleProne": 192,
+     "femaleNotProne": 63,
+     "femaleProne": 209
+    },
+    {
+     "ageGroup": "15-19",
+     "maleNotProne": 70,
+     "maleProne": 232,
+     "femaleNotProne": 80,
+     "femaleProne": 268
+    },
+    {
+     "ageGroup": "20-24",
+     "maleNotProne": 77,
+     "maleProne": 257,
+     "femaleNotProne": 72,
+     "femaleProne": 239
+    },
+    {
+     "ageGroup": "25-29",
+     "maleNotProne": 59,
+     "maleProne": 198,
+     "femaleNotProne": 56,
+     "femaleProne": 189
+    },
+    {
+     "ageGroup": "30-34",
+     "maleNotProne": 54,
+     "maleProne": 181,
+     "femaleNotProne": 44,
+     "femaleProne": 149
+    },
+    {
+     "ageGroup": "35-39",
+     "maleNotProne": 42,
+     "maleProne": 142,
+     "femaleNotProne": 48,
+     "femaleProne": 159
+    },
+    {
+     "ageGroup": "40-44",
+     "maleNotProne": 47,
+     "maleProne": 159,
+     "femaleNotProne": 48,
+     "femaleProne": 162
+    },
+    {
+     "ageGroup": "45-49",
+     "maleNotProne": 44,
+     "maleProne": 148,
+     "femaleNotProne": 43,
+     "femaleProne": 144
+    },
+    {
+     "ageGroup": "50-54",
+     "maleNotProne": 35,
+     "maleProne": 118,
+     "femaleNotProne": 34,
+     "femaleProne": 112
+    },
+    {
+     "ageGroup": "55-59",
+     "maleNotProne": 25,
+     "maleProne": 84,
+     "femaleNotProne": 25,
+     "femaleProne": 84
+    },
+    {
+     "ageGroup": "60-64",
+     "maleNotProne": 31,
+     "maleProne": 104,
+     "femaleNotProne": 24,
+     "femaleProne": 79
+    },
+    {
+     "ageGroup": "65-69",
+     "maleNotProne": 19,
+     "maleProne": 65,
+     "femaleNotProne": 19,
+     "femaleProne": 64
+    },
+    {
+     "ageGroup": "70-74",
+     "maleNotProne": 12,
+     "maleProne": 42,
+     "femaleNotProne": 12,
+     "femaleProne": 40
+    },
+    {
+     "ageGroup": "75-79",
+     "maleNotProne": 6,
+     "maleProne": 22,
+     "femaleNotProne": 5,
+     "femaleProne": 18
+    },
+    {
+     "ageGroup": "80+",
+     "maleNotProne": 9,
+     "maleProne": 28,
+     "femaleNotProne": 3,
+     "femaleProne": 10
+    }
+   ],
+   "notes": "The source age table counts 4,782 prone against the report's 4,779 (source rounding); both kept as reported."
+  },
+  {
+   "psgc": "0803738083",
+   "name": "San Jose",
+   "source": "Ormoc_City_Barangay_Level_Hazard_Assessment_Updated_2026-11-20_v4.xlsx, worksheet \"Bgy - San Jose\" (GeoAnalyticsPH report)",
+   "ageSexStatus": "available",
+   "reportedAt": "November 17, 2026 1:36:47 am",
+   "pronePopulation": 3893,
+   "denominator": 3893,
+   "exposurePercent": 100.0,
+   "classes": [
+    {
+     "name": "Moderate",
+     "population": 749
+    },
+    {
+     "name": "High",
+     "population": 3144
+    }
+   ],
+   "ageSex": [
+    {
+     "ageGroup": "Under 5",
+     "maleNotProne": null,
+     "maleProne": 218,
+     "femaleNotProne": null,
+     "femaleProne": 184
+    },
+    {
+     "ageGroup": "5-9",
+     "maleNotProne": null,
+     "maleProne": 189,
+     "femaleNotProne": null,
+     "femaleProne": 210
+    },
+    {
+     "ageGroup": "10-14",
+     "maleNotProne": null,
+     "maleProne": 203,
+     "femaleNotProne": null,
+     "femaleProne": 219
+    },
+    {
+     "ageGroup": "15-19",
+     "maleNotProne": null,
+     "maleProne": 218,
+     "femaleNotProne": null,
+     "femaleProne": 204
+    },
+    {
+     "ageGroup": "20-24",
+     "maleNotProne": null,
+     "maleProne": 153,
+     "femaleNotProne": null,
+     "femaleProne": 153
+    },
+    {
+     "ageGroup": "25-29",
+     "maleNotProne": null,
+     "maleProne": 142,
+     "femaleNotProne": null,
+     "femaleProne": 166
+    },
+    {
+     "ageGroup": "30-34",
+     "maleNotProne": null,
+     "maleProne": 123,
+     "femaleNotProne": null,
+     "femaleProne": 126
+    },
+    {
+     "ageGroup": "35-39",
+     "maleNotProne": null,
+     "maleProne": 92,
+     "femaleNotProne": null,
+     "femaleProne": 117
+    },
+    {
+     "ageGroup": "40-44",
+     "maleNotProne": null,
+     "maleProne": 111,
+     "femaleNotProne": null,
+     "femaleProne": 122
+    },
+    {
+     "ageGroup": "45-49",
+     "maleNotProne": null,
+     "maleProne": 100,
+     "femaleNotProne": null,
+     "femaleProne": 111
+    },
+    {
+     "ageGroup": "50-54",
+     "maleNotProne": null,
+     "maleProne": 86,
+     "femaleNotProne": null,
+     "femaleProne": 79
+    },
+    {
+     "ageGroup": "55-59",
+     "maleNotProne": null,
+     "maleProne": 88,
+     "femaleNotProne": null,
+     "femaleProne": 83
+    },
+    {
+     "ageGroup": "60-64",
+     "maleNotProne": null,
+     "maleProne": 79,
+     "femaleNotProne": null,
+     "femaleProne": 68
+    },
+    {
+     "ageGroup": "65-69",
+     "maleNotProne": null,
+     "maleProne": 47,
+     "femaleNotProne": null,
+     "femaleProne": 52
+    },
+    {
+     "ageGroup": "70-74",
+     "maleNotProne": null,
+     "maleProne": 44,
+     "femaleNotProne": null,
+     "femaleProne": 29
+    },
+    {
+     "ageGroup": "75-79",
+     "maleNotProne": null,
+     "maleProne": 26,
+     "femaleNotProne": null,
+     "femaleProne": 12
+    },
+    {
+     "ageGroup": "80+",
+     "maleNotProne": null,
+     "maleProne": 30,
+     "femaleNotProne": null,
+     "femaleProne": 9
+    }
+   ]
+  },
+  {
+   "psgc": "0803738084",
+   "name": "San Juan",
+   "source": "Ormoc_City_Barangay_Level_Hazard_Assessment_Updated_2026-11-20_v4.xlsx, worksheet \"Bgy - San Juan\" (GeoAnalyticsPH report)",
+   "ageSexStatus": "available",
+   "reportedAt": "November 16, 2026 8:29:43 pm",
+   "pronePopulation": 2014,
+   "denominator": 2405,
+   "exposurePercent": 83.742,
+   "classes": [
+    {
+     "name": "Not prone",
+     "population": 391
+    },
+    {
+     "name": "High",
+     "population": 830
+    },
+    {
+     "name": "Very High",
+     "population": 1184
+    }
+   ],
+   "ageSex": [
+    {
+     "ageGroup": "Under 5",
+     "maleNotProne": 21,
+     "maleProne": 111,
+     "femaleNotProne": 20,
+     "femaleProne": 105
+    },
+    {
+     "ageGroup": "5-9",
+     "maleNotProne": 19,
+     "maleProne": 99,
+     "femaleNotProne": 20,
+     "femaleProne": 103
+    },
+    {
+     "ageGroup": "10-14",
+     "maleNotProne": 19,
+     "maleProne": 99,
+     "femaleNotProne": 23,
+     "femaleProne": 117
+    },
+    {
+     "ageGroup": "15-19",
+     "maleNotProne": 19,
+     "maleProne": 96,
+     "femaleNotProne": 21,
+     "femaleProne": 108
+    },
+    {
+     "ageGroup": "20-24",
+     "maleNotProne": 17,
+     "maleProne": 88,
+     "femaleNotProne": 20,
+     "femaleProne": 102
+    },
+    {
+     "ageGroup": "25-29",
+     "maleNotProne": 16,
+     "maleProne": 80,
+     "femaleNotProne": 18,
+     "femaleProne": 91
+    },
+    {
+     "ageGroup": "30-34",
+     "maleNotProne": 11,
+     "maleProne": 59,
+     "femaleNotProne": 12,
+     "femaleProne": 59
+    },
+    {
+     "ageGroup": "35-39",
+     "maleNotProne": 10,
+     "maleProne": 49,
+     "femaleNotProne": 14,
+     "femaleProne": 70
+    },
+    {
+     "ageGroup": "40-44",
+     "maleNotProne": 9,
+     "maleProne": 47,
+     "femaleNotProne": 12,
+     "femaleProne": 59
+    },
+    {
+     "ageGroup": "45-49",
+     "maleNotProne": 9,
+     "maleProne": 47,
+     "femaleNotProne": 10,
+     "femaleProne": 52
+    },
+    {
+     "ageGroup": "50-54",
+     "maleNotProne": 9,
+     "maleProne": 47,
+     "femaleNotProne": 8,
+     "femaleProne": 39
+    },
+    {
+     "ageGroup": "55-59",
+     "maleNotProne": 8,
+     "maleProne": 39,
+     "femaleNotProne": 8,
+     "femaleProne": 43
+    },
+    {
+     "ageGroup": "60-64",
+     "maleNotProne": 6,
+     "maleProne": 32,
+     "femaleNotProne": 9,
+     "femaleProne": 48
+    },
+    {
+     "ageGroup": "65-69",
+     "maleNotProne": 6,
+     "maleProne": 30,
+     "femaleNotProne": 5,
+     "femaleProne": 25
+    },
+    {
+     "ageGroup": "70-74",
+     "maleNotProne": 3,
+     "maleProne": 14,
+     "femaleNotProne": 3,
+     "femaleProne": 13
+    },
+    {
+     "ageGroup": "75-79",
+     "maleNotProne": 2,
+     "maleProne": 13,
+     "femaleNotProne": 1,
+     "femaleProne": 6
+    },
+    {
+     "ageGroup": "80+",
+     "maleNotProne": 3,
+     "maleProne": 17,
+     "femaleNotProne": 1,
+     "femaleProne": 6
+    }
+   ],
+   "notes": "The source age table counts 2,013 prone against the report's 2,014 (source rounding); both kept as reported."
+  },
+  {
+   "psgc": "0803738088",
+   "name": "San Pablo (Simangan)",
+   "source": "Ormoc_City_Barangay_Level_Hazard_Assessment_Updated_2026-11-20_v4.xlsx, worksheet \"Bgy - San Pablo (Simangan)\" (GeoAnalyticsPH report)",
+   "ageSexStatus": "available",
+   "reportedAt": "November 16, 2026 8:59:54 pm",
+   "pronePopulation": 741,
+   "denominator": 6374,
+   "exposurePercent": 11.625,
+   "classes": [
+    {
+     "name": "Not prone",
+     "population": 5633
+    },
+    {
+     "name": "Moderate",
+     "population": 450
+    },
+    {
+     "name": "High",
+     "population": 291
+    }
+   ],
+   "ageSex": [
+    {
+     "ageGroup": "Under 5",
+     "maleNotProne": 252,
+     "maleProne": 33,
+     "femaleNotProne": 262,
+     "femaleProne": 34
+    },
+    {
+     "ageGroup": "5-9",
+     "maleNotProne": 248,
+     "maleProne": 33,
+     "femaleNotProne": 277,
+     "femaleProne": 37
+    },
+    {
+     "ageGroup": "10-14",
+     "maleNotProne": 257,
+     "maleProne": 34,
+     "femaleNotProne": 267,
+     "femaleProne": 35
+    },
+    {
+     "ageGroup": "15-19",
+     "maleNotProne": 263,
+     "maleProne": 35,
+     "femaleNotProne": 280,
+     "femaleProne": 37
+    },
+    {
+     "ageGroup": "20-24",
+     "maleNotProne": 244,
+     "maleProne": 32,
+     "femaleNotProne": 251,
+     "femaleProne": 33
+    },
+    {
+     "ageGroup": "25-29",
+     "maleNotProne": 256,
+     "maleProne": 34,
+     "femaleNotProne": 257,
+     "femaleProne": 34
+    },
+    {
+     "ageGroup": "30-34",
+     "maleNotProne": 186,
+     "maleProne": 25,
+     "femaleNotProne": 200,
+     "femaleProne": 26
+    },
+    {
+     "ageGroup": "35-39",
+     "maleNotProne": 202,
+     "maleProne": 27,
+     "femaleNotProne": 179,
+     "femaleProne": 23
+    },
+    {
+     "ageGroup": "40-44",
+     "maleNotProne": 186,
+     "maleProne": 24,
+     "femaleNotProne": 189,
+     "femaleProne": 25
+    },
+    {
+     "ageGroup": "45-49",
+     "maleNotProne": 163,
+     "maleProne": 21,
+     "femaleNotProne": 170,
+     "femaleProne": 22
+    },
+    {
+     "ageGroup": "50-54",
+     "maleNotProne": 138,
+     "maleProne": 18,
+     "femaleNotProne": 135,
+     "femaleProne": 18
+    },
+    {
+     "ageGroup": "55-59",
+     "maleNotProne": 119,
+     "maleProne": 16,
+     "femaleNotProne": 122,
+     "femaleProne": 16
+    },
+    {
+     "ageGroup": "60-64",
+     "maleNotProne": 104,
+     "maleProne": 14,
+     "femaleNotProne": 96,
+     "femaleProne": 13
+    },
+    {
+     "ageGroup": "65-69",
+     "maleNotProne": 72,
+     "maleProne": 10,
+     "femaleNotProne": 71,
+     "femaleProne": 9
+    },
+    {
+     "ageGroup": "70-74",
+     "maleNotProne": 43,
+     "maleProne": 6,
+     "femaleNotProne": 47,
+     "femaleProne": 6
+    },
+    {
+     "ageGroup": "75-79",
+     "maleNotProne": 27,
+     "maleProne": 3,
+     "femaleNotProne": 19,
+     "femaleProne": 3
+    },
+    {
+     "ageGroup": "80+",
+     "maleNotProne": 33,
+     "maleProne": 4,
+     "femaleNotProne": 17,
+     "femaleProne": 2
+    }
+   ],
+   "notes": "The source age table counts 742 prone against the report's 741 (source rounding); both kept as reported."
+  },
+  {
+   "psgc": "0803738101",
+   "name": "Tambulilid",
+   "source": "Ormoc_City_Barangay_Level_Hazard_Assessment_Updated_2026-11-20_v4.xlsx, worksheet \"Bgy - Tambulilid\" (GeoAnalyticsPH report)",
+   "ageSexStatus": "available",
+   "reportedAt": "November 17, 2026 1:44:20 am",
+   "pronePopulation": 11405,
+   "denominator": 11405,
+   "exposurePercent": 100.0,
+   "classes": [
+    {
+     "name": "High",
+     "population": 6672
+    },
+    {
+     "name": "Very High",
+     "population": 4733
+    }
+   ],
+   "ageSex": [
+    {
+     "ageGroup": "Under 5",
+     "maleNotProne": null,
+     "maleProne": 554,
+     "femaleNotProne": null,
+     "femaleProne": 617
+    },
+    {
+     "ageGroup": "5-9",
+     "maleNotProne": null,
+     "maleProne": 509,
+     "femaleNotProne": null,
+     "femaleProne": 598
+    },
+    {
+     "ageGroup": "10-14",
+     "maleNotProne": null,
+     "maleProne": 529,
+     "femaleNotProne": null,
+     "femaleProne": 547
+    },
+    {
+     "ageGroup": "15-19",
+     "maleNotProne": null,
+     "maleProne": 560,
+     "femaleNotProne": null,
+     "femaleProne": 611
+    },
+    {
+     "ageGroup": "20-24",
+     "maleNotProne": null,
+     "maleProne": 588,
+     "femaleNotProne": null,
+     "femaleProne": 497
+    },
+    {
+     "ageGroup": "25-29",
+     "maleNotProne": null,
+     "maleProne": 516,
+     "femaleNotProne": null,
+     "femaleProne": 481
+    },
+    {
+     "ageGroup": "30-34",
+     "maleNotProne": null,
+     "maleProne": 436,
+     "femaleNotProne": null,
+     "femaleProne": 453
+    },
+    {
+     "ageGroup": "35-39",
+     "maleNotProne": null,
+     "maleProne": 377,
+     "femaleNotProne": null,
+     "femaleProne": 364
+    },
+    {
+     "ageGroup": "40-44",
+     "maleNotProne": null,
+     "maleProne": 328,
+     "femaleNotProne": null,
+     "femaleProne": 357
+    },
+    {
+     "ageGroup": "45-49",
+     "maleNotProne": null,
+     "maleProne": 300,
+     "femaleNotProne": null,
+     "femaleProne": 317
+    },
+    {
+     "ageGroup": "50-54",
+     "maleNotProne": null,
+     "maleProne": 248,
+     "femaleNotProne": null,
+     "femaleProne": 253
+    },
+    {
+     "ageGroup": "55-59",
+     "maleNotProne": null,
+     "maleProne": 221,
+     "femaleNotProne": null,
+     "femaleProne": 213
+    },
+    {
+     "ageGroup": "60-64",
+     "maleNotProne": null,
+     "maleProne": 206,
+     "femaleNotProne": null,
+     "femaleProne": 171
+    },
+    {
+     "ageGroup": "65-69",
+     "maleNotProne": null,
+     "maleProne": 132,
+     "femaleNotProne": null,
+     "femaleProne": 133
+    },
+    {
+     "ageGroup": "70-74",
+     "maleNotProne": null,
+     "maleProne": 76,
+     "femaleNotProne": null,
+     "femaleProne": 69
+    },
+    {
+     "ageGroup": "75-79",
+     "maleNotProne": null,
+     "maleProne": 61,
+     "femaleNotProne": null,
+     "femaleProne": 23
+    },
+    {
+     "ageGroup": "80+",
+     "maleNotProne": null,
+     "maleProne": 38,
+     "femaleNotProne": null,
+     "femaleProne": 22
+    }
+   ]
+  },
+  {
+   "psgc": "0803738090",
+   "name": "Valencia",
+   "source": "Ormoc_City_Barangay_Level_Hazard_Assessment_Updated_2026-11-20_v4.xlsx, worksheet \"Bgy - Valencia\" (GeoAnalyticsPH report)",
+   "ageSexStatus": "available",
+   "reportedAt": "November 16, 2026 9:17:08 pm",
+   "pronePopulation": 3983,
+   "denominator": 4262,
+   "exposurePercent": 93.454,
+   "classes": [
+    {
+     "name": "Not prone",
+     "population": 279
+    },
+    {
+     "name": "Moderate",
+     "population": 1395
+    },
+    {
+     "name": "High",
+     "population": 2588
+    }
+   ],
+   "ageSex": [
+    {
+     "ageGroup": "Under 5",
+     "maleNotProne": 17,
+     "maleProne": 236,
+     "femaleNotProne": 14,
+     "femaleProne": 205
+    },
+    {
+     "ageGroup": "5-9",
+     "maleNotProne": 14,
+     "maleProne": 205,
+     "femaleNotProne": 17,
+     "femaleProne": 244
+    },
+    {
+     "ageGroup": "10-14",
+     "maleNotProne": 13,
+     "maleProne": 190,
+     "femaleNotProne": 16,
+     "femaleProne": 232
+    },
+    {
+     "ageGroup": "15-19",
+     "maleNotProne": 14,
+     "maleProne": 197,
+     "femaleNotProne": 14,
+     "femaleProne": 202
+    },
+    {
+     "ageGroup": "20-24",
+     "maleNotProne": 13,
+     "maleProne": 188,
+     "femaleNotProne": 15,
+     "femaleProne": 209
+    },
+    {
+     "ageGroup": "25-29",
+     "maleNotProne": 11,
+     "maleProne": 150,
+     "femaleNotProne": 11,
+     "femaleProne": 154
+    },
+    {
+     "ageGroup": "30-34",
+     "maleNotProne": 8,
+     "maleProne": 114,
+     "femaleNotProne": 10,
+     "femaleProne": 144
+    },
+    {
+     "ageGroup": "35-39",
+     "maleNotProne": 8,
+     "maleProne": 121,
+     "femaleNotProne": 8,
+     "femaleProne": 114
+    },
+    {
+     "ageGroup": "40-44",
+     "maleNotProne": 9,
+     "maleProne": 127,
+     "femaleNotProne": 9,
+     "femaleProne": 133
+    },
+    {
+     "ageGroup": "45-49",
+     "maleNotProne": 6,
+     "maleProne": 92,
+     "femaleNotProne": 6,
+     "femaleProne": 84
+    },
+    {
+     "ageGroup": "50-54",
+     "maleNotProne": 5,
+     "maleProne": 73,
+     "femaleNotProne": 6,
+     "femaleProne": 87
+    },
+    {
+     "ageGroup": "55-59",
+     "maleNotProne": 4,
+     "maleProne": 63,
+     "femaleNotProne": 6,
+     "femaleProne": 80
+    },
+    {
+     "ageGroup": "60-64",
+     "maleNotProne": 5,
+     "maleProne": 78,
+     "femaleNotProne": 5,
+     "femaleProne": 71
+    },
+    {
+     "ageGroup": "65-69",
+     "maleNotProne": 3,
+     "maleProne": 39,
+     "femaleNotProne": 3,
+     "femaleProne": 41
+    },
+    {
+     "ageGroup": "70-74",
+     "maleNotProne": 2,
+     "maleProne": 31,
+     "femaleNotProne": 1,
+     "femaleProne": 21
+    },
+    {
+     "ageGroup": "75-79",
+     "maleNotProne": 1,
+     "maleProne": 19,
+     "femaleNotProne": 1,
+     "femaleProne": 12
+    },
+    {
+     "ageGroup": "80+",
+     "maleNotProne": 1,
+     "maleProne": 20,
+     "femaleNotProne": 1,
+     "femaleProne": 9
+    }
+   ],
+   "notes": "The source age table counts 3,985 prone against the report's 3,983 (source rounding); both kept as reported."
+  }
+ ]
+}
