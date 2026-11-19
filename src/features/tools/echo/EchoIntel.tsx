@@ -2,15 +2,18 @@
 // from the DDRiVE desk assessment (ADR-024) and the evacuation-centre inventory on one map, with centre suitability
 // screening and route screening. Sheets are fitted pictures read at barangay scale; a screening flags what to check
 // with field teams and never marks a centre or a route as safe. The map is not navigation.
+// 1.26.0: the City's listed evacuation centres (CDRRMO list, 19 Nov 2026) show even before the operational seed runs,
+// and possible open areas, overflow venues, assembly areas and storage hubs show as candidates with the site-selection
+// criteria (src/domain/siteSelection.ts). A candidate is a proposal for survey, never a designation.
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { Link } from 'react-router-dom';
 import * as maplibregl from 'maplibre-gl';
 import type { GeoJSONSource, MapMouseEvent } from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
-import { Eraser, Maximize2, Minimize2, MousePointerClick, Route, ScanSearch } from 'lucide-react';
+import { Eraser, ExternalLink, Maximize2, Minimize2, MousePointerClick, Route, ScanSearch } from 'lucide-react';
 import { db } from '@/lib/db';
-import { Badge, Button, Checkbox, Notice, PageHeader, Section, Select, Tabs } from '@/components/ui';
+import { Badge, Button, Checkbox, Field, Input, Notice, PageHeader, Section, Select, Tabs } from '@/components/ui';
 import { tip } from '@/components/Tooltip';
 import { ORMOC, basemapReady, baseStyle, ensureProtocol, plainStyle, token } from '@/features/eoc/map/base';
 import { HAZARD_MAPS } from '@/features/eoc/map/hazardMaps';
@@ -21,9 +24,12 @@ import { centreScreening, fmt, latestPerCentre, utilisation } from '@/domain/ech
 import { currentReportWindow } from '@/domain/eoc';
 import { ECHO_TABS, PHASE, VERIFICATION, VERIFICATION_TONE } from './labels';
 import { densify, severity, summariseRoute, type RouteFinding, type Severity } from './screening';
+import { CITY_LIST, CITY_LIST_SOURCE, MAPPED_OPEN_AREAS, OPEN_AREAS, OPEN_AREA_ROLE, type OpenAreaRole } from '@/data/evacuationSites';
+import { CRITERION_SOURCE, SITE_CRITERIA, openAreaCapacity, polygonLabelPoint } from '@/domain/siteSelection';
 
 type Mode = 'select' | 'route';
-type BgyFeature = { type: 'Feature'; properties: { psgc: string; name: string; area_km2: number }; geometry: unknown };
+type BgyFeature = { type: 'Feature'; properties: { psgc: string; name: string; area_km2: number }; geometry: { type: string; coordinates: unknown } };
+const ROLE_TONE: Record<OpenAreaRole, 'warn' | 'info' | 'neutral'> = { camp_site: 'warn', covered_overflow: 'warn', assembly: 'info', logistics: 'neutral' };
 const SEV_TONE: Record<Severity, 'bad' | 'warn' | 'ok' | 'neutral' | 'info'> = { high: 'bad', moderate: 'warn', low: 'ok', none: 'neutral', unknown: 'info' };
 const SEV_LABEL: Record<Severity, string> = { high: 'High', moderate: 'Moderate', low: 'Low', none: 'Not mapped', unknown: 'Check the sheet' };
 
@@ -42,7 +48,9 @@ export default function EchoIntel() {
   const [route, setRoute] = useState<LngLat[]>([]);
   const [findings, setFindings] = useState<RouteFinding[] | null>(null);
   const [busy, setBusy] = useState(false);
-  const [picked, setPicked] = useState<{ id: string | null; at: LngLat; readings: { title: string; value: string; sev: Severity }[] } | null>(null);
+  const [picked, setPicked] = useState<{ id: string | null; list: string | null; cand: string | null; at: LngLat; readings: { title: string; value: string; sev: Severity }[] } | null>(null);
+  const [showCandidates, setShowCandidates] = useState(true);
+  const [area, setArea] = useState('');
   const [showTraining, setShowTraining] = useState(false);
   const [full, setFull] = useState(false);
 
@@ -57,6 +65,17 @@ export default function EchoIntel() {
   }, []);
   const centres = useMemo(() => (data?.centres ?? []).filter((c) => c.lat !== null && c.verification_status !== 'superseded'
     && (showTraining || c.verification_status !== 'training')), [data, showTraining]);
+
+  const bgyPoint = useMemo(() => {
+    const m = new Map<string, { at: LngLat; name: string }>();
+    for (const f of bgy ?? []) { const p = polygonLabelPoint(f.geometry); if (p) m.set(f.properties.psgc, { at: p, name: f.properties.name }); }
+    return m;
+  }, [bgy]);
+  // City-listed centres not yet in the synced inventory (matched by code).
+  const listOnly = useMemo(() => {
+    const codes = new Set((data?.centres ?? []).filter((c) => c.verification_status !== 'superseded').map((c) => c.code));
+    return CITY_LIST.filter((c) => !codes.has(c.code));
+  }, [data]);
 
   useEffect(() => {
     fetch('/geo/ormoc-barangays.geojson').then((r) => (r.ok ? r.json() : Promise.reject())).then((g: { features: BgyFeature[] }) => setBgy(g.features)).catch(() => setBgy([]));
@@ -80,10 +99,15 @@ export default function EchoIntel() {
       m.addLayer({ id: 'route-line', type: 'line', source: 'route', filter: ['==', ['geometry-type'], 'LineString'], paint: { 'line-color': token('action'), 'line-width': 4, 'line-dasharray': [2, 1] } });
       m.addLayer({ id: 'route-flag', type: 'circle', source: 'route', filter: ['==', ['get', 'kind'], 'high'], paint: { 'circle-color': token('bad'), 'circle-radius': 4 } });
       m.addLayer({ id: 'route-pt', type: 'circle', source: 'route', filter: ['==', ['get', 'kind'], 'vertex'], paint: { 'circle-color': token('action'), 'circle-radius': 5, 'circle-stroke-width': 2, 'circle-stroke-color': token('surface') } });
+      m.addSource('candidates', { type: 'geojson', data: { type: 'FeatureCollection', features: [] } as never });
+      m.addLayer({ id: 'candidates', type: 'circle', source: 'candidates', paint: {
+        'circle-radius': ['interpolate', ['linear'], ['zoom'], 10, 5, 15, 9],
+        'circle-color': token('surface'),
+        'circle-stroke-width': 3, 'circle-stroke-color': ['match', ['get', 'role'], 'logistics', token('muted'), 'assembly', token('info'), token('warn')] } });
       m.addSource('centres', { type: 'geojson', data: { type: 'FeatureCollection', features: [] } as never });
       m.addLayer({ id: 'centres', type: 'circle', source: 'centres', paint: {
         'circle-radius': ['interpolate', ['linear'], ['zoom'], 10, 6, 15, 11],
-        'circle-color': ['match', ['get', 'state'], 'over', token('bad'), 'open', token('ok'), 'training', token('info'), token('action')],
+        'circle-color': ['match', ['get', 'state'], 'over', token('bad'), 'open', token('ok'), 'training', token('info'), 'list', token('warn'), token('action')],
         'circle-stroke-width': 2, 'circle-stroke-color': token('surface') } });
       if (hasBase) m.addLayer({ id: 'centre-label', type: 'symbol', source: 'centres', minzoom: 12.5,
         layout: { 'text-field': ['get', 'name'], 'text-font': ['Noto Sans Regular'], 'text-size': 12, 'text-offset': [0, 1.2], 'text-anchor': 'top' },
@@ -94,10 +118,11 @@ export default function EchoIntel() {
     m.on('click', (e: MapMouseEvent) => {
       const p: LngLat = [e.lngLat.lng, e.lngLat.lat];
       if (modeRef.current === 'route') { setRoute((r) => [...r, p]); setFindings(null); return; }
-      const f = m.queryRenderedFeatures([e.point.x, e.point.y], { layers: ['centres'] })[0];
-      const id = (f?.properties as { id?: string } | undefined)?.id ?? null;
+      const f = m.queryRenderedFeatures([e.point.x, e.point.y], { layers: m.getLayer('candidates') ? ['centres', 'candidates'] : ['centres'] })[0];
+      const props = (f?.properties ?? {}) as { id?: string; list?: string; cand?: string };
       const at: LngLat = f ? ((f.geometry as unknown as { coordinates: LngLat }).coordinates) : p;
-      void identifyAt(at, HAZARD_MAPS).then((rs) => setPicked({ id, at, readings: rs.map((r) => ({ title: r.map.title, value: r.value, sev: severity(r.map, r.value) })) }));
+      void identifyAt(at, HAZARD_MAPS).then((rs) => setPicked({ id: props.id || null, list: props.list || null, cand: props.cand || null, at,
+        readings: rs.map((r) => ({ title: r.map.title, value: r.value, sev: severity(r.map, r.value) })) }));
     });
     map.current = m;
     const ro = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(() => m.resize()) : null;
@@ -128,10 +153,24 @@ export default function EchoIntel() {
       const r = data.latest.get(c.id);
       const u = utilisation(r?.persons ?? null, c.capacity_persons);
       const state = c.verification_status === 'training' ? 'training' : u !== null && u > 1 ? 'over' : r && r.phase !== 'closed' ? 'open' : 'idle';
-      return { type: 'Feature', properties: { id: c.id, name: c.name, state }, geometry: { type: 'Point', coordinates: [c.lng, c.lat] } };
+      return { type: 'Feature', properties: { id: c.id, list: '', name: c.name, state }, geometry: { type: 'Point', coordinates: [c.lng, c.lat] } };
     });
+    for (const c of listOnly) feats.push({ type: 'Feature', properties: { id: '', list: c.code, name: c.name, state: 'list' }, geometry: { type: 'Point', coordinates: [c.lng, c.lat] } });
     (m.getSource('centres') as GeoJSONSource).setData({ type: 'FeatureCollection', features: feats } as never);
-  }, [ready, centres, data]);
+  }, [ready, centres, data, listOnly]);
+  useEffect(() => {
+    const m = map.current;
+    if (!ready || !m) return;
+    // Candidates sit at the barangay's centre (approximate); two in one barangay are nudged apart so both can be tapped.
+    const seen = new Map<string, number>();
+    const feats = showCandidates ? MAPPED_OPEN_AREAS.flatMap((a) => {
+      const b = bgyPoint.get(a.psgc!);
+      if (!b) return [];
+      const k = seen.get(a.psgc!) ?? 0; seen.set(a.psgc!, k + 1);
+      return [{ type: 'Feature', properties: { cand: a.id, role: a.role, name: a.name }, geometry: { type: 'Point', coordinates: [b.at[0] + k * 0.0025, b.at[1] + k * 0.0018] } }];
+    }) : [];
+    (m.getSource('candidates') as GeoJSONSource).setData({ type: 'FeatureCollection', features: feats } as never);
+  }, [ready, showCandidates, bgyPoint]);
   const [flags, setFlags] = useState<LngLat[]>([]);
   useEffect(() => {
     const m = map.current;
@@ -162,6 +201,10 @@ export default function EchoIntel() {
   }
   const pickedCentre = picked?.id ? data?.centres.find((c) => c.id === picked.id) ?? null : null;
   const pickedReport = pickedCentre ? data?.latest.get(pickedCentre.id) ?? null : null;
+  const pickedList = picked?.list ? CITY_LIST.find((c) => c.code === picked.list) ?? null : null;
+  const pickedCand = picked?.cand ? OPEN_AREAS.find((a) => a.id === picked.cand) ?? null : null;
+  const areaM2 = area.trim() === '' ? null : Number(area);
+  const capAll = openAreaCapacity(areaM2), capOutside = openAreaCapacity(areaM2, true);
   const anyHigh = findings?.some((f) => f.high > 0);
 
   return (
@@ -186,6 +229,10 @@ export default function EchoIntel() {
           <span><span className="mr-1 inline-block h-3 w-3 rounded-full bg-bad align-middle" aria-hidden />Over capacity</span>
           <span><span className="mr-1 inline-block h-3 w-3 rounded-full bg-action align-middle" aria-hidden />In the inventory, no open report</span>
           <span><span className="mr-1 inline-block h-3 w-3 rounded-full bg-info align-middle" aria-hidden />Training site</span>
+          <span><span className="mr-1 inline-block h-3 w-3 rounded-full bg-warn align-middle" aria-hidden />On the City list, not yet in the inventory</span>
+          <span><span className="mr-1 inline-block h-3 w-3 rounded-full border-[3px] border-warn bg-surface align-middle" aria-hidden />Possible open area (candidate, approximate)</span>
+          <span><span className="mr-1 inline-block h-3 w-3 rounded-full border-[3px] border-info bg-surface align-middle" aria-hidden />Assembly area</span>
+          <span><span className="mr-1 inline-block h-3 w-3 rounded-full border-[3px] border-muted bg-surface align-middle" aria-hidden />Storage hub</span>
           <span>Red dots on a route: a sheet reads high there.</span>
         </p>
       </div>
@@ -193,7 +240,23 @@ export default function EchoIntel() {
       <div className="grid gap-4 lg:grid-cols-2 2xl:grid-cols-3">
         <div className="space-y-4">
           {picked && mode === 'select' && (
-            <Section title={pickedCentre ? pickedCentre.name : 'Point screening'}>
+            <Section title={pickedCentre ? pickedCentre.name : pickedList ? pickedList.name : pickedCand ? pickedCand.name : 'Point screening'}>
+              {pickedList && (
+                <div className="mb-3 space-y-2">
+                  <div className="flex flex-wrap gap-2"><Badge tone="warn">On the City list</Badge><Badge tone="warn">Not yet in the inventory</Badge></div>
+                  <ul className="list-disc pl-5 text-sm">{pickedList.flags.map((n) => <li key={n}>{n}</li>)}</ul>
+                  <p className="text-xs text-muted">Source: {CITY_LIST_SOURCE}. An administrator adds the list to the inventory (operational file 10); then survey it in <Link className="font-semibold underline" to="/tools/echo/camps">Camp management</Link>.</p>
+                </div>
+              )}
+              {pickedCand && (
+                <div className="mb-3 space-y-2">
+                  <div className="flex flex-wrap gap-2"><Badge tone={ROLE_TONE[pickedCand.role]}>{OPEN_AREA_ROLE[pickedCand.role].label}</Badge><Badge>Candidate, not designated</Badge><Badge tone="info">Approximate: barangay centre</Badge></div>
+                  <p className="text-sm">{pickedCand.basis}</p>
+                  <ul className="list-disc pl-5 text-sm">{pickedCand.cautions.map((n) => <li key={n}>{n}</li>)}</ul>
+                  {pickedCand.source && <a className="inline-flex items-center gap-1 text-sm font-semibold underline" href={pickedCand.source.url} target="_blank" rel="noreferrer" {...tip('Open the public record this candidate rests on')}>{pickedCand.source.title}<ExternalLink className="h-3.5 w-3.5" aria-hidden /></a>}
+                  <Notice tone="info">The readings below are at the barangay's centre, not the site. Pin the site in the field, then screen that point.</Notice>
+                </div>
+              )}
               {pickedCentre && (() => {
                 const s = centreScreening(pickedCentre);
                 return (
@@ -248,13 +311,40 @@ export default function EchoIntel() {
             {data && data.centres.filter((c) => c.lat === null && c.verification_status !== 'superseded').length > 0 && (
               <p className="mt-2 text-sm text-warn">{data.centres.filter((c) => c.lat === null && c.verification_status !== 'superseded').length} centre(s) have no location yet. Add it in Camp management.</p>
             )}
-            {centres.length === 0 && <p className="mt-2 text-sm text-muted">No centre with a location. The inventory is in <Link className="font-semibold underline" to="/tools/echo/camps">Camp management</Link>.</p>}
+            {centres.length === 0 && listOnly.length === 0 && <p className="mt-2 text-sm text-muted">No centre with a location. The inventory is in <Link className="font-semibold underline" to="/tools/echo/camps">Camp management</Link>.</p>}
+            {listOnly.length > 0 && <p className="mt-2 text-sm text-muted">{listOnly.length} centre(s) from the City list are shown in amber until they are added to the inventory: {listOnly.map((c) => c.name).join('; ')}.</p>}
+          </Section>
+          <Section title={`Possible open areas and camp sites (${OPEN_AREAS.length})`}>
+            <label className="flex items-center gap-2 text-sm" {...tip('Show candidate open areas, overflow venues, assembly areas and storage hubs on the map')}><input type="checkbox" className="h-4 w-4" checked={showCandidates} onChange={() => setShowCandidates(!showCandidates)} />Show candidates on the map</label>
+            <p className="mt-2 text-xs text-muted">Proposed by the lead assessor from public records and the City's disaster history, for survey by the CDRRMO, CPDO, City Engineer and CSWDO. None is designated until the CDRRMC endorses it. Those without a confirmed barangay are listed, not mapped.</p>
+            <ul className="mt-2 divide-y divide-line text-sm">
+              {OPEN_AREAS.map((a) => (
+                <li key={a.id} className="flex items-start justify-between gap-3 py-1.5">
+                  <span>{a.name}<span className="block text-xs text-muted">{a.psgc ? bgyPoint.get(a.psgc)?.name ?? '' : 'Barangay to confirm (not mapped)'}</span></span>
+                  <Badge tone={ROLE_TONE[a.role]}>{OPEN_AREA_ROLE[a.role].label}</Badge>
+                </li>
+              ))}
+            </ul>
+          </Section>
+          <Section title="Open-area capacity">
+            <Field label="Usable open area (m²)" hint="Measured on site or on the basemap, without buildings, slopes or drains" tip="Usable open area in square metres">
+              {(id, d) => <Input id={id} aria-describedby={d} type="number" min={0} inputMode="numeric" value={area} onChange={(e) => setArea(e.target.value)} />}
+            </Field>
+            <p className="mt-2 text-sm">{capAll === null ? 'Enter an area to estimate.' : <>About <strong className="font-data">{capAll.toLocaleString('en-PH')}</strong> persons at 45 m² each; <strong className="font-data">{capOutside!.toLocaleString('en-PH')}</strong> if kitchens, schools and health services are outside the site (30 m²).</>}</p>
+            <p className="mt-1 text-xs text-muted">Sphere Handbook (2018), Shelter and settlement standard 2. A planning figure, not a pass mark.</p>
           </Section>
         </div>
         <div className="space-y-4 lg:col-span-2 2xl:col-span-1">
+          <Section title="Site selection criteria">
+            <ol className="list-decimal space-y-1.5 pl-5 text-sm">
+              {SITE_CRITERIA.map((c) => <li key={c.key}>{c.text} <span className="text-xs text-muted">({CRITERION_SOURCE[c.source]}, {c.ref})</span></li>)}
+            </ol>
+            <p className="mt-2 text-xs text-muted">Screening flags what to check in the field. It does not designate a site; the hazard classes come from the agencies' maps, not from ECHO.</p>
+          </Section>
           <Section title="How to use this map">
             <ul className="list-disc space-y-1 pl-5 text-sm text-muted">
               <li><strong className="text-ink">Screen a centre</strong>: click a centre (or any point) to read every hazard sheet there, with the centre's inventory screening.</li>
+              <li><strong className="text-ink">Candidates</strong> (hollow rings) sit at the barangay's centre. Pin the real site before relying on its readings, and add it to Camp management only after the survey.</li>
               <li><strong className="text-ink">Draw a route</strong>: click points along the proposed route, then Screen route. ECHO samples the sheets about every 50 m and marks high readings in red.</li>
               <li>Tick hazard sheets to show them; colour barangays by DDRiVE exposure. Full screen keeps the tools with the map.</li>
               <li>Sheets are fitted pictures for barangay-level awareness. A screening is not a safety certificate and the map is not navigation: routes and sites are confirmed by authorised field teams.</li>
