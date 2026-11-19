@@ -5,7 +5,7 @@
   "description": "MODE: Ormoc City DRRMO & EOC Manual of Operations Development Platform (mobile-first PWA)",
   "type": "module",
   "engines": {
-    "node": "22.x"
+    "node": "26.x"
   },
   "scripts": {
     "dev": "vite",
