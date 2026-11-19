@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { indexDelta, iatSnapshot, trackerSnapshot } from './dashboard';
+import { indexDelta, iatSnapshot, trackerSnapshot, priorityTiers } from './dashboard';
 import type { Domain, Indicator, ManualReviewItem, OutstandingDecision, Response, WorkshopSession } from '@/types';
 
 const dom = (code: string, part: 'A' | 'B' | 'C', sort: number): Domain => ({ code, part, name: code, scope: '', functional_area: '', platform_module: '', sort });
@@ -66,5 +66,21 @@ describe('dashboard tracker snapshot', () => {
     ]);
     expect(t.sessions.next?.title).toBe('First');
     expect(t.sessions.completed).toBe(1);
+  });
+});
+
+describe('priority tiers on Today (ADR-044 principle 4)', () => {
+  const r = (score: number | null, is_na = false) => ({ score, is_na });
+  const items = [
+    { id: 'A1.1', tier: 1 as const, response: r(3) },
+    { id: 'A1.2', tier: 1 as const, response: r(1) },
+    { id: 'A1.3', tier: 1 as const },
+    { id: 'A1.4', tier: 1 as const, response: r(null) },
+    { id: 'B2.7', tier: 1 as const, response: r(null, true) },
+  ];
+  it('keeps unscored apart from needs-work and drops N/A from the count', () => {
+    const { rows, needsWork } = priorityTiers(items);
+    expect(rows[0]).toEqual({ tier: 1, total: 4, met: 1, unscored: 2 });
+    expect(needsWork.map((p) => p.id)).toEqual(['A1.2']);
   });
 });

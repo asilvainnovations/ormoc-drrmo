@@ -79,3 +79,17 @@ export function trackerSnapshot(items: ManualReviewItem[], decisions: Outstandin
     sessions: { total: sessions.length, completed: sessions.filter((s) => s.status === 'completed').length, next: upcoming },
   };
 }
+
+/** Priority-indicator tiers on Today (ADR-031, ADR-044 principle 4). N/A leaves the count; an unscored indicator is
+ *  "not yet scored", never "needs work"; only scored indicators below 3 are listed as needing work. */
+export interface PriorityItem { id: string; tier: 1 | 2 | 3; response?: Pick<Response, 'score' | 'is_na'> }
+export function priorityTiers<T extends PriorityItem>(items: T[]) {
+  const scored = (p: PriorityItem) => !!p.response && !p.response.is_na && p.response.score !== null;
+  const rows = ([1, 2, 3] as const).map((tier) => {
+    const inTier = items.filter((p) => p.tier === tier && !p.response?.is_na);
+    return { tier, total: inTier.length, met: inTier.filter((p) => scored(p) && p.response!.score! >= 3).length,
+      unscored: inTier.filter((p) => !scored(p)).length };
+  });
+  const needsWork = items.filter((p) => scored(p) && p.response!.score! < 3).sort((a, b) => a.tier - b.tier);
+  return { rows, needsWork };
+}
