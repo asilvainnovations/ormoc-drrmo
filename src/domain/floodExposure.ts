@@ -7,6 +7,8 @@
  * 2024 POPCEN population baselines. These are population exposure estimates,
  * not flood depth, area or live warning data.
  */
+import floodJson from '@/data/floodExposure.json';
+
 export interface FloodAgeSexRow {
   ageGroup: string;
   maleNotProne: number | null;
@@ -51,6 +53,24 @@ const records: BarangayFloodExposure[] = [
   { psgc:'0803738003', name:'Labrador (Balion)', reportedAt:'November 07, 2026 10:00:00 pm', source:'Population_Prone_Flood_ Labrador(Balion)_Ormoc_City.xlsx', denominator:2273, pronePopulation:2273, exposurePercent:100, classes:[{name:'High',population:2273}], ageSex:[], ageSexStatus:'available' },
 ];
 
-export const ORMOC_FLOOD_EXPOSURE: ReadonlyArray<BarangayFloodExposure> = records;
-export const getBarangayFloodExposure = (psgc: string) => records.find((row) => row.psgc === psgc);
-export const FLOOD_EXPOSURE_AS_OF = '17 November 2026';
+/** The eight first-reference barangays, transcribed by hand from the City's uploads (17 Nov 2026). */
+export const FIRST_REFERENCE_FLOOD_EXPOSURE: ReadonlyArray<BarangayFloodExposure> = records;
+
+// 1.30.0: every other barangay with a GeoAnalyticsPH flood report, generated from the newest workbook in
+// reference/flood-assessment by scripts/flood_exposure_json.py (merged Poblacion barangays are the sum of their former
+// district reports; CDP Vol. 1, Table 1). A first-reference record stays as transcribed unless the workbook holds a
+// report with the same totals and an age-sex table it lacked.
+type Generated = Omit<BarangayFloodExposure, 'classes'> & { classes: { name: string; population: number }[] };
+const generated = (floodJson as { records: Generated[] }).records as unknown as BarangayFloodExposure[];
+const byPsgc = new Map<string, BarangayFloodExposure>();
+for (const r of generated) byPsgc.set(r.psgc, r);
+for (const r of records) {
+  const g = byPsgc.get(r.psgc);
+  // The workbook record wins only when it carries the age-sex table the hand transcription lacks (same report totals).
+  if (!(g && r.ageSex.length === 0 && g.ageSex.length > 0 && g.pronePopulation === r.pronePopulation && g.denominator === r.denominator)) byPsgc.set(r.psgc, r);
+}
+const all = [...byPsgc.values()].sort((a, b) => a.name.localeCompare(b.name));
+
+export const ORMOC_FLOOD_EXPOSURE: ReadonlyArray<BarangayFloodExposure> = all;
+export const getBarangayFloodExposure = (psgc: string) => byPsgc.get(psgc);
+export const FLOOD_EXPOSURE_AS_OF = '20 November 2026';

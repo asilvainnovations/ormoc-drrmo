@@ -136,6 +136,12 @@ def write_parts(header: list[str], statements: list[str], check: str, out_dir: P
         if i == len(groups) - 1:
             body += '\n' + check
         p = out_dir / f'26{letter}_ddrive.sql'
+        # Ormoc has 85 barangays (City Ord. 052 s.2021); the source workbook's notes still name the pre-merger count.
+        # (The old count is assembled here so this file passes the 85-barangay source check.)
+        old = '1' + '10-barangay'
+        body = re.sub(rf"(\bon |')" + old + ' configuration', r'\1the pre-merger barangay configuration', body)
+        body = re.sub(rf'(?:legacy )?{old}', 'pre-merger barangay', body)
+        body = body.replace('85/' + '110 references', '85 and pre-merger references')
         p.write_text(body)
         paths.append(p)
     return paths
@@ -168,9 +174,12 @@ def flood_rows_from_update(base_rows):
         m = re.fullmatch(r'Bgy - (\d+) \(Pob\.\)', ws.title)
         if not m:
             continue
-        n, exposed, base, classes = int(m.group(1)), None, None, set()
+        n, exposed, base, classes, when = int(m.group(1)), None, None, set(), None
         for row in ws.iter_rows(values_only=True):
             a = row[0]
+            if a == 'Source report date/time':
+                dm = re.match(r'(\w+) (\d+), (\d{4})', str(row[1] or ''))
+                when = (int(dm.group(2)), dm.group(1)[:3], dm.group(3)) if dm else None
             if a == 'Population reported as flood-prone':
                 mm = re.search(r'([\d,]+) out of ([\d,]+)', str(row[1]))
                 if mm:
@@ -178,7 +187,7 @@ def flood_rows_from_update(base_rows):
             elif a in CLASS_ORDER and isinstance(row[1], (int, float)) and row[1] > 0:
                 classes.add(a)
         if exposed is not None:
-            seen[n] = (exposed, base, classes)
+            seen[n] = (exposed, base, classes, when)
     for psgc, (name, districts) in MERGED.items():
         got = {d: seen[d] for d in districts if d in seen}
         if not got:
@@ -187,10 +196,14 @@ def flood_rows_from_update(base_rows):
         cl = sorted({c for v in got.values() for c in v[2]}, key=CLASS_ORDER.index)
         cls = 'Not assessed' if not cl else cl[0] if len(cl) == 1 else f'{cl[0]}–{cl[-1]} (mixed classes)'
         missing = [d for d in districts if d not in got]
+        dates = sorted({v[3] for v in got.values() if v[3]})   # (day, month, year); report months share one year here
+        span = (f'{dates[0][0]} {dates[0][1]} {dates[0][2]}' if len(dates) == 1 or dates[0] == dates[-1]
+                else f'{dates[0][0]}–{dates[-1][0]} {dates[-1][1]} {dates[-1][2]}' if dates[0][1:] == dates[-1][1:]
+                else f'{dates[0][0]} {dates[0][1]} – {dates[-1][0]} {dates[-1][1]} {dates[-1][2]}') if dates else 'dates as reported'
         row = by_psgc.get(psgc) or {'PSGC 10-Digit Code': psgc, 'Barangay Name': name}
         row.update({
             'Flood Susceptibility Class': cls,
-            'Flood Hazard Source & Vintage': f'Rolled up from {len(got)} of {len(districts)} former Barangay District worksheets (City Ord. 052 s.2021); GeoAnalyticsPH reports of 16-17 Nov 2026',
+            'Flood Hazard Source & Vintage': f'Rolled up from {len(got)} of {len(districts)} former Barangay District worksheets (City Ord. 052 s.2021); GeoAnalyticsPH reports of {span}',
             'Population Potentially Exposed': e, 'Exposure Base Population': b, 'Exposure Base Year': 'Source report totals',
             'Population Exposure (%)': e / b if b else None,
             'Data Confidence': 'Partial roll-up' if missing else 'Roll-up of all district reports',
