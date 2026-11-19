@@ -277,7 +277,7 @@ export default function EchoIntel() {
             </Section>
           )}
           {mode === 'route' && (
-            <Section title="Route screening">
+            <Section title="Route Screening">
               {route.length < 2 ? <p className="text-sm text-muted">Click at least two points on the map along the proposed route, then Screen route.</p> : !findings ? <p className="text-sm text-muted">{route.length} points, {fmtDistance(pathLength(route))}. Select Screen route.</p> : (
                 <>
                   <Notice tone={anyHigh ? 'warn' : 'info'}>{anyHigh ? 'Part of this route crosses high classes on at least one sheet. Choose another route or confirm passage with the field team before movement.'
@@ -292,7 +292,7 @@ export default function EchoIntel() {
               )}
             </Section>
           )}
-          <Section title="Hazard sheets">
+          <Section title="Hazard Sheets">
             <div className="flex flex-wrap gap-2">
               {HAZARD_MAPS.map((h) => <Checkbox key={h.code} checked={!!on[h.code]} onChange={() => setOn((o) => ({ ...o, [h.code]: !o[h.code] }))} tip={`${h.source}. Fit error about ${h.accuracy_m} m.`}>{h.title}</Checkbox>)}
             </div>
@@ -300,7 +300,7 @@ export default function EchoIntel() {
           </Section>
         </div>
         <div className="space-y-4">
-          <Section title="Barangay exposure">
+          <Section title="Barangay Exposure">
             <Select value={theme} onChange={(e) => setTheme(e.target.value as ThemeKey)} aria-label="Barangay colouring" {...tip('Colour each barangay by a DDRiVE desk-assessment value')}>
               {THEMES.map((t) => <option key={t.key} value={t.key}>{t.label}</option>)}
             </Select>
@@ -326,7 +326,7 @@ export default function EchoIntel() {
               ))}
             </ul>
           </Section>
-          <Section title="Open-area capacity">
+          <Section title="Open-Area Capacity">
             <Field label="Usable open area (m²)" hint="Measured on site or on the basemap, without buildings, slopes or drains" tip="Usable open area in square metres">
               {(id, d) => <Input id={id} aria-describedby={d} type="number" min={0} inputMode="numeric" value={area} onChange={(e) => setArea(e.target.value)} />}
             </Field>
@@ -335,13 +335,13 @@ export default function EchoIntel() {
           </Section>
         </div>
         <div className="space-y-4 lg:col-span-2 2xl:col-span-1">
-          <Section title="Site selection criteria">
+          <Section title="Site Selection Criteria">
             <ol className="list-decimal space-y-1.5 pl-5 text-sm">
               {SITE_CRITERIA.map((c) => <li key={c.key}>{c.text} <span className="text-xs text-muted">({CRITERION_SOURCE[c.source]}, {c.ref})</span></li>)}
             </ol>
             <p className="mt-2 text-xs text-muted">Screening flags what to check in the field. It does not designate a site; the hazard classes come from the agencies' maps, not from ECHO.</p>
           </Section>
-          <Section title="How to use this map">
+          <Section title="How to Use This Map">
             <ul className="list-disc space-y-1 pl-5 text-sm text-muted">
               <li><strong className="text-ink">Screen a centre</strong>: click a centre (or any point) to read every hazard sheet there, with the centre's inventory screening.</li>
               <li><strong className="text-ink">Candidates</strong> (hollow rings) sit at the barangay's centre. Pin the real site before relying on its readings, and add it to Camp management only after the survey.</li>

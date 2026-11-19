@@ -322,7 +322,7 @@ export function EchoCentre() {
   const c = data?.centres.find((x) => x.id === id);
   const history = useMemo(() => (data?.reports ?? []).filter((r) => r.centre_id === id).sort((a, b) => b.reported_at.localeCompare(a.reported_at)), [data, id]);
   if (!data) return <Loading />;
-  if (!c) return <div className="page"><PageHeader title="Centre not found" back="/tools/echo/camps" /></div>;
+  if (!c) return <div className="page"><PageHeader title="Centre Not Found" back="/tools/echo/camps" /></div>;
   const can = canOperate(roles);
   const authority = canChangeLevel(roles);
   const last = data.latest.get(c.id) ?? null;
@@ -389,7 +389,7 @@ export function EchoCentre() {
           )}
         </Section>
       </div>
-      <Section title="Inventory record">
+      <Section title="Inventory Record">
         <dl className="grid gap-3 text-sm sm:grid-cols-2 lg:grid-cols-4">
           {[['Code', c.code ?? '—'], ['Barangay', data.bgyName.get(c.barangay_psgc ?? '') ?? '—'], ['Capacity', fmt(c.capacity_persons)], ['Covered area', `${fmt(c.covered_area_m2)} m²`],
             ['Persons at 3.5 m²', fmt(spaceCheck(0, c.covered_area_m2).capacityAtStandard)], ['Water supply', `${fmt(c.water_l_day)} L per day`],
@@ -422,7 +422,7 @@ export function EchoCentre() {
           </div>
         )}
       </Section>
-      <Section title="Feedback at this centre">
+      <Section title="Feedback at This Centre">
         <FeedbackList items={data.feedback.filter((f) => f.centre_id === c.id)} canEdit={can} />
       </Section>
       {edit && <CentreForm open onClose={() => setEdit(false)} initial={c} />}

@@ -157,7 +157,7 @@ export function EchoDashboard() {
             </ul>
           )}
         </Section>
-        <Section title="Population inside centres (aggregate)">
+        <Section title="Population Inside Centres (Aggregate)">
           <dl className="grid grid-cols-2 gap-3 text-sm">
             {[['Children', totals.children], ['Older persons', totals.older], ['Persons with disability', totals.pwd], ['Women and girls', totals.female], ['Pregnant or lactating', totals.pregnant]].map(([k, v]) => (
               <div key={k as string}><dt className="text-muted">{k}</dt><dd className="font-data text-lg font-semibold">{fmt(v as number)}</dd></div>

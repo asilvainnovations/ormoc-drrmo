@@ -19,7 +19,7 @@ export function EocLocation() {
   };
 
   return (
-    <Section title="EOC location" className="lg:col-span-2">
+    <Section title="EOC Location" className="lg:col-span-2">
       <KeyValue items={[
         ['Site', <span className="inline-flex flex-wrap items-center gap-2">{site.name}
           <Badge tone={site.confirmed ? 'ok' : 'warn'}>{site.confirmed ? 'Confirmed' : 'To be confirmed'}</Badge></span>],

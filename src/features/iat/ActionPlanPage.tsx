@@ -53,7 +53,7 @@ export function ActionPlanPage() {
 
   return (
     <div className="page">
-      <PageHeader title="Improvement action plan" back={`/assess/${data.cycle.id}`}
+      <PageHeader title="Improvement Action Plan" back={`/assess/${data.cycle.id}`}
         subtitle="High and medium gaps, highest priority first. Each action routes to the manual chapter that fixes it." />
       {gaps.length === 0 ? <EmptyState title="No high or medium gaps yet" body="Gaps appear here as indicators are scored." /> : (
         <Section>

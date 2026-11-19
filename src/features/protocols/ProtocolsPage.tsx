@@ -92,7 +92,7 @@ export function ProtocolsPage({ kind }: { kind: 'workflows' | 'protocols' }) {
       {data && q && groups.size === 0 && <Notice tone="info">Nothing matches “{q}”.</Notice>}
       {data && data.templates.length === 0 && <EmptyState title={kind === 'workflows' ? 'No workflows yet' : 'No protocols yet'} body="They arrive with the reference data. Open Settings, then Sync, if this stays empty." />}
       {data && data.running.length > 0 && (
-        <Section title="Running now">
+        <Section title="Running Now">
           <List>
             {data.running.map((r) => {
               const c = data.stepCounts.get(r.id);
@@ -126,7 +126,7 @@ export function ProtocolsPage({ kind }: { kind: 'workflows' | 'protocols' }) {
         );
       })}
       {data && data.recent.length > 0 && (
-        <Section title="Recent runs">
+        <Section title="Recent Runs">
           <List>{data.recent.map((r) => <ListRow tip="Open the record of this run" key={r.id} to={`/drrm/run/${r.id}`} title={r.title} meta={relative(r.started_at)}
             trailing={<Badge tone={r.status === 'completed' ? 'ok' : 'bad'}>{r.status === 'completed' ? 'Completed' : 'Stopped'}</Badge>} />)}</List>
         </Section>

@@ -8,7 +8,7 @@ test.describe('as a viewer', () => {
 
   test('raci: search shows the colour-coded board; a viewer cannot edit', async ({ page }) => {
     await page.goto('/raci');
-    await expect(page.getByRole('heading', { name: 'RACI board' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'RACI Board' })).toBeVisible();
     // The twenty-one seeded matrices render with their activities.
     await expect(page.getByText('6.4 · State of Imminent Disaster RACI')).toBeVisible();
     await expect(page.getByText(/CH4-EOC · Chapter 4/)).toBeVisible();

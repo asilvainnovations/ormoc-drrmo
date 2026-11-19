@@ -38,7 +38,7 @@ export function ConnectedAppsPage() {
 
   return (
     <div className="page">
-      <PageHeader title="Connected apps" back="/settings" subtitle={`Other City systems you have allowed to sign you in with your ${PRODUCT.short} account. An app reads City records only after the City approves it.`} />
+      <PageHeader title="Connected Apps" back="/settings" subtitle={`Other City systems you have allowed to sign you in with your ${PRODUCT.short} account. An app reads City records only after the City approves it.`} />
       <Section>
         {!online ? <Notice tone="warn">This needs a connection.</Notice>
           : grants === null ? <Loading />
@@ -77,7 +77,7 @@ function OAuthServerDetails() {
     ['Consent screen (Authorization Path)', `${window.location.origin}${CONSENT_PATH}`],
   ];
   return (
-    <Section title="For administrators: OAuth server">
+    <Section title="For Administrators: OAuth Server">
       <p className="mb-3 text-sm text-muted">
         Register each app in Supabase (Authentication, then OAuth Apps) with its exact redirect address. Apps use the authorization code flow with PKCE. Their tokens are read-only in this platform: the database refuses any change made with them.
       </p>

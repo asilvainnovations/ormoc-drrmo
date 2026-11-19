@@ -9,7 +9,7 @@ export function DomainPage() {
   const data = useCycleData(cycleId);
   if (!data) return <Loading />;
   const d = data.domains.find((x) => x.code === domain);
-  if (!d) return <div className="page"><PageHeader title="Domain not found" back={`/assess/${cycleId}`} /></div>;
+  if (!d) return <div className="page"><PageHeader title="Domain Not Found" back={`/assess/${cycleId}`} /></div>;
   const r = data.results.domains[d.code]!;
   const items = data.indicators.filter((i) => i.domain === d.code);
   return (

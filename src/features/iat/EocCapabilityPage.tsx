@@ -58,7 +58,7 @@ export function EocCapabilityPage() {
 
   return (
     <>
-      <PageHeader back={`/assess/${cycle.id}`} title="EOC capability checklist"
+      <PageHeader back={`/assess/${cycle.id}`} title="EOC Capability Checklist"
         subtitle={`${cycle.name} · OCD/NDRRMC TWG EOC Capability Assessment Checklist (Dec 2017), mapped to IAT Part B`} />
 
       <Notice tone="info" title="Pre-filled answers are not observations">
@@ -104,7 +104,7 @@ export function EocCapabilityPage() {
         </div>
       </Section>
 
-      <Section title="Checklist items">
+      <Section title="Checklist Items">
         <div className="mb-3 grid max-w-2xl gap-3 sm:grid-cols-2">
           <Field label="Show" tip="Filter the items by answer or by how the answer was made">
             {(id) => <Select id={id} value={filter} onChange={(e) => setFilter(e.target.value as Filter)}>

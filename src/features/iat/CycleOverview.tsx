@@ -39,7 +39,7 @@ export function CycleOverview() {
   const { has } = useAuth();
   const toast = useToast();
   if (data === undefined) return <Loading />;
-  if (data === null) return <div className="page"><PageHeader title="Cycle not found" back="/assess" /></div>;
+  if (data === null) return <div className="page"><PageHeader title="Cycle Not Found" back="/assess" /></div>;
   const { cycle, domains, results, indicators, byIndicator } = data;
   const next = CYCLE_NEXT[cycle.status];
   const canAdvance = next && (next === 'final' ? has('validator', 'cdrrmo_head') : has('assessor', 'validator', 'cdrrmo_head'));
@@ -96,7 +96,7 @@ export function CycleOverview() {
         )}
       </Section>
 
-      <Section title="Evidence check">
+      <Section title="Evidence Check">
         <p className="mb-3 text-sm text-muted">Whether the evidence behind each score was checked against its source record. A check does not change the score.</p>
         <dl className="grid grid-cols-2 gap-x-6 gap-y-2 sm:grid-cols-5">
           {checks.map(([k, n]) => (
@@ -108,7 +108,7 @@ export function CycleOverview() {
         </dl>
       </Section>
 
-      <Section title="Parts A and B by domain">
+      <Section title="Parts A and B by Domain">
         <KitTabs defaultValue="bars">
           <TabsList className="mb-3 h-auto">
             <TabsTrigger value="bars" className="min-h-tap" {...tip('Exact values by domain, with bands and gaps')}>Bars</TabsTrigger>
@@ -121,7 +121,7 @@ export function CycleOverview() {
           <TabsContent value="profile"><MaturityRadar domains={ab} results={results.domains} /></TabsContent>
         </KitTabs>
       </Section>
-      <Section title="Part C interface, by domain">
+      <Section title="Part C Interface, by Domain">
         <p className="mb-3 text-sm text-muted">These are owned by other offices. They form the separate Interface Index and do not change the CDRRMO's maturity index.</p>
         <MaturityChart domains={c} results={results.domains} hrefFor={(d) => `/assess/${cycle.id}/d/${d}`} caption="Interface maturity, 0 to 4." />
       </Section>

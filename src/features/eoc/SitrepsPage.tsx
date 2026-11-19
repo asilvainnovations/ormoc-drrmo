@@ -158,7 +158,7 @@ export function SitrepEditor() {
             <Button tip="Re-read the EOC records and rewrite the situation, actions, needs and evacuee counts" variant="secondary" icon={Wand2} onClick={refresh}>Refresh from live data</Button>
           </div>
         )}
-        <Section title="Reporting period">
+        <Section title="Reporting Period">
           <div className="grid gap-3 sm:grid-cols-2">
             <Field label="From">{(i) => <Input id={i} type="datetime-local" disabled={!editable} value={toLocalInput(form.period_start)} onChange={(e) => setForm({ ...form, period_start: fromLocalInput(e.target.value) })} />}</Field>
             <Field label="To">{(i) => <Input id={i} type="datetime-local" disabled={!editable} value={toLocalInput(form.period_end)} onChange={(e) => setForm({ ...form, period_end: fromLocalInput(e.target.value) })} />}</Field>
@@ -171,7 +171,7 @@ export function SitrepEditor() {
             </p>
           )}
         </Section>
-        <Section title="DILG VIII harmonized fields">
+        <Section title="DILG VIII Harmonized Fields">
           <div className="space-y-4">
             <div className="grid gap-3 sm:grid-cols-2">
               <Field label="Report type" tip="The harmonized template has four report types">{(i) => (

@@ -84,7 +84,7 @@ function DataQualityPanel({ q }: { q: Quality }) {
   if (q.unconfirmedIat > 0) lines.push({ icon: ShieldCheck, tone: 'text-muted', text: `${q.unconfirmedIat} pre-filled EOC capability answers still need confirming on site.` });
   return (
     <Card className="mb-6">
-      <CardHeader className="pb-2"><CardTitle className="flex items-center gap-2 text-lg text-ink"><AlertCircle className="h-5 w-5 text-warn" aria-hidden />Data quality</CardTitle><CardDescription>What may be out of date or unsent on this device.</CardDescription></CardHeader>
+      <CardHeader className="pb-2"><CardTitle className="flex items-center gap-2 text-lg text-ink"><AlertCircle className="h-5 w-5 text-warn" aria-hidden />Data Quality</CardTitle><CardDescription>What may be out of date or unsent on this device.</CardDescription></CardHeader>
       <CardContent>
         {lines.length ? <ul className="space-y-2 text-sm">{lines.map((l, i) => <li key={i} className={`flex items-start gap-2 ${l.tone}`}><l.icon className="mt-0.5 h-4 w-4 shrink-0" aria-hidden />{l.text}</li>)}</ul>
           : <p className="flex items-center gap-2 text-sm text-ok"><ShieldCheck className="h-4 w-4" aria-hidden />Nothing waiting and nothing flagged on this device.</p>}
@@ -101,7 +101,7 @@ function EvacuationPanel({ sites }: { sites: Sites }) {
   return (
     <Card className="mb-6">
       <CardHeader className="flex-row items-start justify-between space-y-0 pb-2">
-        <div><CardTitle className="flex items-center gap-2 text-lg text-ink"><Building2 className="h-5 w-5 text-ok" aria-hidden />Evacuation centres</CardTitle><CardDescription>How many registered sites have been verified in the field.</CardDescription></div>
+        <div><CardTitle className="flex items-center gap-2 text-lg text-ink"><Building2 className="h-5 w-5 text-ok" aria-hidden />Evacuation Centres</CardTitle><CardDescription>How many registered sites have been verified in the field.</CardDescription></div>
         <TextLink tip="Open the evacuation centre register" size="sm" to="/tools/echo/camps">Open</TextLink>
       </CardHeader>
       <CardContent>
@@ -292,7 +292,7 @@ export function TodayPage() {
 
       <div className="grid gap-4 lg:grid-cols-2">
         <Card>
-          <CardHeader className="pb-2"><CardTitle className="text-lg text-ink">Protocols running</CardTitle><CardDescription>Runs in progress on any device.</CardDescription></CardHeader>
+          <CardHeader className="pb-2"><CardTitle className="text-lg text-ink">Protocols Running</CardTitle><CardDescription>Runs in progress on any device.</CardDescription></CardHeader>
           <CardContent>
             {!data ? <TodaySkeleton /> : data.runs.length ? <List>{data.runs.map((r) => <ListRow tip="Continue this protocol run" key={r.id} to={`/drrm/run/${r.id}`} title={r.title} meta={`Started ${relative(r.started_at, now.getTime())}`} />)}</List>
               : <p className="text-muted">None running.</p>}
@@ -300,7 +300,7 @@ export function TodayPage() {
         </Card>
         <Card>
           <CardHeader className="flex-row items-start justify-between space-y-0 pb-2">
-            <div><CardTitle className="text-lg text-ink">Latest logbook entries</CardTitle><CardDescription>The five most recent entries.</CardDescription></div>
+            <div><CardTitle className="text-lg text-ink">Latest Logbook Entries</CardTitle><CardDescription>The five most recent entries.</CardDescription></div>
             <TextLink tip="Open the EOC logbook" size="sm" to="/eoc/log">Logbook</TextLink>
           </CardHeader>
           <CardContent>
@@ -309,7 +309,7 @@ export function TodayPage() {
         </Card>
         {sections.assessment && <Card>
           <CardHeader className="flex-row items-start justify-between space-y-0 pb-2">
-            <div><CardTitle className="text-lg text-ink">Institutional assessment</CardTitle><CardDescription>Scoring progress of the current cycle.</CardDescription></div>
+            <div><CardTitle className="text-lg text-ink">Institutional Assessment</CardTitle><CardDescription>Scoring progress of the current cycle.</CardDescription></div>
             <TextLink tip="See all assessment cycles" size="sm" to="/assess">All cycles</TextLink>
           </CardHeader>
           <CardContent>
@@ -328,7 +328,7 @@ export function TodayPage() {
         {sections.manual && <ManualReadiness data={data} />}
         {sections.raci && <Card>
           <CardHeader className="flex-row items-start justify-between space-y-0 pb-2">
-            <div><CardTitle className="text-lg text-ink">RACI board</CardTitle><CardDescription>Who does what, from MOO Annex 1-F.</CardDescription></div>
+            <div><CardTitle className="text-lg text-ink">RACI Board</CardTitle><CardDescription>Who does what, from MOO Annex 1-F.</CardDescription></div>
             <TextLink tip="Open the interactive RACI board" size="sm" to="/raci">Open</TextLink>
           </CardHeader>
           <CardContent>
@@ -345,7 +345,7 @@ export function TodayPage() {
         </Card>}
         {sections.eocCapability && <Card>
           <CardHeader className="flex-row items-start justify-between space-y-0 pb-2">
-            <div><CardTitle className="text-lg text-ink">EOC capability</CardTitle><CardDescription>The 154-item OCD/NDRRMC checklist against the IAT B_EOC evidence.</CardDescription></div>
+            <div><CardTitle className="text-lg text-ink">EOC Capability</CardTitle><CardDescription>The 154-item OCD/NDRRMC checklist against the IAT B_EOC evidence.</CardDescription></div>
             <TextLink tip="Open the EOC capability assessment board" size="sm" to="/eoc-assessment">Open</TextLink>
           </CardHeader>
           <CardContent>
@@ -448,7 +448,7 @@ function ManualReadiness({ data }: { data?: { templates: { status: string; kind?
   return (
     <Card>
       <CardHeader className="flex-row items-start justify-between space-y-0 pb-2">
-        <div><CardTitle className="text-lg text-ink">Manual readiness</CardTitle><CardDescription>{chapters} chapter{chapters === 1 ? '' : 's'} drafted. Approval is by the CDRRMO Head after validation.</CardDescription></div>
+        <div><CardTitle className="text-lg text-ink">Manual Readiness</CardTitle><CardDescription>{chapters} chapter{chapters === 1 ? '' : 's'} drafted. Approval is by the CDRRMO Head after validation.</CardDescription></div>
         <TextLink tip="Open the Manual of Operations" size="sm" to="/library">Library</TextLink>
       </CardHeader>
       <CardContent className="space-y-3">
@@ -472,7 +472,7 @@ function ActionsCard({ data }: { data?: { cycle?: { id: string; name: string }; 
   return (
     <Card>
       <CardHeader className="flex-row items-start justify-between space-y-0 pb-2">
-        <div><CardTitle className="text-lg text-ink">Corrective actions</CardTitle><CardDescription>The IAT action plan: what is done, overdue or still unassigned.</CardDescription></div>
+        <div><CardTitle className="text-lg text-ink">Corrective Actions</CardTitle><CardDescription>The IAT action plan: what is done, overdue or still unassigned.</CardDescription></div>
         {data.cycle && <TextLink tip="Open the action plan of the current cycle" size="sm" to={`/assess/${data.cycle.id}/actions`}>Action plan</TextLink>}
       </CardHeader>
       <CardContent>

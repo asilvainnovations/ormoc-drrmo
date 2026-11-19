@@ -90,14 +90,14 @@ export function DocumentPage() {
           ) : <p className="text-muted">No approved text yet.</p>}
         </article>
         <aside className="space-y-6">
-          <Section title="Corrections log">
+          <Section title="Corrections Log">
             <CorrectionsLog documentId={doc.id} />
           </Section>
           <Section title="Versions">
             <List>{versions.map((v) => <ListRow tip="Show this version" key={v.id} onClick={() => setViewId(v.id)} title={v.label} meta={v.change_note ?? undefined}
               trailing={<StatusBadge status={v.status} />} />)}</List>
           </Section>
-          <Section title="Indicators this section answers">
+          <Section title="Indicators This Section Answers">
             <ul className="space-y-2">{data.indicators.map((i) => {
               const r = data.byInd.get(i!.id);
               return <li key={i!.id} className="text-sm">
@@ -107,12 +107,12 @@ export function DocumentPage() {
             })}</ul>
           </Section>
           {data.protocols.length > 0 && (
-            <Section title="Protocols from this section">
+            <Section title="Protocols from This Section">
               <ul className="space-y-1">{data.protocols.map((p) => <li key={p.id}><TextLink tip={`Open ${p.title} in the DRRM module`} to="/drrm/protocols">{p.title}</TextLink></li>)}</ul>
             </Section>
           )}
           {/* 1.19 (ADR-033): the document-governance RACI, mirroring the review/approve guards (migrations 0003/0014). */}
-          <Section title="Review and approval (RACI)">
+          <Section title="Review and Approval (RACI)">
             <ul className="space-y-1.5 text-sm text-muted">
               <li><span className="font-semibold text-ink">R</span> — the author drafts and edits this section.</li>
               <li><span className="font-semibold text-ink">C</span> — the lead office focal is consulted on its content.</li>

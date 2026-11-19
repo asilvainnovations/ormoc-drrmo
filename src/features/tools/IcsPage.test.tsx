@@ -45,7 +45,7 @@ describe('ICS simulator', () => {
       expect(screen.getByText(/^Basis:/)).toBeTruthy();
       fireEvent.click(screen.getByRole('button', { name: op === 3 ? 'Close incident and review' : 'Next operational period' }));
     }
-    expect(screen.getByRole('heading', { name: 'After-action review' })).toBeTruthy();
+    expect(screen.getByRole('heading', { name: 'After-Action Review' })).toBeTruthy();
     expect(screen.getAllByRole('row')).toHaveLength(5);   // header + four decisions
     expect(JSON.parse(localStorage.getItem('ormoc-tools:u1:ics-runs')!)).toHaveLength(1);
   });

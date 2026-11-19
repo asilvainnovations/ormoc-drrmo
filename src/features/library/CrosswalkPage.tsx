@@ -22,7 +22,7 @@ export function CrosswalkPage() {
     <div className="page">
       <PageHeader title="Frameworks" subtitle="How the IAT covers the UNDRR Disaster Resilience Scorecard and the IRR of RA 12287." />
       <Tabs items={LIB_TABS} />
-      <Section title="UNDRR Disaster Resilience Scorecard (detailed level)">{table('UNDRR DRSC', 'Criterion')}</Section>
+      <Section title="UNDRR Disaster Resilience Scorecard (Detailed Level)">{table('UNDRR DRSC', 'Criterion')}</Section>
       <Section title="IRR of RA 12287">{table('RA 12287 IRR', 'Provision')}</Section>
     </div>
   );

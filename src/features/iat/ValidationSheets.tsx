@@ -19,7 +19,7 @@ export function ValidationSheets() {
   const [which, setWhich] = useState<string>('A1');
   const domains = useMemo(() => (data ? (which === 'all' ? data.domains : data.domains.filter((d) => d.code === which)) : []), [data, which]);
   if (data === undefined) return <Loading />;
-  if (data === null) return <div className="page"><PageHeader title="Cycle not found" back="/assess" /></div>;
+  if (data === null) return <div className="page"><PageHeader title="Cycle Not Found" back="/assess" /></div>;
 
   return (
     <div className="page">

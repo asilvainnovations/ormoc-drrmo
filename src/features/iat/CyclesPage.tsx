@@ -41,10 +41,10 @@ export function CyclesPage() {
 
   return (
     <div className="page">
-      <PageHeader title="Institutional assessment" subtitle="IAT v1.7: 125 core indicators (Parts A and B) and 15 interface indicators (Part C)."
+      <PageHeader title="Institutional Assessment" subtitle="IAT v1.7: 125 core indicators (Parts A and B) and 15 interface indicators (Part C)."
         actions={canCreate && <Button tip="Start a new assessment cycle, for example the annual reassessment" icon={Plus} onClick={() => setOpen(true)}>New cycle</Button>} />
       <Tabs items={ASSESS_TABS} />
-      <Section title="Assessment cycles">
+      <Section title="Assessment Cycles">
         {rows && rows.length === 0 ? (
           <EmptyState title="No assessment cycle yet"
             body="Start a cycle for the baseline assessment. Each indicator is scored 0 to 4 against evidence, then validated with CDRRMO management."

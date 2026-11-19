@@ -54,14 +54,14 @@ export function SettingsPage() {
   return (
     <div className="page">
       <PageHeader title="Settings" />
-      <Section title="Your account">
+      <Section title="Your Account">
         <p className="font-semibold">{profile?.full_name || 'Name not set'}</p>
         <p className="text-muted">{email}{profile?.position ? `, ${profile.position}` : ''}</p>
         <p className="mt-2 flex flex-wrap gap-1.5">{roles.map((r) => <Badge key={r}>{ROLE_LABEL[r]}</Badge>)}</p>
         <p className="mt-3"><TextLink to="/auth/reset" tip="Choose a new password for this account">Change password</TextLink></p>
         <p className="mt-1"><TextLink to="/settings/apps" tip="See and withdraw the other City systems you allowed to sign you in with this account; administrators and the CDRRMO Head also approve apps here">Connected apps</TextLink></p>
       </Section>
-      <Section title="This device">
+      <Section title="This Device">
         <div className="mb-3 flex items-center justify-between gap-3 rounded-control border border-line bg-surface px-3"><span className="font-semibold">Appearance</span><ThemeToggle withLabel /></div>
         <LanguageRow />
         <List>
@@ -156,7 +156,7 @@ export function SyncPage() {
   };
   return (
     <div className="page">
-      <PageHeader title="Sync and offline data" back="/settings"
+      <PageHeader title="Sync and Offline Data" back="/settings"
         subtitle={`${online ? 'Online' : 'Offline'}. ${sync.lastSyncAt ? `Last synced ${relative(sync.lastSyncAt)}.` : 'Not synced yet.'}`}
         actions={<Button tip="Send waiting changes and fetch the latest data now" icon={RefreshCw} busy={sync.status === 'syncing'} disabled={!online} onClick={() => syncNow({ forceReference: true, retry: true })}>Sync now</Button>} />
       {sync.status === 'error' && <Notice tone="bad" title="Sync stopped">{sync.message}</Notice>}
@@ -241,7 +241,7 @@ export function UsersPage() {
   const setActive = (u: Account, active: boolean) => act(supabase.from('profiles').update({ is_active: active, version: u.version }).eq('id', u.id), active ? 'Account reactivated' : 'Account deactivated');
   const setOffice = (u: Account, office: string) => act(supabase.from('profiles').update({ office_id: office || null, version: u.version }).eq('id', u.id), 'Office saved');
 
-  if (!has('admin')) return <div className="page"><PageHeader title="Users and roles" back="/settings" /><Notice tone="warn">Only a system administrator can manage accounts.</Notice></div>;
+  if (!has('admin')) return <div className="page"><PageHeader title="Users and Roles" back="/settings" /><Notice tone="warn">Only a system administrator can manage accounts.</Notice></div>;
   const match = (u: Account) => !q.trim() || `${u.email} ${u.full_name} ${u.position ?? ''}`.toLowerCase().includes(q.trim().toLowerCase());
   const pending = (rows ?? []).filter((u) => u.is_active && u.roles.length === 0 && match(u));
   const active = (rows ?? []).filter((u) => u.is_active && u.roles.length > 0 && match(u));
@@ -278,7 +278,7 @@ export function UsersPage() {
 
   return (
     <div className="page">
-      <PageHeader title="Users and roles" back="/settings"
+      <PageHeader title="Users and Roles" back="/settings"
         subtitle="Anyone can create an account. It sees nothing until you approve it by granting a role. Changes need a connection."
         actions={<Button tip="Fetch the latest list of accounts" icon={RefreshCw} disabled={!online} onClick={load}>Refresh</Button>} />
       {!online && <Notice tone="warn">Connect to manage accounts.</Notice>}
@@ -340,7 +340,7 @@ export function BarangaysAdminPage() {
   };
   return (
     <div className="page">
-      <PageHeader title="Barangay list" back="/settings" subtitle={`${count} of ${ORMOC_BARANGAY_COUNT} barangays loaded. Use the current PSA PSGC masterlist for the City of Ormoc.`} />
+      <PageHeader title="Barangay List" back="/settings" subtitle={`${count} of ${ORMOC_BARANGAY_COUNT} barangays loaded. Use the current PSA PSGC masterlist for the City of Ormoc.`} />
       <div className="max-w-3xl space-y-4">
         <Field label="Paste CSV" hint={<>Columns: <code>psgc,name,classification,population,lat,lng</code>. Classification uses <code>;</code> between values, for example <code>coastal;urban</code>. Only PSGC and name are required.</>}>
           {(id, d) => <Textarea id={id} aria-describedby={d} rows={10} value={text} onChange={(e) => { setText(e.target.value); setWarnings([]); setConfirmed(false); }} />}
@@ -366,7 +366,7 @@ export function BarangaysAdminPage() {
 export function AboutPage() {
   return (
     <div className="page">
-      <PageHeader title="About and data privacy" back="/settings" />
+      <PageHeader title="About and Data Privacy" back="/settings" />
       <div className="max-w-prose space-y-4">
         <p><strong>{PRODUCT.short}</strong> ({PRODUCT.expansion}), version {env.appVersion}: the {PRODUCT.full}. Built for the City Disaster Risk Reduction and Management Office and the Emergency Operations Center of the City of Ormoc as part of the Manual of Operations consultancy.</p>
         <p>It carries the Institutional Assessment Tool v1.1, the CDRRMO Manual of Operations and EOC Manual, CDRRMO protocols, EOC operations and the anticipatory action workflow under RA 12287 and its IRR.</p>

@@ -103,7 +103,7 @@ export function RaciboardPage() {
   if (!data) return <Loading />;
   return (
     <div className="page">
-      <PageHeader title="RACI board" back="/today"
+      <PageHeader title="RACI Board" back="/today"
         subtitle="Who is Responsible, Accountable, Consulted and Informed — from the Manual’s RACI matrices (Annex 1-F and Chapters 1-10) and the manual review cycle." />
       <div className="mb-4 max-w-xl">
         <Input type="search" value={q} onChange={(e) => setParams(e.target.value ? { q: e.target.value } : {}, { replace: true })}

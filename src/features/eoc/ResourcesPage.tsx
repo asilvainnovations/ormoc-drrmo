@@ -72,7 +72,7 @@ export function ResourcesPage() {
   const maxLines = Math.max(1, ...summary.map((s) => s.lines));
   return (
     <div className="page">
-      <PageHeader title="What the City has" subtitle="Equipment, vehicles and stocks the EOC can draw on, where they are and whether they work."
+      <PageHeader title="What the City Has" subtitle="Equipment, vehicles and stocks the EOC can draw on, where they are and whether they work."
         actions={canEdit && <Button tip="Add an item to the inventory (needs a connection)" icon={Plus} onClick={() => setDraft(blank())}>Add item</Button>} />
       <Tabs items={EOC_TABS} />
       {rows.length === 0 && <Notice tone="info" title="Nothing recorded yet">The inventory is empty. Add what the CDRRMO holds with the Add item form, or ask an administrator to import the property inventory. The checklist below shows what is still missing against the national minimum.</Notice>}
