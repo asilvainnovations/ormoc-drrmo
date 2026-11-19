@@ -13,7 +13,7 @@ export function RequirementsPage() {
   }, []);
   return (
     <div className="page">
-      <PageHeader title="Master requirements" subtitle="From the Master Requirements and Traceability workbook v1.1. Each requirement says what the assessment checks, what the manuals must contain and what this platform must do." />
+      <PageHeader title="Master Requirements" subtitle="From the Master Requirements and Traceability workbook v1.1. Each requirement says what the assessment checks, what the manuals must contain and what this platform must do." />
       <Tabs items={LIB_TABS} />
       <div className="space-y-6">
         {data?.mrs.map((m) => (

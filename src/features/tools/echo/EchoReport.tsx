@@ -47,7 +47,7 @@ export function EchoReport() {
         </dl>
         {ex.scenario.notes && <p className="mt-2 text-sm">{ex.scenario.notes}</p>}
       </Section>
-      <Section title="Movement and reception">
+      <Section title="Movement and Reception">
         <p className="text-sm">{ex.movement.mode}. Route: <strong>{ex.movement.route === 'validated' ? 'validated by an authorised team' : ex.movement.route === 'blocked' ? 'blocked or unsafe' : 'not yet validated'}</strong>. {fmt(mv.loads)} vehicle loads; {mv.cycles === null ? 'no transport units set' : `${mv.cycles} cycle(s) with ${fmt(ex.movement.vehicles)} units`}. Received {fmt(ex.movement.received)}, en route {fmt(ex.movement.en_route)}, not accounted for {fmt(ex.movement.unaccounted)}.</p>
       </Section>
       <Section title={`Centre: ${site?.name ?? 'none selected'}`}>

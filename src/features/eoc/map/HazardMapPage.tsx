@@ -296,7 +296,7 @@ export default function HazardMapPage() {
               <p className="mt-1 text-xs text-muted">Straight-line distance, not the road route.</p>
             </Section>
           )}
-          <Section title="Hazard layers">
+          <Section title="Hazard Layers">
             <p className="text-sm text-muted">Tick a sheet to show it. The first in a group draws on top; use the arrows to change the order.</p>
             {families.map(({ fam, maps }) => (
               <Collapsible key={fam} defaultOpen className="mt-3">
@@ -337,7 +337,7 @@ export default function HazardMapPage() {
 
         </div>
         <div className="space-y-4">
-          <Section title="Barangay colouring">
+          <Section title="Barangay Colouring">
             <Select value={theme} onChange={(e) => setTheme(e.target.value as ThemeKey)} aria-label="Barangay colouring" {...tip('Colour each barangay by a DDRiVE desk-assessment value')}>
               {THEMES.map((t) => <option key={t.key} value={t.key}>{t.label}</option>)}
             </Select>
@@ -366,7 +366,7 @@ export default function HazardMapPage() {
               {(bgy ?? []).slice().sort((a, b) => a.properties.name.localeCompare(b.properties.name)).map((f) => <option key={f.properties.psgc} value={f.properties.psgc}>{f.properties.name}</option>)}
             </Select>
           </Section>
-          <Section title="How to use this map">
+          <Section title="How to Use This Map">
             <ul className="list-disc space-y-1 pl-5 text-sm text-muted">
               <li>The City's official hazard sheets over the 85 barangays. Each sheet is a printed map fitted to its own grid: read it at barangay level, never for a site decision.</li>
               <li><strong className="text-ink">Identify</strong>: click the map to see the barangay and the class of each sheet shown there, and the nearest EOC places.</li>
@@ -378,7 +378,7 @@ export default function HazardMapPage() {
           </Section>
         </div>
         <div className="space-y-4 lg:col-span-2 2xl:col-span-1">
-          <Section title="Barangay hazard assessment (GeoAnalyticsPH)">
+          <Section title="Barangay Hazard Assessment (GeoAnalyticsPH)">
             <p className="max-w-prose text-sm text-muted">GeoAnalyticsPH, from DOST-PHIVOLCS GeoRiskPH, gives the official barangay-level analysis: population prone and safe by sex and age, affected facilities and land area for each hazard. It opens on its own site, not inside MODE. Do the barangay-level hazard assessment there in ten clicks:</p>
             <ol className="mt-2 max-w-prose list-decimal space-y-0.5 pl-5 text-sm text-ink">
               <li>Open GeoAnalyticsPH with the button below.</li>

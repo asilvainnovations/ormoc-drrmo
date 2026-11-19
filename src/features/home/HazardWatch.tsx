@@ -34,7 +34,7 @@ export function HazardWatch() {
     : 'Flood intelligence (DDRiVE). No flood reference rows on this device yet.';
 
   return (
-    <Section title="Hazard watch">
+    <Section title="Hazard Watch">
       <ul className="flex flex-wrap items-center gap-3" aria-label="Hazard sources">
         {LINKS.map((l) => (
           <li key={l.url}>

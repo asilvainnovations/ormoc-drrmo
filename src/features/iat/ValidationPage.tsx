@@ -20,7 +20,7 @@ export function ValidationPage() {
   const rows = useMemo(() => (data ? validationProgress(data.indicators, data.domains, data.responses) : []), [data]);
   const items = useMemo(() => (data ? queue(data.indicators, data.domains, data.responses, f) : []), [data, f]);
   if (data === undefined) return <Loading />;
-  if (data === null) return <div className="page"><PageHeader title="Cycle not found" back="/assess" /></div>;
+  if (data === null) return <div className="page"><PageHeader title="Cycle Not Found" back="/assess" /></div>;
   const ab = totals(rows, ['A', 'B']);
   const c = totals(rows, ['C']);
   const agree = agreement(ab.confirmed + c.confirmed, ab.revised + c.revised);

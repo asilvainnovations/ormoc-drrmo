@@ -30,10 +30,10 @@ export function ErrorReportsPage() {
   }, []);
   useEffect(() => { if (online && has('admin')) void load(); }, [online, has, load]);
 
-  if (!has('admin')) return <div className="page"><PageHeader title="Error reports" back="/settings" /><Notice tone="warn">Only a system administrator can read error reports.</Notice></div>;
+  if (!has('admin')) return <div className="page"><PageHeader title="Error Reports" back="/settings" /><Notice tone="warn">Only a system administrator can read error reports.</Notice></div>;
   return (
     <div className="page">
-      <PageHeader title="Error reports" back="/settings" subtitle="The newest 200 reports. Each holds the app version, the screen, the error and the browser; email addresses and long numbers are removed before sending."
+      <PageHeader title="Error Reports" back="/settings" subtitle="The newest 200 reports. Each holds the app version, the screen, the error and the browser; email addresses and long numbers are removed before sending."
         actions={<Button tip="Load the reports again (needs a connection)" variant="secondary" icon={RefreshCw} disabled={!online} onClick={() => void load()}>Refresh</Button>} />
       {!online && <Notice tone="info" title="Needs a connection">Reports are read from the server and are not kept on this device.</Notice>}
       {error && <Notice tone="bad">{error}</Notice>}

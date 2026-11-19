@@ -16,7 +16,7 @@ export function ResultsBoard() {
   const box = useRef<HTMLDivElement>(null);
   const rows = useMemo(() => (data ? validationProgress(data.indicators, data.domains, data.responses) : []), [data]);
   if (data === undefined) return <Loading />;
-  if (data === null) return <div className="page"><PageHeader title="Cycle not found" back="/assess" /></div>;
+  if (data === null) return <div className="page"><PageHeader title="Cycle Not Found" back="/assess" /></div>;
   const r = data.results;
   const ab = totals(rows, ['A', 'B']);
   const all = totals(rows);

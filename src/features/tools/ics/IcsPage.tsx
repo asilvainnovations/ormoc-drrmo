@@ -65,11 +65,11 @@ export function IcsPage() {
 
   return (
     <div className="page">
-      <PageHeader title="ICS exercise simulator" back="/tools" subtitle="Practise the Philippine Incident Command System on Ormoc hazards. Every decision is scored against national doctrine and explained." />
+      <PageHeader title="ICS Exercise Simulator" back="/tools" subtitle="Practise the Philippine Incident Command System on Ormoc hazards. Every decision is scored against national doctrine and explained." />
       <Notice tone="info" title="Training tool">
         Scenario names, figures and events are fictional. The procedures follow the cited laws and guidelines; their official text governs. Validate local procedures against the approved Manual of Operations.
       </Notice>
-      <Section title="Choose an exercise">
+      <Section title="Choose an Exercise">
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           <ModeCard title="Individual drill" text="Take one position in the Incident Management Team and run four operational periods, with a timer and feedback after each decision."
             onClick={() => { setSetup({ ...setup, mode: 'single' }); setView('setup'); }} tip="Set up a solo exercise in one ICS position" />
@@ -83,7 +83,7 @@ export function IcsPage() {
             onClick={() => setView('quiz')} tip="Take the ICS knowledge check" />
         </div>
       </Section>
-      <Section title="Your recent exercises">
+      <Section title="Your Recent Exercises">
         {runs.length === 0 ? <p className="text-muted">None yet on this device.</p> : (
           <ul className="divide-y divide-line">
             {runs.slice(0, 8).map((r) => (
@@ -97,7 +97,7 @@ export function IcsPage() {
         )}
         <p className="mt-2 text-sm text-muted">Results are kept on this device only. Print or export the after-action review to keep it as a training record (IAT A2.6, B7.2, B7.3).</p>
       </Section>
-      <Section title="Who decides what">
+      <Section title="Who Decides What">
         <dl className="grid gap-3 sm:grid-cols-2">
           {[['City Mayor (Responsible Official)', 'Sets policy and priorities and delegates authority to the Incident Commander.'],
             ['Incident Commander', 'Manages the on-scene response from the Incident Command Post under a delegation of authority.'],
@@ -269,10 +269,10 @@ function PlayView({ scenario, setup, diff, live, setLive, onFinish, onQuit }: {
           )}
         </div>
         <aside className="space-y-4">
-          <Section title="Position duties">
+          <Section title="Position Duties">
             <ul className="list-disc space-y-1 pl-5 text-sm">{(ICS.ROLE_TASKS[role.id] ?? role.duties).map((t) => <li key={t}>{t}</li>)}</ul>
           </Section>
-          <Section title="Forms this period">
+          <Section title="Forms This Period">
             <ul className="space-y-1 text-sm">
               {ph.forms.map((f) => <li key={f}><span className="font-data font-semibold">ICS {f}</span> {ICS.FORMS[f]}</li>)}
               {report && <li className="pt-1"><span className="font-semibold">{report.r}:</span> harmonized Forms {report.f.join(', ')} ({report.f.map((f) => ICS.HFORMS[f]?.[0]).join('; ')})</li>}
@@ -296,7 +296,7 @@ function Results({ run, onAgain, onHome }: { run: RunRecord; onAgain: () => void
     JSON.stringify({ tool: 'DDRiVE-M ICS, Ormoc City DRRM platform', ...run }, null, 2));
   return (
     <div className="page">
-      <PageHeader title="After-action review" subtitle={`${run.participant || 'Participant'}, ${run.mode === 'multi' ? 'team tabletop' : roleOf(run.role).name}, ${run.scenarioName}, ${difficultyOf(run.difficulty).name}, ${fmt(run.seconds)}`} />
+      <PageHeader title="After-Action Review" subtitle={`${run.participant || 'Participant'}, ${run.mode === 'multi' ? 'team tabletop' : roleOf(run.role).name}, ${run.scenarioName}, ${difficultyOf(run.difficulty).name}, ${fmt(run.seconds)}`} />
       <div className="mb-4 flex flex-wrap gap-2 print:hidden">
         <Button onClick={() => window.print()} icon={Printer} tip="Print or save as PDF for the training record">Print AAR</Button>
         <Button variant="secondary" onClick={exportRun} icon={Download} tip="Download the full record as a JSON file">Export</Button>
@@ -347,7 +347,7 @@ function Results({ run, onAgain, onHome }: { run: RunRecord; onAgain: () => void
           </table>
         </div>
       </Section>
-      <Section title="Lessons to carry into the Manual of Operations">
+      <Section title="Lessons to Carry into the Manual of Operations">
         <ul className="list-disc space-y-1 pl-5">
           {run.picks.filter((p) => p.verdict === 'weak' || p.verdict === 'unsafe').map((p) => <li key={p.phase}>{p.name}: {p.bestWhy}</li>)}
           {run.picks.every((p) => p.verdict === 'best' || p.verdict === 'good') && <li>No weak or unsafe decisions. Test the same scenario at a harder level, or run it as a tabletop with the CDRRMC.</li>}
@@ -365,7 +365,7 @@ function LearnView({ onBack }: { onBack: () => void }) {
   const glossary = useMemo(() => Object.entries(ICS.GLOSSARY).sort(([a], [b]) => a.localeCompare(b)), []);
   return (
     <div className="page">
-      <PageHeader title="Learn the framework" subtitle="Philippine ICS, the EOC, reporting and anticipatory action, localized for Ormoc." />
+      <PageHeader title="Learn the Framework" subtitle="Philippine ICS, the EOC, reporting and anticipatory action, localized for Ormoc." />
       <button type="button" onClick={onBack} className="mb-4 inline-flex min-h-tap items-center font-semibold underline" {...tip('Back to the list of exercises')}>Back</button>
       <div className="grid gap-6 lg:grid-cols-[16rem_minmax(0,1fr)]">
         <nav aria-label="Topics"><ul className="space-y-1">
@@ -390,7 +390,7 @@ function QuizView({ onBack }: { onBack: () => void }) {
   const right = answers.filter((a, i) => a === ICS.QUIZ[i]!.a).length;
   return (
     <div className="page">
-      <PageHeader title="Quick quiz" subtitle="Choose an answer to see whether it is right and why." />
+      <PageHeader title="Quick Quiz" subtitle="Choose an answer to see whether it is right and why." />
       <button type="button" onClick={onBack} className="mb-4 inline-flex min-h-tap items-center font-semibold underline" {...tip('Back to the list of exercises')}>Back</button>
       <div className="max-w-3xl space-y-6">
         {ICS.QUIZ.map((q, qi) => (

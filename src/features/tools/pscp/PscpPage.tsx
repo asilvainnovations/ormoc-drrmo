@@ -44,7 +44,7 @@ export function PscpPage() {
 
       {tab === 'policy' && (
         <>
-          <Section title="Policy and scope">
+          <Section title="Policy and Scope">
             <div className="grid max-w-3xl gap-4">
               <Field label="Office">{(id) => <Input id={id} value={plan.office} onChange={(e) => set({ ...plan, office: e.target.value })} />}</Field>
               <Field label="Continuity policy">{(id) => <Textarea id={id} value={plan.policy} onChange={(e) => set({ ...plan, policy: e.target.value })} />}</Field>
@@ -64,7 +64,7 @@ export function PscpPage() {
       )}
 
       {tab === 'bia' && (
-        <Section title="Essential functions and business impact analysis">
+        <Section title="Essential Functions and Business Impact Analysis">
           <p className="mb-3 max-w-prose text-sm text-muted">Priority 1 is mission-critical. MTPD: the longest the function can stop before the harm is unacceptable. RTO: when it must be running again (must not exceed the MTPD). RPO: how much data loss is tolerable. All in hours.</p>
           <div className="space-y-3">
             {plan.functions.map((f, i) => <FunctionCard key={f.id} f={f} onChange={(nf) => set({ ...plan, functions: plan.functions.map((x, k) => (k === i ? nf : x)) })}
@@ -76,7 +76,7 @@ export function PscpPage() {
       )}
 
       {tab === 'risk' && (
-        <Section title="Risk assessment">
+        <Section title="Risk Assessment">
           <RiskMatrix plan={plan} />
           <div className="mt-4 space-y-2">
             {plan.risks.map((r, i) => (
@@ -95,20 +95,20 @@ export function PscpPage() {
 
       {tab === 'strategy' && (
         <>
-          <Section title="Primary and alternate sites">
+          <Section title="Primary and Alternate Sites">
             <Rows rows={plan.sites} onChange={(sites) => set({ ...plan, sites })} blank={{ kind: 'alternate' as const, name: '', address: '', readiness: 'warm' as const, capacity: '', notes: '' }}
               cols={[{ k: 'kind', l: 'Site', options: ['primary', 'alternate'] }, { k: 'name', l: 'Name' }, { k: 'address', l: 'Address' }, { k: 'readiness', l: 'Readiness', options: ['hot', 'warm', 'cold'] }, { k: 'capacity', l: 'Capacity' }, { k: 'notes', l: 'Notes' }]} />
             <p className="mt-2 text-sm text-muted">Hot: ready at once. Warm: partly equipped. Cold: space only. Check the alternate site against HazardHunterPH before designating it.</p>
           </Section>
-          <Section title="Orders of succession">
+          <Section title="Orders of Succession">
             <Rows rows={plan.succession} onChange={(succession) => set({ ...plan, succession })} blank={{ position: '', first: '', second: '', third: '' }}
               cols={[{ k: 'position', l: 'Position' }, { k: 'first', l: 'First successor' }, { k: 'second', l: 'Second' }, { k: 'third', l: 'Third' }]} />
           </Section>
-          <Section title="Delegations of authority">
+          <Section title="Delegations of Authority">
             <Rows rows={plan.delegations} onChange={(delegations) => set({ ...plan, delegations })} blank={{ authority: '', delegate: '', conditions: '', limits: '' }}
               cols={[{ k: 'authority', l: 'Authority' }, { k: 'delegate', l: 'Delegate' }, { k: 'conditions', l: 'When it applies' }, { k: 'limits', l: 'Limits' }]} />
           </Section>
-          <Section title="Vital records">
+          <Section title="Vital Records">
             <Rows rows={plan.records} onChange={(records) => set({ ...plan, records })} blank={{ record: '', location: '', backup: '', custodian: '' }}
               cols={[{ k: 'record', l: 'Record' }, { k: 'location', l: 'Where kept' }, { k: 'backup', l: 'Backup (3-2-1: three copies, two media, one off site)' }, { k: 'custodian', l: 'Custodian' }]} />
           </Section>
@@ -133,7 +133,7 @@ export function PscpPage() {
                 onClick={() => set({ ...plan, phases: plan.phases.map((x, k) => (k === pi ? { ...x, steps: [...x.steps, { text: '', done: false }] } : x)) })}>Add step</Button>
             </Section>
           ))}
-          <Section title="Testing and maintenance">
+          <Section title="Testing and Maintenance">
             <div className="grid max-w-3xl gap-4 sm:grid-cols-2">
               <Field label="Last test">{(id) => <Input id={id} type="date" value={plan.testing.lastTest} onChange={(e) => set({ ...plan, testing: { ...plan.testing, lastTest: e.target.value } })} />}</Field>
               <Field label="Next test">{(id) => <Input id={id} type="date" value={plan.testing.nextTest} onChange={(e) => set({ ...plan, testing: { ...plan.testing, nextTest: e.target.value } })} />}</Field>

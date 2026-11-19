@@ -195,7 +195,7 @@ export function ComponentsPage() {
   ];
   return (
     <div className="page">
-      <PageHeader title="Interface components" back="/settings"
+      <PageHeader title="Interface Components" back="/settings"
         subtitle={`${entries.length} entries covering the 51 files in src/components/ui and the theme provider. Each works below with City colours; nothing here saves City data.`} />
       <Accordion type="multiple" className="rounded-sheet border border-line bg-surface px-4">
         {entries.map((e) => (

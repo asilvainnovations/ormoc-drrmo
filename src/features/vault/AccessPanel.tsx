@@ -29,7 +29,7 @@ export function AccessPanel({ d }: { d: VaultDocument }) {
   };
 
   return (
-    <Section title="Who may open it">
+    <Section title="Who May Open It">
       {restricted ? <>
         <Badge tone="warn">Restricted</Badge>
         <p className="mt-2 text-sm">CDRRMO Head{(d.allowed_roles ?? []).length ? `, ${(d.allowed_roles ?? []).map((r) => ROLE_LABEL[r]).join(', ')}` : ''}. Other Vault users do not see this document.</p>

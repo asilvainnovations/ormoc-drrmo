@@ -21,7 +21,7 @@ describe('EOC capability checklist (1.20.0)', () => {
     await seed();
     render(<MemoryRouter initialEntries={['/assess/cy1/eoc-capability']}><Routes>
       <Route path="/assess/:cycleId/eoc-capability" element={<EocCapabilityPage />} /></Routes></MemoryRouter>);
-    expect(await screen.findByText('EOC capability checklist')).toBeTruthy();
+    expect(await screen.findByText('EOC Capability Checklist')).toBeTruthy();
     expect(screen.getByText(/1 of 2 answers for the primary eoc are pre-filled/i)).toBeTruthy();
     expect(screen.getAllByText('B2 Facility').length).toBeGreaterThan(0);
     expect(screen.getAllByText('No IAT counterpart (assessed locally)').length).toBeGreaterThan(0);

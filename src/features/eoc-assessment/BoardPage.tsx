@@ -128,7 +128,7 @@ export function EocAssessmentBoardPage() {
 
   return (
     <div className="page">
-      <PageHeader title="EOC capability assessment" back="/today"
+      <PageHeader title="EOC Capability Assessment" back="/today"
         subtitle="The 154-item EOC Capability Assessment Checklist (OCD/NDRRMC TWG, Dec 2017) in 15 sections, answered from the IAT v1-7 B_EOC evidence."
         actions={board && canValidate && board.run.status === 'draft' ? (
           <Button variant="primary" icon={CheckCheck} busy={busy} disabled={!online} onClick={validate}

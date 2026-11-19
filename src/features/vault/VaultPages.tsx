@@ -127,7 +127,7 @@ export function VaultDocumentPage() {
   }, [id]);
   if (!data) return <Loading />;
   const { d } = data;
-  if (!d) return <div className="page"><PageHeader title="Document not found" back="/vault" subtitle="It may not have synced to this device yet." /></div>;
+  if (!d) return <div className="page"><PageHeader title="Document Not Found" back="/vault" subtitle="It may not have synced to this device yet." /></div>;
   const canEdit = d.uploaded_by === userId || has('cdrrmo_head') || !d.uploaded_by;
   const open = async () => {
     const tab = window.open('', '_blank');

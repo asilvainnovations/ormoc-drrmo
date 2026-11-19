@@ -78,7 +78,7 @@ export function PdraNewPage() {
           </div>
           {hazard?.note && <p className="mt-2 text-sm text-muted">{hazard.note}</p>}
         </Section>
-        <Section title="Projected impact">
+        <Section title="Projected Impact">
           <ChoiceGroup legend="Impact classification" value={f.impact_class} onChange={(v) => setF({ ...f, impact_class: v })} columns={2}
             options={(Object.keys(IMPACT) as ImpactClass[]).map((k) => ({ value: k, label: IMPACT[k], detail: k === 'severe' ? 'Major, large-scale, possibly catastrophic damage or disruption (RA 12287 Sec. 3(h))' : undefined }))} />
           <fieldset className="mt-4">

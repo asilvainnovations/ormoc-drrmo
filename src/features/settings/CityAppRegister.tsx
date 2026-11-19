@@ -70,7 +70,7 @@ export function CityAppRegister() {
   const officeName = new Map(offices.map((o) => [o.id, o.name]));
 
   return (
-    <Section title="City register of connected apps" action={isAdmin && online && <Button tip="Register a City system's OAuth client so it can be reviewed and approved (administrator)" variant="secondary" onClick={() => { setF(blank); setProblem(null); setOpen(true); }}>Register an app</Button>}>
+    <Section title="City Register of Connected Apps" action={isAdmin && online && <Button tip="Register a City system's OAuth client so it can be reviewed and approved (administrator)" variant="secondary" onClick={() => { setF(blank); setProblem(null); setOpen(true); }}>Register an app</Button>}>
       <p className="mb-3 text-sm text-muted">An app can read City records only after it is approved here, and only what the signed-in person's role can read. It can never change anything. Approval is reviewed every year.</p>
       {!online ? <Notice tone="warn">This needs a connection.</Notice>
         : apps === null ? <Loading />

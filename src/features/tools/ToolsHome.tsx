@@ -188,17 +188,18 @@ export const SPECIALIZED_TOOLS: ExternalTool[] = [
 
 /** DDRiVE-M, an external entry point kept apart from the app's own routes. */
 export const DDRIVE_M: ExternalTool = {
-  id: 'ddrivem', name: 'DDRiVE-M', by: 'ASilva Innovations',
+  id: 'ddrivem', name: 'DDRiVE-M: Data-Driven Risk and Vulnerability Evaluation and Management', by: 'ASilva Innovations (Alvin M. Silva)',
   url: 'https://ddrive-m.asilvainnovations.com/', icon: Network, category: 'specialized', priority: 'supporting',
-  use: 'Detect and direct, respond and recover, and mitigate: an integrated DRRM decision-support platform.',
-  when: 'Scenario planning, operational coordination, resilience programming and application of the Manual of Operations.',
+  use: 'Disaster resilience intelligence for LGUs, enterprises and development institutions, across seven phases: Detection, Diagnosis, Response, Integration, Validation, Enhancement and Monitoring.',
+  when: 'PAGASA warning relay, an ISO 31000 risk register, anticipatory action under RA 12287, the UNDRR Ten Essentials scorecard, exercises and draft DRRM, contingency, continuity and recovery plans.',
+  limitations: 'DDRiVE-M relays official warnings but does not issue them. Follow PAGASA, PHIVOLCS and the CDRRMO.',
 };
 
 /** Every external service on this page, in display order. The tools test checks each one. */
 export const EXTERNAL_TOOLS: ExternalTool[] = [...PHILIPPINE_TOOLS, ...INTERNATIONAL_TOOLS, ...SPECIALIZED_TOOLS, DDRIVE_M];
 
 export const INTERNAL_TOOLS: InternalTool[] = [
-  { to: '/tools/flood-intelligence', name: 'Flood intelligence', icon: Waves, iat: 'A5, A6, B2, B5',
+  { to: '/tools/flood-intelligence', name: 'Flood Intelligence', icon: Waves, iat: 'A5, A6, B2, B5',
     text: 'Flood map of the 85 barangays over the City sheet, a watch list, a benefit-cost screen for flood measures, and PAGASA and supporting sources. Decision support only — not an official forecast or trigger.' },
   { to: '/tools/echo', name: 'ECHO: Evacuation and Camp Handling Operations', icon: Tent, iat: 'A7.4, A7.6, A7.9, B5.1, B6.3, B6.4',
     text: 'Simulate the whole cycle from evacuation planning to camp closure, screen centres and routes on the hazard sheets, keep the evacuation-centre inventory and aggregate camp reports, and see one EOC picture with SitRep figures.' },
@@ -294,7 +295,7 @@ export function ToolsHome() {
 
       <UserGuideCard />
 
-      <Notice tone="info" title="Multi-hazard intelligence hub">
+      <Notice tone="info" title="Multi-Hazard Intelligence Hub">
         <span className="flex items-start gap-2">
           <Compass className="mt-0.5 h-5 w-5 shrink-0" aria-hidden />
           <span>National warning systems, hazard and risk maps, satellite intelligence and international monitoring. Use them alongside the EOC Manual and the CDRRMO protocols.</span>
@@ -303,37 +304,39 @@ export function ToolsHome() {
 
       {!online && <Notice tone="warn">You are offline. These services need an internet connection, and anything you saw earlier may no longer show current conditions.</Notice>}
 
-      <Section title="1. Official Philippine warning systems">
-        <p className="mb-3 text-sm text-muted">Act on official PAGASA and PHIVOLCS bulletins when making operational decisions, issuing public information and starting a response.</p>
-        <ToolGrid tools={PHILIPPINE_TOOLS.filter((t) => t.category === 'official')} />
-      </Section>
-
-      <Section title="2. Philippine hazard mapping and risk analytics">
-        <p className="mb-3 text-sm text-muted">Local hazard susceptibility, exposure and multi-hazard information for the CDRA, barangay risk profiles and land-use planning.</p>
-        <ToolGrid tools={PHILIPPINE_TOOLS.filter((t) => t.category === 'philippines')} />
-      </Section>
-
-      <Section title="3. International disaster intelligence">
-        <p className="mb-3 text-sm text-muted">Satellite observation, emergency mapping, disaster alerts and environmental data that add to local monitoring.</p>
-        <ToolGrid tools={INTERNATIONAL_TOOLS} />
-      </Section>
-
-      <Section title="4. Satellite, weather and specialized monitoring">
-        <p className="mb-3 text-sm text-muted">Supplementary views for situational awareness and exercises. They do not replace official warnings.</p>
-        <ToolGrid tools={SPECIALIZED_TOOLS} />
-      </Section>
-
-      <Section title="5. DDRiVE-M and readiness tools">
+      <Section title="1. DDRiVE-M and Readiness Tools">
+        <p className="mb-3 text-sm text-muted">DDRiVE-M (Data-Driven Risk and Vulnerability Evaluation and Management) is the integrated disaster resilience intelligence platform continuously developed by ASilva Innovations, taking LGUs, enterprises and development institutions through seven phases from Detection and Diagnosis to Response, Integration, Validation, Enhancement and Monitoring; MODE's barangay DDRiVE desk assessment comes from it. The readiness tools let the CDRRMO and EOC rehearse and record their work (flood intelligence, evacuation and camp handling, ICS exercises, continuity planning and Gawad KALASAG readiness) as evidence for the IAT.</p>
         <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
           <ToolCard tool={DDRIVE_M} />
           {INTERNAL_TOOLS.map((t) => <InternalToolCard key={t.to} tool={t} />)}
         </div>
       </Section>
 
-      <Section title="6. Operational use and data governance">
+      <Section title="2. Official Philippine Warning Systems">
+        <p className="mb-3 text-sm text-muted">Act on official PAGASA and PHIVOLCS bulletins when making operational decisions, issuing public information and starting a response.</p>
+        <ToolGrid tools={PHILIPPINE_TOOLS.filter((t) => t.category === 'official')} />
+      </Section>
+
+      <Section title="3. Philippine Hazard Mapping and Risk Analytics">
+        <p className="mb-3 text-sm text-muted">Local hazard susceptibility, exposure and multi-hazard information for the CDRA, barangay risk profiles and land-use planning.</p>
+        <ToolGrid tools={PHILIPPINE_TOOLS.filter((t) => t.category === 'philippines')} />
+      </Section>
+
+      <Section title="4. International Disaster Intelligence">
+        <p className="mb-3 text-sm text-muted">Satellite observation, emergency mapping, disaster alerts and environmental data that add to local monitoring.</p>
+        <ToolGrid tools={INTERNATIONAL_TOOLS} />
+      </Section>
+
+      <Section title="5. Satellite, Weather and Specialized Monitoring">
+        <p className="mb-3 text-sm text-muted">Supplementary views for situational awareness and exercises. They do not replace official warnings.</p>
+        <ToolGrid tools={SPECIALIZED_TOOLS} />
+      </Section>
+
+
+      <Section title="6. Operational Use and Data Governance">
         <div className="grid gap-3 md:grid-cols-2">
           <div className="rounded-sheet border border-line bg-surface p-4">
-            <p className="flex items-center gap-2 font-bold"><Radio className="h-5 w-5 text-action" aria-hidden />Warning and verification</p>
+            <p className="flex items-center gap-2 font-bold"><Radio className="h-5 w-5 text-action" aria-hidden />Warning and Verification</p>
             <ul className="mt-3 list-disc space-y-1 pl-5 text-sm text-muted">
               <li>Act on PAGASA and PHIVOLCS official bulletins first.</li>
               <li>Check warnings against local observations and the technical offices concerned.</li>
@@ -342,7 +345,7 @@ export function ToolsHome() {
             </ul>
           </div>
           <div className="rounded-sheet border border-line bg-surface p-4">
-            <p className="flex items-center gap-2 font-bold"><ShieldCheck className="h-5 w-5 text-action" aria-hidden />Evidence and data governance</p>
+            <p className="flex items-center gap-2 font-bold"><ShieldCheck className="h-5 w-5 text-action" aria-hidden />Evidence and Data Governance</p>
             <ul className="mt-3 list-disc space-y-1 pl-5 text-sm text-muted">
               <li>Cite the original data provider and dataset.</li>
               <li>Record the extraction date and the observation time.</li>

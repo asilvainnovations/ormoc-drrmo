@@ -158,9 +158,9 @@ export function DeclarationPage() {
 
         <div>
           {data.actions.length > 0 ? <ChecklistSection actions={data.actions} /> : reached('declared') ? (
-            <Section title="Anticipatory actions"><Button tip="Add the anticipatory action checklist (from IRR Rule IV) for this hazard" onClick={async () => toast(`${await loadChecklist({ declarationId: d.id }, d.hazard_code)} actions loaded`)}>Load the checklist</Button></Section>
-          ) : <Section title="Anticipatory actions"><p className="text-muted">The IRR Rule IV checklist loads when the declaration is recorded.</p></Section>}
-          <Section title="Funds released" action={d.status === 'declared' && has('cdrrmo_head') && <Button tip="Record a release of anticipatory action funds. The tranche limits are checked" variant="secondary" icon={Plus} onClick={() => setFundOpen(true)}>Record disbursement</Button>}>
+            <Section title="Anticipatory Actions"><Button tip="Add the anticipatory action checklist (from IRR Rule IV) for this hazard" onClick={async () => toast(`${await loadChecklist({ declarationId: d.id }, d.hazard_code)} actions loaded`)}>Load the checklist</Button></Section>
+          ) : <Section title="Anticipatory Actions"><p className="text-muted">The IRR Rule IV checklist loads when the declaration is recorded.</p></Section>}
+          <Section title="Funds Released" action={d.status === 'declared' && has('cdrrmo_head') && <Button tip="Record a release of anticipatory action funds. The tranche limits are checked" variant="secondary" icon={Plus} onClick={() => setFundOpen(true)}>Record disbursement</Button>}>
             {data.disb.length === 0 ? <p className="text-muted">No disbursement recorded.</p> : (
               <List>{data.disb.map((x) => <ListRow key={x.id} title={`₱${fmtPeso(Number(x.amount))} ${x.purpose}`}
                 meta={`${SOURCE[x.source]}. Intervention ${fmtDateTime(x.intervention_at)}`}

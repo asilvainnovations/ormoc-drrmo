@@ -270,7 +270,7 @@ export function PublicHome() {
         <Card className="rounded-sheet">
           <CardHeader>
             <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-sky-soft text-action"><Users className="h-5 w-5" aria-hidden /></span>
-            <CardTitle id="participate" className="pt-2 text-2xl">Participate in strengthening the Manual</CardTitle>
+            <CardTitle id="participate" className="pt-2 text-2xl">Participate in Strengthening the Manual</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3 text-muted">
             <p>A useful Manual must be technically sound, practical in the field, understood by the offices responsible for implementation and consistent with approved City policies and applicable law.</p>

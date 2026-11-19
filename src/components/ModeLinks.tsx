@@ -44,7 +44,7 @@ export function ModeLinksSection({ indicatorIds, className }: { indicatorIds: st
   const data = useModeLinks(indicatorIds);
   if (!data || (data.links.length === 0 && data.flags.length === 0)) return null;
   return (
-    <Section title="Where this is done in MODE" className={className}>
+    <Section title="Where This Is Done in MODE" className={className}>
       <ModeLinks indicatorIds={indicatorIds} />
     </Section>
   );

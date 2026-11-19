@@ -44,7 +44,7 @@ export function FloodIntelligencePage() {
 
   return (
     <div className="page space-y-5">
-      <PageHeader title="Flood intelligence" back="/tools" subtitle="Which barangays flood, how many people live there, and what to compare before spending. Reference data, not a live forecast." />
+      <PageHeader title="Flood Intelligence" back="/tools" subtitle="Which barangays flood, how many people live there, and what to compare before spending. Reference data, not a live forecast." />
       <Notice tone="warn" title="Operational safety">
         Follow current PAGASA bulletins, City CDRRMO instructions and approved EOC procedures. A flood class or an exposed-population figure is not, by itself, an evacuation order or declaration threshold.
       </Notice>
@@ -65,7 +65,7 @@ export function FloodIntelligencePage() {
       {view === 'watch' && <WatchTab rows={rows} onPick={pick} />}
       {view === 'plan' && <PlanTab />}
       {view === 'sources' && (
-        <Section title="Official and supporting sources">
+        <Section title="Official and Supporting Sources">
           <List>{OUTBOUND.map((t) => <li key={t.url} className="border-b border-line py-3 last:border-0"><a href={t.url} target="_blank" rel="noopener noreferrer" className="flex items-start gap-2 font-medium text-action hover:underline" {...tip(`Open ${t.name} in a new tab`)}><ExternalLink className="mt-0.5 h-4 w-4 shrink-0" aria-hidden /><span>{t.name}<span className="mt-0.5 block text-xs font-normal text-muted">{t.by}</span><span className="mt-1 block text-sm font-normal text-muted">{t.use}</span></span></a></li>)}</List>
           <p className="mt-3 text-sm text-muted">The City's other hazard sheets, with identify and measure tools, are in <Link className="font-medium text-action underline" to="/assess/hazard-maps">Hazard maps</Link>. Flood classes come from DDRiVE and the City's flood sheet (MGB Region VIII, mapped by CPDO-GIS); check each sheet's date and limits before operational use.</p>
         </Section>
