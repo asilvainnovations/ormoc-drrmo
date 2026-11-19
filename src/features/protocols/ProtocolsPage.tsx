@@ -23,6 +23,8 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Input as KitInput } from '@/components/ui/input';
 import { Badge as KitBadge } from '@/components/ui/badge';
 import { tip } from '@/components/Tooltip';
+import GlassCard from '@/components/ui/GlassCard';
+import { PILLAR_CLASS } from '@/features/library/pillars';
 
 export function ProtocolsPage({ kind }: { kind: 'workflows' | 'protocols' }) {
   const wanted = (t: ProtocolTemplate) => (kind === 'workflows') === templateIsWorkflow(t);
@@ -108,19 +110,22 @@ export function ProtocolsPage({ kind }: { kind: 'workflows' | 'protocols' }) {
         return (
           <div key={area.key}>
             {i > 0 && <Separator className="my-6" />}
-            <Section title={area.label}>
-              <p className="mb-3 -mt-1 max-w-prose text-sm text-muted">{area.about}</p>
-              {cats.length === 0 && <p className="text-sm text-muted">No {kind === 'workflows' ? 'workflow' : 'protocol'} in this area yet.</p>}
-              {cats.map((cat) => (
-                <div key={cat} className="mb-4">
-                  <h3 className="mb-1 text-sm font-semibold text-muted">{CATEGORY[cat]}</h3>
-                  <List>
-                    {groups.get(cat)!.map((t) => <ListRow tip="See the steps, the process owner and the forms, then start it" key={t.id} onClick={() => setOpen(t)} title={<>{t.title}{t.sop_ref && <KitBadge variant="outline" size="sm" className="ml-2 align-middle font-data">{t.sop_ref.split(' (')[0]}</KitBadge>}</>}
-                      meta={[t.process_owner && `Owner: ${t.process_owner}`, t.trigger_text].filter(Boolean).join('. ') || undefined}
-                      trailing={<StatusBadge status={t.status} />} />)}
-                  </List>
-                </div>
-              ))}
+            <Section title={`${area.label} (${cats.reduce((n, c) => n + (groups.get(c)?.length ?? 0), 0)})`}
+              action={<TextLink size="sm" to="/drrm/forms" tip={`See the forms recorded in ${area.short}`}>Forms in this area</TextLink>}>
+              <GlassCard hover={false} className={`border-l-4 p-3 sm:p-4 ${PILLAR_CLASS[area.key].edge}`}>
+                <p className="mb-3 max-w-prose text-sm text-muted">{area.about}</p>
+                {cats.length === 0 && <p className="text-sm text-muted">No {kind === 'workflows' ? 'workflow' : 'protocol'} in this area yet.</p>}
+                {cats.map((cat) => (
+                  <div key={cat} className="mb-4 last:mb-0">
+                    <h3 className="mb-1 text-sm font-semibold text-muted">{CATEGORY[cat]}</h3>
+                    <List>
+                      {groups.get(cat)!.map((t) => <ListRow tip="See the steps, the process owner and the forms, then start it" key={t.id} onClick={() => setOpen(t)} title={<>{t.title}{t.sop_ref && <KitBadge variant="outline" size="sm" className="ml-2 align-middle font-data">{t.sop_ref.split(' (')[0]}</KitBadge>}</>}
+                        meta={[t.process_owner && `Owner: ${t.process_owner}`, t.trigger_text].filter(Boolean).join('. ') || undefined}
+                        trailing={<StatusBadge status={t.status} />} />)}
+                    </List>
+                  </div>
+                ))}
+              </GlassCard>
             </Section>
           </div>
         );

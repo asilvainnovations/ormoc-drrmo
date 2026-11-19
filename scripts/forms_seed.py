@@ -118,7 +118,7 @@ FORMS = [
         f('quorum_met', 'Quorum met', 'checkbox', True),
         f('presiding_designation', 'Written designation of the presiding officer (if not the Chair)', 'text'),
         f('resolutions', 'Resolutions adopted (numbers)', 'textarea')]),
-    ('BUD-F01', 'LDRRMF thematic split', 'MOO Ch.1 sec. 1.4 and Ch.2 sec. 2.16.2: how the investment plan splits across thematic areas.', 'MOO Ch.2', [
+    ('BUD-F01', 'LDRRMF thematic split', 'Chapter 6 FIN-F02 (SOP 6-01; formerly Ch.2 sec. 2.16.2): how the investment plan splits across thematic areas.', 'MOO Ch.6', [
         f('fiscal_year', 'Fiscal year', 'integer', True, min=2020),
         f('total_php', 'Total LDRRMF (PHP)', 'number', True, min=0),
         f('prevention_pct', 'Prevention and mitigation (% of the 70%)', 'number', True, min=0),
@@ -127,7 +127,7 @@ FORMS = [
         f('recovery_pct', 'Recovery and rehabilitation (% of the 70%)', 'number', True, min=0),
         f('aa_line_php', 'Anticipatory action line (PHP)', 'number', min=0),
         f('tagged', 'Every line tagged to an LDRRMP/CDP PPA', 'checkbox', True)]),
-    ('BUD-F02', 'Quarterly results-and-finance report', 'Ch.2 sec. 2.16.2 step 7: one report that every division feeds.', 'MOO Ch.2', [
+    ('BUD-F02', 'Quarterly results-and-finance report', 'Chapter 6 FIN-F03 (SOP 6-02; formerly Ch.2 sec. 2.16.2 step 7): one report that every division feeds.', 'MOO Ch.6', [
         f('quarter', 'Quarter', 'select', True, ['Q1', 'Q2', 'Q3', 'Q4']),
         f('obligation_rate_pct', 'Obligation rate (%)', 'number', True, min=0),
         f('results', 'Results against the LDRRMP', 'textarea', True),

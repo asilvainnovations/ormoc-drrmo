@@ -12,7 +12,7 @@ const STORAGE_KEY = 'mode.lang';
 
 export const STRINGS = {
   en: {
-    'nav.today': 'Today', 'nav.assess': 'Assess', 'nav.protocols': 'Protocols', 'nav.eoc': 'EOC',
+    'nav.today': 'Today', 'nav.assess': 'Assess', 'nav.protocols': 'DRRM', 'nav.eoc': 'EOC',
     'nav.library': 'Library', 'nav.vault': 'Vault', 'nav.tools': 'Tools', 'nav.hazardmaps': 'Hazard maps', 'nav.governance': 'Validation',
     'greet.morning': 'Good morning', 'greet.afternoon': 'Good afternoon', 'greet.evening': 'Good evening',
     'today.hero': 'Everything that needs your attention today, in one place.',
@@ -24,14 +24,14 @@ export const STRINGS = {
     'library.pillars': 'The four DRRM pillars',
     'library.pillars.about': 'Every chapter and manual file sits under one pillar, from prevention to recovery.',
     'pillar.prevention': 'Prevention & Mitigation', 'pillar.preparedness': 'Preparedness',
-    'pillar.response': 'Response', 'pillar.recovery': 'Recovery & Rehabilitation',
+    'pillar.response': 'Response & Early Recovery', 'pillar.recovery': 'Rehabilitation & Recovery',
     'library.chapters': 'Manual of Operations: chapters', 'library.areas': 'Functional areas',
     'common.open': 'Open',
     'settings.language': 'Language', 'settings.language.about': 'Navigation and dashboard in Ormocanon (Bisaya), Filipino (Tagalog) or English. The manual and legal texts stay in English.',
     'lang.en': 'English', 'lang.ceb': 'Ormocanon (Bisaya)', 'lang.fil': 'Filipino (Tagalog)',
   },
   ceb: {
-    'nav.today': 'Karon', 'nav.assess': 'Pagtimbang-timbang', 'nav.protocols': 'Mga Protocol', 'nav.eoc': 'EOC',
+    'nav.today': 'Karon', 'nav.assess': 'Pagtimbang-timbang', 'nav.protocols': 'DRRM', 'nav.eoc': 'EOC',
     'nav.library': 'Librarya', 'nav.vault': 'Vault', 'nav.tools': 'Mga Hinagiban', 'nav.hazardmaps': 'Mga Mapa sa Peligro', 'nav.governance': 'Pagpamatuod',
     'greet.morning': 'Maayong buntag', 'greet.afternoon': 'Maayong hapon', 'greet.evening': 'Maayong gabii',
     'today.hero': 'Tanang kinahanglan nimong atimanon karon, sa usa ka lugar.',
@@ -50,7 +50,7 @@ export const STRINGS = {
     'lang.en': 'English', 'lang.ceb': 'Ormocanon (Bisaya)', 'lang.fil': 'Filipino (Tagalog)',
   },
   fil: {
-    'nav.today': 'Ngayon', 'nav.assess': 'Pagtatasa', 'nav.protocols': 'Mga Protocol', 'nav.eoc': 'EOC',
+    'nav.today': 'Ngayon', 'nav.assess': 'Pagtatasa', 'nav.protocols': 'DRRM', 'nav.eoc': 'EOC',
     'nav.library': 'Aklatan', 'nav.vault': 'Vault', 'nav.tools': 'Mga Kasangkapan', 'nav.hazardmaps': 'Mga Mapa ng Panganib', 'nav.governance': 'Pagpapatunay',
     'greet.morning': 'Magandang umaga', 'greet.afternoon': 'Magandang hapon', 'greet.evening': 'Magandang gabi',
     'today.hero': 'Lahat ng kailangan mong tutukan ngayon, sa iisang lugar.',

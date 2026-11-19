@@ -66,6 +66,7 @@ export function SettingsPage() {
         <LanguageRow />
         <List>
           <ListRow tip="See what is waiting to send and anything the server refused" to="/settings/sync" title="Sync and offline data" meta="What is waiting to send, and anything the server refused" />
+          <ListRow tip="See every current notice and choose which kinds appear on the bell" to="/settings/notifications" title="Notifications" meta="EOC level, declarations, sync problems, requests, protocols and overdue actions" />
           {has('admin') && <ListRow tip="Approve new accounts, grant or remove roles, deactivate people" to="/settings/users" title="Users and roles" meta="Approve new accounts and grant roles" />}
           {has('admin') && <ListRow tip="Load or update the barangay list from the PSA PSGC file" to="/settings/barangays" title="Barangay list" meta="Import the barangays with their PSGC codes" />}
           {has('admin') && <ListRow tip="See crash and error reports sent by the app (needs a connection)" to="/settings/errors" title="Error reports" meta="Screens that crashed, with the app version and error" />}

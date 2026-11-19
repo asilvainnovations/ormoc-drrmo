@@ -3,12 +3,14 @@ import { AboutPage, BarangaysAdminPage, SettingsPage, SyncPage, UsersPage } from
 import { ConnectedAppsPage } from './ConnectedAppsPage';
 import { ErrorReportsPage } from './ErrorReportsPage';
 import { ComponentsPage } from './ComponentsPage';
+import { NotificationsPage } from '@/features/notifications/NotificationsPage';
 
 export default function SettingsRoutes() {
   return (
     <Routes>
       <Route index element={<SettingsPage />} />
       <Route path="sync" element={<SyncPage />} />
+      <Route path="notifications" element={<NotificationsPage />} />
       <Route path="users" element={<UsersPage />} />
       <Route path="barangays" element={<BarangaysAdminPage />} />
       <Route path="apps" element={<ConnectedAppsPage />} />
