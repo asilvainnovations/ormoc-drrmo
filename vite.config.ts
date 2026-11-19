@@ -123,12 +123,17 @@ export default defineConfig(({ command, mode }) => {
     build: {
       target: 'es2022',
       sourcemap: false,
+      // Two chunks are large on purpose and both load only when needed: the reference data (reference-*.js, about
+      // 2.4 MB, read once by the first sync, src/lib/bootstrap.ts) and the map engine (maplibre, about 1 MB, only on
+      // map screens). The limit sits just above them, so any new oversized chunk still warns.
+      chunkSizeWarningLimit: 2600,
       rollupOptions: {
         output: {
           manualChunks: {
             react: ['react', 'react-dom', 'react-router-dom'],
             data: ['dexie', 'dexie-react-hooks', '@supabase/supabase-js'],
             markdown: ['marked', 'dompurify'],
+            maplibre: ['maplibre-gl'],
           },
         },
       },
