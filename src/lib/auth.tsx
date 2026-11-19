@@ -36,6 +36,8 @@ interface AuthState {
   roles: Role[];
   has: (...r: Role[]) => boolean;
   signInWithPassword: (email: string, password: string) => Promise<void>;
+  /** 1.28.0: Google through Supabase Auth (PKCE). Leaves the page; /auth/confirm finishes the sign-in. */
+  signInWithGoogle: (next?: string) => Promise<void>;
   signUp: (email: string, password: string, fullName: string, position: string) => Promise<void>;
   resendConfirmation: (email: string) => Promise<void>;
   /** `next`: a same-site path to open after the link signs the person in (for example the OAuth consent screen). */
@@ -243,6 +245,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     has: (...r: Role[]) => roles.includes('admin') || r.some((x) => roles.includes(x)),
     signInWithPassword: async (email, password) => {
       const { error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) throw new Error(authMessage(error));
+    },
+    signInWithGoogle: async (next = '/today') => {
+      // A new Google account starts with no role, like any sign-up (ADR-009): it sees nothing until approved.
+      const { error } = await supabase.auth.signInWithOAuth({ provider: 'google',
+        options: { redirectTo: authRedirect(`/auth/confirm?next=${encodeURIComponent(next)}`), queryParams: { prompt: 'select_account' } } });
       if (error) throw new Error(authMessage(error));
     },
     signUp: async (email, password, fullName, position) => {
