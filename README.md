@@ -39,7 +39,7 @@ The app always works against a Supabase project; there is no demo mode. Copy `.e
 
 ```bash
 npm ci
-npm run dev        # http://localhost:5173
+npm run npm      # http://localhost:5173
 ```
 
 For training and validation workshops, use a separate training Supabase project with test accounts, never the production one. A production build without valid settings stops with a message. See [DEPLOY.md](DEPLOY.md) for creating the City-owned project, applying the database, opening sign-up and publishing the app.
