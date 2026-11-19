@@ -8,7 +8,7 @@
   publish = "dist"
 
 [build.environment]
-  NODE_VERSION = "22"
+  NODE_VERSION = "26"
   # The PWA build never needs a browser; skip Playwright's download on install.
   PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD = "1"
 

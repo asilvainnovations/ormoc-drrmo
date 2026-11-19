@@ -9,7 +9,7 @@ Time needed: about half a day, plus the time to invite staff.
 - [ ] A City email account to **own** the Supabase, Netlify and GitHub accounts (for example, `drrm-platform@ormoc.gov.ph`). This is about who owns and pays for the service. It does not limit who can sign in to the app: any email address can, including personal and consultant addresses (sections 2 and 4).
 - [ ] A password manager or vault for the database password and keys.
 - [ ] The DPO has reviewed the privacy notice text (Settings → About) and the cross-border transfer to Japan ([ADR-002](docs/adr/002-hosting-and-privacy.md), [ADR-021](docs/adr/021-production-region-tokyo.md)).
-- [ ] A workstation with Node 22+, Git and `psql` (PostgreSQL 15+ client).
+- [ ] A workstation with Node 26 (the version in package.json "engines" and in Vercel), Git and `psql` (PostgreSQL 15+ client).
 
 ## 1. Create the Supabase project (City-owned)
 
@@ -666,7 +666,7 @@ Classification takes one or more of `urban`, `coastal`, `riverine` and `upland`,
 
 ### Option A: Netlify (City-owned team)
 
-`netlify.toml` in the repository root already sets the build command (`npm run build`), the output folder (`dist`), Node 22, the single-page fallback, caching rules and the security headers. Nothing needs to be typed in the build settings.
+`netlify.toml` in the repository root already sets the build command (`npm run build`), the output folder (`dist`), Node 26, the single-page fallback, caching rules and the security headers. Nothing needs to be typed in the build settings.
 
 1. Sign in to Netlify with the City email and create a team named "City Government of Ormoc".
 2. **Add new site → Import an existing project → GitHub**. Authorise Netlify for the repository only (not the whole GitHub account) and pick the repository.
