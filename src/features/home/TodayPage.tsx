@@ -12,6 +12,7 @@ import { db } from '@/lib/db';
 import { useAuth } from '@/lib/auth';
 import { useActiveDeclaration, useNow } from '@/lib/hooks';
 import { cycleResults } from '@/domain/scoring';
+import { priorityTiers } from '@/domain/dashboard';
 import { statusCounts } from '@/domain/eoc_assessment';
 import { nextDeadline } from '@/domain/aa';
 import { canOperate } from '@/domain/eoc';
@@ -365,13 +366,9 @@ async function eocCapabilitySummary() {
 function ParetoCard({ data, t }: { data?: { cycle?: { id: string; name: string }; priority: { id: string; tier: 1 | 2 | 3; indicator: Pick<Indicator, 'id' | 'statement'>; response?: Response }[] }; t: (k: StringKey) => string }) {
   const TIER_KEY = { 1: 'today.pareto.tier1', 2: 'today.pareto.tier2', 3: 'today.pareto.tier3' } as const;
   if (!data) return <div className="mt-4"><Card><CardContent className="pt-6"><TodaySkeleton /></CardContent></Card></div>;
-  const rows = ([1, 2, 3] as const).map((tier) => {
-    const items = data.priority.filter((p) => p.tier === tier);
-    const met = items.filter((p) => (p.response?.score ?? 0) >= 3 && !p.response?.is_na).length;
-    return { tier, met, total: items.length };
-  });
-  const unmet = data.priority.filter((p) => (p.response?.score ?? 0) < 3 && !p.response?.is_na)
-    .sort((a, b) => a.tier - b.tier).slice(0, 5);
+  // ADR-044 principle 4: an unscored indicator is "not yet scored", never "needs work"; N/A leaves the count.
+  const { rows, needsWork } = priorityTiers(data.priority);
+  const unmet = needsWork.slice(0, 5);
   return (
     <div className="mt-4">
       <Card>
@@ -384,12 +381,12 @@ function ParetoCard({ data, t }: { data?: { cycle?: { id: string; name: string }
         </CardHeader>
         <CardContent className="space-y-3">
           {!data.cycle ? <p className="text-muted">{t('today.pareto.none')}</p> : <>
-            {rows.map(({ tier, met, total }, i) => (
+            {rows.map(({ tier, met, total, unscored }, i) => (
               <div key={tier}>
                 {i > 0 && <Separator className="mb-3" />}
                 <div className="mb-1 flex items-baseline justify-between gap-2 text-sm">
                   <span className="font-semibold text-ink">{'★'.repeat(4 - tier)} {t(TIER_KEY[tier])}</span>
-                  <span className="font-data text-muted">{met} of {total} {t('today.pareto.met')}</span>
+                  <span className="font-data text-muted">{met} of {total} {t('today.pareto.met')}{unscored > 0 && ` · ${unscored} ${t('today.pareto.unscored')}`}</span>
                 </div>
                 <Progress value={total ? (100 * met) / total : 0} variant={met === total && total > 0 ? 'success' : 'default'} aria-label={`Priority tier ${tier} met`} />
               </div>
