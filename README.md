@@ -32,7 +32,7 @@ It works with no signal. Entries are saved on the device and sent when a connect
 
 ## Accounts
 
-Anyone can create an account with an email address and a password. The account sees nothing until a system administrator approves it by granting a role (Settings → Users and roles). Invited staff, sign-in links by email and password reset all work too. See [ADR-009](docs/adr/009-open-signup-and-live-data.md).
+Anyone can create an account with an email address and a password. From 1.28.0 people can also sign in or sign up with a Google account, once the City enables the Google provider and sets `VITE_GOOGLE_SIGN_IN=on` (DEPLOY.md 2b); a Google account also starts with no role. The account sees nothing until a system administrator approves it by granting a role (Settings → Users and roles). Invited staff, sign-in links by email and password reset all work too. See [ADR-009](docs/adr/009-open-signup-and-live-data.md).
 
 Other City systems can offer **Sign in with MODE**: the platform is the consent screen for the project's OAuth 2.1 / OpenID Connect server (`/oauth/consent`). People see and withdraw the apps they allowed under Settings → Connected apps. Tokens issued to other apps are read-only in the database. See [ADR-010](docs/adr/010-oauth-provider-read-only-clients.md) and DEPLOY.md section 2a.
 

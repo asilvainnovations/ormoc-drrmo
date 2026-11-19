@@ -25,4 +25,7 @@ export const env = {
   appVersion: '1.9.0',
   /** Folder holding ormoc.pmtiles, fonts/ and sprites/ (scripts/build_basemap.sh makes and uploads them). */
   basemapBase: basemapOverride || (checked.url ? `${checked.url}/storage/v1/object/public/basemap` : ''),
+  /** 1.28.0: "Continue with Google" shows only when the City sets VITE_GOOGLE_SIGN_IN=on, after enabling the Google
+   *  provider in Supabase Auth (DEPLOY.md section 2). Off by default, so a build never offers a broken button. */
+  googleSignIn: ['on', 'true', '1'].includes(String(import.meta.env.VITE_GOOGLE_SIGN_IN ?? '').toLowerCase()),
 };

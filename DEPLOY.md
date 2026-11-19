@@ -56,6 +56,21 @@ Authentication → SMTP: **required** once sign-up is open. Set the City's mail 
 
 Authentication → Rate Limits: keep the defaults or lower them. Consider **Attack Protection → CAPTCHA** (hCaptcha or Turnstile) if the sign-up form attracts spam; tell the developer, because the app must then send the CAPTCHA token.
 
+### 2b. Sign in with Google, optional (1.28.0)
+
+People can sign in, or create an account, with a Google account. A new Google account starts with no role, like any sign-up: it sees nothing until an administrator grants a role.
+
+1. **Google Cloud** (project `ormoc-cdrrmo-eoc`) → Google Auth Platform → Clients: a **Web application** client.
+   - **Authorized JavaScript origins:** `https://www.mode-cddrmo-ormoc.online` (and any other app address).
+   - **Authorized redirect URIs:** `https://jmctsspadywjcbbqwweh.supabase.co/auth/v1/callback` (Supabase's callback, not the app's).
+   - Branding: app name, support email, the app's privacy policy and terms pages; Audience: **External**, and publish the app so any Google account can use it. Scopes: `openid`, `email`, `profile` only.
+2. **Supabase** → Authentication → Sign In / Providers → **Google**: turn it on and paste the **Client ID** and **Client secret** from step 1. The secret stays in Supabase: never put it in the app, the repository or a chat.
+3. Authentication → URL Configuration: the Redirect URLs of section 2 already cover `/auth/confirm`, which finishes the Google sign-in.
+4. **Hosting** (Vercel or Netlify) → Environment variables: set `VITE_GOOGLE_SIGN_IN=on`, then redeploy. Without it the buttons stay hidden, so the app never offers a sign-in that is not set up.
+5. Test: Sign in → **Continue with Google** with a new Google account; the account lands on "waiting for approval"; an administrator grants a role in Settings → Users and roles. On New account, **Sign up with Google** stays disabled until the privacy notice is ticked.
+
+If an email address already has a password account, Supabase links the Google sign-in to the same account when the Google address is verified.
+
 ### 2a. Sign in with MODE (OAuth 2.1 server), optional
 
 Turn this on when another City system should sign people in with their MODE account. The design is in [ADR-010](docs/adr/010-oauth-provider-read-only-clients.md). Apps signed in this way can read what the person's role allows, and cannot change anything (migration 0010).

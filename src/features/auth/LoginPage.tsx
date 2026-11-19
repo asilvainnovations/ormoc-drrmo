@@ -6,6 +6,27 @@ import { Button, Checkbox, Field, Input, Notice } from '@/components/ui';
 import { tip } from '@/components/Tooltip';
 import { AuthLayout, formCard } from './AuthLayout';
 import { PRODUCT } from '@/lib/product';
+import { env } from '@/lib/env';
+
+/** 1.28.0: Google sign-in or sign-up through Supabase Auth. Shown only when the City has switched it on. */
+function GoogleButton({ label, next, disabled, disabledReason }: { label: string; next?: string; disabled?: boolean; disabledReason?: string }) {
+  const { signInWithGoogle } = useAuth();
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  if (!env.googleSignIn) return null;
+  const go = async () => {
+    setBusy(true); setError(null);
+    try { await signInWithGoogle(next ?? '/today'); } catch (err) { setError((err as Error).message); setBusy(false); }
+  };
+  return (
+    <div className="space-y-2">
+      <Button type="button" full size="lg" variant="secondary" busy={busy} disabled={disabled} onClick={() => void go()}
+        tip={disabled ? disabledReason ?? label : 'Use your Google account. New accounts see nothing until a system administrator grants a role'}>{label}</Button>
+      {error && <p role="alert" className="text-sm font-semibold text-bad">{error}</p>}
+      <p className="flex items-center gap-3 text-xs text-muted" aria-hidden><span className="h-px flex-1 bg-line" />or with email<span className="h-px flex-1 bg-line" /></p>
+    </div>
+  );
+}
 
 type Mode = 'signin' | 'signup' | 'forgot';
 
@@ -76,6 +97,7 @@ function SignInForm({ onForgot, from }: { onForgot: () => void; from?: string })
 
   return (
     <form onSubmit={submit} className={formCard} noValidate aria-label="Sign in">
+      <GoogleButton label="Continue with Google" next={from ?? '/today'} />
       {sent && <Notice tone="ok" title="Check your email">{sent}</Notice>}
       <Field label="Email" error={error}>
         {(id, d) => <Input id={id} aria-describedby={d} type="email" autoComplete="email" inputMode="email" required value={email} onChange={(e) => setEmail(e.target.value)} {...tip('The email address of your account')} />}
@@ -124,6 +146,13 @@ function SignUpForm({ onSignIn }: { onSignIn: () => void }) {
   return (
     <form onSubmit={submit} className={formCard} noValidate aria-label="Create an account">
       <Notice tone="info">New accounts see nothing until a system administrator approves them and grants a role.</Notice>
+      {env.googleSignIn && <>
+        <Checkbox checked={consent} onChange={() => setConsent(!consent)} className="flex py-2"
+          tip="Required under the Data Privacy Act of 2012 (RA 10173)">
+          <span className="text-sm">I agree that the City Government of Ormoc keeps my name, position, office and email to run my account, under the Data Privacy Act of 2012 (RA 10173).</span>
+        </Checkbox>
+        <GoogleButton label="Sign up with Google" disabled={!consent} disabledReason="Agree to the data privacy notice first" />
+      </>}
       <Field label="Full name" hint="As the administrator knows you, for example: Maria Santos.">
         {(id, d) => <Input id={id} aria-describedby={d} autoComplete="name" value={f.name} onChange={(e) => setF({ ...f, name: e.target.value })} />}
       </Field>
@@ -139,10 +168,10 @@ function SignUpForm({ onSignIn }: { onSignIn: () => void }) {
       <Field label="Password again" error={mismatch}>
         {(id, d) => <Input id={id} aria-describedby={d} type="password" autoComplete="new-password" value={f.confirm} onChange={(e) => setF({ ...f, confirm: e.target.value })} />}
       </Field>
-      <Checkbox checked={consent} onChange={() => setConsent(!consent)} className="flex py-2"
+      {!env.googleSignIn && <Checkbox checked={consent} onChange={() => setConsent(!consent)} className="flex py-2"
         tip="Required under the Data Privacy Act of 2012 (RA 10173)">
         <span className="text-sm">I agree that the City Government of Ormoc keeps my name, position, office and email to run my account, under the Data Privacy Act of 2012 (RA 10173).</span>
-      </Checkbox>
+      </Checkbox>}
       {error && <p role="alert" className="text-sm font-semibold text-bad">{error}</p>}
       <Button type="submit" full size="lg" busy={busy} tip={problem ?? 'Create the account. We email you a link to confirm your address'}>Create account</Button>
     </form>
