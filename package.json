@@ -1,11 +1,11 @@
 {
   "name": "ormoc-drrm-ops",
   "private": true,
-  "version": "1.28.0",
+  "version": "1.28.1",
   "description": "MODE: Ormoc City DRRMO & EOC Manual of Operations Development Platform (mobile-first PWA)",
   "type": "module",
   "engines": {
-    "node": ">=22"
+    "node": "22.x"
   },
   "scripts": {
     "dev": "vite",
@@ -76,7 +76,7 @@
     "react-hook-form": "7.54.2",
     "react-resizable-panels": "2.1.7",
     "react-router-dom": "6.30.6",
-    "recharts": "2.15.0",
+    "recharts": "^3.11.0",
     "sonner": "1.7.4",
     "tailwind-merge": "2.5.5",
     "vaul": "0.9.9",
@@ -93,7 +93,7 @@
     "@vitejs/plugin-react": "4.3.3",
     "autoprefixer": "10.4.20",
     "fake-indexeddb": "6.0.0",
-    "jsdom": "25.0.1",
+    "jsdom": "^31.0.1",
     "postcss": "8.5.32",
     "tailwindcss": "3.4.14",
     "tailwindcss-animate": "1.0.7",
@@ -101,5 +101,11 @@
     "vite": "5.4.21",
     "vite-plugin-pwa": "0.20.5",
     "vitest": "2.1.9"
+  },
+  "overrides": {
+    "glob": "^14.0.6"
+  },
+  "allowScripts": {
+    "esbuild": true
   }
 }
