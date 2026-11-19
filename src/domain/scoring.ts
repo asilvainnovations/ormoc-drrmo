@@ -72,11 +72,16 @@ export function complianceStatus(r: Pick<Response, 'score' | 'is_na'> | undefine
   return r.score >= 3 ? 'Meets GP' : 'Below GP';
 }
 
-export interface ResultRow { scored: number; indicators: number; maturityIndex: number | null; band: Band | null; mandatoryCompliance: number | null; highGaps: number }
+export interface ResultRow {
+  scored: number; indicators: number; maturityIndex: number | null; band: Band | null; mandatoryCompliance: number | null; highGaps: number;
+  /** 1.27.0 (ADR-044 item 4), additive counts that change no score: indicators marked N/A, indicators with neither a
+   *  score nor N/A, and the Mandatory indicators (Parts A and B) that were scored and that scored 3 or 4. */
+  notApplicable: number; unscored: number; mandatoryScored: number; mandatoryMet: number;
+}
 
 interface Scored { score: number; weight: number; type: 'M' | 'GP'; part: string }
 
-function summarise(items: Scored[], indicators: number): ResultRow {
+function summarise(items: Scored[], indicators: number, notApplicable = 0): ResultRow {
   const w = items.reduce((s, i) => s + i.weight, 0);
   const sw = items.reduce((s, i) => s + i.score * i.weight, 0);
   const raw = w === 0 ? null : sw / w;
@@ -86,7 +91,8 @@ function summarise(items: Scored[], indicators: number): ResultRow {
   const high = items.filter((i) => priorityBand(gapPriorityScore(i.score, i.weight, i.type, i.part)) === 'High').length;
   // Band the unrounded index, as the workbook does: 2.495 is Developing although it displays as 2.50
   // (supabase/migrations/20261111002300_band_unrounded.sql).
-  return { scored: items.length, indicators, maturityIndex: idx, band: maturityBand(raw), mandatoryCompliance: mc, highGaps: high };
+  return { scored: items.length, indicators, maturityIndex: idx, band: maturityBand(raw), mandatoryCompliance: mc, highGaps: high,
+    notApplicable, unscored: Math.max(0, indicators - items.length - notApplicable), mandatoryScored: m.length, mandatoryMet: m.filter((i) => i.score >= 3).length };
 }
 
 export interface CycleResults {
@@ -100,22 +106,25 @@ export function cycleResults(indicators: Indicator[], domains: Domain[], respons
   const partOf = new Map(domains.map((d) => [d.code, d.part]));
   const byInd = new Map(responses.map((r) => [r.indicator_id, r]));
   const scored: (Scored & { domain: string })[] = [];
+  const na: { domain: string; part: string }[] = [];
   for (const i of indicators) {
     const r = byInd.get(i.id);
     if (r && !r.is_na && r.score !== null) scored.push({ score: r.score, weight: i.weight, type: i.type, part: partOf.get(i.domain) ?? 'A', domain: i.domain });
+    else if (r?.is_na) na.push({ domain: i.domain, part: partOf.get(i.domain) ?? 'A' });
   }
+  const naIn = (pred: (x: { domain: string; part: string }) => boolean) => na.filter(pred).length;
   const count = (pred: (i: Indicator) => boolean) => indicators.filter(pred).length;
   const domainsOut: Record<string, ResultRow> = {};
   for (const d of domains) {
-    domainsOut[d.code] = summarise(scored.filter((s) => s.domain === d.code), count((i) => i.domain === d.code));
+    domainsOut[d.code] = summarise(scored.filter((s) => s.domain === d.code), count((i) => i.domain === d.code), naIn((x) => x.domain === d.code));
   }
   const inPart = (p: string) => (i: Indicator) => partOf.get(i.domain) === p;
   return {
     domains: domainsOut,
-    partA: summarise(scored.filter((s) => s.part === 'A'), count(inPart('A'))),
-    partB: summarise(scored.filter((s) => s.part === 'B'), count(inPart('B'))),
-    imi: summarise(scored.filter((s) => s.part === 'A' || s.part === 'B'), count((i) => partOf.get(i.domain) !== 'C')),
-    interface: summarise(scored.filter((s) => s.part === 'C'), count(inPart('C'))),
+    partA: summarise(scored.filter((s) => s.part === 'A'), count(inPart('A')), naIn((x) => x.part === 'A')),
+    partB: summarise(scored.filter((s) => s.part === 'B'), count(inPart('B')), naIn((x) => x.part === 'B')),
+    imi: summarise(scored.filter((s) => s.part === 'A' || s.part === 'B'), count((i) => partOf.get(i.domain) !== 'C'), naIn((x) => x.part !== 'C')),
+    interface: summarise(scored.filter((s) => s.part === 'C'), count(inPart('C')), naIn((x) => x.part === 'C')),
     answered: responses.filter((r) => r.is_na || r.score !== null).length,
     total: indicators.length,
   };

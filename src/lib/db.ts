@@ -148,6 +148,7 @@ export class DrrmDB extends Dexie {
   // 1.23.0 Manual Governance (ADR-043)
   manual_governance_stakeholders!: Table<T.ManualGovernanceStakeholder, string>;
   manual_review_items!: Table<T.ManualReviewItem, string>;
+  manual_corrections!: Table<T.ManualCorrection, string>;
   outstanding_decisions!: Table<T.OutstandingDecision, string>;
   workshop_sessions!: Table<T.WorkshopSession, string>;
 
@@ -269,6 +270,8 @@ export class DrrmDB extends Dexie {
       outstanding_decisions: 'id, source_decision_id, decision_status, priority',
       workshop_sessions: 'id, source_session_key, session_number, status',
     });
+    // 1.27.0: chapter corrections log.
+    this.version(12).stores({ manual_corrections: 'id, document_id, created_at' });
   }
 }
 

@@ -1303,6 +1303,58 @@ select tests.expect_eq('a re-run pre-fill leaves observed answers alone and refr
 select tests.expect_eq('the roll-up counts the observed answer under its domain',
   (select sum(observed)::text from public.v_eoc_cap_domains where cycle_id = '8911a053-1b14-587f-b906-c0fb2adaf7f3' and site = 'primary' and domain = 'B2'), '1');
 
+-- ================================================ Chapter corrections (1.27.0) =========
+-- A test chapter whose only version is approved: the first correction opens a new draft from it.
+select tests.login('00000000-0000-0000-0000-000000000011');  -- CDRRMO Head
+insert into public.moo_documents (id, manual, kind, code, title) values ('b0000000-0000-0000-0000-000000000001', 'MOO', 'chapter', 'TEST Ch.99', 'Corrections test');
+insert into public.moo_versions (id, document_id, label, body_md, status)
+values ('a0000000-0000-0000-0000-0000000000c1', 'b0000000-0000-0000-0000-000000000001', 'v1.0', '# EOC Ch.2', 'approved');
+select tests.login('00000000-0000-0000-0000-000000000010');  -- viewer
+select tests.expect_error('a viewer cannot correct the Manual',
+  $$select public.apply_manual_correction('b0000000-0000-0000-0000-000000000001', 'a0000000-0000-0000-0000-0000000000c1',
+    'EOC Ch.2', 'revise', '# EOC Ch.2', '# EOC Ch.2 (corrected)', 'Typo in the title')$$, '42501');
+select tests.login('00000000-0000-0000-0000-00000000000c');  -- validator
+select tests.expect_error('a correction needs a reason',
+  $$select public.apply_manual_correction('b0000000-0000-0000-0000-000000000001', 'a0000000-0000-0000-0000-0000000000c1',
+    'EOC Ch.2', 'add', '# EOC Ch.2', '# EOC Ch.2
+
+Added.', 'ok')$$, '23514');
+select tests.expect_ok('a validator adds text; it goes into a new draft',
+  $$select public.apply_manual_correction('b0000000-0000-0000-0000-000000000001', 'a0000000-0000-0000-0000-0000000000c1',
+    'EOC Ch.2', 'add', '# EOC Ch.2', '# EOC Ch.2
+
+Added during validation.', 'Workshop session 2: missing sentence on activation')$$);
+select tests.expect_eq('the approved version is unchanged',
+  (select body_md from public.moo_versions where id = 'a0000000-0000-0000-0000-0000000000c1'), '# EOC Ch.2');
+select tests.expect_eq('the draft carries the correction',
+  (select body_md from public.moo_versions where document_id = 'b0000000-0000-0000-0000-000000000001' and status = 'draft' and label like 'validation draft%'),
+  '# EOC Ch.2
+
+Added during validation.');
+select tests.login('00000000-0000-0000-0000-00000000000b');  -- assessor
+select tests.expect_ok('an assessor revises the same draft; no second draft is made',
+  $$select public.apply_manual_correction('b0000000-0000-0000-0000-000000000001', 'a0000000-0000-0000-0000-0000000000c1',
+    'EOC Ch.2', 'revise', 'Added during validation.', 'Added during validation (revised).', 'Clearer wording agreed with the CDRRMO')$$);
+select tests.expect_eq('one validation draft for the chapter',
+  (select count(*)::text from public.moo_versions where document_id = 'b0000000-0000-0000-0000-000000000001' and label like 'validation draft%'), '1');
+select tests.expect_error('a stale section is refused, not overwritten',
+  $$select public.apply_manual_correction('b0000000-0000-0000-0000-000000000001', 'a0000000-0000-0000-0000-0000000000c1',
+    'EOC Ch.2', 'delete', 'Added during validation.', '', 'Remove the sentence')$$, 'PT409');
+select tests.expect_eq('both corrections are logged with who made them',
+  (select count(distinct corrected_by)::text || ' people, ' || count(*)::text || ' corrections' from public.manual_corrections
+    where document_id = 'b0000000-0000-0000-0000-000000000001'), '2 people, 2 corrections');
+select tests.expect_error('nobody writes the log directly',
+  $$insert into public.manual_corrections (document_id, version_id, section_title, action, before_md, after_md, reason)
+    values ('b0000000-0000-0000-0000-000000000001', 'a0000000-0000-0000-0000-0000000000c1', 'x', 'add', 'a', 'b', 'forged entry')$$, '42501');
+select tests.login('00000000-0000-0000-0000-000000000011');  -- CDRRMO Head
+select tests.expect_error('the Head cannot edit the log',
+  $$update public.manual_corrections set reason = 'changed later' where document_id = 'b0000000-0000-0000-0000-000000000001'$$, '42501');
+select tests.expect_error('the Head cannot delete from the log',
+  $$delete from public.manual_corrections where document_id = 'b0000000-0000-0000-0000-000000000001'$$, '42501');
+select tests.login('00000000-0000-0000-0000-000000000010');  -- viewer
+select tests.expect_rows('active users read the corrections log',
+  $$select count(*) from public.manual_corrections where document_id = 'b0000000-0000-0000-0000-000000000001'$$, 2);
+
 reset role;
 select tests.expect_eq('audit trail recorded', ((select count(*) from public.audit_log) > 50)::text, 'true');
 \o

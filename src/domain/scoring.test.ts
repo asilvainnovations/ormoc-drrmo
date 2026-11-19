@@ -48,4 +48,15 @@ describe('gap priority (IAT §5.4)', () => {
     expect(complianceStatus({ score: null, is_na: true }, 'M', 'A')).toBe('N/A');
     expect(complianceStatus(undefined, 'M', 'A')).toBe('Not scored');
   });
+  it('counts N/A, unscored and Mandatory scored/met apart, without changing any score (1.27.0, ADR-044 item 4)', () => {
+    const domains = [{ code: 'A1', part: 'A', name: 'A1', scope: '', functional_area: '', platform_module: '', sort: 1 },
+      { code: 'C1', part: 'C', name: 'C1', scope: '', functional_area: '', platform_module: '', sort: 2 }] as Domain[];
+    const ind = (id: string, domain: string, type: 'M' | 'GP') => ({ id, domain, type, weight: 1 }) as Indicator;
+    const indicators = [ind('A1.1', 'A1', 'M'), ind('A1.2', 'A1', 'M'), ind('A1.3', 'A1', 'M'), ind('A1.4', 'A1', 'GP'), ind('C1.1', 'C1', 'GP')];
+    const r = (indicator_id: string, score: number | null, is_na = false) => ({ id: indicator_id, cycle_id: 'c', indicator_id, score, is_na }) as Response;
+    const res = cycleResults(indicators, domains, [r('A1.1', 3), r('A1.2', 1), r('A1.3', null, true), r('C1.1', 2)]);
+    expect(res.imi).toMatchObject({ indicators: 4, scored: 2, notApplicable: 1, unscored: 1, mandatoryScored: 2, mandatoryMet: 1, mandatoryCompliance: 0.5, maturityIndex: 2 });
+    expect(res.interface).toMatchObject({ indicators: 1, scored: 1, notApplicable: 0, unscored: 0, mandatoryScored: 0 });
+    expect(res.domains.A1).toMatchObject({ notApplicable: 1, unscored: 1 });
+  });
 });

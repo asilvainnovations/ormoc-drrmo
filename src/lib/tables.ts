@@ -122,6 +122,8 @@ export const TABLES: TableConfig[] = [
   { name: 'manual_governance_stakeholders', pk: 'id', cursor: 'updated_at', write: 'none' },
   { name: 'manual_review_items', pk: 'id', cursor: 'updated_at', write: 'upsert',
     omit: [...STAMPS, 'closed_by', 'closed_at'] },
+  // 1.27.0: chapter corrections log. Written only by apply_manual_correction (online); read everywhere.
+  { name: 'manual_corrections', pk: 'id', cursor: 'updated_at', write: 'none' },
   { name: 'outstanding_decisions', pk: 'id', cursor: 'updated_at', write: 'upsert',
     omit: [...STAMPS, 'decided_by'] },
   { name: 'workshop_sessions', pk: 'id', cursor: 'updated_at', write: 'upsert', omit: STAMPS },
