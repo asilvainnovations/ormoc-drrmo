@@ -23,8 +23,8 @@ const QUICK: { label: string; category: ResourceCategory; unit: string }[] = [
   { label: 'Backhoe', category: 'heavy_equipment', unit: 'units' }, { label: 'Generator set', category: 'power', unit: 'units' }, { label: 'Food packs', category: 'relief', unit: 'packs' },
   { label: 'Tents', category: 'relief', unit: 'units' }, { label: 'Radio (handheld)', category: 'communications', unit: 'units' }, { label: 'Chainsaw', category: 'rescue', unit: 'units' }, { label: 'Life vests', category: 'rescue', unit: 'pcs' },
 ];
-type Draft = { id: string | null; name: string; category: ResourceCategory; unit: string; quantity: number; location: string; serviceable: boolean; version: number };
-const blank = (): Draft => ({ id: null, name: '', category: 'other', unit: 'units', quantity: 1, location: '', serviceable: true, version: 1 });
+type Draft = { id: string | null; name: string; category: ResourceCategory; unit: string; quantity: number; location: string; ownerOfficeId: string; serviceable: boolean; version: number };
+const blank = (): Draft => ({ id: null, name: '', category: 'other', unit: 'units', quantity: 1, location: '', ownerOfficeId: '', serviceable: true, version: 1 });
 
 export function ResourcesPage() {
   const { roles } = useAuth();
@@ -37,6 +37,7 @@ export function ResourcesPage() {
   const data = useLiveQuery(async () => ({
     rows: (await db.resources.toArray()).sort((a, b) => a.category.localeCompare(b.category) || a.name.localeCompare(b.name)),
     places: (await db.barangays.orderBy('name').toArray()).map((b) => b.name),
+    offices: (await db.offices.toArray()).sort((a,b) => a.name.localeCompare(b.name)),
   }), []);
   const rows = data?.rows ?? [];
   const summary = useMemo(() => categorySummary(rows), [rows]);
@@ -48,7 +49,7 @@ export function ResourcesPage() {
   const gaps = coverage.filter((c) => c.units === 0).length;
 
   const addFromStandard = (s: StandardItem) => setDraft({ ...blank(), name: s.label.replace(/ \(.*\)$/, ''), category: s.category, unit: s.unit });
-  const edit = (r: Resource) => setDraft({ id: r.id, name: r.name, category: r.category, unit: r.unit, quantity: r.quantity, location: r.location_text ?? '', serviceable: r.is_serviceable, version: r.version });
+  const edit = (r: Resource) => setDraft({ id: r.id, name: r.name, category: r.category, unit: r.unit, quantity: r.quantity, location: r.location_text ?? '', ownerOfficeId: r.owner_office_id ?? '', serviceable: r.is_serviceable, version: r.version });
 
   const commit = async () => {
     if (!draft || !draft.name.trim()) return;
@@ -56,11 +57,11 @@ export function ResourcesPage() {
     try {
       if (draft.id) {
         const row = rows.find((x) => x.id === draft.id)!;
-        await updateOnline<Resource>('resources', row, { name: draft.name.trim(), category: draft.category, quantity: draft.quantity, unit: draft.unit.trim() || 'unit', location_text: draft.location.trim() || null, is_serviceable: draft.serviceable }, 'Update the resource');
+        await updateOnline<Resource>('resources', row, { name: draft.name.trim(), category: draft.category, quantity: draft.quantity, unit: draft.unit.trim() || 'unit', location_text: draft.location.trim() || null, owner_office_id: draft.ownerOfficeId || null, is_serviceable: draft.serviceable }, 'Update the resource');
         toast('Resource updated');
       } else {
         const now = new Date().toISOString();
-        const row: Resource = { id: uuid(), name: draft.name.trim(), category: draft.category, unit: draft.unit.trim() || 'unit', quantity: draft.quantity, owner_office_id: null,
+        const row: Resource = { id: uuid(), name: draft.name.trim(), category: draft.category, unit: draft.unit.trim() || 'unit', quantity: draft.quantity, owner_office_id: draft.ownerOfficeId || null,
           location_text: draft.location.trim() || null, is_serviceable: draft.serviceable, version: 1, created_at: now, updated_at: now } as Resource;
         await insertOnline('resources', row, 'Add a resource');
         toast(`Added: ${row.name}`);
@@ -70,11 +71,20 @@ export function ResourcesPage() {
   };
 
   const maxLines = Math.max(1, ...summary.map((s) => s.lines));
+  const totalUnits = rows.reduce((n,r) => n + r.quantity, 0);
+  const serviceableUnits = rows.filter((r) => r.is_serviceable).reduce((n,r) => n + r.quantity, 0);
+  const unassigned = rows.filter((r) => !r.owner_office_id).length;
   return (
     <div className="page">
       <PageHeader title="What the City Has" subtitle="Equipment, vehicles and stocks the EOC can draw on, where they are and whether they work."
         actions={canEdit && <Button tip="Add an item to the inventory (needs a connection)" icon={Plus} onClick={() => setDraft(blank())}>Add item</Button>} />
       <Tabs items={EOC_TABS} />
+      {rows.length > 0 && <div className="mb-5 grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <div className="rounded-sheet border border-line bg-surface p-3"><p className="text-xs font-bold text-muted">Recorded inventory</p><p className="mt-1 font-data text-2xl font-extrabold">{totalUnits.toLocaleString("en-PH")}</p><p className="text-xs text-muted">{rows.length} item records</p></div>
+        <div className="rounded-sheet border border-line bg-surface p-3"><p className="text-xs font-bold text-muted">Serviceable quantity</p><p className="mt-1 font-data text-2xl font-extrabold text-ok">{serviceableUnits.toLocaleString("en-PH")}</p><p className="text-xs text-muted">Recorded as serviceable</p></div>
+        <div className="rounded-sheet border border-line bg-surface p-3"><p className="text-xs font-bold text-muted">Not serviceable</p><p className="mt-1 font-data text-2xl font-extrabold text-warn">{(totalUnits-serviceableUnits).toLocaleString("en-PH")}</p><p className="text-xs text-muted">Marked not serviceable</p></div>
+        <div className="rounded-sheet border border-line bg-surface p-3"><p className="text-xs font-bold text-muted">No owner assigned</p><p className="mt-1 font-data text-2xl font-extrabold">{unassigned}</p><p className="text-xs text-muted">Records needing custodian assignment</p></div>
+      </div>}
       {rows.length === 0 && <Notice tone="info" title="Nothing recorded yet">The inventory is empty. Add what the CDRRMO holds with the Add item form, or ask an administrator to import the property inventory. The checklist below shows what is still missing against the national minimum.</Notice>}
 
       {rows.length > 0 && (
@@ -114,7 +124,7 @@ export function ResourcesPage() {
               <li key={r.id}>
                 <button type="button" onClick={() => edit(r)} className="flex w-full items-center justify-between gap-3 py-3 text-left hover:bg-sunken">
                   <span className="min-w-0"><span className="block font-bold">{r.name}</span>
-                    <span className="block truncate text-xs text-muted">{RESOURCE_CATEGORY[r.category]}{r.location_text ? ` · ${r.location_text}` : ''}</span></span>
+                    <span className="block truncate text-xs text-muted">{RESOURCE_CATEGORY[r.category]}{r.location_text ? ` · ${r.location_text}` : ''}{r.owner_office_id ? ` · ${data?.offices.find((o) => o.id === r.owner_office_id)?.name ?? 'Owner office'}` : ' · Owner not assigned'}</span></span>
                   <span className="flex shrink-0 items-center gap-3"><span className="font-data text-lg font-extrabold">{r.quantity} <span className="text-xs font-semibold text-muted">{r.unit}</span></span>
                     <Badge tone={r.is_serviceable ? 'ok' : 'bad'}>{r.is_serviceable ? 'Ready' : 'Not serviceable'}</Badge></span>
                 </button>
@@ -137,6 +147,10 @@ export function ResourcesPage() {
             <div><p className="mb-2 text-sm font-bold">Kind</p><Chips label="Kind" value={draft.category} disabled={!canEdit} onChange={(v) => setDraft({ ...draft, category: v })} options={CATS.map((c) => ({ value: c, label: RESOURCE_CATEGORY[c] }))} /></div>
             <div><p className="mb-2 text-sm font-bold">How many ({draft.unit})</p><Stepper label="quantity" value={draft.quantity} onChange={(n) => setDraft({ ...draft, quantity: n })} jumps={[1, 5, 10, 50, 100]} />
               <Field label="Unit">{(id) => <Input id={id} className="mt-2 w-40" value={draft.unit} disabled={!canEdit} onChange={(e) => setDraft({ ...draft, unit: e.target.value })} />}</Field></div>
+            <Field label="Responsible office" optional hint="Custodian / asset-owning office; this is not a deployment assignment.">{(id) => (
+              <select id={id} className="min-h-tap w-full rounded-control border border-line bg-surface px-3" value={draft.ownerOfficeId} disabled={!canEdit} onChange={(e) => setDraft({ ...draft, ownerOfficeId: e.target.value })}>
+                <option value="">Owner not assigned</option>{data?.offices.map((o) => <option key={o.id} value={o.id}>{o.name}</option>)}
+              </select>)}</Field>
             <Field label="Where it is kept" optional hint="A barangay, facility or storage site.">{(id) => (
               <>
                 <Input id={id} list="resource-places" value={draft.location} disabled={!canEdit} onChange={(e) => setDraft({ ...draft, location: e.target.value })} />
