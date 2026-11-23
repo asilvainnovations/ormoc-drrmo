@@ -2,7 +2,7 @@
  * Today — Hazard watch (ADR-041, simplified 1.26.0): one row of icons. Official agency pages open outside MODE; the two local
  * tools open inside it. The notes that used to sit as paragraphs are tooltips. Never a trigger.
  */
-import { Activity, CloudRain, Droplets, Info, ShieldAlert, Waves, Wind } from 'lucide-react';
+import { Activity, CloudRain, Droplets, Info, ShieldAlert, Waves, Wind, ThermometerSun, Sprout } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
@@ -15,6 +15,8 @@ const CHIP = 'grid h-12 w-12 shrink-0 place-items-center rounded-full border bor
 const LINKS: { name: string; url: string; icon: LucideIcon; text: string }[] = [
   { name: 'PAGASA Visayas forecast', url: 'https://www.pagasa.dost.gov.ph/regional-forecast/visprsd', icon: CloudRain, text: 'Official regional forecast (Visayas).' },
   { name: 'PAGASA weather and cyclones', url: 'https://www.pagasa.dost.gov.ph/weather', icon: Wind, text: 'National weather and tropical cyclone products.' },
+  { name: 'PAGASA heat index', url: 'https://www.pagasa.dost.gov.ph/weather/heat-index', icon: ThermometerSun, text: 'Official heat index observations and forecasts. Check the issue time and applicable location.' },
+  { name: 'PAGASA DroughtCaster', url: 'https://droughtcaster.pagasa.dost.gov.ph', icon: Sprout, text: 'PAGASA drought-monitoring and outlook resource. Check the product date and geographic coverage.' },
   { name: 'PHIVOLCS earthquakes', url: 'https://www.phivolcs.dost.gov.ph/index.php/earthquake/earthquake-information3', icon: Activity, text: 'Official earthquake information and monitoring.' },
   { name: 'PHIVOLCS tsunami', url: 'https://tsunami.phivolcs.dost.gov.ph/', icon: Waves, text: 'Official tsunami information bulletins for significant earthquakes, in the Philippines and abroad.' },
 ];
