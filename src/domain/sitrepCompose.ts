@@ -42,7 +42,7 @@ export const COP_GROUPS = {
     ['education', 'Education — schools and evacuation-centre use'], ['logistics', 'Logistics and supply chain — warehouses, trucking and shipping'],
   ] as [string, string][],
   transport: [
-    ['road_tacloban', 'Or​​moc–Tacloban national road'], ['road_baybay', 'Ormoc–Baybay national road'], ['road_kananga', 'Ormoc–Kananga national road'],
+    ['road_tacloban', 'Ormoc–Tacloban national road'], ['road_baybay', 'Ormoc–Baybay national road'], ['road_kananga', 'Ormoc–Kananga national road'],
     ['port_ormoc', 'Ormoc Port'], ['port_fastcraft', 'Fastcraft services to Cebu'], ['port_roro', 'RoRo services'], ['port_cargo', 'Cargo operations'],
     ['air_tacloban', 'Access to Tacloban Airport'], ['air_hlz', 'Helicopter landing zones'],
   ] as [string, string][],
@@ -110,7 +110,7 @@ export function parseLifelines(text: string | null): { state: Partial<Record<Lif
     const sentence = `${l.label}: ${STATE_WORD[st]}.`;
     if (rest.includes(sentence)) { state[l.key] = st; rest = rest.replace(sentence, ''); }
   }
-  return { state, note: rest.replace(/\\s+/g, ' ').trim() };
+  return { state, note: rest.replace(/\s+/g, ' ').trim() };
 }
 
 export interface ComposeInput {
@@ -145,5 +145,5 @@ export function composeSitrep(i: ComposeInput): ComposedSitrep {
   const needs = [...i.openRequests].sort((a, b) => Number(b.priority === 'life_safety') - Number(a.priority === 'life_safety')).map((r) => `- ${r.quantity} ${r.unit} ${r.item} for ${r.requesting_party}${r.priority === 'life_safety' ? ' (life safety)' : r.priority === 'urgent' ? ' (urgent)' : ''}`);
   const given = i.deliveredInPeriod.map((r) => `- ${r.quantity} ${r.unit} ${r.item} to ${r.requesting_party}`);
   return { report_type: i.hasActivation ? 'during_disaster' : 'pre_disaster', incident_type: i.hazardName, affected_barangays: hit.length, evacuated_families: fam, evacuated_persons: per,
-    situation: lines.filter(Boolean).join(' '), actions_taken: acts.length ? acts.join('\\n') : null, needs: needs.length ? needs.join('\\n') : null, assistance_provided: given.length ? given.join('\\n') : null };
+    situation: lines.filter(Boolean).join(' '), actions_taken: acts.length ? acts.join('\n') : null, needs: needs.length ? needs.join('\n') : null, assistance_provided: given.length ? given.join('\n') : null };
 }
