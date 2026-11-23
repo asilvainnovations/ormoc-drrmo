@@ -8,8 +8,7 @@ import { uuid } from '@/lib/ids';
 import { useAuth } from '@/lib/auth';
 import { canChangeLevel, canOperate, currentLevel, cutoffForLevel, latestPerBarangay, LEVEL_INFO, sitrepReportWindow } from '@/domain/eoc';
 import { campTotals, latestPerCentre } from '@/domain/echo';
-import { composeSitrep, LIFELINE_STATES, LIFELINES, lifelinesText, parseLifelines, type ComposedSitrep, type Lifeline, type LifelineState } from '@/domain/sitrepCompose';
-import { Chips } from './kit';
+import { composeSitrep, COP_GROUPS, COP_STATUS_OPTIONS, emptySitrepCop, parseSitrepCop, sitrepCopText, type ComposedSitrep, type SitrepCopData, type CopField } from '@/domain/sitrepCompose';
 import { fmtDateTime, fromLocalInput, toLocalInput } from '@/lib/time';
 import { downloadXlsx } from '@/lib/xlsx';
 import { Badge, Button, EmptyState, Field, Input, List, ListRow, Loading, Notice, PageHeader, Section, Select, Tabs, Textarea } from '@/components/ui';
@@ -114,7 +113,8 @@ export function SitrepEditor() {
       ['I. Situation overview', null, null, null], [form.situation ?? '—', null, null, null],
       ['II. Figures', null, null, null],
       ...figures.map(([k, v]) => [k, v, null, null]),
-      ['III. Status of lifelines (power, water, communications, roads)', null, null, null], [form.lifelines_status ?? '—', null, null, null],
+      ['III. Critical lifelines and Common Operating Picture', null, null, null],
+      ...copExportRows(parseSitrepCop(form.lifelines_status)),
       ['IV. Actions taken', null, null, null], [form.actions_taken ?? '—', null, null, null],
       ['V. Assistance provided', null, null, null], [form.assistance_provided ?? '—', null, null, null],
       ['VI. Needs and gaps', null, null, null], [form.needs ?? '—', null, null, null],
@@ -154,7 +154,7 @@ export function SitrepEditor() {
       <div className="max-w-3xl">
         {editable && (
           <div className="mb-5 flex flex-wrap items-center justify-between gap-3 rounded-sheet border border-sky/40 bg-sky-soft p-4">
-            <p className="max-w-md text-sm text-ink">This report was filled in from the barangay reports, camp reports, requests and logbook. Check it, set the lifelines, add casualties and damage, then submit.</p>
+            <p className="max-w-md text-sm text-ink">This report is pre-filled from EOC records. Validate the incident picture, update each critical lifeline and regional connection, record the reporting office and time, then add casualties, damage, actions and unmet needs. Unknown or unreported data must not be treated as normal.</p>
             <Button tip="Re-read the EOC records and rewrite the situation, actions, needs and evacuee counts" variant="secondary" icon={Wand2} onClick={refresh}>Refresh from live data</Button>
           </div>
         )}
@@ -189,7 +189,7 @@ export function SitrepEditor() {
               <Field label="Damaged houses — partially">{(i) => <Input id={i} type="number" min={0} inputMode="numeric" disabled={!editable} value={num('damaged_houses_partially')}
                 onChange={(e) => setForm({ ...form, damaged_houses_partially: e.target.value === '' ? null : Math.max(0, Number(e.target.value)) })} />}</Field>
             </div>
-            <LifelinesField disabled={!editable} value={form.lifelines_status} onChange={(v) => setForm({ ...form, lifelines_status: v })} />
+            <SitrepCopEditor disabled={!editable} value={form.lifelines_status} onChange={(v) => setForm({ ...form, lifelines_status: v })} />
             <div className="grid gap-3 sm:grid-cols-[1fr_12rem]">
               <Field label="Assistance provided" optional hint="Food and non-food items, services delivered">{(i) => <Textarea id={i} rows={3} disabled={!editable} value={form.assistance_provided ?? ''} onChange={(e) => setForm({ ...form, assistance_provided: e.target.value || null })} />}</Field>
               <Field label="Cost of assistance (PHP)">{(i) => <Input id={i} type="number" min={0} inputMode="numeric" disabled={!editable} value={num('cost_of_assistance')}
@@ -225,19 +225,79 @@ export function SitrepEditor() {
   );
 }
 
-function LifelinesField({ value, onChange, disabled }: { value: string | null; onChange: (v: string | null) => void; disabled: boolean }) {
-  const { state, note } = parseLifelines(value);
-  const write = (st: Partial<Record<Lifeline, LifelineState>>, n: string) => onChange(lifelinesText(st, n) || null);
+
+function copExportRows(data: SitrepCopData): (string | number | null)[][] {
+  const rows: (string | number | null)[][] = [];
+  const groups = [
+    ['Critical lifelines', 'lifelines'], ['Transportation facilities and corridors', 'transport'],
+    ['Regional connectivity', 'connectivity'], ['Fuel supply', 'fuel'], ['Health system', 'health'],
+    ['Early recovery', 'recovery'], ['Weather and hydrometeorological monitoring', 'weather'],
+  ] as const;
+  for (const [title, key] of groups) {
+    rows.push([title, null, null, null]);
+    const labels = COP_GROUPS[key] as readonly (readonly [string, string])[];
+    for (const [id, label] of labels) {
+      const field = data[key][id];
+      if (field?.status || field?.value || field?.note) rows.push([label, field.status ?? 'Not reported', field.value ?? '', field.note ?? '']);
+    }
+  }
+  if (data.generalNotes) rows.push(['COP notes', data.generalNotes, null, null]);
+  return rows;
+}
+
+function SitrepCopEditor({ value, onChange, disabled }: { value: string | null; onChange: (v: string | null) => void; disabled: boolean }) {
+  const data = parseSitrepCop(value);
+  const update = (group: keyof Omit<SitrepCopData, 'version' | 'generalNotes'>, id: string, field: Partial<CopField>) => {
+    const next = { ...data, [group]: { ...data[group], [id]: { ...data[group][id], ...field } } };
+    onChange(sitrepCopText(next) || null);
+  };
+  const sections = [
+    { key: 'lifelines', title: 'Critical lifelines', intro: 'Track service continuity and operational impacts across the city. Include the reporting office and last verified time in the notes.' },
+    { key: 'transport', title: 'Transportation facilities and corridors', intro: 'Report each corridor or facility separately. A port service can be suspended even when the port itself remains open.' },
+    { key: 'connectivity', title: 'Regional connectivity', intro: 'Assess end-to-end movement and logistics links, not only the condition of a single road or facility.' },
+    { key: 'fuel', title: 'Fuel supply', intro: 'Record availability and operational stations. Do not infer stock sufficiency from station operating status.' },
+    { key: 'health', title: 'Health system status', intro: 'Use verified facility totals and occupancy denominators; do not enter an estimated percentage as confirmed.' },
+    { key: 'recovery', title: 'Early recovery indicators', intro: 'Use consistent denominators and compare with the previous reporting period.' },
+    { key: 'weather', title: 'Weather and hydrometeorological monitoring', intro: 'Record bulletin/product issue time, source and applicable location. Link to official PAGASA products for interpretation.' },
+  ] as const;
   return (
-    <fieldset className="space-y-3">
-      <legend className="mb-1 text-sm font-bold">Status of lifelines</legend>
-      {LIFELINES.map((l) => (
-        <div key={l.key} className="grid items-center gap-2 sm:grid-cols-[9rem_1fr]">
-          <span className="text-sm font-semibold">{l.label}</span>
-          <Chips label={l.label} disabled={disabled} value={state[l.key] ?? null} onChange={(v) => write({ ...state, [l.key]: v }, note)} options={LIFELINE_STATES} />
-        </div>
-      ))}
-      <Field label="Details" optional hint="Which roads, which barangays, expected restoration.">{(i) => <Textarea id={i} rows={2} disabled={disabled} value={note} onChange={(e) => write(state, e.target.value)} />}</Field>
+    <fieldset className="space-y-4">
+      <legend className="mb-1 text-sm font-bold">Critical lifelines and operational picture</legend>
+      <p className="text-xs text-muted">Status options distinguish normal, limited, disrupted, unknown and not reported. For every entry, record the source office, observation time and geographic coverage in the notes.</p>
+      {sections.map((section) => {
+        const items = COP_GROUPS[section.key] as readonly (readonly [string, string])[];
+        return (
+          <section key={section.key} className="rounded-sheet border border-line p-3">
+            <h3 className="text-sm font-extrabold">{section.title}</h3>
+            <p className="mb-3 mt-1 text-xs text-muted">{section.intro}</p>
+            <div className="space-y-3">
+              {items.map(([id, label]) => {
+                const field = data[section.key][id] ?? {};
+                return (
+                  <div key={id} className="grid gap-2 border-t border-line pt-3">
+                    <p className="text-sm font-semibold">{label}</p>
+                    <div className="grid gap-2 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+                      <label className="text-xs font-semibold text-muted">Status</label>
+                      <Select aria-label={`${label} status`} disabled={disabled} value={field.status ?? 'not_reported'}
+                        onChange={(e) => update(section.key, id, { status: e.target.value as CopField['status'] })}>
+                        {COP_STATUS_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
+                      </Select>
+                      <Input aria-label={`${label} value or indicator`} disabled={disabled} placeholder="Value / x of y / percentage"
+                        value={field.value ?? ''} onChange={(e) => update(section.key, id, { value: e.target.value })} />
+                    </div>
+                    <Input aria-label={`${label} source and notes`} disabled={disabled} placeholder="Reporting office, source, time verified, location, restoration estimate"
+                      value={field.note ?? ''} onChange={(e) => update(section.key, id, { note: e.target.value })} />
+                  </div>
+                );
+              })}
+            </div>
+          </section>
+        );
+      })}
+      <Field label="Additional COP notes" optional hint="Cross-sector dependencies, priority decisions, constraints and regional coordination requirements">
+        {(i) => <Textarea id={i} rows={3} disabled={disabled} value={data.generalNotes}
+          onChange={(e) => onChange(sitrepCopText({ ...data, generalNotes: e.target.value }) || null)} />}
+      </Field>
     </fieldset>
   );
 }
