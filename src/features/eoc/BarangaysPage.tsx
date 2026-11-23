@@ -267,7 +267,7 @@ export function BarangaysPage() {
             ? pic.window.kind === 'event'
               ? `Latest report per barangay since this activation began, ${fmtDateTime(pic.window.from)}.`
               : 'White level: latest report per barangay in the last 24 hours.'
-            : 'Barangay status monitoring and CSWD district coordination.'
+            : 'Barangay status monitoring and CSWD/CDRRMO district coordination.'
         }
       />
       <Tabs items={EOC_TABS} />
@@ -299,12 +299,11 @@ export function BarangaysPage() {
                     id="cswd-district-title"
                     className="text-lg font-extrabold tracking-tight text-ink"
                   >
-                    CSWD District Coordination
+                    CDRRMO/CSWDO District Coordination
                   </h2>
                   <p className="mt-0.5 max-w-2xl text-sm text-muted">
                     Six administrative districts for social welfare coordination
-                    and evacuation-camp support. These are separate from the
-                    CDRRMO operational clusters used for hazard and response planning.
+                    and evacuation-camp support, .
                   </p>
                 </div>
               </div>
