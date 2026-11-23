@@ -17,6 +17,7 @@ import { Sheet } from '@/components/Sheet';
 import { useToast } from '@/components/Toast';
 import type { EocLevel } from '@/types';
 import { setEocLevel } from './actions';
+import { parseSitrepCop, COP_GROUPS, type CopField } from '@/domain/sitrepCompose';
 import { EocLocation } from './EocLocation';
 import { QuickLogSheet } from './QuickLogSheet';
 import { Block, Legend, Ring, Tile } from './kit';
@@ -40,6 +41,8 @@ export function BoardPage() {
     return {
       log: await db.logbook_entries.orderBy('occurred_at').reverse().limit(6).toArray(),
       open,
+      resources: await db.resources.toArray(),
+      latestSitrep: (await db.sitreps.toArray()).filter((s) => s.status !== 'draft').sort((a, b) => b.period_end.localeCompare(a.period_end))[0] ?? null,
       camps: campTotals(latestPerCentre(await db.camp_reports.toArray(), (await db.eoc_activations.toArray()).find((a) => a.id === activation?.id)?.started_at ?? new Date(Date.now() - 24 * 3600_000).toISOString()),
         new Map((await db.evacuation_centers.toArray()).map((c) => [c.id, c.capacity_persons]))),
     };
@@ -53,6 +56,16 @@ export function BoardPage() {
   const reporting = total - (pic?.counts.silent ?? 0);
   const hit = (pic?.counts.affected ?? 0) + (pic?.counts.evacuating ?? 0) + (pic?.counts.isolated ?? 0);
   const lifeSafety = data?.open.filter((r) => r.priority === 'life_safety').length ?? 0;
+  const cop = parseSitrepCop(data?.latestSitrep?.lifelines_status ?? null);
+  const lifelineFields = COP_GROUPS.lifelines.map(([id, label]) => ({ id, label, field: cop.lifelines[id] })).filter((x) => !!x.field?.status);
+  const connectivityFields = COP_GROUPS.connectivity.map(([id, label]) => ({ id, label, field: cop.connectivity[id] })).filter((x) => !!x.field?.status);
+  const supplyGaps = (data?.open ?? []).reduce((acc, request) => {
+    const key = request.item.trim().toLocaleLowerCase('en') + '|' + request.unit.trim().toLocaleLowerCase('en');
+    const found = acc.find((x) => x.key === key);
+    if (found) found.requested += request.quantity;
+    else acc.push({ key, item: request.item, unit: request.unit, requested: request.quantity, available: (data?.resources ?? []).filter((r) => r.is_serviceable && r.name.trim().toLocaleLowerCase('en') === request.item.trim().toLocaleLowerCase('en') && r.unit.trim().toLocaleLowerCase('en') === request.unit.trim().toLocaleLowerCase('en')).reduce((n, r) => n + r.quantity, 0) });
+    return acc;
+  }, [] as { key: string; item: string; unit: string; requested: number; available: number }[]).map((x) => ({ ...x, gap: Math.max(0, x.requested - x.available) })).sort((a, b) => b.gap - a.gap);
   const attention = attentionItems({
     activeEvent: !!activation,
     silentPriority: (pic?.rows ?? []).filter((r) => r.cond === 'silent' && r.priority != null).sort((a, b) => a.priority! - b.priority!).slice(0, 10).map((r) => r.b.name),
@@ -71,7 +84,7 @@ export function BoardPage() {
         <div>
           <p className="text-3xl font-extrabold">{LEVEL_INFO[level].name} level</p>
           <p className="text-base">{LEVEL_INFO[level].meaning}</p>
-          {activation && <p className="mt-1 text-sm opacity-90">Since {fmtDateTime(activation.started_at)}. {activation.reason}</p>}
+          <p className="mt-1 text-sm opacity-90">{activation ? 'Activation active · operational period began ' + fmtDateTime(activation.started_at) : 'No active EOC activation'}{activation?.reason ? ' · ' + activation.reason : ''}</p>
         </div>
         <div className="flex flex-wrap gap-2">
           {operator && <Button tip="Add a logbook entry with a short form" icon={ClipboardPen} onClick={() => setLogOpen(true)} className="!border-transparent !bg-surface !text-ink">Log</Button>}
@@ -91,6 +104,19 @@ export function BoardPage() {
           hint={data?.camps.centresOpen ? `${data.camps.persons.toLocaleString('en-PH')} persons${data.camps.overCapacity ? ` · ${data.camps.overCapacity} over capacity` : ''}` : 'ECHO camp reports'} to="/tools/echo/dashboard" />
       </div>
 
+      <div className="mb-5 grid gap-4 lg:grid-cols-2">
+        <Block title="Critical lifelines" action={<Link to="/eoc/sitreps" className="text-sm font-semibold text-info underline">Source SitRep</Link>}>
+          <p className="mb-3 text-xs text-muted">{data?.latestSitrep ? 'Latest submitted / approved SitRep · ' + fmtDateTime(data.latestSitrep.period_end) : 'No submitted or approved SitRep has lifeline data yet.'} · Unknown and unreported values are not assumed normal.</p>
+          {lifelineFields.length ? <ul className="grid gap-2 sm:grid-cols-2">{lifelineFields.map(({id,label,field}) => <li key={id} className="flex items-center justify-between gap-2 rounded-control border border-line px-3 py-2 text-sm"><span className="font-semibold">{label}</span><CopStatusBadge field={field}/></li>)}</ul> : <p className="text-sm text-muted">No lifeline statuses recorded in the latest report.</p>}
+        </Block>
+        <Block title="Regional connectivity" action={<Link to="/eoc/sitreps" className="text-sm font-semibold text-info underline">Update in SitRep</Link>}>
+          {connectivityFields.length ? <ul className="space-y-2">{connectivityFields.map(({id,label,field}) => <li key={id} className="flex items-center justify-between gap-2 rounded-control border border-line px-3 py-2 text-sm"><span className="font-semibold">{label}</span><CopStatusBadge field={field}/></li>)}</ul> : <p className="text-sm text-muted">Cebu, Tacloban, Baybay, Kananga and Northern Leyte connectivity has not yet been reported.</p>}
+        </Block>
+      </div>
+      <Block title="Resource sufficiency snapshot" className="mb-5" action={<Link to="/eoc/resources" className="text-sm font-semibold text-info underline">Supply</Link>}>
+        <p className="mb-3 text-xs text-muted">Compares open request quantities with serviceable inventory using exact item and unit matches only. This is a planning indicator, not a stock reservation or allocation.</p>
+        {supplyGaps.length ? <ul className="grid gap-2 sm:grid-cols-2 xl:grid-cols-3">{supplyGaps.slice(0,6).map((x) => <li key={x.key} className="rounded-control border border-line p-3"><p className="font-bold">{x.item}</p><p className="mt-1 text-xs text-muted">Available {x.available} {x.unit} · Requested {x.requested} {x.unit}</p><p className={clsx('mt-1 text-sm font-extrabold',x.gap?'text-bad':'text-ok')}>{x.gap ? 'Potential gap: ' + x.gap + ' ' + x.unit : 'Matched against current serviceable inventory'}</p></li>)}</ul> : <p className="text-sm text-muted">No open requests to compare.</p>}
+      </Block>
       <div className="grid gap-5 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
         <Block title="Barangay picture" action={<Link to="/eoc/barangays" className="text-sm font-semibold text-info underline">Open</Link>}>
           {total === 0 ? <p className="text-muted">No barangay list loaded. An administrator imports Ormoc’s 85 barangays in Settings.</p> : (
@@ -168,4 +194,11 @@ function LevelSheet({ open, onClose, current, onSubmit }: { open: boolean; onClo
       {error && <p role="alert" className="font-semibold text-bad">{error}</p>}
     </Sheet>
   );
+}
+
+function CopStatusBadge({ field }: { field?: CopField }) {
+  const status = field?.status ?? 'not_reported';
+  const label: Record<string,string> = { normal: 'Operational', limited: 'Limited', disrupted: 'Disrupted', unknown: 'Unknown', not_reported: 'Not reported' };
+  const tone = status === 'normal' ? 'ok' : status === 'limited' ? 'warn' : status === 'disrupted' ? 'bad' : 'neutral';
+  return <Badge tone={tone}>{label[status] ?? 'Not reported'}</Badge>;
 }

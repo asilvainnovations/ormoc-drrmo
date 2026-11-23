@@ -4,6 +4,8 @@
 // the existing report, activation, flood-exposure and DDRiVE workflows.
 
 import { useEffect, useMemo, useState } from 'react';
+import { useLiveQuery } from 'dexie-react-hooks';
+import { Link } from 'react-router-dom';
 import { useSearchParams } from 'react-router-dom';
 import clsx from 'clsx';
 import { MapPinned, UsersRound, Search, X } from 'lucide-react';
@@ -84,6 +86,13 @@ export function BarangaysPage() {
   const { roles } = useAuth();
   const toast = useToast();
   const pic = useBarangayPicture();
+  const escalation = useLiveQuery(async () => {
+    const [requests, flood, priorities] = await Promise.all([
+      db.resource_requests.where('status').anyOf('requested', 'approved', 'mobilized').toArray(),
+      db.ddrive_flood.toArray(), db.ddrive_priority.toArray(),
+    ]);
+    return { requests, flood: new Map(flood.map((x) => [x.psgc, x.susceptibility_class])), priorities: new Map(priorities.map((x) => [x.psgc, x.priority_rank])) };
+  }, []);
   const [params, setParams] = useSearchParams();
 
   const [q, setQ] = useState('');
@@ -257,6 +266,13 @@ export function BarangaysPage() {
     (pic?.counts.affected ?? 0) +
     (pic?.counts.evacuating ?? 0) +
     (pic?.counts.isolated ?? 0);
+  const escalationRows = districtRows.map((row) => ({
+    ...row,
+    openRequests: escalation?.requests.filter((request) => request.requesting_party.trim().toLocaleLowerCase('en') === row.b.name.trim().toLocaleLowerCase('en')).length ?? 0,
+    floodClass: escalation?.flood.get(row.b.psgc) ?? null,
+    priorityRank: escalation?.priorities.get(row.b.psgc) ?? row.priority,
+  })).filter((row) => row.cond === 'isolated' || row.cond === 'evacuating' || (pic?.activation && row.cond === 'silent') || row.openRequests > 0)
+    .sort((a,b) => Number(b.cond === 'isolated') - Number(a.cond === 'isolated') || Number(b.cond === 'evacuating') - Number(a.cond === 'evacuating') || (a.priorityRank ?? 999) - (b.priorityRank ?? 999));
 
   return (
     <div className="page">
@@ -602,6 +618,25 @@ export function BarangaysPage() {
                 <span>{rows.length} matching barangays</span>
               </div>
             )}
+          </section>
+
+          <section aria-labelledby="barangay-escalation-title" className="rounded-sheet border border-line bg-surface p-4 shadow-raised">
+            <div className="mb-3 flex flex-wrap items-start justify-between gap-2">
+              <div><h2 id="barangay-escalation-title" className="text-lg font-extrabold">Operational escalation queue</h2>
+                <p className="text-xs text-muted">Prioritizes isolated and evacuating barangays, silent barangays during an activation, and barangays with open requests. It does not create automatic dispatches.</p></div>
+              <Badge tone={escalationRows.length ? 'warn' : 'neutral'}>{escalationRows.length} require attention</Badge>
+            </div>
+            {escalationRows.length ? <ul className="divide-y divide-line">
+              {escalationRows.slice(0, 15).map((row) => <li key={row.b.psgc} className="flex flex-wrap items-center justify-between gap-3 py-3">
+                <div className="min-w-0"><p className="font-bold">{row.b.name}</p>
+                  <p className="text-xs text-muted">{row.cond === 'silent' ? 'No report in current reporting window' : COND_LABEL[row.cond]}{row.report ? ' · ' + relative(row.report.reported_at) : ''}{row.priorityRank != null ? ' · DDRiVE priority #' + row.priorityRank : ''}{row.floodClass ? ' · Flood class: ' + row.floodClass : ''}</p>
+                </div>
+                <div className="flex flex-wrap items-center gap-2">
+                  {row.openRequests > 0 && <Badge tone="warn">{row.openRequests} open request(s)</Badge>}
+                  {operator ? <Link className="text-sm font-bold text-info underline" to={`/eoc/barangays?b=${row.b.psgc}`}>Review</Link> : <Badge>{COND_LABEL[row.cond]}</Badge>}
+                </div>
+              </li>)}
+            </ul> : <p className="text-sm text-muted">No barangay escalation indicators are currently flagged from available records.</p>}
           </section>
 
           {/* Priority warning */}

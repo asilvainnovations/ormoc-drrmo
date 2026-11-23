@@ -34,6 +34,7 @@ export function RosterPage() {
   }, []);
   if (!data) return null;
   const sum = depthSummary(data.rows);
+  const staffingGaps = SECTIONS.map((section) => ({ section, title: SECTION[section], rows: data.rows.filter((r) => r.position.section === section && !r.byRank[1]) })).filter((x) => x.rows.length > 0);
   const officeName = new Map(data.offices.map((o) => [o.id, o.name]));
   const nameOf = (d: EocDesignation) => d.designee_position || (d.person_id && data.people.get(d.person_id)) || (d.office_id && officeName.get(d.office_id)) || 'Linked account';
 
@@ -65,6 +66,11 @@ export function RosterPage() {
           <Ring value={sum.twoDeep} max={sum.positions || 1} tone={sum.share !== null && sum.share >= 0.8 ? 'ok' : 'warn'}>{sum.share !== null ? `${Math.round(sum.share * 100)}%` : '–'}</Ring>
           <div><p className="text-lg font-extrabold">{sum.twoDeep} of {sum.positions} positions covered two deep</p>
             <p className="text-sm text-muted">{sum.threeDeep} three deep · {sum.noPrimary} without a primary</p></div>
+        </div>
+        <div className="mb-5 rounded-sheet border border-line bg-surface p-4 shadow-raised">
+          <div className="mb-2 flex flex-wrap items-center justify-between gap-2"><h2 className="text-sm font-extrabold">Staffing gaps by function</h2><Badge tone={sum.noPrimary ? "warn" : "ok"}>{sum.noPrimary} positions without a primary</Badge></div>
+          <p className="mb-3 text-xs text-muted">This is designation coverage from the approved EOC roster, not real-time attendance or deployment. Duty status and shift check-in are not yet captured in the current roster data model.</p>
+          {staffingGaps.length ? <ul className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">{staffingGaps.map((group) => <li key={group.section} className="rounded-control border border-line p-3"><p className="text-xs font-bold text-muted">{group.title}</p><p className="mt-1 font-data text-2xl font-extrabold text-warn">{group.rows.length}</p><ul className="mt-1 space-y-1 text-xs">{group.rows.slice(0,4).map((row) => <li key={row.position.id}>{row.position.title}</li>)}</ul></li>)}</ul> : <p className="text-sm font-semibold text-ok">All active positions have a named primary designation.</p>}
         </div>
         <div className="space-y-5">
           {SECTIONS.map((sec) => {
