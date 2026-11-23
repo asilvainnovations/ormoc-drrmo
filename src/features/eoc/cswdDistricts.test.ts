@@ -25,8 +25,14 @@ describe('Ormoc CSWD district assignments', () => {
 
   it('assigns Alta Vista to District 5 and keeps District 6 at 12 barangays', () => {
     expect(getCSWDDistrict('Alta Vista')?.code).toBe('District 5');
-    expect(CSWD_DISTRICTS[5].barangays).not.toContain('Alta Vista');
-    expect(CSWD_DISTRICTS[5].barangays).toHaveLength(12);
+    const district6 = CSWD_DISTRICTS.find(
+      (district) => district.code === 'District 6',
+    );
+
+    // Array.find may return undefined; optional chaining keeps this test
+    // compatible with strict TypeScript and noUncheckedIndexedAccess.
+    expect(district6?.barangays).not.toContain('Alta Vista');
+    expect(district6?.barangays).toHaveLength(12);
   });
 
   it('matches common imported barangay-name variants', () => {
