@@ -11,6 +11,7 @@ import { LoginPage } from '@/features/auth/LoginPage';
 import { AuthCallbackPage, SetPasswordPage } from '@/features/auth/AuthCallbackPage';
 import { DeactivatedPage, PendingApprovalPage } from '@/features/auth/AccountGatePages';
 import { UpdatePrompt } from '@/components/UpdatePrompt';
+import { EngagementPrompts } from '@/components/EngagementPrompts';
 import { TodayPage } from '@/features/home/TodayPage';
 import { OAuthConsentPage } from '@/features/auth/OAuthConsentPage';
 import { CONSENT_PATH } from '@/lib/oauth';
@@ -83,6 +84,7 @@ export function App() {
       <ToastProvider>
         <AuthProvider>
           <WorkspaceMeta />
+          <EngagementPrompts />
           <Routes>
             {/* 1.10: public, indexable pages. They open without the workspace (no reference load, no sync). */}
             <Route path="/" element={<PublicHome />} />
