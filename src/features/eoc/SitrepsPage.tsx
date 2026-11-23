@@ -8,7 +8,7 @@ import { uuid } from '@/lib/ids';
 import { useAuth } from '@/lib/auth';
 import { canChangeLevel, canOperate, currentLevel, cutoffForLevel, latestPerBarangay, LEVEL_INFO, sitrepReportWindow } from '@/domain/eoc';
 import { campTotals, latestPerCentre } from '@/domain/echo';
-import { composeSitrep, COP_GROUPS, COP_STATUS_OPTIONS, emptySitrepCop, parseSitrepCop, sitrepCopText, type ComposedSitrep, type SitrepCopData, type CopField } from '@/domain/sitrepCompose';
+import { composeSitrep, COP_GROUPS, COP_STATUS_OPTIONS, parseSitrepCop, sitrepCopText, type ComposedSitrep, type SitrepCopData, type CopField } from '@/domain/sitrepCompose';
 import { fmtDateTime, fromLocalInput, toLocalInput } from '@/lib/time';
 import { downloadXlsx } from '@/lib/xlsx';
 import { Badge, Button, EmptyState, Field, Input, List, ListRow, Loading, Notice, PageHeader, Section, Select, Tabs, Textarea } from '@/components/ui';
@@ -310,7 +310,7 @@ function CopExecutiveSummary({ value, form, level }: { value: string | null; for
   const count = (status: string) => all.filter((f) => f.status === status).length;
   const affected = count('limited') + count('disrupted');
   const known = count('normal') + affected;
-  const roadFields = ['road_tacloban', 'road_baybay', 'road_kananga'].map((key) => data.transport[key]).filter(Boolean);
+  const roadFields = ['road_tacloban', 'road_baybay', 'road_kananga'].map((key) => data.transport[key]).filter((field): field is CopField => field !== undefined);
   const roadClosures = roadFields.filter((f) => f.status === 'disrupted').length;
   const port = data.transport.port_ormoc?.status;
   const links = Object.values(data.connectivity);
