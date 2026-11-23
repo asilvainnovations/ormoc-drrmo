@@ -152,7 +152,7 @@ export function SitrepEditor() {
         </>} />
       {s.status === 'approved' && <Notice tone="ok" title="Approved">{`Approved ${fmtDateTime(s.approved_at)}. Issue the next SitRep for new information.`}</Notice>}
       <div className="max-w-3xl">
-        <CopExecutiveSummary value={form.lifelines_status} />
+        <CopExecutiveSummary value={form.lifelines_status} form={form} level={cutoff?.level ?? null} />
         {editable && (
           <div className="mb-5 flex flex-wrap items-center justify-between gap-3 rounded-sheet border border-sky/40 bg-sky-soft p-4">
             <p className="max-w-md text-sm text-ink">This report is pre-filled from EOC records. Validate the incident picture, update each critical lifeline and regional connection, record the reporting office and time, then add casualties, damage, actions and unmet needs. Unknown or unreported data must not be treated as normal.</p>
@@ -303,24 +303,40 @@ function SitrepCopEditor({ value, onChange, disabled }: { value: string | null; 
   );
 }
 
-function CopExecutiveSummary({ value }: { value: string | null }) {
+
+function CopExecutiveSummary({ value, form, level }: { value: string | null; form: Sitrep; level: string | null }) {
   const data = parseSitrepCop(value);
   const all = Object.values(data).filter((v): v is Record<string, CopField> => typeof v === 'object' && v !== null && !Array.isArray(v)).flatMap((group) => Object.values(group));
   const count = (status: string) => all.filter((f) => f.status === status).length;
   const affected = count('limited') + count('disrupted');
   const known = count('normal') + affected;
-  const total = all.length;
+  const roadFields = ['road_tacloban', 'road_baybay', 'road_kananga'].map((key) => data.transport[key]).filter(Boolean);
+  const roadClosures = roadFields.filter((f) => f.status === 'disrupted').length;
+  const port = data.transport.port_ormoc?.status;
+  const links = Object.values(data.connectivity);
+  const regional = links.length ? links.some((f) => f.status === 'disrupted') ? 'Disrupted' : links.some((f) => f.status === 'limited') ? 'Limited' : links.every((f) => f.status === 'normal') ? 'Normal' : 'Partly reported' : 'Not reported';
+  const statusLabel = (status?: string) => status === 'normal' ? 'Operational' : status === 'limited' ? 'Limited' : status === 'disrupted' ? 'Disrupted' : status === 'unknown' ? 'Unknown' : 'Not reported';
+  const tiles = [
+    ['EOC level', level ? LEVEL_INFO[level as keyof typeof LEVEL_INFO]?.name ?? level : 'Not available'],
+    ['Affected barangays', form.affected_barangays ?? 'Not reported'],
+    ['Population affected', form.affected_persons ?? 'Not reported'],
+    ['Evacuated persons', form.evacuated_persons ?? 'Not reported'],
+    ['Lifelines limited / disrupted', affected],
+    ['Road closures', roadFields.length ? `${roadClosures} / ${roadFields.length}` : 'Not reported'],
+    ['Ormoc Port', statusLabel(port)],
+    ['Regional connectivity', regional],
+  ];
   return (
     <section aria-label="Operational picture summary" className="mb-5 rounded-sheet border border-line bg-surface p-4">
-      <h2 className="text-sm font-extrabold">Operational picture</h2>
-      <p className="mt-1 text-xs text-muted">A quick summary of the entries recorded in this SitRep. Blank and not-reported fields are not treated as normal.</p>
+      <h2 className="text-sm font-extrabold">Executive operational picture</h2>
+      <p className="mt-1 text-xs text-muted">A rapid decision view for this reporting period. Missing values are displayed as not reported, never assumed normal.</p>
       <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
-        <div><p className="text-xs text-muted">Indicators entered</p><p className="font-data text-2xl font-extrabold">{all.filter((f) => f.status && f.status !== 'not_reported').length}</p></div>
-        <div><p className="text-xs text-muted">Normal / operational</p><p className="font-data text-2xl font-extrabold">{count('normal')}</p></div>
-        <div><p className="text-xs text-muted">Limited / disrupted</p><p className="font-data text-2xl font-extrabold">{affected}</p></div>
-        <div><p className="text-xs text-muted">Unknown / not reported</p><p className="font-data text-2xl font-extrabold">{count('unknown') + count('not_reported')}</p></div>
+        {tiles.map(([label, value]) => <div key={label}><p className="text-xs text-muted">{label}</p><p className="mt-1 font-data text-xl font-extrabold">{value}</p></div>)}
       </div>
-      <p className="mt-2 text-xs text-muted">{known} of {total} indicators have a known operational condition. Confirm the source, time and geographic coverage before submission.</p>
+      <div className="mt-4 border-t border-line pt-3">
+        <p className="text-xs text-muted">{all.filter((f) => f.status && f.status !== 'not_reported').length} indicators entered · {count('normal')} normal · {count('limited')} limited · {count('disrupted')} disrupted · {count('unknown') + count('not_reported')} unknown / not reported</p>
+        <p className="mt-1 text-xs text-muted">{known} of {all.length} saved indicators have a known operational condition. Confirm source, reporting time and geographic coverage before submission.</p>
+      </div>
     </section>
   );
 }
