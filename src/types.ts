@@ -196,6 +196,8 @@ export interface Sitrep extends Versioned {
 }
 export interface Barangay {
   psgc: string; name: string; classification: string[]; population: number | null; lat: number | null; lng: number | null; version?: number;
+  /** CSWD social-welfare district (1–6); distinct from the CDRRMO operational cluster_id. */
+  district_id?: number | null;
   cluster_id?: string | null; hazard_tags?: string[]; hazard_tag_source?: string | null;
 }
 
