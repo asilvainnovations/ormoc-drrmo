@@ -1,0 +1,2413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="artifact-type" content="dashboard">
+  <meta name="design-style" content="carbon">
+  <title>Ormoc City CDRRMO &amp; EOC Systems Archetypes Visualizer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&family=Poppins:wght@400;500;600&family=Roboto+Condensed:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      color-scheme: light;
+
+      /* 1 & 2. MODE Design System v1.1 + Carbon structure */
+      --background: #EEF5FB;
+      --surface-container-low: #E3EBF2;
+      --surface-container: #FFFFFF;
+      --surface-container-high: #D5E1EC;
+
+      /* Ink */
+      --on-surface: #13283D;
+      --on-surface-variant: #51606E;
+
+      /* Rules */
+      --outline: #8FA3B5;
+      --outline-variant: #C9D5E0;
+
+      /* Accents (WCAG AA pairs preserved) */
+      --primary: #D66812;
+      --primary-text: #AD4E06;
+      --primary-btn: #B85307;
+      --on-primary: #FFFFFF;
+      --primary-container: #FDF0E6;
+      --on-primary-container: #13283D;
+
+      --secondary: #2F86C8;
+      --secondary-text: #1E6AA3;
+      --secondary-container: #E5F1FA;
+      --on-secondary-container: #13283D;
+
+      --warning: #926408;
+      --warning-container: #FDF6E4;
+      --on-warning-container: #13283D;
+
+      --positive: #166534;
+      --positive-container: #EAF6EE;
+      --error: #B42318;
+      --on-error: #FFFFFF;
+
+      /* Data series */
+      --data-1: #D66812;
+      --data-2: #2F86C8;
+      --data-3: #926408;
+      --data-4: #166534;
+      --data-context: #8FA3B5;
+
+      /* Typography */
+      --font-headline: 'Montserrat', sans-serif;
+      --font-body: 'Poppins', sans-serif;
+      --font-label: 'Roboto Condensed', sans-serif;
+
+      /* Type scale (dashboard) */
+      --display-size: clamp(1.75rem, 1.4rem + 1.2vw, 2.35rem);
+      --headline-size: clamp(1.25rem, 1.1rem + 0.5vw, 1.5rem);
+      --subhead-size: clamp(1.0625rem, 1rem + 0.25vw, 1.1875rem);
+      --body-size: clamp(0.9375rem, 0.9rem + 0.15vw, 1rem);
+      --label-size: 0.78rem;
+
+      /* Shape */
+      --rounded: 0.25rem;
+      --rounded-lg: 0.5rem;
+      --rounded-full: 0.875rem;
+
+      /* Effects */
+      --rule: 1px solid var(--outline-variant);
+      --ink-rule: 2px solid var(--on-surface);
+      --indicator: 3px solid var(--primary);
+      --shadow-1: 0 2px 6px rgb(19 40 61 / 0.08);
+      --shadow-2: 0 6px 16px rgb(19 40 61 / 0.10);
+      --focus: #D66812;
+
+      /* Spacing scale */
+      --space-xs: 0.25rem;
+      --space-sm: 0.5rem;
+      --space-md: 1rem;
+      --space-lg: 1.5rem;
+      --space-xl: 2.25rem;
+      --space-2xl: 3.5rem;
+
+      /* Motion */
+      --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+      --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+      --dur-micro: 120ms;
+      --dur-short: 220ms;
+      --dur-long: 420ms;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body {
+      overflow-x: clip;
+      margin: 0;
+      padding: 0;
+      background-color: var(--background);
+      color: var(--on-surface);
+      font-family: var(--font-body);
+      font-size: var(--body-size);
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+    }
+    header { position: static !important; }
+
+    button, input, select, textarea { font-family: inherit; }
+
+    :focus-visible {
+      outline: 2.5px solid var(--focus);
+      outline-offset: 2px;
+    }
+
+    /* MODE Status Band */
+    .status-band {
+      background-color: var(--surface-container);
+      border-top: 4px solid var(--on-surface);
+      border-bottom: var(--rule);
+      padding: var(--space-sm) var(--space-lg);
+    }
+    .status-band-inner {
+      max-width: 1240px;
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-sm) var(--space-md);
+    }
+    .status-pills {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+    .status-pill {
+      font-family: var(--font-label);
+      font-size: var(--label-size);
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 0.25rem 0.625rem;
+      border-radius: var(--rounded);
+      background-color: var(--surface-container-low);
+      color: var(--on-surface);
+      border: var(--rule);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .status-pill.is-warn {
+      background-color: var(--warning-container);
+      color: var(--warning);
+      border-color: var(--warning);
+    }
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: var(--secondary);
+      display: inline-block;
+      flex-shrink: 0;
+    }
+    .status-pill.is-warn .status-dot {
+      background-color: var(--warning);
+    }
+    .status-meta {
+      font-family: var(--font-label);
+      font-size: var(--label-size);
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--on-surface-variant);
+    }
+
+    /* Main Container */
+    .page-grid {
+      display: grid;
+      gap: var(--space-xl);
+      padding: var(--space-lg);
+      max-width: 1240px;
+      margin: 0 auto;
+      overflow: hidden;
+    }
+    .page-grid * { min-width: 0; }
+
+    /* Hero / Header */
+    .hero-block {
+      display: grid;
+      gap: var(--space-md);
+      padding-bottom: var(--space-lg);
+      border-bottom: var(--rule);
+    }
+    .kicker {
+      font-family: var(--font-label);
+      font-size: var(--label-size);
+      font-weight: 700;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      color: var(--secondary-text);
+      margin: 0;
+    }
+    h1 {
+      font-family: var(--font-headline);
+      font-size: var(--display-size);
+      font-weight: 800;
+      line-height: 1.12;
+      letter-spacing: -0.02em;
+      color: var(--on-surface);
+      margin: 0;
+    }
+    .lede {
+      font-size: var(--subhead-size);
+      color: var(--on-surface-variant);
+      max-width: 72ch;
+      margin: 0;
+      line-height: 1.55;
+    }
+
+    /* KPI Strip */
+    .kpi-strip {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: var(--space-md);
+      margin-top: var(--space-xs);
+    }
+    .kpi-tile {
+      background-color: var(--surface-container);
+      border: var(--rule);
+      border-radius: var(--rounded);
+      padding: var(--space-md);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-xs);
+    }
+    .kpi-tile.is-headline {
+      border-bottom: 3px solid var(--secondary);
+    }
+    .kpi-tile.is-alert {
+      border-bottom: 3px solid var(--warning);
+    }
+    .kpi-label {
+      font-family: var(--font-label);
+      font-size: var(--label-size);
+      font-weight: 700;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: var(--on-surface-variant);
+    }
+    .kpi-value {
+      font-family: var(--font-label);
+      font-size: 1.75rem;
+      font-weight: 700;
+      line-height: 1.1;
+      color: var(--on-surface);
+      font-variant-numeric: tabular-nums;
+    }
+    .kpi-sub {
+      font-size: 0.8125rem;
+      color: var(--on-surface-variant);
+      line-height: 1.35;
+    }
+    .meter-track {
+      height: 6px;
+      background-color: var(--surface-container-low);
+      border-radius: var(--rounded);
+      overflow: hidden;
+      margin-top: var(--space-xs);
+    }
+    .meter-fill {
+      height: 100%;
+      background-color: var(--secondary);
+      border-radius: var(--rounded);
+      transition: width var(--dur-long) var(--ease-out);
+    }
+    .meter-fill.is-warn {
+      background-color: var(--warning);
+    }
+
+    /* Section Headings */
+    .section-head {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: var(--space-sm) var(--space-md);
+      border-bottom: var(--ink-rule);
+      padding-bottom: var(--space-sm);
+      margin-bottom: var(--space-md);
+    }
+    .section-head h2 {
+      font-family: var(--font-headline);
+      font-size: var(--headline-size);
+      font-weight: 700;
+      line-height: 1.2;
+      color: var(--on-surface);
+      margin: 0;
+    }
+    .section-lead {
+      font-size: 0.9375rem;
+      color: var(--on-surface-variant);
+      max-width: 72ch;
+      margin: 0 0 var(--space-md) 0;
+    }
+
+    /* Primer Grid (6 Building Blocks) */
+    .primer-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: var(--space-md);
+    }
+    .primer-card {
+      background-color: var(--surface-container);
+      border: var(--rule);
+      border-radius: var(--rounded-lg);
+      padding: var(--space-md);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-sm);
+      transition: border-color var(--dur-micro) var(--ease-out), box-shadow var(--dur-micro) var(--ease-out);
+    }
+    .primer-card:hover {
+      border-color: var(--secondary);
+      box-shadow: var(--shadow-1);
+    }
+    .primer-glyph {
+      background-color: var(--surface-container-low);
+      border-radius: var(--rounded);
+      padding: var(--space-sm);
+      height: 84px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .primer-card h3 {
+      font-family: var(--font-headline);
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--on-surface);
+      margin: 0;
+    }
+    .primer-card p {
+      font-size: 0.875rem;
+      color: var(--on-surface-variant);
+      margin: 0;
+      line-height: 1.5;
+    }
+    .primer-example {
+      margin-top: auto;
+      background-color: var(--surface-container-low);
+      border-left: 3px solid var(--secondary);
+      padding: var(--space-xs) var(--space-sm);
+      border-radius: 0 var(--rounded) var(--rounded) 0;
+      font-size: 0.8125rem;
+      color: var(--on-surface);
+    }
+    .primer-example strong {
+      font-family: var(--font-label);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-size: 0.72rem;
+      color: var(--secondary-text);
+      display: block;
+    }
+
+    /* Archetype Switcher */
+    .archetype-tabs {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: var(--space-sm);
+      margin-bottom: var(--space-md);
+    }
+    .arch-tab {
+      min-height: 54px;
+      padding: var(--space-sm) var(--space-md);
+      background-color: var(--surface-container);
+      border: var(--rule);
+      border-radius: var(--rounded);
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 2px;
+      color: var(--on-surface);
+      transition: background-color var(--dur-micro) var(--ease-out), border-color var(--dur-micro) var(--ease-out);
+    }
+    .arch-tab:hover {
+      background-color: var(--surface-container-low);
+      border-color: var(--outline);
+    }
+    .arch-tab.is-active {
+      background-color: var(--primary-container);
+      border-color: var(--primary);
+      box-shadow: inset 0 -3px 0 0 var(--primary);
+    }
+    .arch-tab-num {
+      font-family: var(--font-label);
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--on-surface-variant);
+    }
+    .arch-tab.is-active .arch-tab-num {
+      color: var(--primary-text);
+    }
+    .arch-tab-name {
+      font-family: var(--font-headline);
+      font-size: 0.9375rem;
+      font-weight: 700;
+      line-height: 1.25;
+      color: var(--on-surface);
+    }
+
+    /* Archetype Thesis Banner */
+    .arch-banner {
+      background-color: var(--surface-container);
+      border: var(--rule);
+      border-left: 4px solid var(--primary);
+      border-radius: var(--rounded);
+      padding: var(--space-md) var(--space-lg);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-md);
+      margin-bottom: var(--space-md);
+    }
+    .arch-banner-copy h3 {
+      font-family: var(--font-headline);
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin: 0 0 0.25rem 0;
+      color: var(--on-surface);
+    }
+    .arch-banner-copy p {
+      margin: 0;
+      font-size: 0.9rem;
+      color: var(--on-surface-variant);
+      max-width: 72ch;
+    }
+    .badge-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-xs);
+    }
+    .iat-badge {
+      font-family: var(--font-label);
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      padding: 0.25rem 0.5rem;
+      border-radius: var(--rounded);
+      background-color: var(--surface-container-low);
+      color: var(--on-surface);
+      border: var(--rule);
+    }
+    .iat-badge.is-high {
+      background-color: var(--warning-container);
+      color: var(--warning);
+      border-color: var(--warning);
+    }
+
+    /* Main Workbench Split */
+    .workbench-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.18fr) minmax(0, 0.92fr);
+      gap: var(--space-lg);
+      align-items: start;
+    }
+    .panel-card {
+      background-color: var(--surface-container);
+      border: var(--rule);
+      border-radius: var(--rounded-lg);
+      padding: var(--space-md);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-md);
+    }
+    .panel-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-sm);
+      border-bottom: var(--rule);
+      padding-bottom: var(--space-sm);
+    }
+    .panel-title-group h3 {
+      font-family: var(--font-headline);
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin: 0;
+      color: var(--on-surface);
+    }
+    .panel-subtitle {
+      font-family: var(--font-label);
+      font-size: var(--label-size);
+      color: var(--on-surface-variant);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    /* Control Bar */
+    .control-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+    .btn-toggle {
+      min-height: 44px;
+      padding: 0.45rem 0.85rem;
+      font-family: var(--font-label);
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      background-color: var(--surface-container-low);
+      color: var(--on-surface);
+      border: 1px solid var(--outline);
+      border-radius: var(--rounded);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: background-color var(--dur-micro) var(--ease-out), border-color var(--dur-micro) var(--ease-out);
+    }
+    .btn-toggle:hover {
+      background-color: var(--surface-container-high);
+    }
+    .btn-toggle.is-active {
+      background-color: var(--primary-container);
+      color: var(--primary-text);
+      border-color: var(--primary);
+      box-shadow: inset 0 -2px 0 0 var(--primary);
+    }
+    .btn-toggle.is-sky.is-active {
+      background-color: var(--secondary-container);
+      color: var(--secondary-text);
+      border-color: var(--secondary);
+      box-shadow: inset 0 -2px 0 0 var(--secondary);
+    }
+    .btn-toggle.is-ochre.is-active {
+      background-color: var(--warning-container);
+      color: var(--warning);
+      border-color: var(--warning);
+      box-shadow: inset 0 -2px 0 0 var(--warning);
+    }
+    .btn-primary {
+      min-height: 44px;
+      padding: 0.45rem 1rem;
+      font-family: var(--font-label);
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      background-color: var(--primary-btn);
+      color: var(--on-primary);
+      border: 1px solid var(--primary-btn);
+      border-radius: var(--rounded);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      transition: background-color var(--dur-micro) var(--ease-out);
+    }
+    .btn-primary:hover {
+      background-color: var(--primary-text);
+    }
+
+    /* CLD SVG Canvas */
+    .cld-stage {
+      background-color: var(--surface-container-low);
+      border: var(--rule);
+      border-radius: var(--rounded);
+      padding: var(--space-sm);
+      min-height: 390px;
+      position: relative;
+    }
+    .cld-svg {
+      width: 100%;
+      height: auto;
+      display: block;
+      min-height: 360px;
+      user-select: none;
+    }
+    .cld-legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-md);
+      font-family: var(--font-label);
+      font-size: 0.78rem;
+      color: var(--on-surface-variant);
+      padding: 0 var(--space-xs);
+    }
+    .legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+    .legend-swatch {
+      width: 16px;
+      height: 4px;
+      border-radius: 2px;
+      display: inline-block;
+    }
+
+    /* Causal Link Inspector */
+    .inspector-box {
+      background-color: var(--surface-container-low);
+      border: var(--rule);
+      border-left: 4px solid var(--primary);
+      border-radius: var(--rounded);
+      padding: var(--space-md);
+      display: grid;
+      gap: var(--space-sm);
+    }
+    .inspector-top {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-sm);
+    }
+    .inspector-route {
+      font-family: var(--font-headline);
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--on-surface);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .polarity-tag {
+      font-family: var(--font-label);
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 0.15rem 0.5rem;
+      border-radius: var(--rounded);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .polarity-tag.is-plus {
+      background-color: var(--secondary-container);
+      color: var(--secondary-text);
+      border: 1px solid var(--secondary);
+    }
+    .polarity-tag.is-minus {
+      background-color: var(--warning-container);
+      color: var(--warning);
+      border: 1px solid var(--warning);
+    }
+    .delay-tag {
+      font-family: var(--font-label);
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 0.15rem 0.45rem;
+      border-radius: var(--rounded);
+      background-color: var(--surface-container);
+      color: var(--warning);
+      border: 1px solid var(--warning);
+      text-transform: uppercase;
+    }
+    .inspector-desc {
+      font-size: 0.875rem;
+      color: var(--on-surface);
+      margin: 0;
+      line-height: 1.5;
+    }
+    .inspector-evidence {
+      font-size: 0.8125rem;
+      color: var(--on-surface-variant);
+      margin: 0;
+      padding-top: var(--space-xs);
+      border-top: var(--rule);
+    }
+    .inspector-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-sm);
+    }
+    .btn-step {
+      min-height: 44px;
+      padding: 0.35rem 0.75rem;
+      font-family: var(--font-label);
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      background-color: var(--surface-container);
+      color: var(--on-surface);
+      border: 1px solid var(--outline);
+      border-radius: var(--rounded);
+      cursor: pointer;
+    }
+    .btn-step:hover {
+      background-color: var(--surface-container-high);
+    }
+
+    /* BOT Graph Card */
+    .bot-stage {
+      background-color: var(--surface-container);
+      border: var(--rule);
+      border-radius: var(--rounded);
+      padding: var(--space-sm);
+      min-height: 290px;
+    }
+    .bot-svg {
+      width: 100%;
+      height: auto;
+      display: block;
+      min-height: 260px;
+      cursor: pointer;
+    }
+    .scrubber-panel {
+      background-color: var(--surface-container-low);
+      border: var(--rule);
+      border-radius: var(--rounded);
+      padding: var(--space-sm) var(--space-md);
+      display: grid;
+      gap: var(--space-sm);
+    }
+    .scrubber-controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-end;
+      gap: var(--space-sm) var(--space-md);
+    }
+    .slider-field {
+      flex: 1 1 200px;
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+    .slider-label-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: var(--font-label);
+      font-size: var(--label-size);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--on-surface);
+    }
+    .slider-time-readout {
+      color: var(--primary-text);
+    }
+    input[type="range"].mode-slider {
+      width: 100%;
+      height: 44px;
+      margin: 0;
+      accent-color: var(--primary);
+      cursor: pointer;
+    }
+
+    /* Live BOT Metrics Readout */
+    .bot-readouts {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: var(--space-sm);
+    }
+    .readout-chip {
+      background-color: var(--surface-container-low);
+      border: var(--rule);
+      border-radius: var(--rounded);
+      padding: var(--space-sm);
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .readout-name {
+      font-family: var(--font-label);
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--on-surface-variant);
+    }
+    .readout-val {
+      font-family: var(--font-label);
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--on-surface);
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* MOO Leverage Box */
+    .leverage-card {
+      background-color: var(--surface-container);
+      border: var(--rule);
+      border-left: 4px solid var(--secondary);
+      border-radius: var(--rounded-lg);
+      padding: var(--space-md);
+      display: grid;
+      gap: var(--space-sm);
+    }
+    .leverage-card h4 {
+      font-family: var(--font-headline);
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin: 0;
+      color: var(--on-surface);
+    }
+    .leverage-list {
+      margin: 0;
+      padding-left: 1.15rem;
+      font-size: 0.875rem;
+      color: var(--on-surface-variant);
+      display: grid;
+      gap: 0.35rem;
+    }
+    .leverage-list strong {
+      color: var(--on-surface);
+    }
+
+    /* Section 3: Iceberg & Crosswalk */
+    .iceberg-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.25fr);
+      gap: var(--space-lg);
+      align-items: start;
+    }
+    .iceberg-layer-btn {
+      cursor: pointer;
+      transition: opacity var(--dur-micro) var(--ease-out);
+    }
+    .iceberg-detail {
+      background-color: var(--surface-container-low);
+      border: var(--rule);
+      border-left: 4px solid var(--primary);
+      border-radius: var(--rounded);
+      padding: var(--space-md);
+    }
+    .iceberg-detail h4 {
+      font-family: var(--font-headline);
+      font-size: 1rem;
+      font-weight: 700;
+      margin: 0 0 var(--space-xs) 0;
+      color: var(--on-surface);
+    }
+    .iceberg-detail p {
+      margin: 0;
+      font-size: 0.875rem;
+      color: var(--on-surface-variant);
+    }
+
+    /* Data Table */
+    .table-wrap {
+      overflow-x: auto;
+      background-color: var(--surface-container);
+      border: var(--rule);
+      border-radius: var(--rounded-lg);
+    }
+    table.crosswalk-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.875rem;
+      text-align: left;
+    }
+    .crosswalk-table th {
+      font-family: var(--font-label);
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--on-surface);
+      background-color: var(--surface-container-low);
+      padding: 0.75rem var(--space-md);
+      border-bottom: var(--ink-rule);
+      white-space: nowrap;
+    }
+    .crosswalk-table td {
+      padding: 0.75rem var(--space-md);
+      border-bottom: var(--rule);
+      vertical-align: top;
+      color: var(--on-surface-variant);
+    }
+    .crosswalk-table tbody tr:last-child td {
+      border-bottom: 0;
+    }
+    .crosswalk-table td strong {
+      color: var(--on-surface);
+      font-weight: 600;
+    }
+    .crosswalk-table tr.is-current-row {
+      background-color: var(--primary-container);
+    }
+    .crosswalk-table tr.is-current-row td {
+      color: var(--on-surface);
+    }
+
+    /* Footer */
+    .source-footer {
+      border-top: var(--rule);
+      padding-top: var(--space-md);
+      padding-bottom: var(--space-xl);
+      font-size: 0.8125rem;
+      color: var(--on-surface-variant);
+      display: grid;
+      gap: var(--space-xs);
+    }
+    .source-footer strong {
+      font-family: var(--font-label);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--on-surface);
+    }
+
+    /* Interactive SVG Node & Arrow styling */
+    .cld-link-hit {
+      cursor: pointer;
+    }
+    .cld-link-hit:focus-visible {
+      outline: none;
+    }
+    .cld-link-path {
+      transition: stroke var(--dur-micro) var(--ease-out), stroke-width var(--dur-micro) var(--ease-out), opacity var(--dur-micro) var(--ease-out);
+    }
+
+    @media (max-width: 980px) {
+      .kpi-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .primer-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .archetype-tabs { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .workbench-grid { grid-template-columns: 1fr; }
+      .iceberg-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 640px) {
+      .page-grid { padding: var(--space-md); gap: var(--space-lg); }
+      .kpi-strip { grid-template-columns: 1fr; }
+      .primer-grid { grid-template-columns: 1fr; }
+      .archetype-tabs { grid-template-columns: 1fr; }
+      .status-band { padding: var(--space-sm) var(--space-md); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- MODE State-Before-Content Status Band -->
+  <div class="status-band" role="region" aria-label="Operational posture and baseline state">
+    <div class="status-band-inner">
+      <div class="status-pills">
+        <span class="status-pill"><span class="status-dot" aria-hidden="true"></span>EOC Posture: White (Normal Ops)</span>
+        <span class="status-pill">Declaration: None in Force</span>
+        <span class="status-pill is-warn"><span class="status-dot" aria-hidden="true"></span>Baseline: IAT v1.7 (11 Nov 2026) · 41.8% Compliance</span>
+      </div>
+      <div class="status-meta">Ormoc City CDRRMO–EOC · MODE Design System</div>
+    </div>
+  </div>
+
+  <main class="page-grid">
+    <!-- Hero & KPI Baseline -->
+    <header class="hero-block">
+      <p class="kicker">Systems Thinking Diagnostic · CResT Framework · 85 PSGC Barangays</p>
+      <h1>Ormoc City DRRMO &amp; EOC Systems Archetypes</h1>
+      <p class="lede">
+        Ormoc City runs an active 24/7 monitoring operation, yet mandatory legal compliance stands at 41.8%. Explore the four recurring system traps that keep teams stuck in reactive crisis mode—and test how the Manual of Operations (MOO) breaks each loop over time.
+      </p>
+
+      <div class="kpi-strip" aria-label="Institutional Assessment Tool v1.7 baseline metrics">
+        <div class="kpi-tile is-headline">
+          <span class="kpi-label">Institutional Maturity (IMI)</span>
+          <span class="kpi-value">1.98 / 4.00</span>
+          <span class="kpi-sub">Developing band across 108 A+B indicators (target &ge; 2.50)</span>
+          <div class="meter-track" aria-hidden="true"><div class="meter-fill" style="width: 49.5%;"></div></div>
+        </div>
+        <div class="kpi-tile is-alert">
+          <span class="kpi-label">Mandatory Compliance</span>
+          <span class="kpi-value">41.8%</span>
+          <span class="kpi-sub">A1 Governance: 66.7% · B1 EOC Basis: 20.0% (target 100%)</span>
+          <div class="meter-track" aria-hidden="true"><div class="meter-fill is-warn" style="width: 41.8%;"></div></div>
+        </div>
+        <div class="kpi-tile is-alert">
+          <span class="kpi-label">Permanent Plantilla Share</span>
+          <span class="kpi-value">4 / 47</span>
+          <span class="kpi-sub">8.5% permanent posts; 7 OpCen staff for 24/7 duty roster</span>
+          <div class="meter-track" aria-hidden="true"><div class="meter-fill is-warn" style="width: 8.5%;"></div></div>
+        </div>
+        <div class="kpi-tile">
+          <span class="kpi-label">ICS–EOC Interface (B6.1)</span>
+          <span class="kpi-value">Score 1 / 4</span>
+          <span class="kpi-sub">High-priority gap: field command vs. EOC support uncodified</span>
+          <div class="meter-track" aria-hidden="true"><div class="meter-fill is-warn" style="width: 25%;"></div></div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Section 1: Systems Thinking Definitions -->
+    <section aria-labelledby="sec-definitions">
+      <div class="section-head">
+        <h2 id="sec-definitions">1. How to Read These Diagrams: Six Core Building Blocks</h2>
+      </div>
+      <p class="section-lead">
+        Systems thinking looks past one-off emergencies to see the hidden circles of cause and effect driving daily work. Here is what each symbol in the interactive diagrams below means in plain language.
+      </p>
+
+      <div class="primer-grid">
+        <!-- Card 1: CLDs -->
+        <article class="primer-card">
+          <div class="primer-glyph">
+            <svg viewBox="0 0 220 68" width="210" height="64" aria-hidden="true">
+              <rect x="8" y="16" width="76" height="36" rx="4" fill="var(--surface-container)" stroke="var(--on-surface)" stroke-width="1.5"/>
+              <text x="46" y="38" text-anchor="middle" font-family="var(--font-label)" font-size="11" font-weight="700" fill="var(--on-surface)">CAUSE</text>
+              <rect x="136" y="16" width="76" height="36" rx="4" fill="var(--surface-container)" stroke="var(--on-surface)" stroke-width="1.5"/>
+              <text x="174" y="38" text-anchor="middle" font-family="var(--font-label)" font-size="11" font-weight="700" fill="var(--on-surface)">EFFECT</text>
+              <path d="M 88 26 Q 110 12 132 26" fill="none" stroke="var(--secondary)" stroke-width="2"/>
+              <polygon points="134,27 126,22 128,30" fill="var(--secondary)"/>
+              <path d="M 132 42 Q 110 56 88 42" fill="none" stroke="var(--warning)" stroke-width="2"/>
+              <polygon points="86,41 94,46 92,38" fill="var(--warning)"/>
+            </svg>
+          </div>
+          <h3>Causal Loop Diagrams (CLDs)</h3>
+          <p>A visual map showing how actions and conditions feed back into one another in closed circles, rather than ending in a straight line.</p>
+          <div class="primer-example">
+            <strong>In Ormoc</strong>
+            Short-term storm fixes affect whether permanent ordinances get passed later.
+          </div>
+        </article>
+
+        <!-- Card 2: Polarities -->
+        <article class="primer-card">
+          <div class="primer-glyph">
+            <svg viewBox="0 0 220 68" width="210" height="64" aria-hidden="true">
+              <line x1="16" y1="20" x2="88" y2="20" stroke="var(--secondary)" stroke-width="2.5"/>
+              <polygon points="92,20 84,15 84,25" fill="var(--secondary)"/>
+              <circle cx="72" cy="20" r="10" fill="var(--secondary-container)" stroke="var(--secondary)" stroke-width="1.5"/>
+              <text x="72" y="24" text-anchor="middle" font-family="var(--font-label)" font-size="13" font-weight="700" fill="var(--secondary-text)">+</text>
+              <text x="106" y="24" font-family="var(--font-label)" font-size="11" font-weight="700" fill="var(--on-surface)">SAME DIRECTION</text>
+
+              <line x1="16" y1="48" x2="88" y2="48" stroke="var(--warning)" stroke-width="2.5"/>
+              <polygon points="92,48 84,43 84,53" fill="var(--warning)"/>
+              <circle cx="72" cy="48" r="10" fill="var(--warning-container)" stroke="var(--warning)" stroke-width="1.5"/>
+              <text x="72" y="52" text-anchor="middle" font-family="var(--font-label)" font-size="14" font-weight="700" fill="var(--warning)">&#8722;</text>
+              <text x="106" y="52" font-family="var(--font-label)" font-size="11" font-weight="700" fill="var(--on-surface)">OPPOSITE DIRECTION</text>
+            </svg>
+          </div>
+          <h3>Polarities (+ and &#8722;)</h3>
+          <p><strong>+ (Same):</strong> When the first item grows, the second grows too. <strong>&#8722; (Opposite):</strong> When the first grows, the second shrinks.</p>
+          <div class="primer-example">
+            <strong>In Ormoc</strong>
+            More staff overload (&#8722;) cuts 24/7 readiness; clear SOPs (&#8722;) cut field confusion.
+          </div>
+        </article>
+
+        <!-- Card 3: Reinforcing Loops -->
+        <article class="primer-card">
+          <div class="primer-glyph">
+            <svg viewBox="0 0 220 68" width="210" height="64" aria-hidden="true">
+              <circle cx="75" cy="34" r="24" fill="none" stroke="var(--warning)" stroke-width="2.5" stroke-dasharray="118 32"/>
+              <polygon points="94,18 99,26 89,25" fill="var(--warning)"/>
+              <text x="75" y="39" text-anchor="middle" font-family="var(--font-label)" font-size="16" font-weight="700" fill="var(--warning)">R</text>
+              <text x="116" y="30" font-family="var(--font-label)" font-size="11" font-weight="700" fill="var(--warning)">SNOWBALL EFFECT</text>
+              <text x="116" y="46" font-family="var(--font-label)" font-size="11" fill="var(--on-surface-variant)">Even count of (&#8722;) links</text>
+            </svg>
+          </div>
+          <h3>Reinforcing Loops (R)</h3>
+          <p>A self-multiplying cycle where every turn pushes things further in the same direction—either building momentum or worsening a crisis.</p>
+          <div class="primer-example">
+            <strong>In Ormoc</strong>
+            Command confusion delays support, which makes the incident even harder to manage.
+          </div>
+        </article>
+
+        <!-- Card 4: Balancing Loops -->
+        <article class="primer-card">
+          <div class="primer-glyph">
+            <svg viewBox="0 0 220 68" width="210" height="64" aria-hidden="true">
+              <circle cx="75" cy="34" r="24" fill="none" stroke="var(--secondary)" stroke-width="2.5" stroke-dasharray="118 32"/>
+              <polygon points="94,18 99,26 89,25" fill="var(--secondary)"/>
+              <text x="75" y="39" text-anchor="middle" font-family="var(--font-label)" font-size="16" font-weight="700" fill="var(--secondary-text)">B</text>
+              <text x="116" y="30" font-family="var(--font-label)" font-size="11" font-weight="700" fill="var(--secondary-text)">GOAL-SEEKING</text>
+              <text x="116" y="46" font-family="var(--font-label)" font-size="11" fill="var(--on-surface-variant)">Odd count of (&#8722;) links</text>
+            </svg>
+          </div>
+          <h3>Balancing Loops (B)</h3>
+          <p>A stabilizing cycle—like a thermostat—that reacts to a gap or problem and pulls the system back toward control or a limit.</p>
+          <div class="primer-example">
+            <strong>In Ormoc</strong>
+            Emergency Executive Orders quickly calm an immediate typhoon disruption, then stop.
+          </div>
+        </article>
+
+        <!-- Card 5: Delays -->
+        <article class="primer-card">
+          <div class="primer-glyph">
+            <svg viewBox="0 0 220 68" width="210" height="64" aria-hidden="true">
+              <line x1="20" y1="34" x2="128" y2="34" stroke="var(--warning)" stroke-width="2.5"/>
+              <polygon points="134,34 125,29 125,39" fill="var(--warning)"/>
+              <line x1="72" y1="22" x2="72" y2="46" stroke="var(--warning)" stroke-width="3"/>
+              <line x1="80" y1="22" x2="80" y2="46" stroke="var(--warning)" stroke-width="3"/>
+              <text x="148" y="30" font-family="var(--font-label)" font-size="11" font-weight="700" fill="var(--warning)">TIME LAG ( || )</text>
+              <text x="148" y="45" font-family="var(--font-label)" font-size="11" fill="var(--on-surface-variant)">Slow feedback</text>
+            </svg>
+          </div>
+          <h3>Delays ( || )</h3>
+          <p>Parallel hash bars across an arrow mark a waiting period before an action pays off—causing people to give up or overreact too early.</p>
+          <div class="primer-example">
+            <strong>In Ormoc</strong>
+            Drafting, reviewing, and passing an enabling City Ordinance takes months, not hours.
+          </div>
+        </article>
+
+        <!-- Card 6: Systems Archetypes -->
+        <article class="primer-card">
+          <div class="primer-glyph">
+            <svg viewBox="0 0 220 68" width="210" height="64" aria-hidden="true">
+              <circle cx="62" cy="34" r="20" fill="none" stroke="var(--secondary)" stroke-width="2.2"/>
+              <text x="62" y="39" text-anchor="middle" font-family="var(--font-label)" font-size="13" font-weight="700" fill="var(--secondary-text)">B</text>
+              <circle cx="102" cy="34" r="20" fill="none" stroke="var(--warning)" stroke-width="2.2"/>
+              <text x="102" y="39" text-anchor="middle" font-family="var(--font-label)" font-size="13" font-weight="700" fill="var(--warning)">R</text>
+              <text x="136" y="30" font-family="var(--font-label)" font-size="11" font-weight="700" fill="var(--on-surface)">RECURRING TRAP</text>
+              <text x="136" y="45" font-family="var(--font-label)" font-size="11" fill="var(--on-surface-variant)">Predictable pattern</text>
+            </svg>
+          </div>
+          <h3>Systems Archetypes</h3>
+          <p>Well-known combinations of R and B loops that explain why hardworking teams see the same headaches return year after year.</p>
+          <div class="primer-example">
+            <strong>In Ormoc</strong>
+            Four archetypes explain 41.8% compliance despite active typhoon response.
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- Section 2: Interactive Archetype Explorer -->
+    <section aria-labelledby="sec-explorer">
+      <div class="section-head">
+        <h2 id="sec-explorer">2. Interactive Archetype Explorer: Causal Loops &amp; Behavior Over Time</h2>
+      </div>
+
+      <!-- Archetype Switcher -->
+      <div class="archetype-tabs" role="tablist" aria-label="Select Ormoc DRRM Systems Archetype">
+        <button type="button" role="tab" class="arch-tab is-active" id="tab-arch-1" aria-selected="true" onclick="selectArchetype('shifting')">
+          <span class="arch-tab-num">01 · Shifting the Burden</span>
+          <span class="arch-tab-name">Ad-Hoc EOs vs. Permanent SOPs</span>
+        </button>
+        <button type="button" role="tab" class="arch-tab" id="tab-arch-2" aria-selected="false" onclick="selectArchetype('underinvestment')">
+          <span class="arch-tab-num">02 · Growth &amp; Underinvestment</span>
+          <span class="arch-tab-name">Rising Mandates vs. Plantilla Gap</span>
+        </button>
+        <button type="button" role="tab" class="arch-tab" id="tab-arch-3" aria-selected="false" onclick="selectArchetype('drifting')">
+          <span class="arch-tab-num">03 · Drifting Goals</span>
+          <span class="arch-tab-name">Response Effort vs. Legal Standard</span>
+        </button>
+        <button type="button" role="tab" class="arch-tab" id="tab-arch-4" aria-selected="false" onclick="selectArchetype('conflation')">
+          <span class="arch-tab-num">04 · Escalation Trap</span>
+          <span class="arch-tab-name">ICS–EOC Mandate Conflation</span>
+        </button>
+      </div>
+
+      <!-- Active Archetype Banner -->
+      <div class="arch-banner" id="arch-banner">
+        <div class="arch-banner-copy">
+          <h3 id="arch-title">Archetype 1: Shifting the Burden</h3>
+          <p id="arch-summary">Loading summary…</p>
+        </div>
+        <div class="badge-row" id="arch-badges"></div>
+      </div>
+
+      <!-- Main Workbench Grid -->
+      <div class="workbench-grid">
+        <!-- Left Panel: CLD Canvas + Link Inspector -->
+        <div class="panel-card">
+          <div class="panel-header">
+            <div class="panel-title-group">
+              <h3>Causal Loop Diagram (CLD)</h3>
+              <span class="panel-subtitle" id="cld-subtitle">Hover, tap, or tab to any arrow to inspect cause &amp; effect</span>
+            </div>
+          </div>
+
+          <div class="control-row" role="group" aria-label="Filter feedback loops">
+            <button type="button" class="btn-toggle is-active" id="filter-all" onclick="setLoopFilter('all')">All Loops</button>
+            <button type="button" class="btn-toggle is-ochre" id="filter-R" onclick="setLoopFilter('R')">Reinforcing (R)</button>
+            <button type="button" class="btn-toggle is-sky" id="filter-B" onclick="setLoopFilter('B')">Balancing (B)</button>
+            <button type="button" class="btn-toggle is-sky" id="filter-fix" onclick="toggleMOOOverlay()">MOO Fix Highlight: On</button>
+          </div>
+
+          <div class="cld-stage">
+            <svg id="cld-svg" class="cld-svg" viewBox="0 0 680 450" role="img" aria-label="Interactive Causal Loop Diagram"></svg>
+          </div>
+
+          <div class="cld-legend" aria-label="Diagram legend">
+            <span class="legend-item"><span class="legend-swatch" style="background-color: var(--secondary);"></span>Balancing Loop (B) / Stabilizer</span>
+            <span class="legend-item"><span class="legend-swatch" style="background-color: var(--warning);"></span>Reinforcing Loop (R) / Trap</span>
+            <span class="legend-item"><span class="legend-swatch" style="background-color: var(--primary);"></span>Selected Causal Link</span>
+            <span class="legend-item"><strong style="color: var(--warning);">||</strong> Time Delay</span>
+          </div>
+
+          <!-- Causal Link Inspector -->
+          <div class="inspector-box" id="link-inspector" aria-live="polite">
+            <div class="inspector-top">
+              <div class="inspector-route" id="insp-route">Select an arrow above</div>
+              <div class="badge-row" id="insp-tags"></div>
+            </div>
+            <p class="inspector-desc" id="insp-desc"></p>
+            <p class="inspector-evidence" id="insp-evidence"></p>
+            <div class="inspector-nav">
+              <button type="button" class="btn-step" onclick="stepLink(-1)">&#8592; Previous Link</button>
+              <span class="panel-subtitle" id="insp-counter">Link 1 of 5</span>
+              <button type="button" class="btn-step" onclick="stepLink(1)">Next Link &#8594;</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Panel: BOT Graph + Scrubber + Leverage Actions -->
+        <div class="panel-card">
+          <div class="panel-header">
+            <div class="panel-title-group">
+              <h3>Behavior Over Time (BOT) Graph</h3>
+              <span class="panel-subtitle" id="bot-subtitle">Relative trajectory across operational timeline</span>
+            </div>
+            <button type="button" class="btn-toggle is-sky is-active" id="btn-intervention" onclick="toggleIntervention()">MOO Reform: Applied</button>
+          </div>
+
+          <div class="bot-stage">
+            <svg id="bot-svg" class="bot-svg" viewBox="0 0 560 285" role="img" aria-label="Behavior Over Time graph" onclick="handleBotClick(event)"></svg>
+          </div>
+
+          <!-- Time Axis Scrubber & Playback -->
+          <div class="scrubber-panel">
+            <div class="scrubber-controls">
+              <button type="button" class="btn-primary" id="btn-play" onclick="togglePlay()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6,4 20,12 6,20"></polygon></svg>
+                <span id="btn-play-label">Play Timeline</span>
+              </button>
+              <button type="button" class="btn-step" onclick="resetTimeline()">Reset</button>
+              <div class="slider-field">
+                <div class="slider-label-row">
+                  <label for="time-scrubber">Time Axis Scrubber</label>
+                  <span class="slider-time-readout" id="time-readout">Year 5.0 (100%)</span>
+                </div>
+                <input type="range" id="time-scrubber" class="mode-slider" min="5" max="100" value="100" oninput="scrubTime(this.value)">
+              </div>
+            </div>
+
+            <div class="bot-readouts" id="bot-readouts"></div>
+          </div>
+
+          <!-- Leverage Points Card -->
+          <div class="leverage-card">
+            <h4 id="lev-title">How the Ormoc MOO Breaks This Trap</h4>
+            <ul class="leverage-list" id="lev-list"></ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 3: Iceberg Model & Crosswalk Table -->
+    <section aria-labelledby="sec-iceberg">
+      <div class="section-head">
+        <h2 id="sec-iceberg">3. Below the Surface: CResT Iceberg Model &amp; MOO Leverage Crosswalk</h2>
+      </div>
+      <p class="section-lead">
+        Events like typhoon evacuations are only the visible tip. Click any layer of the Iceberg below to see how Ormoc's underlying rules and mental models create the four archetypes above.
+      </p>
+
+      <div class="iceberg-grid">
+        <div class="panel-card">
+          <div class="panel-title-group">
+            <h3>CResT Four-Layer Iceberg</h3>
+            <span class="panel-subtitle">Click or tap a layer to inspect Ormoc findings</span>
+          </div>
+          <svg viewBox="0 0 460 320" width="100%" style="min-height: 270px;" role="img" aria-label="Interactive four-layer Iceberg Model">
+            <!-- Waterline -->
+            <line x1="12" y1="88" x2="448" y2="88" stroke="var(--secondary)" stroke-width="2" stroke-dasharray="5 4"/>
+            <text x="16" y="80" font-family="var(--font-label)" font-size="11" font-weight="700" fill="var(--secondary-text)">VISIBLE ABOVE SURFACE</text>
+            <text x="16" y="104" font-family="var(--font-label)" font-size="11" font-weight="700" fill="var(--on-surface-variant)">HIDDEN SYSTEM DRIVERS</text>
+
+            <!-- Layer 1: Events -->
+            <g class="iceberg-layer-btn" tabindex="0" role="button" aria-label="Layer 1: Events" onclick="selectIceberg(0)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();selectIceberg(0);}">
+              <polygon id="ice-poly-0" points="230,16 286,82 174,82" fill="var(--secondary-container)" stroke="var(--secondary)" stroke-width="2"/>
+              <text x="230" y="64" text-anchor="middle" font-family="var(--font-label)" font-size="12" font-weight="700" fill="var(--on-surface)">1. EVENTS</text>
+            </g>
+
+            <!-- Layer 2: Patterns -->
+            <g class="iceberg-layer-btn" tabindex="0" role="button" aria-label="Layer 2: Patterns and Trends" onclick="selectIceberg(1)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();selectIceberg(1);}">
+              <polygon id="ice-poly-1" points="168,94 292,94 334,158 126,158" fill="var(--surface-container-low)" stroke="var(--outline)" stroke-width="2"/>
+              <text x="230" y="131" text-anchor="middle" font-family="var(--font-label)" font-size="12" font-weight="700" fill="var(--on-surface)">2. PATTERNS / TRENDS</text>
+            </g>
+
+            <!-- Layer 3: Structures -->
+            <g class="iceberg-layer-btn" tabindex="0" role="button" aria-label="Layer 3: Underlying Structures" onclick="selectIceberg(2)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();selectIceberg(2);}">
+              <polygon id="ice-poly-2" points="120,166 340,166 382,232 78,232" fill="var(--surface-container-low)" stroke="var(--outline)" stroke-width="2"/>
+              <text x="230" y="204" text-anchor="middle" font-family="var(--font-label)" font-size="12" font-weight="700" fill="var(--on-surface)">3. UNDERLYING STRUCTURES</text>
+            </g>
+
+            <!-- Layer 4: Mental Models -->
+            <g class="iceberg-layer-btn" tabindex="0" role="button" aria-label="Layer 4: Mental Models" onclick="selectIceberg(3)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();selectIceberg(3);}">
+              <polygon id="ice-poly-3" points="72,240 388,240 424,304 36,304" fill="var(--primary-container)" stroke="var(--primary)" stroke-width="2.5"/>
+              <text x="230" y="277" text-anchor="middle" font-family="var(--font-label)" font-size="12" font-weight="700" fill="var(--on-surface)">4. MENTAL MODELS (HIGHEST LEVERAGE)</text>
+            </g>
+          </svg>
+          <div class="iceberg-detail" id="iceberg-detail" aria-live="polite">
+            <h4 id="ice-title">4. Mental Models (Highest Leverage)</h4>
+            <p id="ice-desc">Treating DRRM mainly as reactive storm response—and viewing the EOC as an alternative field command post—keeps the office trapped in emergency fixes instead of risk-informed governance and PDCA quality cycles.</p>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table class="crosswalk-table">
+            <thead>
+              <tr>
+                <th>Archetype</th>
+                <th>IAT v1.7 Baseline Gap</th>
+                <th>Systemic Trap</th>
+                <th>Ormoc MOO Leverage Fix</th>
+              </tr>
+            </thead>
+            <tbody id="crosswalk-body">
+              <tr id="row-shifting" class="is-current-row">
+                <td><strong>01 · Shifting the Burden</strong></td>
+                <td>A1.1 (2), A1.6 (3), A1.8 (1), B1.1 (2)</td>
+                <td>Event EOs &amp; casual duty mask the lack of permanent ordinances &amp; SOPs.</td>
+                <td>Amend Ord. 008 s.2014 (Annex 1-A); issue EOC EO (Annex 1-C); adopt GOV-04 &amp; GOV-05 (RA 12287).</td>
+              </tr>
+              <tr id="row-underinvestment">
+                <td><strong>02 · Growth &amp; Underinvestment</strong></td>
+                <td>A2.3 (2), A2.5 (2), B4.3 (2), A5.6 (2)</td>
+                <td>Only 4/47 permanent staff &amp; 7 OpCen staff lag behind climate &amp; statutory load.</td>
+                <td>Fund JMC 2014-1 plantilla divisions, 3-deep 24/7 roster, GIS/M&amp;E posts &amp; alternate EOC.</td>
+              </tr>
+              <tr id="row-drifting">
+                <td><strong>03 · Drifting Goals</strong></td>
+                <td>41.8% Mandatory Compliance vs. 100% target</td>
+                <td>Informal practice is tolerated when busy response effort substitutes for verified compliance.</td>
+                <td>Enforce TQM/PDCA cycles, annual IAT audits, RACI accountability &amp; CAPA register (SOP 7-04).</td>
+              </tr>
+              <tr id="row-conflation">
+                <td><strong>04 · ICS–EOC Conflation</strong></td>
+                <td>B6.1 (Score 1, High), A8.1 (2), B1.4 (2)</td>
+                <td>EOC issuing tactical field orders creates chain-of-command confusion &amp; resource delays.</td>
+                <td>Enforce SOP 4-05 (PR-ICS-INTERFACE): IC commands field; EOC coordinates logistics &amp; policy.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <footer class="source-footer">
+      <div><strong>Ground Truth &amp; Sources</strong></div>
+      <div>
+        Grounded in City Government of Ormoc CDRRMO–EOC Manual of Operations (Chapters 1–9), Institutional Assessment Tool (IAT) v1.7 Dashboard (11 Nov 2026), CResT Toolkit Iceberg &amp; CLD Methodology, Ormoc City DRRM 10-Year Plan (2023–2032), CLUP (2017–2027), RA 10121, RA 12287 &amp; 2026 IRR, NDRRMC Memo No. 131 s. 2018, NDRRMC MC No. 4 s. 2012, and MODE Design System v1.1.
+      </div>
+    </footer>
+  </main>
+
+  <api-shim></api-shim>
+  <script>
+    const ARCHETYPES = {
+      shifting: {
+        id: `shifting`,
+        num: `01 · Shifting the Burden`,
+        title: `Archetype 1: Shifting the Burden (Ad-Hoc Event EOs vs. Permanent SOPs)`,
+        summary: `When operational disruptions hit, issuing one-off Executive Orders and using casual duty staff relieves immediate pressure (B1). Over time, relying on quick fixes delays passing permanent ordinances and written SOPs (R1), guaranteeing the next storm brings the same chaos.`,
+        subtitle: `B1 (Quick Fix) vs. R1 (Dependency Trap) & B2 (Permanent Reform)`,
+        badges: [
+          { text: `A1.1 Score 2 (High)`, warn: true },
+          { text: `A1.8 Score 1 (High)`, warn: true },
+          { text: `B1.1 Score 2 (High)`, warn: true },
+          { text: `A1.6 Score 3 (Med)`, warn: false }
+        ],
+        nodes: [
+          { id: `n1`, x: 145, y: 225, w: 174, h: 66, label: [`Operational Friction`, `& Crisis Workload`], role: `symptom` },
+          { id: `n2`, x: 465, y: 88, w: 196, h: 62, label: [`Ad-Hoc Fixes`, `(Event EOs & Casual Duty)`], role: `quick` },
+          { id: `n3`, x: 465, y: 362, w: 204, h: 62, label: [`Permanent Ordinance`, `& Plantilla SOPs`], role: `fund` }
+        ],
+        links: [
+          {
+            id: `s1`, from: `n1`, to: `n2`,
+            path: `M 145 192 Q 210 78 364 84`,
+            labelPos: { x: 245, y: 95 },
+            polarity: `+`, loop: `B1`, delay: false, isFix: false,
+            title: `Operational Friction \u2192 Ad-Hoc Fixes`,
+            desc: `As storm disruptions and daily task load climb, the office reaches for immediate workarounds—such as event-specific resolutions and temporary staff assignments.`,
+            evidence: `Evidence: Evacuation & class suspensions handled event-by-event (CDRRMC Res. Nos. 08–09 s.2021 for Odette; Res. No. 06 s.2022 for Agaton).`
+          },
+          {
+            id: `s2`, from: `n2`, to: `n1`,
+            path: `M 366 106 Q 290 165 234 205`,
+            labelPos: { x: 294, y: 172 },
+            polarity: `\u2212`, loop: `B1`, delay: false, isFix: false,
+            title: `Ad-Hoc Fixes \u2192 Operational Friction`,
+            desc: `Quick event EOs and overtime calm the immediate emergency, temporarily lowering workload pressure—making the quick fix feel successful.`,
+            evidence: `Evidence: Active 24/7 OpCen monitoring keeps acute emergencies moving despite missing written EOC SOPs.`
+          },
+          {
+            id: `s3`, from: `n2`, to: `n3`,
+            path: `M 548 119 Q 628 225 548 331`,
+            labelPos: { x: 598, y: 270 },
+            delayPos: { x: 588, y: 225 },
+            polarity: `\u2212`, loop: `R`, delay: true, isFix: false,
+            title: `Ad-Hoc Fixes \u2192 Permanent Ordinance & SOPs`,
+            desc: `Because temporary fixes put out today's fire, pressure to draft permanent rules fades. After a delay, legislative reform and SOP adoption stall, locking in the compliance gap.`,
+            evidence: `Evidence: Ord. No. 008 s.2014 was never amended into a full JMC 2014-1 department, and QRF resolutions omit declaration citations (A1.6).`
+          },
+          {
+            id: `s4`, from: `n1`, to: `n3`,
+            path: `M 145 258 Q 210 372 360 366`,
+            labelPos: { x: 245, y: 356 },
+            polarity: `+`, loop: `B2`, delay: false, isFix: true,
+            title: `Operational Friction \u2192 Demand for Permanent SOPs`,
+            desc: `Repeated breakdowns under pressure eventually force recognition that permanent legal authority and standardized checklists are needed.`,
+            evidence: `MOO Leverage: IAT v1.7 baseline (1.98/4.00) catalyzes formal validation and Annex 1-A / 1-C drafting.`
+          },
+          {
+            id: `s5`, from: `n3`, to: `n1`,
+            path: `M 362 342 Q 290 282 234 244`,
+            labelPos: { x: 294, y: 275 },
+            delayPos: { x: 300, y: 296 },
+            polarity: `\u2212`, loop: `B2`, delay: true, isFix: true,
+            title: `Permanent Ordinance & SOPs \u2192 Operational Friction`,
+            desc: `Once enacted (after legislative & training delays), permanent divisions, GOV-04 (Calamity), and GOV-05 (RA 12287 Imminent Disaster) cut chronic crisis friction for good.`,
+            evidence: `MOO Leverage: Annex 1-A (Ord. 008 Amendment), Annex 1-C (EOC EO), SOP GOV-04 & GOV-05 (3–5 day lead-time AA).`
+          }
+        ],
+        loopBadges: [
+          { id: `B1`, x: 282, y: 128, label: `B1: Quick Fix`, type: `B` },
+          { id: `R1`, x: 468, y: 225, label: `R1: Side-Effect`, type: `R` },
+          { id: `B2`, x: 282, y: 320, label: `B2: MOO Cure`, type: `B` }
+        ],
+        bot: {
+          xLabels: [`Yr 0`, `Yr 1`, `Yr 2 (MOO)`, `Yr 3`, `Yr 4`, `Yr 5`],
+          interventionX: 0.40,
+          yTitle: `Index Level (0–100 Scale)`,
+          series: [
+            {
+              key: `symptom`, name: `Operational Friction (Symptom)`, color: `var(--warning)`, unit: `pts`,
+              statusQuo: [62, 68, 72, 78, 83, 88],
+              withMoo:   [62, 68, 72, 58, 38, 22]
+            },
+            {
+              key: `quick`, name: `Event-by-Event EOs (Symptomatic)`, color: `var(--primary)`, unit: `pts`,
+              statusQuo: [50, 62, 70, 79, 85, 90],
+              withMoo:   [50, 62, 70, 48, 26, 14]
+            },
+            {
+              key: `fund`, name: `Statutory Compliance & SOPs (Fundamental)`, color: `var(--secondary)`, unit: `%`,
+              statusQuo: [38, 40, 41.8, 42, 41, 40],
+              withMoo:   [38, 40, 41.8, 66, 86, 96]
+            }
+          ]
+        },
+        leverage: [
+          `<strong>Enact Annex 1-A (Ord. 008 Amendment):</strong> Upgrade CDRRMO to a regular department with all three JMC 2014-1 divisions.`,
+          `<strong>Issue Annex 1-C (EOC Establishment EO):</strong> Formalize White/Blue/Red activation authority under NDRRMC Memo 131 s. 2018.`,
+          `<strong>Operationalize GOV-04 &amp; GOV-05:</strong> Replace ad-hoc declarations with pre-scripted RA 10121 QRF triggers and RA 12287 3–5 day Anticipatory Action tranches.`
+        ]
+      },
+
+      underinvestment: {
+        id: `underinvestment`,
+        num: `02 · Growth & Underinvestment`,
+        title: `Archetype 2: Growth and Underinvestment (Expanding Mandates vs. Lagging Plantilla)`,
+        summary: `Expanding national laws (RA 12287, Gawad KALASAG, SGLG) and climate risks push demand on the CDRRMO higher every year. Because staff cover gaps with informal overtime and casual labor (43 of 47 posts), budget decision-makers delay permanent hiring and EOC facility redundancy.`,
+        subtitle: `B1 (Capacity Limit) & B2 (Investment) vs. R1 (Underinvestment Trap)`,
+        badges: [
+          { text: `4 / 47 Permanent Staff`, warn: true },
+          { text: `A2.5 / B4.3 Score 2`, warn: true },
+          { text: `A5.6 / A10.4 Score 2`, warn: true },
+          { text: `A2.9 AA Focal Score 0`, warn: true }
+        ],
+        nodes: [
+          { id: `n1`, x: 120, y: 78, w: 182, h: 56, label: [`Climate Risks &`, `RA 12287 Mandates`], role: `driver` },
+          { id: `n2`, x: 120, y: 226, w: 178, h: 58, label: [`Operational Demand`, `on CDRRMO & EOC`], role: `demand` },
+          { id: `n3`, x: 345, y: 78, w: 188, h: 58, label: [`Staff & Facility Strain`, `(4/47 Plantilla, 7 OpCen)`], role: `strain` },
+          { id: `n4`, x: 345, y: 226, w: 178, h: 58, label: [`Readiness & 24/7`, `Coverage Standard`], role: `readiness` },
+          { id: `n5`, x: 565, y: 226, w: 186, h: 60, label: [`Plantilla & EOC`, `Facility Investment`], role: `fund` },
+          { id: `n6`, x: 345, y: 376, w: 196, h: 58, label: [`Informal Coping`, `(Casuals & Overtime)`], role: `quick` }
+        ],
+        links: [
+          {
+            id: `u1`, from: `n1`, to: `n2`,
+            path: `M 120 106 L 120 194`,
+            labelPos: { x: 102, y: 152 },
+            polarity: `+`, loop: `B1`, delay: false, isFix: false,
+            title: `Mandates & Climate Risks \u2192 Operational Demand`,
+            desc: `RA 12287 anticipatory action, 85-barangay BDRRM reviews, and GeoRiskPH flood/landslide hazards steadily raise the volume of required CDRRMO tasks.`,
+            evidence: `Evidence: 46 barangays face critical flood exposure (59,545 residents; ₱222.4B modelled flood exposure).`
+          },
+          {
+            id: `u2`, from: `n2`, to: `n3`,
+            path: `M 176 196 Q 210 116 248 92`,
+            labelPos: { x: 205, y: 126 },
+            polarity: `+`, loop: `B1`, delay: false, isFix: false,
+            title: `Operational Demand \u2192 Staff & Facility Strain`,
+            desc: `More tasks hitting a fixed team of 7 OpCen staff and 4 permanent plantilla employees rapidly creates shift fatigue and analytical bottlenecks.`,
+            evidence: `Evidence: 7 OpCen staff cannot sustain a 2-per-shift 24/7 roster; no dedicated GIS, M&E, logistics, or AA focal posts exist (Table 2.3).`
+          },
+          {
+            id: `u3`, from: `n3`, to: `n4`,
+            path: `M 345 107 L 345 194`,
+            labelPos: { x: 325, y: 154 },
+            polarity: `\u2212`, loop: `B1`, delay: false, isFix: false,
+            title: `Staff & Facility Strain \u2192 Readiness & 24/7 Coverage`,
+            desc: `Overstretched staff and a co-located facility without an alternate EOC cut into sustained readiness and documentation quality.`,
+            evidence: `Evidence: EOC Capability Checklist calls for a 3-deep 72-hour roster and an alternate survivable EOC site.`
+          },
+          {
+            id: `u4`, from: `n4`, to: `n2`,
+            path: `M 256 226 L 212 226`,
+            labelPos: { x: 234, y: 212 },
+            polarity: `+`, loop: `B1`, delay: false, isFix: false,
+            title: `Readiness \u2192 Service Uptake & Demand`,
+            desc: `Higher readiness brings more partner requests across City offices and clusters—until capacity limits cap how much the office can absorb (B1).`,
+            evidence: `Evidence: 15 Part C partner-office interfaces rely on CDRRMO coordination.`
+          },
+          {
+            id: `u5`, from: `n4`, to: `n5`,
+            path: `M 434 226 L 469 226`,
+            labelPos: { x: 452, y: 210 },
+            delayPos: { x: 452, y: 236 },
+            polarity: `\u2212`, loop: `B2`, delay: true, isFix: true,
+            title: `Readiness \u2192 Plantilla & Facility Investment`,
+            desc: `When readiness drops below target, it signals a need to invest in plantilla items and an alternate EOC—though budget and HRMO review cycles introduce a delay.`,
+            evidence: `MOO Leverage: SOP HR-01 Annual Workforce Planning & LDRRMF investment planning (Ch. 6) convert readiness gaps into funded budget lines.`
+          },
+          {
+            id: `u6`, from: `n5`, to: `n3`,
+            path: `M 565 196 Q 535 102 442 84`,
+            labelPos: { x: 518, y: 110 },
+            polarity: `\u2212`, loop: `B2`, delay: false, isFix: true,
+            title: `Plantilla & Facility Investment \u2192 Staff & Facility Strain`,
+            desc: `Adding permanent JMC 2014-1 technical positions, a 3-deep roster, and alternate EOC redundancy directly relieves operational strain.`,
+            evidence: `MOO Leverage: Dedicated GIS/M&E/AA focal roles close A2.9 (0), A5.6 (2), and A10.4 (2) gaps.`
+          },
+          {
+            id: `u7`, from: `n4`, to: `n6`,
+            path: `M 345 255 L 345 344`,
+            labelPos: { x: 325, y: 300 },
+            polarity: `\u2212`, loop: `R`, delay: false, isFix: false,
+            title: `Readiness \u2192 Informal Coping (Overtime & Casuals)`,
+            desc: `Whenever readiness slips, supervisors patch holes using job-order extensions and extra hours rather than waiting for formal budget approvals.`,
+            evidence: `Evidence: 43 of 47 personnel are casual/job-order workers filling permanent operational roles.`
+          },
+          {
+            id: `u8`, from: `n6`, to: `n5`,
+            path: `M 443 376 Q 536 355 562 258`,
+            labelPos: { x: 525, y: 335 },
+            polarity: `\u2212`, loop: `R`, delay: false, isFix: false,
+            title: `Informal Coping \u2192 Plantilla & Facility Investment`,
+            desc: `Because the office appears to keep running through overtime and casuals, council and budget reviewers perceive less urgency to fund permanent plantilla posts.`,
+            evidence: `Evidence: Growth in RA 12287 & M&E expectations without matching permanent staffing investment.`
+          }
+        ],
+        loopBadges: [
+          { id: `B1`, x: 245, y: 175, label: `B1: Limit`, type: `B` },
+          { id: `B2`, x: 458, y: 158, label: `B2: Invest`, type: `B` },
+          { id: `R1`, x: 446, y: 302, label: `R1: Underinvest`, type: `R` }
+        ],
+        bot: {
+          xLabels: [`Yr 0`, `Yr 1`, `Yr 2 (MOO)`, `Yr 3`, `Yr 4`, `Yr 5`],
+          interventionX: 0.40,
+          yTitle: `Normalized Level (0–100 Scale)`,
+          series: [
+            {
+              key: `demand`, name: `Mandate & Risk Demand`, color: `var(--warning)`, unit: `pts`,
+              statusQuo: [42, 54, 65, 76, 86, 94],
+              withMoo:   [42, 54, 65, 76, 84, 90]
+            },
+            {
+              key: `investment`, name: `Capacity Investment (Plantilla & EOC)`, color: `var(--secondary)`, unit: `pts`,
+              statusQuo: [24, 25, 26, 27, 27, 28],
+              withMoo:   [24, 25, 26, 52, 76, 88]
+            },
+            {
+              key: `need`, name: `Perceived Need to Invest`, color: `var(--primary)`, unit: `pts`,
+              statusQuo: [32, 40, 44, 41, 36, 33],
+              withMoo:   [32, 40, 68, 82, 54, 30]
+            }
+          ]
+        },
+        leverage: [
+          `<strong>Execute SOP HR-01 Workforce Review:</strong> Reconcile the 47-person roster with HRMO and prioritize permanent JMC 2014-1 plantilla items.`,
+          `<strong>Staff Critical Missing Roles:</strong> Establish dedicated GIS/data, M&amp;E, Logistics, and RA 12287 Anticipatory Action focal posts.`,
+          `<strong>Fund EOC Facility Redundancy:</strong> Allocate LDRRMF lines for a 3-deep 24/7 duty roster and an alternate survivable EOC facility.`
+        ]
+      },
+
+      drifting: {
+        id: `drifting`,
+        num: `03 · Drifting Goals`,
+        title: `Archetype 3: Drifting Goals (Emergency Response Effort vs. Legal Compliance)`,
+        summary: `When the gap between Ormoc's 100% statutory mandate and its 41.8% verified compliance feels hard to close, informal emergency effort becomes the unofficial yardstick. Over time, expectations quietly drift downward to match informal practice—until an audit or major disaster exposes the gap.`,
+        subtitle: `B1 (Corrective Action with Delay) vs. B2 (Goal Erosion Loop)`,
+        badges: [
+          { text: `41.8% Compliance vs 100%`, warn: true },
+          { text: `B1 EOC Basis 20.0%`, warn: true },
+          { text: `A1.4 Secretariat Gaps`, warn: true },
+          { text: `SOP 7-04 CAPA Cure`, warn: false }
+        ],
+        nodes: [
+          { id: `n1`, x: 135, y: 82, w: 184, h: 58, label: [`Tolerance of Informal`, `Practice ("Busy Effort")`], role: `pressure` },
+          { id: `n2`, x: 135, y: 225, w: 184, h: 62, label: [`Effective Practiced`, `Compliance Standard`], role: `goal` },
+          { id: `n3`, x: 345, y: 225, w: 164, h: 58, label: [`Perceived`, `Compliance Gap`], role: `gap` },
+          { id: `n4`, x: 550, y: 82, w: 186, h: 58, label: [`Formal SOPs,`, `Training & CAPA`], role: `action` },
+          { id: `n5`, x: 550, y: 368, w: 186, h: 60, label: [`Actual Mandatory`, `Compliance (41.8%)`], role: `actual` },
+          { id: `n6`, x: 135, y: 368, w: 184, h: 58, label: [`IAT v1.7 Validation`, `& PDCA Audits`], role: `anchor` }
+        ],
+        links: [
+          {
+            id: `d1`, from: `n2`, to: `n3`,
+            path: `M 227 225 L 260 225`,
+            labelPos: { x: 243, y: 209 },
+            polarity: `+`, loop: `B2`, delay: false, isFix: false,
+            title: `Effective Standard \u2192 Perceived Compliance Gap`,
+            desc: `Holding the office to the full legal benchmark makes any shortfall obvious; letting the working expectation slip shrinks the felt gap.`,
+            evidence: `Evidence: IAT separates Maturity Index (1.98) from Mandatory Compliance (41.8%) so high effort cannot hide legal gaps.`
+          },
+          {
+            id: `d2`, from: `n3`, to: `n1`,
+            path: `M 310 196 Q 272 115 229 90`,
+            labelPos: { x: 280, y: 125 },
+            polarity: `+`, loop: `B2`, delay: false, isFix: false,
+            title: `Compliance Gap \u2192 Tolerance of Informal Practice`,
+            desc: `When formal compliance looks far away, teams feel pressure to rely on verbal routines and judge success solely by storm response effort.`,
+            evidence: `Evidence: Records lapses (undated resolutions, reused control numbers) tolerated while active field response continued (A1.4).`
+          },
+          {
+            id: `d3`, from: `n1`, to: `n2`,
+            path: `M 135 111 L 135 191`,
+            labelPos: { x: 115, y: 152 },
+            polarity: `\u2212`, loop: `B2`, delay: false, isFix: false,
+            title: `Tolerance of Informality \u2192 Effective Compliance Standard`,
+            desc: `Accepting informal workarounds quietly lowers the bar for what "good enough" looks like day to day (Goal Erosion).`,
+            evidence: `Evidence: Quarterly CDRRMC meetings missed 4 consecutive quarters and presiding officer designations went undocumented (A1.3).`
+          },
+          {
+            id: `d4`, from: `n3`, to: `n4`,
+            path: `M 380 196 Q 418 115 454 90`,
+            labelPos: { x: 404, y: 125 },
+            polarity: `+`, loop: `B1`, delay: false, isFix: false,
+            title: `Compliance Gap \u2192 Formal SOPs, Training & CAPA`,
+            desc: `An acknowledged compliance gap motivates drafting written manuals, standard forms, and corrective action plans.`,
+            evidence: `Evidence: 9-chapter MOO and MODE workflow templates built specifically to close IAT Part A & B gaps.`
+          },
+          {
+            id: `d5`, from: `n4`, to: `n5`,
+            path: `M 550 111 L 550 335`,
+            labelPos: { x: 572, y: 225 },
+            delayPos: { x: 550, y: 205 },
+            polarity: `+`, loop: `B1`, delay: true, isFix: false,
+            title: `Formal SOPs & CAPA \u2192 Actual Mandatory Compliance`,
+            desc: `Documenting, approving, training, and collecting proof of use raises verified compliance—after an implementation delay.`,
+            evidence: `Evidence: Under IAT rubric, Score 3 requires BOTH an approved document AND proof of active use (logs, minutes, AARs).`
+          },
+          {
+            id: `d6`, from: `n5`, to: `n3`,
+            path: `M 457 355 Q 395 315 358 256`,
+            labelPos: { x: 405, y: 318 },
+            polarity: `\u2212`, loop: `B1`, delay: false, isFix: false,
+            title: `Actual Compliance \u2192 Perceived Compliance Gap`,
+            desc: `As verified compliance climbs toward 100%, the true compliance gap closes sustainably.`,
+            evidence: `Evidence: Target state across all 17 domains in IAT Dashboard.`
+          },
+          {
+            id: `d7`, from: `n6`, to: `n2`,
+            path: `M 135 339 L 135 258`,
+            labelPos: { x: 112, y: 300 },
+            polarity: `+`, loop: `B1`, delay: false, isFix: true,
+            title: `IAT Validation & PDCA Audits \u2192 Effective Compliance Standard`,
+            desc: `External validation workshops and an append-only CAPA register anchor the effective standard at 100%, blocking goal erosion.`,
+            evidence: `MOO Leverage: SOP 7-01 (Annual Review) & SOP 7-04 (AAR & CAPA) with MODE evidence-gated scoring.`
+          }
+        ],
+        loopBadges: [
+          { id: `B2`, x: 215, y: 158, label: `B2: Goal Erosion`, type: `R` },
+          { id: `B1`, x: 468, y: 225, label: `B1: Formal Fix`, type: `B` }
+        ],
+        bot: {
+          xLabels: [`Yr 0`, `Yr 1`, `Yr 2 (MOO)`, `Yr 3`, `Yr 4`, `Yr 5`],
+          interventionX: 0.40,
+          yTitle: `Compliance / Effort (%)`,
+          series: [
+            {
+              key: `effectiveGoal`, name: `Effective Practiced Standard (Goal Erosion)`, color: `var(--warning)`, unit: `%`,
+              statusQuo: [100, 86, 72, 60, 52, 47],
+              withMoo:   [100, 86, 72, 92, 98, 100]
+            },
+            {
+              key: `actual`, name: `Actual Mandatory Compliance`, color: `var(--secondary)`, unit: `%`,
+              statusQuo: [38, 40, 41.8, 42, 43, 44],
+              withMoo:   [38, 40, 41.8, 68, 88, 97]
+            },
+            {
+              key: `effort`, name: `Informal Emergency Response Effort`, color: `var(--primary)`, unit: `%`,
+              statusQuo: [76, 82, 85, 84, 86, 88],
+              withMoo:   [76, 82, 85, 78, 74, 72]
+            }
+          ]
+        },
+        leverage: [
+          `<strong>Anchor Standards Externally (SOP 7-01):</strong> Require annual IAT validation workshops where Score &ge; 3 demands approved documents plus proof of use.`,
+          `<strong>Enforce Append-Only CAPA Register (SOP 7-04):</strong> Track every audit and exercise gap to an accountable position and closure deadline.`,
+          `<strong>Embed TQM &amp; PDCA Cycles:</strong> Measure office performance by verified procedural readiness, not just crisis hours logged.`
+        ]
+      },
+
+      conflation: {
+        id: `conflation`,
+        num: `04 · Escalation Trap`,
+        title: `Archetype 4: ICS–EOC Mandate Conflation (Field Command vs. Coordination Hub)`,
+        summary: `Without an approved ICS–EOC boundary (IAT B6.1 Score 1), rising incident complexity tempts the EOC to issue direct tactical orders to field units. This confuses the chain of command, stalls resource dispatch, and worsens the incident (R1). Codifying SOP 4-05 turns the EOC into a support hub (B1).`,
+        subtitle: `R1 (Command Conflation Spiral) vs. B1 (SOP 4-05 Support Boundary)`,
+        badges: [
+          { text: `B6.1 Score 1 (High)`, warn: true },
+          { text: `A8.1 Score 2 (High)`, warn: true },
+          { text: `NDRRMC MC 4 s. 2012`, warn: false },
+          { text: `SOP 4-05 PR-ICS-INTERFACE`, warn: false }
+        ],
+        nodes: [
+          { id: `n1`, x: 130, y: 120, w: 176, h: 58, label: [`Incident Complexity`, `& Field Scale`], role: `symptom` },
+          { id: `n2`, x: 340, y: 72, w: 184, h: 56, label: [`Demand for EOC`, `Coordination`], role: `demand` },
+          { id: `n3`, x: 550, y: 140, w: 184, h: 58, label: [`EOC Usurping`, `Field Command`], role: `trap` },
+          { id: `n4`, x: 550, y: 332, w: 186, h: 58, label: [`Confusion in Field`, `Chain of Command`], role: `trap` },
+          { id: `n5`, x: 210, y: 356, w: 192, h: 60, label: [`Resource Delay &`, `Dispatch Misalignment`], role: `strain` },
+          { id: `n6`, x: 340, y: 215, w: 192, h: 58, label: [`Codified ICS–EOC`, `Boundary (SOP 4-05)`], role: `fix` }
+        ],
+        links: [
+          {
+            id: `c1`, from: `n1`, to: `n2`,
+            path: `M 205 94 Q 225 76 245 74`,
+            labelPos: { x: 222, y: 72 },
+            polarity: `+`, loop: `R`, delay: false, isFix: false,
+            title: `Incident Complexity \u2192 Demand for EOC Coordination`,
+            desc: `Multi-barangay floods or typhoons require cross-office logistics, SitReps, and cluster desks—driving sharp demand for EOC activation.`,
+            evidence: `Evidence: Scenario-based EOC activation switches on only required cluster desks (Ch. 1 Sec. 6.3, Ch. 4).`
+          },
+          {
+            id: `c2`, from: `n2`, to: `n3`,
+            path: `M 434 78 Q 505 88 538 108`,
+            labelPos: { x: 500, y: 78 },
+            polarity: `+`, loop: `R`, delay: false, isFix: false,
+            title: `Demand for Coordination \u2192 EOC Usurping Field Command`,
+            desc: `When the ICS–EOC chain of command is undefined, urgent EOC staff bypass the Incident Commander and try to direct rescue or clearing teams directly.`,
+            evidence: `Evidence: IAT B6.1 scored 1 (High gap)—ICS–EOC interface and chain of command were undefined at baseline.`
+          },
+          {
+            id: `c3`, from: `n3`, to: `n4`,
+            path: `M 550 170 L 550 300`,
+            labelPos: { x: 572, y: 235 },
+            polarity: `+`, loop: `R`, delay: false, isFix: false,
+            title: `EOC Usurping Command \u2192 Field Chain-of-Command Confusion`,
+            desc: `Field units receive conflicting tactical instructions from both the on-scene Incident Commander (IMT) and the remote EOC.`,
+            evidence: `Evidence: Violates NDRRMC MC No. 4 s. 2012, which vests tactical field command exclusively in the Incident Commander.`
+          },
+          {
+            id: `c4`, from: `n4`, to: `n5`,
+            path: `M 455 344 Q 380 356 308 356`,
+            labelPos: { x: 382, y: 372 },
+            polarity: `+`, loop: `R`, delay: false, isFix: false,
+            title: `Command Confusion \u2192 Resource Delay & Misalignment`,
+            desc: `Unclear ownership stalls logistics requests, duplicates deployments, and leaves high-need barangays waiting.`,
+            evidence: `Evidence: Table 4.11 & SOP 4-05 require every request to carry a single tracked owner and status (EOC-F03 / ER-F02).`
+          },
+          {
+            id: `c5`, from: `n5`, to: `n1`,
+            path: `M 155 326 Q 112 245 124 152`,
+            labelPos: { x: 102, y: 240 },
+            polarity: `+`, loop: `R`, delay: false, isFix: false,
+            title: `Resource Delay \u2192 Incident Complexity`,
+            desc: `Misaligned and late support allows hazard impacts to compound, escalating the crisis in a runaway reinforcing spiral (R1).`,
+            evidence: `Evidence: CResT CLD 2 ("ICS–EOC Mandate Conflation Loop") identifies this as a primary response escalation driver.`
+          },
+          {
+            id: `c6`, from: `n2`, to: `n6`,
+            path: `M 340 101 L 340 183`,
+            labelPos: { x: 320, y: 142 },
+            polarity: `+`, loop: `B1`, delay: false, isFix: true,
+            title: `Coordination Demand \u2192 Codified ICS–EOC Boundary (SOP 4-05)`,
+            desc: `Under SOP 4-05, incident notification triggers confirming the designated Incident Commander first—before any EOC support tasking.`,
+            evidence: `MOO Leverage: SOP 4-05 Step 1 confirms IC/IMT & ICP on notification (Form EOC-F03).`
+          },
+          {
+            id: `c7`, from: `n6`, to: `n3`,
+            path: `M 436 196 Q 485 182 518 168`,
+            labelPos: { x: 472, y: 196 },
+            polarity: `\u2212`, loop: `B1`, delay: false, isFix: true,
+            title: `Codified Boundary \u2192 EOC Usurping Field Command`,
+            desc: `Explicit rules prohibit the EOC Manager from issuing tactical field orders unless separately appointed inside the ICS structure.`,
+            evidence: `MOO Leverage: Ch. 4 Sec. 9.1 ("The EOC supports; it does not command the field").`
+          },
+          {
+            id: `c8`, from: `n6`, to: `n5`,
+            path: `M 310 245 Q 262 282 225 324`,
+            labelPos: { x: 245, y: 274 },
+            polarity: `\u2212`, loop: `B1`, delay: false, isFix: true,
+            title: `Codified Boundary \u2192 Resource Delay & Misalignment`,
+            desc: `Routing verified requests from the IC through EOC section desks to cluster owners cuts dispatch delays and stabilizes incident response (B1).`,
+            evidence: `MOO Leverage: SOP 4-05 Steps 3–6 align EOC support objectives with IC operational periods and briefing rhythms.`
+          }
+        ],
+        loopBadges: [
+          { id: `R1`, x: 455, y: 268, label: `R1: Conflation`, type: `R` },
+          { id: `B1`, x: 205, y: 208, label: `B1: SOP 4-05`, type: `B` }
+        ],
+        bot: {
+          xLabels: [`OP 1`, `OP 2`, `OP 3 (4-05)`, `OP 4`, `OP 5`, `OP 6`],
+          interventionX: 0.40,
+          yTitle: `Operational Friction / Support Score`,
+          series: [
+            {
+              key: `confusion`, name: `Field Chain-of-Command Confusion`, color: `var(--warning)`, unit: `pts`,
+              statusQuo: [35, 52, 68, 80, 88, 94],
+              withMoo:   [35, 52, 68, 34, 16, 8]
+            },
+            {
+              key: `delay`, name: `Resource Dispatch Delay`, color: `var(--primary)`, unit: `pts`,
+              statusQuo: [30, 44, 60, 74, 84, 91],
+              withMoo:   [30, 44, 60, 38, 22, 14]
+            },
+            {
+              key: `alignment`, name: `Coordinated EOC Support Efficiency`, color: `var(--secondary)`, unit: `%`,
+              statusQuo: [48, 42, 34, 28, 24, 20],
+              withMoo:   [48, 42, 34, 66, 84, 93]
+            }
+          ]
+        },
+        leverage: [
+          `<strong>Approve ICS Executive Order (B6.1):</strong> Legally separate Incident Commander tactical field command from EOC coordination and executive escalation.`,
+          `<strong>Run SOP 4-05 (PR-ICS-INTERFACE):</strong> Confirm the IC and ICP on first notification (EOC-F03) and align EOC support objectives with each IC operational period.`,
+          `<strong>Test in Joint Exercises:</strong> Drill the IC–EOC request tracker (ER-F02) and shift handovers (EOC-F04) before typhoon season.`
+        ]
+      }
+    };
+
+    const ICEBERG_LAYERS = [
+      {
+        title: `1. Events (Visible Surface Layer)`,
+        desc: `Acute emergency responses—Typhoon Odette (2021), TD Agaton (2022), dengue outbreaks (2024), and historical floods (TS Uring 1991, Typhoon Yolanda 2013)—along with event-by-event class/work suspensions and ad-hoc EOC duty activations.`
+      },
+      {
+        title: `2. Patterns / Trends (Dynamic Behavior Over Time)`,
+        desc: `Recurring reliance on one-off Executive Orders, persistent 41.8% mandatory compliance lag despite active 24/7 monitoring, and routine traffic/public-safety duties mixing with emergency EOC shifts.`
+      },
+      {
+        title: `3. Underlying Structures (System Drivers)`,
+        desc: `Ordinance No. 008 s. 2014 lacks an amendment creating the three JMC 2014-1 divisions (A1.1); no EO formally establishes the EOC (B1.1); the ICS–EOC boundary is uncodified (B6.1); and 43 of 47 staff are casual or job-order workers (A2.3).`
+      },
+      {
+        title: `4. Mental Models (Highest Leverage)`,
+        desc: `Treating DRRM mainly as reactive storm response—and viewing the EOC as an alternative field command post—keeps the office trapped in emergency fixes instead of risk-informed governance and PDCA quality cycles.`
+      }
+    ];
+
+    const appState = {
+      activeArchetype: `shifting`,
+      loopFilter: `all`,
+      showMooOverlay: true,
+      selectedLinkIndex: 0,
+      showIntervention: true,
+      timeScrub: 100,
+      isPlaying: false,
+      activeIceberg: 3
+    };
+
+    let playTimerId = null;
+
+    function persistState() {
+      if (window.notebookAppApi && typeof window.notebookAppApi.setAppState === `function`) {
+        window.notebookAppApi.setAppState({
+          activeArchetype: appState.activeArchetype,
+          loopFilter: appState.loopFilter,
+          showMooOverlay: appState.showMooOverlay,
+          selectedLinkIndex: appState.selectedLinkIndex,
+          showIntervention: appState.showIntervention,
+          timeScrub: appState.timeScrub,
+          activeIceberg: appState.activeIceberg
+        }).catch(() => {});
+      }
+    }
+
+    function selectArchetype(key) {
+      if (!ARCHETYPES[key]) return;
+      stopPlayback();
+      appState.activeArchetype = key;
+      appState.selectedLinkIndex = 0;
+      renderAll();
+      persistState();
+    }
+
+    function setLoopFilter(filter) {
+      appState.loopFilter = filter;
+      renderCLD();
+      updateFilterButtons();
+      persistState();
+    }
+
+    function toggleMOOOverlay() {
+      appState.showMooOverlay = !appState.showMooOverlay;
+      renderCLD();
+      updateFilterButtons();
+      persistState();
+    }
+
+    function toggleIntervention() {
+      appState.showIntervention = !appState.showIntervention;
+      const btn = document.getElementById(`btn-intervention`);
+      if (btn) {
+        btn.classList.toggle(`is-active`, appState.showIntervention);
+        btn.textContent = appState.showIntervention ? `MOO Reform: Applied` : `MOO Reform: Status Quo`;
+      }
+      renderBOT();
+      persistState();
+    }
+
+    function selectLink(idx) {
+      const arch = ARCHETYPES[appState.activeArchetype];
+      if (!arch || idx < 0 || idx >= arch.links.length) return;
+      appState.selectedLinkIndex = idx;
+      renderCLD();
+      renderInspector();
+      persistState();
+    }
+
+    function stepLink(delta) {
+      const arch = ARCHETYPES[appState.activeArchetype];
+      if (!arch) return;
+      const len = arch.links.length;
+      const nextIdx = (appState.selectedLinkIndex + delta + len) % len;
+      selectLink(nextIdx);
+    }
+
+    function scrubTime(val) {
+      stopPlayback();
+      appState.timeScrub = Math.max(5, Math.min(100, Number(val) || 100));
+      renderBOT();
+      persistState();
+    }
+
+    function handleBotClick(evt) {
+      const svg = document.getElementById(`bot-svg`);
+      if (!svg) return;
+      const rect = svg.getBoundingClientRect();
+      if (!rect.width) return;
+      const relX = ((evt.clientX - rect.left) / rect.width) * 560;
+      const plotStart = 58;
+      const plotWidth = 468;
+      const pct = Math.round(((relX - plotStart) / plotWidth) * 100);
+      const clamped = Math.max(5, Math.min(100, pct));
+      scrubTime(clamped);
+      const slider = document.getElementById(`time-scrubber`);
+      if (slider) slider.value = String(clamped);
+    }
+
+    function togglePlay() {
+      if (appState.isPlaying) {
+        stopPlayback();
+        return;
+      }
+      if (appState.timeScrub >= 100) {
+        appState.timeScrub = 5;
+      }
+      appState.isPlaying = true;
+      updatePlayButton();
+      playTimerId = setInterval(() => {
+        if (appState.timeScrub >= 100) {
+          stopPlayback();
+          persistState();
+          return;
+        }
+        appState.timeScrub = Math.min(100, appState.timeScrub + 2);
+        const slider = document.getElementById(`time-scrubber`);
+        if (slider) slider.value = String(appState.timeScrub);
+        renderBOT();
+      }, 60);
+    }
+
+    function stopPlayback() {
+      if (playTimerId) {
+        clearInterval(playTimerId);
+        playTimerId = null;
+      }
+      appState.isPlaying = false;
+      updatePlayButton();
+    }
+
+    function resetTimeline() {
+      stopPlayback();
+      appState.timeScrub = 15;
+      const slider = document.getElementById(`time-scrubber`);
+      if (slider) slider.value = `15`;
+      renderBOT();
+      persistState();
+    }
+
+    function updatePlayButton() {
+      const btn = document.getElementById(`btn-play`);
+      const lbl = document.getElementById(`btn-play-label`);
+      if (!btn || !lbl) return;
+      lbl.textContent = appState.isPlaying ? `Pause` : `Play Timeline`;
+    }
+
+    function selectIceberg(idx) {
+      if (idx < 0 || idx >= ICEBERG_LAYERS.length) return;
+      appState.activeIceberg = idx;
+      renderIceberg();
+      persistState();
+    }
+
+    function updateFilterButtons() {
+      const fAll = document.getElementById(`filter-all`);
+      const fR = document.getElementById(`filter-R`);
+      const fB = document.getElementById(`filter-B`);
+      const fFix = document.getElementById(`filter-fix`);
+      if (fAll) fAll.classList.toggle(`is-active`, appState.loopFilter === `all`);
+      if (fR) fR.classList.toggle(`is-active`, appState.loopFilter === `R`);
+      if (fB) fB.classList.toggle(`is-active`, appState.loopFilter === `B`);
+      if (fFix) {
+        fFix.classList.toggle(`is-active`, appState.showMooOverlay);
+        fFix.textContent = appState.showMooOverlay ? `MOO Fix Highlight: On` : `MOO Fix Highlight: Off`;
+      }
+    }
+
+    function renderBannerAndTabs() {
+      const arch = ARCHETYPES[appState.activeArchetype];
+      const mapTab = { shifting: `tab-arch-1`, underinvestment: `tab-arch-2`, drifting: `tab-arch-3`, conflation: `tab-arch-4` };
+      Object.keys(mapTab).forEach((k) => {
+        const el = document.getElementById(mapTab[k]);
+        if (el) {
+          const active = k === appState.activeArchetype;
+          el.classList.toggle(`is-active`, active);
+          el.setAttribute(`aria-selected`, active ? `true` : `false`);
+        }
+      });
+
+      const titleEl = document.getElementById(`arch-title`);
+      const sumEl = document.getElementById(`arch-summary`);
+      const subEl = document.getElementById(`cld-subtitle`);
+      const badgesEl = document.getElementById(`arch-badges`);
+      if (titleEl) titleEl.textContent = arch.title;
+      if (sumEl) sumEl.textContent = arch.summary;
+      if (subEl) subEl.textContent = arch.subtitle;
+      if (badgesEl) {
+        badgesEl.innerHTML = arch.badges.map((b) =>
+          `<span class="iat-badge ${b.warn ? `is-high` : ``}">${b.text}</span>`
+        ).join(``);
+      }
+
+      const levList = document.getElementById(`lev-list`);
+      if (levList) {
+        levList.innerHTML = arch.leverage.map((item) => `<li>${item}</li>`).join(``);
+      }
+
+      const rows = [`shifting`, `underinvestment`, `drifting`, `conflation`];
+      rows.forEach((r) => {
+        const tr = document.getElementById(`row-${r}`);
+        if (tr) tr.classList.toggle(`is-current-row`, r === appState.activeArchetype);
+      });
+    }
+
+    function isLinkHighlighted(link) {
+      if (link.isFix && !appState.showMooOverlay && appState.loopFilter === `all`) return false;
+      if (appState.loopFilter === `all`) return true;
+      if (appState.loopFilter === `R`) return link.loop === `R`;
+      if (appState.loopFilter === `B`) return link.loop.startsWith(`B`);
+      return true;
+    }
+
+    function renderCLD() {
+      const svg = document.getElementById(`cld-svg`);
+      const arch = ARCHETYPES[appState.activeArchetype];
+      if (!svg || !arch) return;
+
+      const defs = `
+        <defs>
+          <marker id="arrow-b" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+            <path d="M 0 1 L 9 5 L 0 9 z" fill="var(--secondary)" />
+          </marker>
+          <marker id="arrow-r" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+            <path d="M 0 1 L 9 5 L 0 9 z" fill="var(--warning)" />
+          </marker>
+          <marker id="arrow-active" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7.5" markerHeight="7.5" orient="auto-start-reverse">
+            <path d="M 0 1 L 9 5 L 0 9 z" fill="var(--primary)" />
+          </marker>
+          <marker id="arrow-dim" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 0 1 L 9 5 L 0 9 z" fill="var(--outline)" />
+          </marker>
+        </defs>
+      `;
+
+      const loopSvg = arch.loopBadges.map((lb) => {
+        const isR = lb.type === `R`;
+        const showLoop = appState.loopFilter === `all` || appState.loopFilter === lb.type;
+        const opacity = showLoop ? `1` : `0.25`;
+        const strokeCol = isR ? `var(--warning)` : `var(--secondary)`;
+        const textCol = isR ? `var(--warning)` : `var(--secondary-text)`;
+        const bgCol = isR ? `var(--warning-container)` : `var(--secondary-container)`;
+        return `
+          <g opacity="${opacity}">
+            <circle cx="${lb.x}" cy="${lb.y - 10}" r="18" fill="${bgCol}" stroke="${strokeCol}" stroke-width="2" stroke-dasharray="90 22"/>
+            <text x="${lb.x}" y="${lb.y - 5}" text-anchor="middle" font-family="var(--font-label)" font-size="13" font-weight="700" fill="${textCol}">${lb.id}</text>
+            <rect x="${lb.x - 46}" y="${lb.y + 12}" width="92" height="19" rx="3" fill="var(--surface-container)" stroke="${strokeCol}" stroke-width="1"/>
+            <text x="${lb.x}" y="${lb.y + 25}" text-anchor="middle" font-family="var(--font-label)" font-size="10.5" font-weight="700" fill="${textCol}">${lb.label.toUpperCase()}</text>
+          </g>
+        `;
+      }).join(``);
+
+      const linksSvg = arch.links.map((lk, idx) => {
+        const isSel = idx === appState.selectedLinkIndex;
+        const lit = isLinkHighlighted(lk);
+        const isR = lk.loop === `R`;
+        let strokeCol = isR ? `var(--warning)` : `var(--secondary)`;
+        let markerEnd = isR ? `url(#arrow-r)` : `url(#arrow-b)`;
+        let strokeW = 2.6;
+        let opacity = lit ? 1 : 0.2;
+        if (isSel) {
+          strokeCol = `var(--primary)`;
+          markerEnd = `url(#arrow-active)`;
+          strokeW = 4;
+          opacity = 1;
+        } else if (!lit) {
+          strokeCol = `var(--outline)`;
+          markerEnd = `url(#arrow-dim)`;
+        }
+        const dashAttr = (lk.isFix && appState.showMooOverlay) ? `stroke-dasharray="7 4"` : ``;
+
+        const polFill = lk.polarity === `+` ? `var(--secondary-container)` : `var(--warning-container)`;
+        const polStroke = isSel ? `var(--primary)` : (lk.polarity === `+` ? `var(--secondary)` : `var(--warning)`);
+        const polTextCol = isSel ? `var(--primary-text)` : (lk.polarity === `+` ? `var(--secondary-text)` : `var(--warning)`);
+
+        const delayMarkup = (lk.delay && lk.delayPos) ? `
+          <g opacity="${opacity}">
+            <rect x="${lk.delayPos.x - 10}" y="${lk.delayPos.y - 10}" width="20" height="20" rx="3" fill="var(--surface-container)" stroke="${strokeCol}" stroke-width="1.2"/>
+            <line x1="${lk.delayPos.x - 3}" y1="${lk.delayPos.y - 7}" x2="${lk.delayPos.x - 3}" y2="${lk.delayPos.y + 7}" stroke="${strokeCol}" stroke-width="2.4"/>
+            <line x1="${lk.delayPos.x + 3}" y1="${lk.delayPos.y - 7}" x2="${lk.delayPos.x + 3}" y2="${lk.delayPos.y + 7}" stroke="${strokeCol}" stroke-width="2.4"/>
+          </g>
+        ` : ``;
+
+        return `
+          <g>
+            <path class="cld-link-path" d="${lk.path}" fill="none" stroke="${strokeCol}" stroke-width="${strokeW}" ${dashAttr} marker-end="${markerEnd}" opacity="${opacity}" stroke-linecap="round"/>
+            ${delayMarkup}
+            <g opacity="${opacity}">
+              <circle cx="${lk.labelPos.x}" cy="${lk.labelPos.y}" r="11" fill="${polFill}" stroke="${polStroke}" stroke-width="1.6"/>
+              <text x="${lk.labelPos.x}" y="${lk.labelPos.y + 4.5}" text-anchor="middle" font-family="var(--font-label)" font-size="14" font-weight="700" fill="${polTextCol}">${lk.polarity}</text>
+            </g>
+            <path class="cld-link-hit" d="${lk.path}" fill="none" stroke="transparent" stroke-width="24"
+              tabindex="0" role="button" aria-label="${lk.title} (${lk.polarity === '+' ? 'Same direction' : 'Opposite direction'})"
+              onmouseenter="selectLink(${idx})"
+              onclick="selectLink(${idx})"
+              onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();selectLink(${idx});}" />
+          </g>
+        `;
+      }).join(``);
+
+      const nodesSvg = arch.nodes.map((nd) => {
+        const isFixNode = nd.role === `fix` || nd.role === `anchor` || nd.role === `fund`;
+        const borderCol = (isFixNode && appState.showMooOverlay) ? `var(--secondary)` : `var(--on-surface)`;
+        const borderW = (isFixNode && appState.showMooOverlay) ? `2.5` : `1.8`;
+        const fillCol = (isFixNode && appState.showMooOverlay) ? `var(--secondary-container)` : `var(--surface-container)`;
+        const topBar = (nd.role === `symptom` || nd.role === `trap`) ? `var(--warning)` : (isFixNode ? `var(--secondary)` : `var(--on-surface)`);
+        const x0 = nd.x - nd.w / 2;
+        const y0 = nd.y - nd.h / 2;
+        const line1 = nd.label[0] || ``;
+        const line2 = nd.label[1] || ``;
+        return `
+          <g>
+            <rect x="${x0}" y="${y0}" width="${nd.w}" height="${nd.h}" rx="6" fill="${fillCol}" stroke="${borderCol}" stroke-width="${borderW}"/>
+            <rect x="${x0 + 1}" y="${y0 + 1}" width="${nd.w - 2}" height="5" rx="4" fill="${topBar}"/>
+            <text x="${nd.x}" y="${nd.y - 3}" text-anchor="middle" font-family="var(--font-headline)" font-size="12.5" font-weight="700" fill="var(--on-surface)">${line1}</text>
+            <text x="${nd.x}" y="${nd.y + 15}" text-anchor="middle" font-family="var(--font-headline)" font-size="12" font-weight="600" fill="var(--on-surface-variant)">${line2}</text>
+          </g>
+        `;
+      }).join(``);
+
+      svg.innerHTML = defs + loopSvg + linksSvg + nodesSvg;
+    }
+
+    function renderInspector() {
+      const arch = ARCHETYPES[appState.activeArchetype];
+      if (!arch) return;
+      const idx = Math.max(0, Math.min(arch.links.length - 1, appState.selectedLinkIndex));
+      const lk = arch.links[idx];
+
+      const routeEl = document.getElementById(`insp-route`);
+      const tagsEl = document.getElementById(`insp-tags`);
+      const descEl = document.getElementById(`insp-desc`);
+      const evEl = document.getElementById(`insp-evidence`);
+      const cntEl = document.getElementById(`insp-counter`);
+
+      if (routeEl) routeEl.textContent = lk.title;
+      if (tagsEl) {
+        const isPlus = lk.polarity === `+`;
+        let html = `<span class="polarity-tag ${isPlus ? `is-plus` : `is-minus`}">${isPlus ? `+ Same Direction` : `\u2212 Opposite Direction`}</span>`;
+        if (lk.delay) html += `<span class="delay-tag">|| Delay</span>`;
+        html += `<span class="iat-badge">Loop ${lk.loop}</span>`;
+        tagsEl.innerHTML = html;
+      }
+      if (descEl) descEl.textContent = lk.desc;
+      if (evEl) evEl.textContent = lk.evidence;
+      if (cntEl) cntEl.textContent = `Link ${idx + 1} of ${arch.links.length}`;
+    }
+
+    function interpolateVal(arr, normT) {
+      const n = arr.length - 1;
+      const pos = Math.max(0, Math.min(n, normT * n));
+      const i = Math.floor(pos);
+      const frac = pos - i;
+      if (i >= n) return arr[n];
+      return arr[i] + (arr[i + 1] - arr[i]) * frac;
+    }
+
+    function buildSmoothPath(points) {
+      if (points.length < 2) return ``;
+      let d = `M ${points[0].x.toFixed(1)} ${points[0].y.toFixed(1)}`;
+      for (let i = 0; i < points.length - 1; i++) {
+        const p0 = points[i];
+        const p1 = points[i + 1];
+        const cx = ((p0.x + p1.x) / 2).toFixed(1);
+        d += ` C ${cx} ${p0.y.toFixed(1)}, ${cx} ${p1.y.toFixed(1)}, ${p1.x.toFixed(1)} ${p1.y.toFixed(1)}`;
+      }
+      return d;
+    }
+
+    function renderBOT() {
+      const svg = document.getElementById(`bot-svg`);
+      const arch = ARCHETYPES[appState.activeArchetype];
+      if (!svg || !arch) return;
+
+      const W = 560;
+      const H = 285;
+      const padL = 58;
+      const padR = 34;
+      const padT = 26;
+      const padB = 42;
+      const plotW = W - padL - padR;
+      const plotH = H - padT - padB;
+
+      const normT = appState.timeScrub / 100;
+      const playX = padL + normT * plotW;
+
+      const timeReadout = document.getElementById(`time-readout`);
+      if (timeReadout) {
+        const totalLabs = arch.bot.xLabels.length - 1;
+        const pos = normT * totalLabs;
+        const labIdx = Math.min(totalLabs, Math.round(pos));
+        timeReadout.textContent = `${arch.bot.xLabels[labIdx]} (${appState.timeScrub}%)`;
+      }
+
+      const subEl = document.getElementById(`bot-subtitle`);
+      if (subEl) subEl.textContent = `${arch.bot.yTitle} · Click chart or drag scrubber below`;
+
+      // Gridlines
+      let gridSvg = ``;
+      [0, 25, 50, 75, 100].forEach((val) => {
+        const y = padT + plotH - (val / 100) * plotH;
+        const isZero = val === 0;
+        gridSvg += `<line x1="${padL}" y1="${y.toFixed(1)}" x2="${W - padR}" y2="${y.toFixed(1)}" stroke="${isZero ? `var(--on-surface)` : `var(--outline-variant)`}" stroke-width="${isZero ? `1.5` : `1`}" ${isZero ? `` : `stroke-dasharray="3 3"`}/>`;
+        gridSvg += `<text x="${padL - 8}" y="${(y + 4).toFixed(1)}" text-anchor="end" font-family="var(--font-label)" font-size="11" fill="var(--on-surface-variant)">${val}</text>`;
+      });
+
+      // X axis labels
+      const xLabs = arch.bot.xLabels;
+      xLabs.forEach((lbl, i) => {
+        const x = padL + (i / (xLabs.length - 1)) * plotW;
+        gridSvg += `<text x="${x.toFixed(1)}" y="${H - 14}" text-anchor="middle" font-family="var(--font-label)" font-size="11" font-weight="${i === 2 ? `700` : `400`}" fill="${i === 2 ? `var(--secondary-text)` : `var(--on-surface-variant)`}">${lbl}</text>`;
+      });
+
+      // Intervention vertical line
+      const intX = padL + arch.bot.interventionX * plotW;
+      const intLine = appState.showIntervention ? `
+        <rect x="${intX.toFixed(1)}" y="${padT}" width="${(W - padR - intX).toFixed(1)}" height="${plotH}" fill="var(--secondary-container)" opacity="0.35"/>
+        <line x1="${intX.toFixed(1)}" y1="${padT}" x2="${intX.toFixed(1)}" y2="${padT + plotH}" stroke="var(--secondary)" stroke-width="1.5" stroke-dasharray="4 3"/>
+        <text x="${(intX + 6).toFixed(1)}" y="${padT + 14}" font-family="var(--font-label)" font-size="10.5" font-weight="700" fill="var(--secondary-text)">MOO INTERVENTION</text>
+      ` : ``;
+
+      // Clip path for scrubbed time
+      const clipDef = `
+        <defs>
+          <clipPath id="bot-time-clip">
+            <rect x="${padL - 4}" y="0" width="${(playX - padL + 8).toFixed(1)}" height="${H}"/>
+          </clipPath>
+        </defs>
+      `;
+
+      // Curves & endpoint dots
+      let curvesSvg = ``;
+      let dotsSvg = ``;
+      const readoutItems = [];
+
+      arch.bot.series.forEach((ser) => {
+        const activeArr = appState.showIntervention ? ser.withMoo : ser.statusQuo;
+        const ptsActive = activeArr.map((v, i) => ({
+          x: padL + (i / (activeArr.length - 1)) * plotW,
+          y: padT + plotH - (v / 100) * plotH
+        }));
+        const dActive = buildSmoothPath(ptsActive);
+
+        // If intervention is active, show faded status quo ghost curve for comparison
+        if (appState.showIntervention) {
+          const ptsGhost = ser.statusQuo.map((v, i) => ({
+            x: padL + (i / (ser.statusQuo.length - 1)) * plotW,
+            y: padT + plotH - (v / 100) * plotH
+          }));
+          const dGhost = buildSmoothPath(ptsGhost);
+          curvesSvg += `<path d="${dGhost}" fill="none" stroke="${ser.color}" stroke-width="1.6" stroke-dasharray="3 4" opacity="0.35" clip-path="url(#bot-time-clip)"/>`;
+        }
+
+        curvesSvg += `<path d="${dActive}" fill="none" stroke="${ser.color}" stroke-width="3" stroke-linecap="round" clip-path="url(#bot-time-clip)"/>`;
+
+        const curVal = interpolateVal(activeArr, normT);
+        const curY = padT + plotH - (curVal / 100) * plotH;
+        dotsSvg += `<circle cx="${playX.toFixed(1)}" cy="${curY.toFixed(1)}" r="5" fill="${ser.color}" stroke="var(--surface-container)" stroke-width="2"/>`;
+
+        readoutItems.push({
+          name: ser.name,
+          val: `${Math.round(curVal)}${ser.unit === `%` ? `%` : ``}`,
+          color: ser.color
+        });
+      });
+
+      // Playhead line
+      const playheadSvg = `
+        <line x1="${playX.toFixed(1)}" y1="${padT}" x2="${playX.toFixed(1)}" y2="${padT + plotH}" stroke="var(--primary)" stroke-width="2"/>
+        <circle cx="${playX.toFixed(1)}" cy="${padT}" r="4" fill="var(--primary)"/>
+      `;
+
+      svg.innerHTML = clipDef + intLine + gridSvg + curvesSvg + playheadSvg + dotsSvg;
+
+      // Update live readout chips
+      const readoutsEl = document.getElementById(`bot-readouts`);
+      if (readoutsEl) {
+        readoutsEl.innerHTML = readoutItems.map((it) => `
+          <div class="readout-chip" style="border-top: 3px solid ${it.color};">
+            <span class="readout-name">${it.name}</span>
+            <span class="readout-val">${it.val}</span>
+          </div>
+        `).join(``);
+      }
+    }
+
+    function renderIceberg() {
+      ICEBERG_LAYERS.forEach((layer, idx) => {
+        const poly = document.getElementById(`ice-poly-${idx}`);
+        if (!poly) return;
+        const active = idx === appState.activeIceberg;
+        poly.setAttribute(`fill`, active ? `var(--primary-container)` : (idx === 0 ? `var(--secondary-container)` : `var(--surface-container-low)`));
+        poly.setAttribute(`stroke`, active ? `var(--primary)` : (idx === 0 ? `var(--secondary)` : `var(--outline)`));
+        poly.setAttribute(`stroke-width`, active ? `2.5` : `1.8`);
+      });
+
+      const titleEl = document.getElementById(`ice-title`);
+      const descEl = document.getElementById(`ice-desc`);
+      const item = ICEBERG_LAYERS[appState.activeIceberg];
+      if (titleEl && item) titleEl.textContent = item.title;
+      if (descEl && item) descEl.textContent = item.desc;
+    }
+
+    function renderAll() {
+      renderBannerAndTabs();
+      updateFilterButtons();
+      renderCLD();
+      renderInspector();
+      renderBOT();
+      renderIceberg();
+    }
+
+    async function initApp() {
+      try {
+        if (window.notebookAppApi && typeof window.notebookAppApi.getAppState === `function`) {
+          const saved = await window.notebookAppApi.getAppState();
+          if (saved && typeof saved === `object`) {
+            if (saved.activeArchetype && ARCHETYPES[saved.activeArchetype]) appState.activeArchetype = saved.activeArchetype;
+            if (saved.loopFilter) appState.loopFilter = saved.loopFilter;
+            if (typeof saved.showMooOverlay === `boolean`) appState.showMooOverlay = saved.showMooOverlay;
+            if (typeof saved.selectedLinkIndex === `number`) appState.selectedLinkIndex = saved.selectedLinkIndex;
+            if (typeof saved.showIntervention === `boolean`) appState.showIntervention = saved.showIntervention;
+            if (typeof saved.timeScrub === `number`) appState.timeScrub = Math.max(5, Math.min(100, saved.timeScrub));
+            if (typeof saved.activeIceberg === `number`) appState.activeIceberg = saved.activeIceberg;
+          }
+        }
+      } catch (_err) {
+        // Fallback to default state
+      }
+
+      const slider = document.getElementById(`time-scrubber`);
+      if (slider) slider.value = String(appState.timeScrub);
+
+      const intBtn = document.getElementById(`btn-intervention`);
+      if (intBtn) {
+        intBtn.classList.toggle(`is-active`, appState.showIntervention);
+        intBtn.textContent = appState.showIntervention ? `MOO Reform: Applied` : `MOO Reform: Status Quo`;
+      }
+
+      renderAll();
+
+      if (window.notebookAppApi && typeof window.notebookAppApi.notifyAppReady === `function`) {
+        window.notebookAppApi.notifyAppReady();
+      }
+    }
+
+    document.addEventListener(`DOMContentLoaded`, initApp);
+  </script>
+</body>
+</html>
