@@ -6,7 +6,7 @@
   <meta name="artifact-type" content="dashboard">
   <meta name="design-style" content="briefing">
 
-  <title>Ormoc City DRRMO &amp; EOC Manual of Operations | MODE Platform</title>
+  <title>Systems Diagnosis | MODE — Ormoc City CDRRMO &amp; EOC</title>
   <meta name="description" content="MODE is the digital execution of the manual of operations for the Disaster Risk Reduction and Management Office (DRRMO) and Emergency Operations Center (EOC). Access emergency management systems, disaster preparedness resources, operational procedures, incident coordination, and resilience planning tools.">
   <meta name="keywords" content="Ormoc City DRRMO, EOC, Emergency Operations Center, Disaster Risk Reduction and Management, DRRM, Disaster Preparedness, Emergency Response, Risk Management, Resilience, Incident Command System, Operations Manual, Philippines, Leyte, Local Government Unit, LGU, MODE">
   <meta name="author" content="Alvin M. Silva">
@@ -15,13 +15,13 @@
   <meta name="geo.position" content="11.0050;124.6075">
   <meta name="ICBM" content="11.0050, 124.6075">
 
-  <link rel="canonical" href="https://www.mode-cddrmo-ormoc.online/">
+  <link rel="canonical" href="https://www.mode-cddrmo-ormoc.online/systems-diagnosis.html">
 
   <!-- OpenGraph -->
   <meta property="og:type" content="website">
   <meta property="og:title" content="MODE | Ormoc City DRRMO &amp; EOC Manual of Operations Platform">
   <meta property="og:description" content="MODE is the digital execution of the manual of operations for the Disaster Risk Reduction and Management Office (DRRMO) and Emergency Operations Center (EOC). Access emergency management systems, disaster preparedness resources, operational procedures, incident coordination, and resilience planning tools.">
-  <meta property="og:url" content="https://www.mode-cddrmo-ormoc.online/">
+  <meta property="og:url" content="https://www.mode-cddrmo-ormoc.online/systems-diagnosis.html">
   <meta property="og:site_name" content="MODE | Ormoc City DRRMO &amp; EOC Manual of Operations Platform">
   <meta property="og:locale" content="en_PH">
 
@@ -65,31 +65,28 @@
   }
   </script>
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Roboto+Condensed:wght@600;700&display=swap" rel="stylesheet">
-  <script src="https://unpkg.com/lucide@1.43.0/dist/umd/lucide.min.js"></script>
+  <!-- Fonts are supplied by the MODE application through self-hosted @fontsource packages. -->
 
   <style>
     :root {
       color-scheme: light;
 
       /* MODE Design System Tokens + Briefing Dossier Architecture */
-      --background: #EEF5FB;
+      --background: rgb(238 245 251);
       --surface-container-low: #FFFFFF;
-      --surface-container: #E3EEF7;
+      --surface-container: #E3EBF2;
       --surface-container-high: #D5E5F2;
 
       /* Ink */
       --on-surface: #13283D;
-      --on-surface-variant: #425B73;
+      --on-surface-variant: #51606E;
 
       /* Rules */
       --outline: #13283D;
-      --outline-variant: #C6D8E8;
+      --outline-variant: #C9D5E0;
 
       /* Accents */
-      --primary: #13283D;
+      --primary: #0F3D66;
       --on-primary: #FFFFFF;
       --primary-container: #D66812;
       --on-primary-container: #FFFFFF;
@@ -100,7 +97,7 @@
 
       /* Accessible Ink & Tint Tokens for Orange & Sky Blue */
       --accent-orange: #D66812;
-      --accent-orange-ink: #A34B07;
+      --accent-orange-ink: #A84A05;
       --accent-orange-tint: #FDECE0;
       --accent-blue: #2F86C8;
       --accent-blue-ink: #1C6299;
@@ -113,7 +110,7 @@
       --warning: #A34B07;
       --warning-tint: #FDECE0;
       --error-tint: #FEECEB;
-      --focus: #2F86C8;
+      --focus: #D1600C;
 
       /* Data Series */
       --data-1: #D66812;
@@ -123,10 +120,10 @@
       --data-context: #9DB5CA;
 
       /* Typography */
-      --font-headline: 'Plus Jakarta Sans', sans-serif;
-      --font-body: 'Plus Jakarta Sans', sans-serif;
-      --font-metric: 'Roboto Condensed', sans-serif;
-      --font-label: 'IBM Plex Mono', monospace;
+      --font-headline: 'Montserrat Variable', 'Montserrat', sans-serif;
+      --font-body: 'Poppins', sans-serif;
+      --font-metric: 'Roboto Condensed Variable', 'Roboto Condensed', sans-serif;
+      --font-label: 'Roboto Condensed Variable', 'Roboto Condensed', monospace;
 
       /* Type Scale (Dashboard / Explorer) */
       --display-size: clamp(1.65rem, 1.35rem + 1.15vw, 2.25rem);
@@ -162,6 +159,16 @@
       --dur-short: 220ms;
       --dur-long: 420ms;
     }
+
+
+    .brand-lockup { display:flex; align-items:center; gap:.75rem; margin-bottom:1rem; }
+    .brand-mark { display:inline-flex; flex:0 0 auto; border-radius:50%; background:#fff; border:1px solid var(--outline-variant); padding:3px; }
+    .brand-mark img { display:block; width:clamp(38px,5vw,52px); height:auto; aspect-ratio:1; object-fit:contain; }
+    .brand-copy { display:grid; line-height:1.2; gap:2px; }
+    .brand-copy strong { font-family:var(--font-headline); font-size:1.05rem; letter-spacing:.06em; color:var(--primary); }
+    .brand-copy span { font-weight:600; font-size:.88rem; }
+    .brand-copy small { color:var(--on-surface-variant); font-size:.74rem; }
+    [data-lucide] { display:inline-block; font-style:normal; line-height:1; }
 
     /* Base Reset */
     *, *::before, *::after { box-sizing: border-box; }
@@ -516,6 +523,35 @@
       color: var(--on-surface-variant);
       max-width: 72ch;
     }
+
+
+    .version-history { margin-top:var(--space-lg); }
+    .version-controls { display:flex; flex-wrap:wrap; gap:.45rem; margin:.5rem 0 1rem; }
+    .version-btn { min-height:40px; padding:.4rem .85rem; border:1px solid var(--outline-variant); border-radius:var(--rounded); background:var(--background); color:var(--on-surface); font:600 .85rem var(--font-body); cursor:pointer; }
+    .version-btn:hover,.version-btn.is-active { border-color:var(--accent-orange); background:var(--accent-blue-tint); }
+    .version-btn.is-active { box-shadow:inset 0 -3px 0 var(--accent-orange); }
+    .version-detail { border-left:4px solid var(--accent-blue); background:var(--surface-container); padding:.85rem 1rem; border-radius:var(--rounded); }
+    .version-detail p { margin:.35rem 0 .65rem; max-width:90ch; }
+    .version-metrics { display:flex; flex-wrap:wrap; gap:.5rem; }
+    .version-metrics span { display:inline-flex; padding:.25rem .5rem; border:1px solid var(--outline-variant); background:var(--surface-container-low); border-radius:var(--rounded); font-size:.78rem; font-weight:600; }
+
+
+    .domain-filters { display:flex; flex-wrap:wrap; gap:.35rem; }
+    .domain-filter { min-height:36px; padding:.3rem .65rem; border:1px solid var(--outline-variant); border-radius:var(--rounded); background:var(--surface-container-low); color:var(--on-surface); font:600 .76rem var(--font-body); cursor:pointer; }
+    .domain-filter.is-active { border-color:var(--accent-orange); background:var(--accent-blue-tint); box-shadow:inset 0 -2px 0 var(--accent-orange); }
+    .domain-summary-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:.65rem; margin:.75rem 0 1rem; }
+    .domain-summary { display:grid; gap:.15rem; padding:.7rem .8rem; border:1px solid var(--outline-variant); border-radius:var(--rounded); background:var(--surface-container-low); }
+    .domain-summary span { color:var(--on-surface-variant); font-size:.75rem; font-weight:600; }
+    .domain-summary strong { font:700 1.55rem var(--font-metric); color:var(--primary); }
+    .domain-summary small { color:var(--on-surface-variant); font-size:.72rem; }
+    .domain-table-wrap { overflow-x:auto; border:1px solid var(--outline-variant); border-radius:var(--rounded); }
+    .domain-table { width:100%; border-collapse:collapse; min-width:620px; font-size:.82rem; }
+    .domain-table th,.domain-table td { padding:.48rem .65rem; border-bottom:1px solid var(--outline-variant); text-align:left; white-space:nowrap; }
+    .domain-table thead th { background:var(--surface-container); font-size:.72rem; text-transform:uppercase; letter-spacing:.035em; }
+    .domain-table tbody th { font-weight:600; white-space:normal; min-width:260px; }
+    .domain-table tbody tr:last-child th,.domain-table tbody tr:last-child td { border-bottom:0; }
+    .domain-table tbody tr:hover { background:var(--accent-blue-tint); }
+    @media(max-width:700px) { .domain-summary-grid { grid-template-columns:1fr; } .domain-filters { width:100%; } }
 
     /* Archetype Selector Cards */
     .archetype-selector-grid {
@@ -1142,10 +1178,19 @@
   <div class="page-grid">
     <!-- Dossier Masthead -->
     <header class="masthead">
+      <div class="brand-lockup" aria-label="MODE Ormoc City DRRMO and EOC">
+        <a class="brand-mark" href="https://ormoc.gov.ph/" target="_blank" rel="noopener noreferrer" aria-label="City Government of Ormoc official website">
+          <img src="/brand/ormoc-city-seal-128.webp" width="52" height="52" alt="Official seal of the City of Ormoc">
+        </a>
+        <a class="brand-mark" href="https://www.mode-cddrmo-ormoc.online/" aria-label="MODE Ormoc City DRRMO and EOC home">
+          <img src="/brand/cdrrmo-seal-128.webp" width="52" height="52" alt="Seal of the Ormoc City Disaster Risk Reduction and Management Office">
+        </a>
+        <div class="brand-copy"><strong>MODE</strong><span>Ormoc City DRRMO and EOC</span><small>Manual of Operations Platform</small></div>
+      </div>
       <div class="dossier-bar">
         <div class="dossier-left">
           <span class="dossier-pill">Ormoc City CDRRMO &amp; EOC</span>
-          <span class="dossier-meta">MODE Platform · Systems Diagnosis Workbench · IAT v1.7 Baseline</span>
+          <span class="dossier-meta">MODE Platform · Systems Diagnosis Workbench · IAT v1.7 · Draft for validation</span>
         </div>
         <span class="dossier-meta">Statutory Basis: RA 10121 · RA 12287 (2026 IRR) · JMC 2014-1</span>
       </div>
@@ -1170,23 +1215,84 @@
         <article class="figure-card figure-card--orange">
           <span class="figure-label">Mandatory Compliance Baseline</span>
           <span class="figure-value figure-value--orange">32.9%</span>
-          <p class="figure-note">IAT v1.7 Intro Sec. 5.4 · Risk of settling at &ldquo;we responded&rdquo; over statutory standard</p>
+          <p class="figure-note">IAT v1.7 · 26 of 79 Mandatory indicators scored 3–4 (33% when B2.7 is N/A)</p>
         </article>
         <article class="figure-card figure-card--blue">
           <span class="figure-label">Institutional Maturity Index (IMI)</span>
           <span class="figure-value figure-value--blue">1.98 / 4.00</span>
-          <p class="figure-note">140 indicators (Parts A &amp; B) · Part C Interface reported separately at 1.41 / 4.00</p>
+          <p class="figure-note">125 scored indicators in Parts A &amp; B · Part C (15 indicators) is separate at 1.41 / 4.00</p>
         </article>
         <article class="figure-card figure-card--navy">
-          <span class="figure-label">Permanent Plantilla Staffing</span>
-          <span class="figure-value">4 / 47</span>
-          <p class="figure-note">43 casual/job-order staff (IAT A2.3, Score 2) · Pending HRMO plantilla reconciliation</p>
+          <span class="figure-label">Lowest EOC Domain Index</span>
+          <span class="figure-value">1.31</span>
+          <p class="figure-note">Lowest domain index: EOC organisation &amp; staffing (B4), Initial; roster and three-deep coverage remain priority gaps.</p>
         </article>
         <article class="figure-card figure-card--green">
           <span class="figure-label">High-Priority Structural Gaps</span>
           <span class="figure-value">29 Gaps</span>
-          <p class="figure-note">17 CDRRMO Part A · 12 EOC Part B · +2 cross-office Part C interface gaps</p>
+          <p class="figure-note">18 CDRRMO Part A · 11 EOC Part B · Part C reported separately</p>
         </article>
+      </section>
+      <section class="section-card version-history" aria-labelledby="iat-history-title">
+        <div class="section-header">
+          <div><h2 class="section-title" id="iat-history-title">IAT development and evidence-gated scoring · Versions 1.1–1.7</h2>
+          <p class="section-sub">The assessment evolved as City plans, issuances and consultation evidence became available. Only published version-specific values are shown; unreported interim scores are not interpolated.</p></div>
+          <span class="dossier-pill">Controlled baseline: v1.7 · 11 Nov 2026</span>
+        </div>
+        <div class="version-controls" role="group" aria-label="Select IAT version">
+          <button type="button" class="version-btn is-active" data-version="1.1" aria-pressed="true">v1.1</button>
+          <button type="button" class="version-btn" data-version="1.3" aria-pressed="false">v1.3</button>
+          <button type="button" class="version-btn" data-version="1.4" aria-pressed="false">v1.4</button>
+          <button type="button" class="version-btn" data-version="1.5–1.6" aria-pressed="false">v1.5–1.6</button>
+          <button type="button" class="version-btn" data-version="1.7" aria-pressed="false">v1.7</button>
+        </div>
+        <div class="version-detail" aria-live="polite" aria-atomic="true">
+          <strong id="version-detail-title">v1.1 · October 2026</strong>
+          <p id="version-detail-copy">Added six RA 12287 IRR indicators and revised six; added 11 Scorecard-based Good Practice indicators and the 15-indicator Part C interface. Parts A and B contained 125 indicators at this stage.</p>
+          <div class="version-metrics" id="version-detail-metrics"><span>IMI: Not reported</span><span>Evidence status: Initial working baseline</span></div>
+        </div>
+        <p class="figure-note">Source: Situational Analysis Report v0.1 (19 November 2026), Table 3 and Annex C. Version history describes assessment development, not a time-series of comparable maturity scores.</p>
+      </section>
+      <section class="section-card domain-scorecard" aria-labelledby="domain-score-title">
+        <div class="section-header">
+          <div><h2 class="section-title" id="domain-score-title">Institutional maturity by assessment domain</h2>
+          <p class="section-sub">IAT v1.7 recomputed with B2.7 (alternate EOC) treated as not applicable. Scores are provisional pending the City validation workshop.</p></div>
+          <div class="domain-filters" role="group" aria-label="Filter assessment domains">
+            <button class="domain-filter is-active" type="button" data-domain-filter="all" aria-pressed="true">All domains</button>
+            <button class="domain-filter" type="button" data-domain-filter="A" aria-pressed="false">CDRRMO · Part A</button>
+            <button class="domain-filter" type="button" data-domain-filter="B" aria-pressed="false">EOC · Part B</button>
+          </div>
+        </div>
+        <div class="domain-summary-grid">
+          <div class="domain-summary"><span>CDRRMO · Part A</span><strong>2.06 / 4</strong><small>Developing · 18 high-priority gaps</small></div>
+          <div class="domain-summary"><span>EOC · Part B</span><strong>1.89 / 4</strong><small>Developing · 11 high-priority gaps</small></div>
+          <div class="domain-summary"><span>City-office interface · Part C</span><strong>1.41 / 4</strong><small>Initial · 2 high-priority gaps · excluded from IMI</small></div>
+        </div>
+        <div class="domain-table-wrap">
+          <table class="domain-table">
+            <thead><tr><th scope="col">Domain</th><th scope="col">Index</th><th scope="col">Maturity band</th><th scope="col">Mandatory met</th><th scope="col">High gaps</th></tr></thead>
+            <tbody id="domain-score-rows">
+              <tr data-part="A"><th scope="row">A1 · Legal mandate &amp; DRRM governance</th><td>2.47</td><td>Developing</td><td>4 / 6</td><td>2</td></tr>
+              <tr data-part="A"><th scope="row">A2 · Organisation, staffing &amp; HR</th><td>1.86</td><td>Developing</td><td>1 / 7</td><td>4</td></tr>
+              <tr data-part="A"><th scope="row">A3 · DRRM &amp; contingency planning</th><td>2.61</td><td>Compliant</td><td>3 / 6</td><td>1</td></tr>
+              <tr data-part="A"><th scope="row">A4 · DRRM financing &amp; fund management</th><td>2.16</td><td>Developing</td><td>3 / 6</td><td>1</td></tr>
+              <tr data-part="A"><th scope="row">A5 · Risk assessment, data &amp; knowledge management</th><td>2.11</td><td>Developing</td><td>3 / 4</td><td>0</td></tr>
+              <tr data-part="A"><th scope="row">A6 · Early warning &amp; risk communication</th><td>1.93</td><td>Developing</td><td>1 / 4</td><td>3</td></tr>
+              <tr data-part="A"><th scope="row">A7 · Preparedness &amp; community capacity</th><td>2.12</td><td>Developing</td><td>2 / 5</td><td>1</td></tr>
+              <tr data-part="A"><th scope="row">A8 · Response capability</th><td>1.77</td><td>Developing</td><td>2 / 8</td><td>5</td></tr>
+              <tr data-part="A"><th scope="row">A9 · Rehabilitation &amp; recovery</th><td>1.38</td><td>Initial</td><td>0 / 1</td><td>0</td></tr>
+              <tr data-part="A"><th scope="row">A10 · Partnerships, M&amp;E &amp; accountability</th><td>1.86</td><td>Developing</td><td>1 / 4</td><td>1</td></tr>
+              <tr data-part="B"><th scope="row">B1 · EOC legal basis &amp; concept of operations</th><td>2.23</td><td>Developing</td><td>1 / 5</td><td>2</td></tr>
+              <tr data-part="B"><th scope="row">B2 · EOC facility, site &amp; resilience</th><td>2.92</td><td>Compliant</td><td>3 / 3</td><td>0</td></tr>
+              <tr data-part="B"><th scope="row">B3 · EOC communications &amp; ICT</th><td>1.91</td><td>Developing</td><td>1 / 3</td><td>1</td></tr>
+              <tr data-part="B"><th scope="row">B4 · EOC organisation &amp; staffing</th><td>1.31</td><td>Initial</td><td>0 / 4</td><td>2</td></tr>
+              <tr data-part="B"><th scope="row">B5 · Information management &amp; reporting</th><td>1.47</td><td>Initial</td><td>0 / 5</td><td>3</td></tr>
+              <tr data-part="B"><th scope="row">B6 · Coordination &amp; resource management</th><td>1.38</td><td>Initial</td><td>0 / 3</td><td>2</td></tr>
+              <tr data-part="B"><th scope="row">B7 · EOC SOPs, training, exercises &amp; continuity</th><td>2.08</td><td>Developing</td><td>1 / 4</td><td>1</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="figure-note">Part A: 82 indicators, index 2.06. Part B: 43 indicators, index 1.89. Part C: 15 interface indicators, index 1.41 and not included in the IMI. Mandatory compliance with B2.7 N/A: 26 of 78 (33.3%); as filed: 26 of 79 (32.9%). A domain is compliant only when all its scored Mandatory indicators are rated 3 or 4.</p>
       </section>
     </header>
 
@@ -1575,6 +1681,43 @@
 
   <api-shim></api-shim>
   <script>
+    // Offline-safe decorative icon fallback; the page does not fetch an icon CDN.
+    window.lucide = window.lucide || { createIcons: function () {
+      const glyphs = { download: '↓', 'arrow-right': '→', 'trending-up': '↗', 'rotate-ccw': '↶', play: '▶', 'alert-circle': '!' };
+      document.querySelectorAll('[data-lucide]').forEach(function (el) {
+        const name = el.getAttribute('data-lucide');
+        el.textContent = glyphs[name] || '•';
+        el.setAttribute('aria-hidden', 'true');
+      });
+    }};
+    (function bindIatVersionHistory () {
+      const versions = {
+        '1.1': { title:'v1.1 · October 2026', copy:'Added six RA 12287 IRR indicators and revised six; added 11 Scorecard-based Good Practice indicators and the 15-indicator Part C interface. Parts A and B contained 125 indicators at this stage.', metrics:['IMI: Not reported','Indicators: 125 in Parts A and B + 15 in Part C'] },
+        '1.3': { title:'v1.3 · Early November 2026', copy:'Entered field scores and completed the desk review of City plans dated 30 October 2026. The report does not publish a comparable headline IMI for this release.', metrics:['IMI: Not reported','Evidence: City-plan desk review'] },
+        '1.4': { title:'v1.4 · November 2026', copy:'Applied the evidence rule to 27 Part A indicators initially resting on focus-group self-scores. The resulting Institutional Maturity Index was 1.75.', metrics:['IMI: 1.75','Evidence rule: 27 Part A indicators reviewed'] },
+        '1.5–1.6': { title:'v1.5–v1.6 · November 2026', copy:'Added the desk review of 23 City issuances dated 6 November 2026 and introduced an Evidence Validation Status column. The status of evidence items was marked Pending validation.', metrics:['IMI: Not reported','Evidence status: Pending validation'] },
+        '1.7': { title:'v1.7 · 11 November 2026', copy:'Re-applied the evidence rule after desk review: 11 indicators were reduced from 3 or 4 to 2, and four indicators from 4 to 3. Twenty-four indicators still rested on focus-group evidence alone. The filed IMI is 1.98; with B2.7 treated as not applicable, the recomputed IMI is 2.00.', metrics:['IMI: 1.98 filed / 2.00 with B2.7 N/A','Mandatory compliance: 32.9% filed / 33.3% with B2.7 N/A','High-priority gaps: 30 filed / 29 with B2.7 N/A'] }
+      };
+      document.addEventListener('DOMContentLoaded', function () {
+        const domainButtons = document.querySelectorAll('.domain-filter');
+        domainButtons.forEach(function (button) { button.addEventListener('click', function () {
+          const filter = button.dataset.domainFilter;
+          domainButtons.forEach(function (b) { b.classList.toggle('is-active', b === button); b.setAttribute('aria-pressed', String(b === button)); });
+          document.querySelectorAll('#domain-score-rows tr').forEach(function (row) { row.hidden = filter !== 'all' && row.dataset.part !== filter; });
+        }); });
+        const buttons = document.querySelectorAll('.version-btn');
+        buttons.forEach(function (button) { button.addEventListener('click', function () {
+          const data = versions[button.dataset.version]; if (!data) return;
+          buttons.forEach(function (b) { b.classList.toggle('is-active', b === button); b.setAttribute('aria-pressed', String(b === button)); });
+          document.getElementById('version-detail-title').textContent = data.title;
+          document.getElementById('version-detail-copy').textContent = data.copy;
+          const metrics = document.getElementById('version-detail-metrics'); metrics.replaceChildren();
+          data.metrics.forEach(function (value) { const chip = document.createElement('span'); chip.textContent = value; metrics.appendChild(chip); });
+        }); });
+      });
+    })();
+  </script>
+  <script>
     /* =====================================================================
        1. DATA MODELS (100% grounded in Ormoc City Manual of Operations & IAT)
        ===================================================================== */
@@ -1584,7 +1727,7 @@
         id: `shifting`,
         code: `ARCHETYPE A`,
         title: `Shifting the Burden (Fixes that Fail)`,
-        summary: `Rising operational disruptions trigger ad-hoc Executive Orders and reliance on 43 casual/job-order personnel (Loop B1). While this relieves immediate crisis pressure, it erodes urgency for passing a JMC 2014-1 department ordinance and written SOPs (Loop B2) and drives Side-Effect Loop R1: institutional compliance decay (32.9% baseline).`,
+        summary: `Rising operational disruptions trigger ad-hoc Executive Orders and reliance on temporary staffing arrangements (Loop B1). While this relieves immediate crisis pressure, it erodes urgency for passing a JMC 2014-1 department ordinance and written SOPs (Loop B2) and drives Side-Effect Loop R1: institutional compliance decay (32.9% baseline).`,
         loops: [
           { id: `all`, label: `All Loops` },
           { id: `B1`, label: `B1 · Symptomatic Fix`, type: `B`, cx: 245, cy: 165, title: `Balancing Loop B1 (Symptomatic Relief)` },
@@ -1602,11 +1745,11 @@
           },
           {
             id: `adhoc`, x: 135, y: 175, w: 204, h: 62,
-            label: `Ad-Hoc Fixes: Event EOs\n& 43 Casual/JO Staff`,
+            label: `Ad-Hoc Fixes: Event Directives\n& Temporary Staffing`,
             role: `symptom`, roleLabel: `Symptomatic Fix`,
-            desc: `Instead of codified procedures, emergencies are handled through event-specific Executive Orders, informal workarounds, and temporary job-order duty assignments.`,
-            evidence: `Reported workforce of ~47 personnel includes only 4 permanent plantilla employees (43 casual/JO). Pre-emptive evacuations and suspensions previously relied on ad-hoc issuances.`,
-            chips: [`IAT A2.3 (Score 2)`, `4 / 47 Plantilla`, `MR-02`]
+            desc: `Instead of codified procedures, some decisions are remade event by event and operational continuity relies on routines that are not yet fully formalised.`,
+            evidence: `The report identifies unfilled plantilla positions and a need to approve the CDRRMO structure, position descriptions and EOC three-deep roster. Event-specific resolutions have been used for some warning and evacuation actions.`,
+            chips: [`IAT A2.3`, `B4.1–B4.2`, `MR-02`]
           },
           {
             id: `relief`, x: 135, y: 315, w: 196, h: 56,
@@ -1637,7 +1780,7 @@
             label: `Compliance Decay &\nSystemic Vulnerability`,
             role: `compliance`, roleLabel: `Side Effect / Risk`,
             desc: `Over-reliance on temporary staff and unwritten procedures erodes institutional memory, leaving mandatory compliance at 32.9%.`,
-            evidence: `IAT v1.7 records 32.9% Mandatory Compliance and 29 high-priority structural gaps across Parts A and B.`,
+            evidence: `IAT v1.7 records 32.9% Mandatory Compliance and 29 high-priority gaps across Parts A and B (18 CDRRMO; 11 EOC).`,
             chips: [`32.9% Mandatory`, `1.98 / 4.00 IMI`, `29 High Gaps`]
           }
         ],
@@ -1743,7 +1886,7 @@
             label: `Working Performance\nStandard ("We Responded")`,
             role: `symptom`, roleLabel: `Drifting Goal`,
             desc: `Informal operational benchmark that treats emergency activity or attendance as success instead of verified statutory compliance.`,
-            evidence: `Ch. 7 Sec. 1 warns that with 32.9% Mandatory compliance, procedures without fixed measurement drift downward.`,
+            evidence: `Ch. 7 Sec. 1 warns that with 32.9% Mandatory compliance as filed (33.3% with B2.7 N/A), procedures without fixed measurement drift downward.`,
             chips: [`Ch. 7 Sec. 1`, `Ch. 7 Sec. 5.4`]
           },
           {
