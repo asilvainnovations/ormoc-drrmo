@@ -23,15 +23,16 @@ export const REQUEST_STATUS: Record<RequestStatus, string> = {
 };
 export const PRIORITY: Record<string, string> = { life_safety: 'Life safety', urgent: 'Urgent', routine: 'Routine' };
 export const EOC_TABS = [
-  { to: '/eoc', label: 'Board', end: true, tip: 'The EOC at a glance: alert level, the barangay picture, key numbers and what needs attention' },
-  { to: '/eoc/log', label: 'Logbook', tip: 'Time-stamped record of everything that happens. Entries cannot be edited, only corrected' },
+  { to: '/eoc', label: 'Board', end: true, tip: 'The EOC at a glance: alert level, the barangay picture, key numbers, decision-support tools and what needs attention' },
+  { to: '/eoc/map', label: 'Map', tip: 'Geo-COP: live operational layers, barangay status, reference maps, EOC points and uploaded GIS layers' },
+  { to: '/eoc/hazard-maps', label: 'Hazard Maps', tip: 'City hazard-map sheets and map interpretation tools for barangay-level reference' },
+  { to: '/eoc/risk', label: 'Risk', tip: 'Risk picture: likelihood and severity matrix and the Ten-Year Plan risk profile' },
   { to: '/eoc/barangays', label: 'Barangays', tip: 'All 85 barangays by cluster, coloured by their latest report. Tap one to record a status' },
+  { to: '/eoc/log', label: 'Logbook', tip: 'Time-stamped record of everything that happens. Entries cannot be edited, only corrected' },
   { to: '/eoc/requests', label: 'Requests', tip: 'Resource requests from request to delivery' },
   { to: '/eoc/resources', label: 'Resources', tip: 'What the City has: equipment, vehicles and stocks, checked against the national minimum list' },
   { to: '/eoc/sitreps', label: 'SitReps', tip: 'Situation reports, pre-filled from the EOC records, for OCD VIII and the Province' },
   { to: '/eoc/roster', label: 'Roster', tip: 'Who staffs each EOC position: primary and two alternates, with contacts' },
-  { to: '/eoc/map', label: 'Map', tip: 'Geo-COP: hazard map layers, barangay status, reference points and uploaded layers' },
-  { to: '/eoc/risk', label: 'Risk', tip: 'Risk picture: likelihood and severity matrix and the Ten-Year Plan risk profile' },
   { to: '/eoc/aa', label: 'Anticipatory action', tip: 'PDRA, State of Imminent Disaster, the action checklist and AA funds (RA 12287)' },
 ];
 export const SITREP_STATUS: Record<'draft' | 'submitted' | 'approved', string> = { draft: 'Draft', submitted: 'Submitted', approved: 'Approved' };
