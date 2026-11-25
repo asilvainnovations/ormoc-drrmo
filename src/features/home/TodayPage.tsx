@@ -4,10 +4,11 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { 
   ClipboardCheck, FolderLock, ListChecks, NotebookPen, Settings, Siren, Users, 
   Workflow, Wrench, ShieldCheck, AlertCircle,
-  Clock, Building2, ArrowUpRight, BookOpen
+  Clock, Building2, ArrowUpRight, BookOpen, Activity
 } from 'lucide-react';
 import { ButtonAnchor, Badge, List, ListRow, Notice, TextLink } from '@/components/ui';
 import { USER_GUIDE_LABEL, USER_GUIDE_TIP, USER_GUIDE_URL } from '@/lib/userGuide';
+import { SYSTEMS_DIAGNOSIS_LABEL, SYSTEMS_DIAGNOSIS_TIP, SYSTEMS_DIAGNOSIS_URL } from '@/lib/systemsDiagnosis';
 import { db } from '@/lib/db';
 import { useAuth } from '@/lib/auth';
 import { useActiveDeclaration, useNow } from '@/lib/hooks';
@@ -226,17 +227,15 @@ export function TodayPage() {
             </h1>
             <p className="mt-1 max-w-prose text-muted">{t('today.hero')}</p>
             
-            {/* UPDATED: Added target and rel for external static file to preserve app state */}
-            <ButtonAnchor 
-              href={USER_GUIDE_URL} 
-              variant="primary" 
-              icon={BookOpen} 
-              tip={USER_GUIDE_TIP} 
-              className="mt-4"
-              newTab
-            >
-              {USER_GUIDE_LABEL}
-            </ButtonAnchor>
+            {/* Static pages open in a new tab so the workspace keeps its state */}
+            <div className="mt-4 flex flex-wrap gap-2">
+              <ButtonAnchor href={USER_GUIDE_URL} variant="primary" icon={BookOpen} tip={USER_GUIDE_TIP} newTab>
+                {USER_GUIDE_LABEL}
+              </ButtonAnchor>
+              <ButtonAnchor href={SYSTEMS_DIAGNOSIS_URL} variant="secondary" icon={Activity} tip={SYSTEMS_DIAGNOSIS_TIP} newTab>
+                {SYSTEMS_DIAGNOSIS_LABEL}
+              </ButtonAnchor>
+            </div>
           </div>
           <div className="flex shrink-0 items-center gap-1 lg:hidden">
             <ThemeToggle />

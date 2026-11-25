@@ -5,7 +5,7 @@
 // from src/lib/site.ts. The copy follows docs/implementation/public-website-pwa/01-public-web-copy.md.
 import { useEffect, type ReactNode } from 'react';
 import { Link, Navigate, useLocation, useParams } from 'react-router-dom';
-import { ArrowRight, BookOpen, ClipboardCheck, FileText, LifeBuoy, ListChecks, Mail, Map as MapIcon, Menu, RadioTower, RefreshCcw, ShieldCheck, Siren, Users, WifiOff } from 'lucide-react';
+import { Activity, ArrowRight, BookOpen, ClipboardCheck, FileText, LifeBuoy, ListChecks, Mail, Map as MapIcon, Menu, RadioTower, RefreshCcw, ShieldCheck, Siren, Users, WifiOff } from 'lucide-react';
 import { Seal } from '@/components/Brand';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
@@ -20,6 +20,7 @@ import { useAuth } from '@/lib/auth';
 import { PRODUCT } from '@/lib/product';
 import { POLICY, policyApproved, setPageMeta, SITE } from '@/lib/site';
 import { USER_GUIDE_LABEL, USER_GUIDE_TIP, USER_GUIDE_URL } from '@/lib/userGuide';
+import { SYSTEMS_DIAGNOSIS_LABEL, SYSTEMS_DIAGNOSIS_TIP, SYSTEMS_DIAGNOSIS_URL } from '@/lib/systemsDiagnosis';
 import { InstallPrompt } from '@/components/InstallPrompt';
 
 // ------------------------------------------------------------------ content
@@ -97,6 +98,15 @@ function UserGuideLink({ compact = false }: { compact?: boolean }) {
   );
 }
 
+function SystemsDiagnosisLink({ compact = false }: { compact?: boolean }) {
+  return (
+    <a href={SYSTEMS_DIAGNOSIS_URL} target="_blank" rel="noopener noreferrer" aria-label={`${SYSTEMS_DIAGNOSIS_LABEL} (opens in a new tab)`} {...tip(SYSTEMS_DIAGNOSIS_TIP)}
+      className={compact ? linkCls : `${linkCls} hidden lg:inline-flex`}>
+      {SYSTEMS_DIAGNOSIS_LABEL}
+    </a>
+  );
+}
+
 function Frame({ title, description, path, children }: { title: string; description: string; path: string; children: ReactNode }) {
   const { status } = useAuth();
   useEffect(() => { setPageMeta({ title, description, path, index: true }); }, [title, description, path]);
@@ -119,6 +129,7 @@ function Frame({ title, description, path, children }: { title: string; descript
             <Link to="/about" className={`${linkCls} hidden md:inline-flex`} {...tip('What MODE is and how it works')}>About</Link>
             <Link to="/faq" className={`${linkCls} hidden md:inline-flex`} {...tip('Answers to common questions')}>FAQ</Link>
             <Link to="/support" className={`${linkCls} hidden md:inline-flex`} {...tip('Help, privacy requests and contacts')}>Support</Link>
+            <SystemsDiagnosisLink />
             <UserGuideLink />
             <ThemeToggle />
             <DropdownMenu>
@@ -154,6 +165,7 @@ function Frame({ title, description, path, children }: { title: string; descript
               <li><Link to="/faq" className={linkCls} {...tip('Answers to common questions')}>Frequently asked questions</Link></li>
               <li><Link to="/support" className={linkCls} {...tip('Help, privacy requests and contacts')}>Support</Link></li>
               <li><UserGuideLink compact /></li>
+              <li><SystemsDiagnosisLink compact /></li>
             </ul>
           </nav>
           <nav aria-label="Policies">
@@ -203,6 +215,7 @@ export function PublicHome() {
             <div className="mt-7 flex flex-wrap gap-3">
               <Link to="/login" {...tip('Sign in with your MODE account')} className="inline-flex min-h-tap items-center gap-2 rounded-control bg-accent-bright px-5 font-bold text-banner shadow-raised hover:opacity-90">Sign in to MODE <ArrowRight className="h-4 w-4" aria-hidden /></Link>
               <a href="#supports" {...tip('Jump to what MODE brings together')} className="inline-flex min-h-tap items-center rounded-control border border-on-level/60 px-5 font-semibold hover:bg-on-level/10">Explore the platform</a>
+              <a href={SYSTEMS_DIAGNOSIS_URL} target="_blank" rel="noopener noreferrer" aria-label={`${SYSTEMS_DIAGNOSIS_LABEL} (opens in a new tab)`} {...tip(SYSTEMS_DIAGNOSIS_TIP)} className="inline-flex min-h-tap items-center gap-2 rounded-control border border-on-level/60 px-5 font-semibold hover:bg-on-level/10"><Activity className="h-4 w-4" aria-hidden /> {SYSTEMS_DIAGNOSIS_LABEL}</a>
             </div>
             <div className="mt-6 flex flex-wrap gap-2">
               <Badge variant="outline" className="border-on-level/40 text-on-level">RA 10121</Badge>

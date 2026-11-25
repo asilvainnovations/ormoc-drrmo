@@ -11,6 +11,7 @@ vi.mock('@/components/ThemeToggle', () => ({ ThemeToggle: () => null }));
 const { AboutPage, FAQPage, FAQS, PublicHome, SupportPage } = await import('./PublicPages');
 const { SITE } = await import('@/lib/site');
 const { USER_GUIDE_URL } = await import('@/lib/userGuide');
+const { SYSTEMS_DIAGNOSIS_URL } = await import('@/lib/systemsDiagnosis');
 
 const at = (el: JSX.Element) => render(<MemoryRouter>{el}</MemoryRouter>);
 afterEach(() => { cleanup(); status = 'signed_out'; });
@@ -33,6 +34,12 @@ describe('public header and footer', () => {
     expect(links.length).toBeGreaterThanOrEqual(1);
     for (const l of links) { expect(l.getAttribute('href')).toBe(USER_GUIDE_URL); expect(l.getAttribute('target')).toBe('_blank'); }
     expect(screen.getAllByRole('link', { name: /User Guide/ }).length).toBeGreaterThanOrEqual(2);
+  });
+  it('shows Systems Diagnosis in the hero, header and footer, each opening in a new tab', () => {
+    at(<PublicHome />);
+    const links = screen.getAllByRole('link', { name: /Systems Diagnosis/ });
+    expect(links.length).toBeGreaterThanOrEqual(3);
+    for (const l of links) { expect(l.getAttribute('href')).toBe(SYSTEMS_DIAGNOSIS_URL); expect(l.getAttribute('target')).toBe('_blank'); expect(l.getAttribute('rel')).toContain('noopener'); }
   });
   it('shows Sign in when signed out and Open workspace when signed in', () => {
     at(<PublicHome />);
