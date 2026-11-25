@@ -971,7 +971,7 @@
       <p class="kicker">Systems Thinking Diagnostic · CResT Framework · 85 PSGC Barangays</p>
       <h1>Ormoc City DRRMO &amp; EOC Systems Archetypes</h1>
       <p class="lede">
-        Ormoc City runs an active 24/7 monitoring operation, yet mandatory legal compliance stands at 41.8%. Explore the four recurring system traps that keep teams stuck in reactive crisis mode—and test how the Manual of Operations (MOO) breaks each loop over time.
+        Ormoc City runs an active 24/7 monitoring operation, yet mandatory legal compliance stands at 41.8%. Explore the four recurring system traps that keep teams stuck in reactive crisis mode—and test how the operational protocols in the Manual of Operations breaks each loop over time.
       </p>
 
       <div class="kpi-strip" aria-label="Institutional Assessment Tool v1.7 baseline metrics">
@@ -1161,7 +1161,7 @@
         </button>
         <button type="button" role="tab" class="arch-tab" id="tab-arch-4" aria-selected="false" onclick="selectArchetype('conflation')">
           <span class="arch-tab-num">04 · Escalation Trap</span>
-          <span class="arch-tab-name">ICS–EOC Mandate Conflation</span>
+          <span class="arch-tab-name">ICS–EOC Mandate Mix-up</span>
         </button>
       </div>
 
@@ -1189,7 +1189,7 @@
             <button type="button" class="btn-toggle is-active" id="filter-all" onclick="setLoopFilter('all')">All Loops</button>
             <button type="button" class="btn-toggle is-ochre" id="filter-R" onclick="setLoopFilter('R')">Reinforcing (R)</button>
             <button type="button" class="btn-toggle is-sky" id="filter-B" onclick="setLoopFilter('B')">Balancing (B)</button>
-            <button type="button" class="btn-toggle is-sky" id="filter-fix" onclick="toggleMOOOverlay()">MOO Fix Highlight: On</button>
+            <button type="button" class="btn-toggle is-sky" id="filter-fix" onclick="toggleMOOOverlay()"> Fix Highlight: On</button>
           </div>
 
           <div class="cld-stage">
@@ -1262,10 +1262,10 @@
       </div>
     </section>
 
-    <!-- Section 3: Iceberg Model & Crosswalk Table -->
+    <!-- Section 3: Iceberg Model Table -->
     <section aria-labelledby="sec-iceberg">
       <div class="section-head">
-        <h2 id="sec-iceberg">3. Below the Surface: CResT Iceberg Model &amp; MOO Leverage Crosswalk</h2>
+        <h2 id="sec-iceberg">3. Below the Surface: CResT Iceberg Model &amp; Leverage Crosswalk</h2>
       </div>
       <p class="section-lead">
         Events like typhoon evacuations are only the visible tip. Click any layer of the Iceberg below to see how Ormoc's underlying rules and mental models create the four archetypes above.
@@ -1320,7 +1320,7 @@
                 <th>Archetype</th>
                 <th>IAT v1.7 Baseline Gap</th>
                 <th>Systemic Trap</th>
-                <th>Ormoc MOO Leverage Fix</th>
+                <th>Leverage Points</th>
               </tr>
             </thead>
             <tbody id="crosswalk-body">
@@ -1539,7 +1539,7 @@
             polarity: `\u2212`, loop: `B2`, delay: false, isFix: true,
             title: `Plantilla & Facility Investment \u2192 Staff & Facility Strain`,
             desc: `Adding permanent JMC 2014-1 technical positions, a 3-deep roster, and alternate EOC redundancy directly relieves operational strain.`,
-            evidence: `MOO Leverage: Dedicated GIS/M&E/AA focal roles close A2.9 (0), A5.6 (2), and A10.4 (2) gaps.`
+            evidence: `Protocol Leverage: Dedicated GIS/M&E/AA focal roles close A2.9 (0), A5.6 (2), and A10.4 (2) gaps.`
           },
           {
             id: `u7`, from: `n4`, to: `n6`,
@@ -1556,7 +1556,7 @@
             labelPos: { x: 525, y: 335 },
             polarity: `\u2212`, loop: `R`, delay: false, isFix: false,
             title: `Informal Coping \u2192 Plantilla & Facility Investment`,
-            desc: `Because the office appears to keep running through overtime and casuals, council and budget reviewers perceive less urgency to fund permanent plantilla posts.`,
+            desc: `EOC appears to keep running through overtime and casuals, council and budget reviewers perceive less urgency to fund permanent plantilla posts.`,
             evidence: `Evidence: Growth in RA 12287 & M&E expectations without matching permanent staffing investment.`
           }
         ],
@@ -1777,7 +1777,7 @@
             polarity: `+`, loop: `R`, delay: false, isFix: false,
             title: `Resource Delay \u2192 Incident Complexity`,
             desc: `Misaligned and late support allows hazard impacts to compound, escalating the crisis in a runaway reinforcing spiral (R1).`,
-            evidence: `Evidence: CResT CLD 2 ("ICS–EOC Mandate Conflation Loop") identifies this as a primary response escalation driver.`
+            evidence: `Evidence: CResT CLD 2 ("ICS–EOC Mandate Mix-up Loop") identifies this as a primary response escalation driver.`
           },
           {
             id: `c6`, from: `n2`, to: `n6`,
@@ -1786,7 +1786,7 @@
             polarity: `+`, loop: `B1`, delay: false, isFix: true,
             title: `Coordination Demand \u2192 Codified ICS–EOC Boundary (SOP 4-05)`,
             desc: `Under SOP 4-05, incident notification triggers confirming the designated Incident Commander first—before any EOC support tasking.`,
-            evidence: `MOO Leverage: SOP 4-05 Step 1 confirms IC/IMT & ICP on notification (Form EOC-F03).`
+            evidence: `Protocol Leverage: SOP 4-05 Step 1 confirms IC/IMT & ICP on notification (Form EOC-F03).`
           },
           {
             id: `c7`, from: `n6`, to: `n3`,
@@ -1804,7 +1804,7 @@
             polarity: `\u2212`, loop: `B1`, delay: false, isFix: true,
             title: `Codified Boundary \u2192 Resource Delay & Misalignment`,
             desc: `Routing verified requests from the IC through EOC section desks to cluster owners cuts dispatch delays and stabilizes incident response (B1).`,
-            evidence: `MOO Leverage: SOP 4-05 Steps 3–6 align EOC support objectives with IC operational periods and briefing rhythms.`
+            evidence: `Protocol Leverage: SOP 4-05 Steps 3–6 align EOC support objectives with IC operational periods and briefing rhythms.`
           }
         ],
         loopBadges: [
