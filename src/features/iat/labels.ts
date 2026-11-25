@@ -9,7 +9,6 @@ export const CYCLE_NEXT_LABEL: Partial<Record<CycleStatus, string>> = { draft: '
 /** Assess holds the IAT and, below it, the Hazard maps (moved from the EOC module in 1.16.0, ADR-030). */
 export const ASSESS_TABS = [
   { to: '/assess', label: 'Institutional assessment (IAT)', end: true, tip: 'Assessment cycles: score indicators with evidence, validate and plan improvements' },
-  { to: '/assess/hazard-maps', label: 'Hazard maps', tip: 'Official hazard sheets over the 85 barangays: layers, identify, measure, exposure summary, full screen and export' },
 ];
 export const RESPONSE_STATUS: Record<Response['status'], string> = { draft: 'Draft', provisional: 'For validation', validated: 'Validated' };
 /** Same colour code as the Library and Workflows (components/StatusBadge.tsx): draft ochre, for validation blue, validated green. */
