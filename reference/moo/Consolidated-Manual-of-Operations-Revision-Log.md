@@ -7,7 +7,7 @@ Applied to: Consolidated_Ormoc_City_CDRRMO_EOC_Manual-Operations.docx (Consolida
 |---|---|
 | High-priority gaps | Ch.1 "29 (17 + 12)" corrected to 30 (18 Part A + 12 Part B) plus 2 Part C (32 in all). Executive Summary table now reads "30 in Parts A and B; 32 including 2 in Part C". |
 | Part C priorities | Ch.8 "9 Medium; 4 Low" corrected to 8 Medium; 5 Low (IAT v1.7: 2 High, 8 Medium, 5 Low). |
-| Barangays | 85 stated as the official count (PSA PSGC, 31 Jul 2025) in Ch.3 (section 15 text, row P1), Ch.4 and Ch.6. "Not yet settled / pending reconciliation" wording removed. The 110-to-85 crosswalk obligation is retained for restating older counts. |
+| Barangays | 85 stated as the official count (PSA PSGC, 31 Jul 2025) in Ch.3 (section 15 text, row P1), Ch.4 and Ch.6. "Not yet settled / pending reconciliation" wording removed. The pre-merger-to-current crosswalk obligation is retained for restating older counts. |
 | MODE | One expansion: Manual of Operations for the DRRMO and EOC (Executive Summary, Abbreviations, Glossary). |
 | IAT versions | Stale v1.5 (Ch.1 note), v1.6 (Ch.3 text and table) and v1.3 (Ch.3 references) updated to v1.7. v1.0 reference in Ch.7 kept (it correctly identifies the superseded sheet). |
 | Alert levels | Executive Summary and Glossary now state activation and resource posture together (Blue = partial activation, at least 50% resources on standby; Red = full activation, all resources available). |
