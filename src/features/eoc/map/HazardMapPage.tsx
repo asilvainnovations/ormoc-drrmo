@@ -1,4 +1,4 @@
-// Assess → Hazard maps (ADR-028; moved from the EOC module in 1.16.0, ADR-030): the City's official hazard sheets over the barangays, with the QGIS tools the EOC
+// EOC → Hazard Maps (restored to the EOC navigation): the City's official hazard sheets over the barangays, with the QGIS tools the EOC
 // uses — layers, opacity and order, categorised barangay colouring, identify, measure, coordinates, exposure summary
 // and a PNG export that carries title, sources and accuracy. Barangay-level analysis is GeoAnalyticsPH, opened on its own site. Sheets are pictures fitted to their own grid: read them
 // at barangay level, never for a site decision. Nothing here sets a hazard threshold.
@@ -14,7 +14,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/component
 import { Separator } from '@/components/ui/separator';
 import { Slider } from '@/components/ui/slider';
 import { tip } from '@/components/Tooltip';
-import { ASSESS_TABS } from '@/features/iat/labels';
+import { EOC_TABS } from '../labels';
 import { ORMOC, basemapReady, baseStyle, ensureProtocol, plainStyle, token } from './base';
 import { HAZARD_MAPS, type HazardMap } from './hazardMaps';
 import { classOf, exposureSummary, rawValue, THEMES, type ThemeData, type ThemeKey } from './themes';
@@ -239,8 +239,8 @@ export default function HazardMapPage() {
 
   return (
     <div className="mx-auto w-full max-w-[120rem] space-y-4 px-4 pb-28 pt-4 lg:px-6 lg:pb-12">
-      <PageHeader title="Hazard Maps" />
-      <Tabs items={ASSESS_TABS} />
+      <PageHeader title="Hazard Maps" subtitle="City hazard-map sheets for barangay-level awareness and planning reference." />
+      <Tabs items={EOC_TABS} />
       {baseProblem && <Notice tone="info" title="Plain background">{baseProblem} The sheets and boundaries still show.</Notice>}
       {bgyProblem && <Notice tone="warn">{bgyProblem}</Notice>}
 
