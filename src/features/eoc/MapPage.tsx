@@ -25,6 +25,7 @@ import { HAZARD_MAPS } from './map/hazardMaps';
 import { Slider } from '@/components/ui/slider';
 
 const empty = { type: 'FeatureCollection' as const, features: [] as unknown[] };
+const CONTEXT_REFERENCE_MAPS = CITY_REFERENCE_MAPS.filter((item) => ['zoning', 'slope', 'topography'].includes(item.id));
 
 
 export default function MapPage() {
@@ -115,6 +116,18 @@ export default function MapPage() {
               <div className="flex items-center gap-2"><span className="w-14 text-xs text-muted">Opacity</span><Slider value={[opac[h.code]??75]} min={10} max={100} step={5} thumbLabel={`Opacity of ${h.title}`} thumbTip="Drag to make the sheet more or less see-through" onValueChange={([v])=>setOpac((o)=>({...o,[h.code]:v!}))}/><span className="w-9 text-right text-xs tabular-nums">{opac[h.code]??75}%</span></div>
               <ul className="flex flex-wrap gap-x-3 gap-y-1 text-xs">{h.legend.map((l)=><li key={l.label} className="flex items-center gap-1.5"><span className="inline-block h-3 w-3 rounded-sm border border-line" style={{background:l.color}}/>{l.label}</li>)}</ul>
             </div>}
+          </li>)}</ul>
+        </div>
+
+        <div>
+          <h2 className="mb-2 text-lg font-extrabold">City reference layers</h2>
+          <p className="mb-2 text-xs text-muted">Zoning, slope and topography are supplied here as static reference sheets, not georeferenced overlays. Open the full-resolution sheet to inspect its original legend, scale and date. Confirm zoning with CPDO and terrain interpretation with the responsible technical office before operational or site decisions.</p>
+          <ul className="space-y-3">{CONTEXT_REFERENCE_MAPS.map((item)=><li key={item.id} className="rounded-control border border-line p-3">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <div><p className="font-semibold">{item.title}</p><p className="text-xs text-muted">{item.description}</p></div>
+              <a href={item.href} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-tap items-center rounded-control border border-line px-3 text-sm font-semibold hover:bg-sky-soft" aria-label={`Open full resolution ${item.title}`}>Open sheet</a>
+            </div>
+            <p className="mt-2 text-xs text-muted">{item.caution}</p>
           </li>)}</ul>
         </div>
         <div>

@@ -80,6 +80,33 @@ export function BoardPage() {
       <PageHeader title="EOC Operations" subtitle="Level changes need a connection and the EOC Manager or CDRRMO Head." />
       <Tabs items={EOC_TABS} />
 
+      <details className="mb-5 rounded-sheet border border-line bg-surface p-4 shadow-raised">
+        <summary className="flex min-h-tap cursor-pointer list-none items-center justify-between gap-3 font-bold text-ink">
+          <span className="flex items-center gap-2"><ClipboardPen className="h-5 w-5 text-sky" aria-hidden />Operational tools and simulators</span>
+          <span className="text-xs font-normal text-muted">Expand tools</span>
+        </summary>
+        <p className="mt-2 text-sm text-muted">Decision-support and training workspaces. Simulators are for exercises and planning; they do not replace approved command authority, official warnings or live operational decisions.</p>
+        <div className="mt-3 grid gap-2 sm:grid-cols-2 xl:grid-cols-4">
+          <Link to="/tools/flood-intelligence" className="rounded-control border border-line p-3 hover:border-sky hover:bg-sky-soft/40">
+            <span className="block font-semibold text-ink">Flood intelligence</span>
+            <span className="mt-1 block text-xs text-muted">Barangay flood susceptibility, watch information and official warning sources</span>
+          </Link>
+          <Link to="/tools/ics" className="rounded-control border border-line p-3 hover:border-sky hover:bg-sky-soft/40">
+            <span className="block font-semibold text-ink">ICS Simulator</span>
+            <span className="mt-1 block text-xs text-muted">Incident Command System exercise and role-based simulation</span>
+          </Link>
+          <Link to="/tools/pscp" className="rounded-control border border-line p-3 hover:border-sky hover:bg-sky-soft/40">
+            <span className="block font-semibold text-ink">PSCP Simulator</span>
+            <span className="mt-1 block text-xs text-muted">Public Service Continuity Plan exercise workspace</span>
+          </Link>
+          <Link to="/tools/echo" className="rounded-control border border-line p-3 hover:border-sky hover:bg-sky-soft/40">
+            <span className="block font-semibold text-ink">ECHO</span>
+            <span className="mt-1 block text-xs text-muted">Evacuation and Camp Handling Operations simulator</span>
+          </Link>
+        </div>
+      </details>
+
+
       <section className={clsx('mb-5 flex flex-wrap items-center justify-between gap-4 rounded-sheet px-5 py-4', tone)} aria-label="Activation level">
         <div>
           <p className="text-3xl font-extrabold">{LEVEL_INFO[level].name} level</p>

@@ -2,7 +2,7 @@ import { NavLink, Link, Outlet } from 'react-router-dom';
 import { useCallback, useEffect, useState } from 'react';
 import { ScreenErrorBoundary } from '@/components/ErrorBoundary';
 import clsx from 'clsx';
-import { BookOpen, ClipboardCheck, Map as MapIcon, FolderLock, House, ListChecks, RadioTower, Settings, CloudOff, RefreshCw, AlertTriangle, Check, Wrench, Scale, PanelLeftClose, PanelLeftOpen, type LucideIcon } from 'lucide-react';
+import { BookOpen, ClipboardCheck, FolderLock, House, ListChecks, RadioTower, Settings, CloudOff, RefreshCw, AlertTriangle, Check, Wrench, Scale, PanelLeftClose, PanelLeftOpen, type LucideIcon } from 'lucide-react';
 import { LEVEL_INFO } from '@/domain/eoc';
 import { useActiveDeclaration, useEocStatus, useNow, usePending } from '@/lib/hooks';
 import { useSyncState } from '@/lib/sync';
@@ -25,11 +25,9 @@ type NavItem = {
 };
 const NAV: NavItem[] = [
   { to: '/today', k: 'nav.today', label: 'Today', icon: House, end: true, tip: 'Your day: alerts, quick actions, running protocols and latest log' },
-  { to: '/assess', k: 'nav.assess', label: 'Assess', icon: ClipboardCheck, tip: 'Institutional Assessment Tool: score indicators with evidence and plan improvements',
-    // 1.16.0 (ADR-030): Hazard maps sit in Assess, just below the IAT.
-    sub: [{ to: '/assess/hazard-maps', k: 'nav.hazardmaps', label: 'Hazard maps', icon: MapIcon, tip: 'Official hazard sheets over the 85 barangays, full width or full screen' }] },
-  // 1.23.0 (ADR-043): Manual governance — rail only so the phone tab bar stays at six. 1.29.0: placed below Assess.
+  // Validation follows Today in the primary desktop navigation; it remains rail-only on phones to protect thumb navigation.
   { to: '/governance', k: 'nav.governance', label: 'Validation', icon: Scale, tip: 'Review register, outstanding decisions and the validation workshop', rail: true },
+  { to: '/assess', k: 'nav.assess', label: 'Assess', icon: ClipboardCheck, tip: 'Institutional Assessment Tool: score indicators with evidence and plan improvements' },
   // 1.29.0 (ADR-046): "Protocols" becomes "DRRM" — workflows, protocols and forms by thematic area.
   { to: '/drrm', k: 'nav.protocols', label: 'DRRM', icon: ListChecks, tip: 'DRRM workflows, protocols and forms by thematic area, to run live or as drills' },
   { to: '/eoc', k: 'nav.eoc', label: 'EOC', icon: RadioTower, tip: 'Emergency Operations Center: level, logbook, SitReps, requests and anticipatory action' },
