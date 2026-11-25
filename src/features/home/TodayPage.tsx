@@ -249,6 +249,21 @@ export function TodayPage() {
 
       {offlineIdentity && <Notice tone="info" title="Working offline">You are using the last sign-in on this device. Your entries are kept here and sent when the connection returns.</Notice>}
 
+
+      <Card className="mb-6 border-sky/40">
+        <CardHeader className="flex-row items-start justify-between space-y-0 pb-2">
+          <div>
+            <CardTitle className="text-lg text-ink">Systems Diagnosis</CardTitle>
+            <CardDescription>Explore the system conditions, relationships and leverage points shaping local disaster risk.</CardDescription>
+          </div>
+          <Badge tone="info">Systems tool</Badge>
+        </CardHeader>
+        <CardContent>
+          <p className="mb-3 max-w-prose text-sm text-muted">Use the Systems Diagnosis workspace to examine interconnected drivers and support evidence-informed DRR–CCA planning.</p>
+          <ButtonAnchor href="/systems-diagnosis.html" variant="primary" icon={Workflow} tip="Open the Systems Diagnosis workspace">Open Systems Diagnosis</ButtonAnchor>
+        </CardContent>
+      </Card>
+
       <HazardWatch />
 
       {roles.length > 0 && <p role="status" className={`mb-4 rounded-control px-3 py-2 text-sm ${fresh.tone === 'ok' ? 'bg-ok-soft text-ink' : fresh.tone === 'info' ? 'bg-info-soft text-ink' : fresh.tone === 'warn' ? 'bg-warn-soft text-ink' : 'bg-bad-soft text-ink'}`}>
