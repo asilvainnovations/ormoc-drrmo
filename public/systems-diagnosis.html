@@ -1347,8 +1347,8 @@
         <div class="archetype-selector-grid" role="group" aria-label="Select Systems Archetype">
           <button type="button" class="arch-btn is-selected" id="arch-btn-shifting" onclick="selectArchetype('shifting')">
             <span class="arch-code">Archetype A · B1 / B2 / R1</span>
-            <span class="arch-name">Shifting the Burden (Fixes that Fail)</span>
-            <span class="arch-tagline">Event EOs &amp; 43 casual staff relieve immediate pressure while decaying JMC 2014-1 reform.</span>
+            <span class="arch-name">Shifting the Burden</span>
+            <span class="arch-tagline">Event-specific directives and temporary workarounds relieve pressure while weakening attention to permanent institutional reform.</span>
           </button>
           <button type="button" class="arch-btn" id="arch-btn-growth" onclick="selectArchetype('growth')">
             <span class="arch-code">Archetype B · R1 / B2 / B3</span>
@@ -1459,7 +1459,7 @@
             <label for="lev-arch-filter" class="field-label">Filter by Target Archetype</label>
             <select id="lev-arch-filter" class="field-select" onchange="filterLeveragePoints()">
               <option value="all">All 4 Systems Archetypes</option>
-              <option value="shifting">Shifting the Burden (Fixes that Fail)</option>
+              <option value="shifting">Shifting the Burden</option>
               <option value="growth">Growth &amp; Underinvestment</option>
               <option value="drifting">Drifting Goals</option>
               <option value="conflation">ICS–EOC Mandate Conflation</option>
@@ -1490,6 +1490,7 @@
             <p class="section-sub">
               Scrub across a 60-month horizon (Nov 2026 &ndash; Nov 2031) to compare the Unintervened Status Quo drift against MODE Institutional Transformation, including policy delay lags and structural crossover points.
             </p>
+            <p class="figure-note" style="margin-top:.5rem;">Interpretation note: curves are illustrative, normalized behaviour patterns used to explain the archetypes. They are not observed time-series data, approved targets, forecasts, or commitments. Only the IAT baseline values explicitly identified in the situational analysis are empirical. Conceptual templates follow Daniel H. Kim and Virginia Anderson, <em>Systems Archetype Basics: From Story to Structure</em> (Shifting the Burden, §3; Drifting Goals, §5; Growth and Underinvestment, §6).</p>
           </div>
         </div>
 
@@ -1497,7 +1498,7 @@
           <div class="field-group">
             <label for="bot-arch-select" class="field-label">Archetype Dynamic Model</label>
             <select id="bot-arch-select" class="field-select" onchange="setBotArchetype(this.value)">
-              <option value="shifting">Shifting the Burden (Event EOs vs. JMC 2014-1 Ordinance)</option>
+              <option value="shifting">Shifting the Burden (temporary response vs. institutional solution)</option>
               <option value="growth">Growth &amp; Underinvestment (RA 12287 Demand vs. Technical Capacity)</option>
               <option value="drifting">Drifting Goals (&ldquo;We Responded&rdquo; vs. 32.9% Mandatory Standard)</option>
               <option value="conflation">ICS–EOC Mandate Conflation (Field Confusion vs. SOP 4-05 Hub)</option>
@@ -1508,8 +1509,8 @@
             <label for="bot-regime-select" class="field-label">Policy Trajectory Regime</label>
             <select id="bot-regime-select" class="field-select" onchange="setBotRegime(this.value)">
               <option value="compare">Compare Overlay (MODE Active vs. Status Quo Dashed)</option>
-              <option value="mode">MODE Transformation Active (Leverage Points 1&ndash;5)</option>
-              <option value="statusquo">Status Quo (Unintervened Archetype Drift)</option>
+              <option value="mode">Illustrative Intervention Pathway (Leverage Points 1&ndash;5)</option>
+              <option value="statusquo">Status Quo (Archetype-Dominant Pattern)</option>
             </select>
           </div>
 
@@ -1523,11 +1524,11 @@
 
         <div class="bot-chart-wrap">
           <!-- Series Legend -->
-          <div class="cld-legend" aria-label="Chart Series Legend">
-            <span class="legend-item"><span class="pol-badge pol-minus">S</span> Problem Symptom</span>
-            <span class="legend-item"><span class="pol-badge" style="background: var(--accent-orange-tint); color: var(--accent-orange-ink); border: 1px dashed var(--accent-orange-ink);">F</span> Symptomatic Fix</span>
-            <span class="legend-item"><span class="pol-badge pol-plus">C</span> Fundamental Solution</span>
-            <span class="legend-item"><span class="pol-badge" style="background: var(--positive-tint); color: var(--positive); border: 1px solid var(--positive);">%</span> Institutional Compliance Index</span>
+          <div id="bot-series-legend" class="cld-legend" aria-label="Chart Series Legend">
+            <span class="legend-item"><span class="pol-badge pol-minus">1</span> Series 1</span>
+            <span class="legend-item"><span class="pol-badge" style="background: var(--accent-orange-tint); color: var(--accent-orange-ink); border: 1px dashed var(--accent-orange-ink);">2</span> Series 2</span>
+            <span class="legend-item"><span class="pol-badge pol-plus">3</span> Series 3</span>
+            <span class="legend-item"><span class="pol-badge" style="background: var(--positive-tint); color: var(--positive); border: 1px solid var(--positive);">4</span> Series 4</span>
           </div>
 
           <div class="bot-svg-container">
@@ -1559,22 +1560,22 @@
           <!-- Live Telemetry Counters -->
           <div class="telemetry-grid" aria-live="polite">
             <div class="telemetry-tile">
-              <span class="figure-label">Problem Symptom Severity</span>
+              <span id="tel-symptom-title" class="figure-label">Problem Symptom Severity</span>
               <div id="tel-symptom" class="telemetry-val" style="color: var(--accent-orange-ink);">78</div>
               <p id="tel-symptom-note" class="figure-note">Normalized index (0&ndash;100)</p>
             </div>
             <div class="telemetry-tile">
-              <span class="figure-label">Symptomatic Fix Reliance</span>
+              <span id="tel-fix-title" class="figure-label">Symptomatic Fix Reliance</span>
               <div id="tel-fix" class="telemetry-val" style="color: var(--tertiary);">74</div>
               <p id="tel-fix-note" class="figure-note">Ad-hoc / temporary actions</p>
             </div>
             <div class="telemetry-tile">
-              <span class="figure-label">Fundamental Capacity</span>
+              <span id="tel-fund-title" class="figure-label">Fundamental Capacity</span>
               <div id="tel-fund" class="telemetry-val" style="color: var(--accent-blue-ink);">28</div>
               <p id="tel-fund-note" class="figure-note">Permanent &amp; codified capability</p>
             </div>
             <div class="telemetry-tile">
-              <span class="figure-label">Mandatory Compliance Index</span>
+              <span id="tel-comp-title" class="figure-label">Mandatory Compliance Index</span>
               <div id="tel-comp" class="telemetry-val" style="color: var(--positive);">32.9%</div>
               <p id="tel-comp-note" class="figure-note">IAT 140-indicator benchmark</p>
             </div>
@@ -1620,7 +1621,7 @@
             <button type="button" class="iceberg-layer-btn iceberg-layer--3" id="ice-btn-3" onclick="selectIcebergLayer(3)">
               <span class="arch-code">Layer 3 · System Architecture</span>
               <span class="arch-name">Underlying Institutional Structures</span>
-              <span class="arch-tagline">No enabling department ordinance, no EOC EO, undefined ICS–EOC boundary (B6.1), 43/47 casual staff.</span>
+              <span class="arch-tagline">No adopted department ordinance, no formal EOC establishment instrument, and an undefined ICS–EOC interface (B6.1).</span>
             </button>
 
             <button type="button" class="iceberg-layer-btn iceberg-layer--4" id="ice-btn-4" onclick="selectIcebergLayer(4)">
@@ -1726,13 +1727,13 @@
       shifting: {
         id: `shifting`,
         code: `ARCHETYPE A`,
-        title: `Shifting the Burden (Fixes that Fail)`,
-        summary: `Rising operational disruptions trigger ad-hoc Executive Orders and reliance on temporary staffing arrangements (Loop B1). While this relieves immediate crisis pressure, it erodes urgency for passing a JMC 2014-1 department ordinance and written SOPs (Loop B2) and drives Side-Effect Loop R1: institutional compliance decay (32.9% baseline).`,
+        title: `Shifting the Burden`,
+        summary: `Three linked feedback processes shape this pattern. B1: event-specific workarounds reduce immediate operational pressure. B2: sustained pressure can drive permanent institutional reform that reduces recurring workload. R1: repeated reliance on workarounds builds dependency and erodes the attention and capability needed for fundamental reform, allowing the original pressure to return. The report documents event-by-event decisions, unfilled plantilla positions, and the absence of an approved EOC three-deep roster; it does not quantify a workforce ratio.`,
         loops: [
           { id: `all`, label: `All Loops` },
-          { id: `B1`, label: `B1 · Symptomatic Fix`, type: `B`, cx: 245, cy: 165, title: `Balancing Loop B1 (Symptomatic Relief)` },
+          { id: `B1`, label: `B1 · Quick Relief`, type: `B`, cx: 245, cy: 165, title: `Balancing Loop B1 (Symptomatic Relief)` },
           { id: `B2`, label: `B2 · Fundamental Reform`, type: `B`, cx: 525, cy: 165, title: `Balancing Loop B2 (Structural Ordinance)` },
-          { id: `R1`, label: `R1 · Compliance Decay`, type: `R`, cx: 385, cy: 365, title: `Reinforcing Loop R1 (Addiction & Decay)` }
+          { id: `R1`, label: `R1 · Dependency Trap`, type: `R`, cx: 385, cy: 365, title: `Reinforcing Loop R1 (Dependency Undermines Fundamental Capability)` }
         ],
         nodes: [
           {
@@ -1745,9 +1746,9 @@
           },
           {
             id: `adhoc`, x: 135, y: 175, w: 204, h: 62,
-            label: `Ad-Hoc Fixes: Event Directives\n& Temporary Staffing`,
+            label: `Ad-Hoc Responses: Event Decisions\n& Informal Workarounds`,
             role: `symptom`, roleLabel: `Symptomatic Fix`,
-            desc: `Instead of codified procedures, some decisions are remade event by event and operational continuity relies on routines that are not yet fully formalised.`,
+            desc: `Instead of invoking fully codified procedures, some decisions are remade event by event and operational continuity relies on routines that are not yet fully formalised.`,
             evidence: `The report identifies unfilled plantilla positions and a need to approve the CDRRMO structure, position descriptions and EOC three-deep roster. Event-specific resolutions have been used for some warning and evacuation actions.`,
             chips: [`IAT A2.3`, `B4.1–B4.2`, `MR-02`]
           },
@@ -1771,29 +1772,29 @@
             id: `ordinance`, x: 625, y: 315, w: 206, h: 62,
             label: `Dept Ordinance (JMC 2014-1)\n& Written Manual SOPs`,
             role: `lever`, roleLabel: `Fundamental Lever`,
-            desc: `Enacting the permanent CDRRMO Institutionalization Ordinance (3 divisions), formal EOC EO, and validated MODE workflows.`,
+            desc: `Adopting and operationalising the proposed CDRRMO institutionalisation ordinance, formal EOC establishment instrument, and validated MODE workflows.`,
             evidence: `Annex 1-A (Sangguniang Panlungsod) and Annex 1-C (City Mayor EO) formalize permanent divisions and authority gates.`,
             chips: [`IAT A1.1 (Score 2)`, `IAT B1.1 (Score 2)`, `MR-01`, `MR-02`]
           },
           {
             id: `decay`, x: 385, y: 418, w: 214, h: 60,
-            label: `Compliance Decay &\nSystemic Vulnerability`,
+            label: `Dependency on Workarounds &\nErosion of Reform Capability`,
             role: `compliance`, roleLabel: `Side Effect / Risk`,
-            desc: `Over-reliance on temporary staff and unwritten procedures erodes institutional memory, leaving mandatory compliance at 32.9%.`,
-            evidence: `IAT v1.7 records 32.9% Mandatory Compliance and 29 high-priority gaps across Parts A and B (18 CDRRMO; 11 EOC).`,
-            chips: [`32.9% Mandatory`, `1.98 / 4.00 IMI`, `29 High Gaps`]
+            desc: `As temporary workarounds become the default, institutional memory, staff time, and attention for permanent reform can be displaced. This side effect weakens the system's ability to implement the fundamental solution.`,
+            evidence: `The situational analysis describes procedures held in people rather than documents, unfilled plantilla positions, and the absence of an approved EOC roster. IAT v1.7 records 32.9% mandatory compliance as filed and 29 high gaps across Parts A and B when B2.7 is treated as not applicable.`,
+            chips: [`32.9% Mandatory (filed)`, `1.98 / 4.00 IMI`, `29 High Gaps (N/A basis)`]
           }
         ],
         edges: [
-          { from: `workload`, to: `adhoc`, pol: `+`, delay: false, loops: [`B1`, `R1`], curve: -25, note: `Rising crisis pressure triggers rapid ad-hoc EOs and casual staff augmentation.` },
-          { from: `adhoc`, to: `relief`, pol: `+`, delay: false, loops: [`B1`, `R1`], curve: -18, note: `Temporary fixes stabilize the immediate emergency event.` },
+          { from: `workload`, to: `adhoc`, pol: `+`, delay: false, loops: [`B1`, `R1`], curve: -25, note: `As operational pressure rises, reliance on rapid event-specific workarounds increases.` },
+          { from: `adhoc`, to: `relief`, pol: `+`, delay: false, loops: [`B1`], curve: -18, note: `The symptomatic response reduces the immediate problem pressure.` },
           { from: `relief`, to: `workload`, pol: `-`, delay: false, loops: [`B1`], curve: 75, note: `Immediate crisis resolution temporarily reduces perceived operational pressure.` },
           { from: `workload`, to: `urgency`, pol: `+`, delay: false, loops: [`B2`], curve: 25, note: `Unresolved operational strain builds pressure for permanent institutional reform.` },
-          { from: `relief`, to: `urgency`, pol: `-`, delay: false, loops: [`R1`], curve: 18, note: `When ad-hoc fixes calm the immediate crisis, urgency to pass ordinances drops.` },
-          { from: `urgency`, to: `ordinance`, pol: `+`, delay: true, loops: [`B2`, `R1`], curve: 20, note: `Legislative & HRMO plantilla approval requires sustained commitment across budget cycles (Delay).` },
-          { from: `ordinance`, to: `workload`, pol: `-`, delay: false, loops: [`B2`], curve: 70, note: `Permanent divisions and clear SOPs systematically absorb recurring disruptions.` },
-          { from: `adhoc`, to: `decay`, pol: `+`, delay: true, loops: [`R1`], curve: 20, note: `Continued casual staffing and unwritten workarounds erode compliance and continuity over time (Delay).` },
-          { from: `decay`, to: `workload`, pol: `+`, delay: false, loops: [`R1`], curve: -65, note: `Higher institutional vulnerability amplifies future operational workload during the next disaster.` }
+          
+          { from: `urgency`, to: `ordinance`, pol: `+`, delay: true, loops: [`B2`, `R1`], curve: 20, note: `Sustained reform pressure supports adoption and operationalisation of the permanent institutional structure (Delay).` },
+          { from: `ordinance`, to: `workload`, pol: `-`, delay: false, loops: [`B2`, `R1`], curve: 70, note: `Once implemented, permanent roles, authority, and written procedures reduce recurring coordination pressure.` },
+          { from: `adhoc`, to: `decay`, pol: `+`, delay: true, loops: [`R1`], curve: 20, note: `Repeated use of workarounds increases organisational dependency and displaces investment in institutional capability (Delay).` },
+          { from: `decay`, to: `urgency`, pol: `-`, delay: false, loops: [`R1`], curve: -65, note: `Greater dependency and eroded reform capability weaken the sustained drive to implement the fundamental solution.` }
         ]
       },
 
@@ -1877,8 +1878,8 @@
         summary: `Chapter 7 (Sec. 1 & 5.4) identifies Drifting Goals directly: at 32.9% mandatory compliance, informal norms settle at "we responded" rather than "we met the standard." Pressure from an unclosed compliance gap can either lower informal expectations (Loop B1) or drive corrective actions via the CAPA Register ME-F05 (Loop B2).`,
         loops: [
           { id: `all`, label: `All Loops` },
-          { id: `B1`, label: `B1 · Eroding Standard`, type: `B`, cx: 245, cy: 255, title: `Balancing Loop B1 (Lowering the Working Standard)` },
-          { id: `B2`, label: `B2 · PDCA & CAPA Fix`, type: `B`, cx: 525, cy: 255, title: `Balancing Loop B2 (Closing Gap via CAPA Register)` }
+          { id: `B1`, label: `B1 · Corrective Action`, type: `B`, cx: 525, cy: 255, title: `Balancing Loop B1 (Corrective Action Closes the Performance Gap)` },
+          { id: `B2`, label: `B2 · Lowering the Goal`, type: `B`, cx: 245, cy: 255, title: `Balancing Loop B2 (Pressure Lowers the Working Goal)` }
         ],
         nodes: [
           {
@@ -1923,12 +1924,12 @@
           }
         ],
         edges: [
-          { from: `standard`, to: `gap`, pol: `+`, delay: false, loops: [`B1`], curve: -20, note: `A higher statutory standard reveals a larger compliance gap until closed.` },
-          { from: `gap`, to: `pressure`, pol: `+`, delay: false, loops: [`B1`], curve: -20, note: `Persistent gaps generate administrative pressure to relax internal expectations.` },
-          { from: `pressure`, to: `standard`, pol: `-`, delay: false, loops: [`B1`], curve: -38, note: `Lowering the working benchmark reduces perceived gap without fixing root causes.` },
-          { from: `gap`, to: `capa`, pol: `+`, delay: false, loops: [`B2`], curve: 20, note: `Mandatory IAT & AAR triggers log unclosed gaps into CAPA Register ME-F05.` },
-          { from: `capa`, to: `actual`, pol: `+`, delay: true, loops: [`B2`], curve: 38, note: `Corrective actions take a drill, season, or IAT cycle to show measurable effect (Delay).` },
-          { from: `actual`, to: `gap`, pol: `-`, delay: false, loops: [`B2`], curve: 20, note: `Verified operational improvements genuinely close the statutory compliance gap.` }
+          { from: `standard`, to: `gap`, pol: `+`, delay: false, loops: [`B2`], curve: -20, note: `A higher goal increases the gap when actual performance does not change.` },
+          { from: `gap`, to: `pressure`, pol: `+`, delay: false, loops: [`B2`], curve: -20, note: `A persistent gap can create pressure to lower the working goal.` },
+          { from: `pressure`, to: `standard`, pol: `-`, delay: false, loops: [`B2`], curve: -38, note: `Lowering the goal reduces the measured gap without improving actual performance.` },
+          { from: `gap`, to: `capa`, pol: `+`, delay: false, loops: [`B1`], curve: 20, note: `The performance gap signals the need for corrective action.` },
+          { from: `capa`, to: `actual`, pol: `+`, delay: true, loops: [`B1`], curve: 38, note: `Corrective action improves actual performance after implementation and learning delays.` },
+          { from: `actual`, to: `gap`, pol: `-`, delay: false, loops: [`B1`], curve: 20, note: `Improved actual performance closes the gap against the goal.` }
         ]
       },
 
@@ -2033,7 +2034,7 @@
         name: `System Rules & Legal Structures`,
         headline: `Enact Permanent CDRRMO Department Ordinance & Formal EOC Executive Order`,
         archetypes: [`shifting`, `growth`],
-        targetGap: `CDRRMO operates under an EO with 43 casual/JO staff out of 47 (IAT A2.3); no EOC-establishing EO exists (IAT B1.1, Score 2).`,
+        targetGap: `CDRRMO institutionalisation and staffing arrangements require formalisation; the EOC has no approved establishment instrument and three-deep roster (IAT A2 and B1/B4).`,
         transformation: `Pass the proposed CDRRMO Institutionalization Ordinance (Annex 1-A) creating the three JMC 2014-1 permanent divisions (Administration & Training, Research & Planning, Operations & Warning) and issue the City EOC Establishment EO (Annex 1-C) under NDRRMC Memo No. 131, s. 2018.`,
         meadowsRationale: `System rules define who holds lawful authority and permanent tenure. Replacing temporary event EOs with statutory structures breaks the Shifting the Burden addiction permanently.`,
         sops: [
@@ -2044,7 +2045,7 @@
         milestones: [
           { id: `l2-m1`, text: `Submit Annex 1-A CDRRMO Institutionalization Ordinance (JMC 2014-1 divisions) to Sangguniang Panlungsod` },
           { id: `l2-m2`, text: `Issue Annex 1-C City EOC Establishment Executive Order under NDRRMC Memo 131, s. 2018` },
-          { id: `l2-m3`, text: `Reconcile 4/47 plantilla baseline with HRMO via ORG-SOP-01 and designate EOC alternates (ORG-F08)` }
+          { id: `l2-m3`, text: `Validate the approved plantilla and staffing complement with HRMO via ORG-SOP-01; designate EOC alternates (ORG-F08)` }
         ]
       },
       {
@@ -2112,112 +2113,111 @@
 
     const BOT_MODELS = {
       shifting: {
-        name: `Shifting the Burden (Event EOs vs. JMC 2014-1 Ordinance)`,
+        name: `Shifting the Burden · symptomatic relief versus fundamental capability`,
         labels: {
-          symptom: `Operational Disruptions`,
-          fix: `Ad-Hoc EOs & Casual Staff`,
-          fundamental: `Ordinance & SOP Capacity`,
-          compliance: `Mandatory Compliance (%)`
+          symptom: `Recurring operational pressure`,
+          fix: `Reliance on symptomatic fixes`,
+          fundamental: `Attention to fundamental solution`,
+          compliance: `Institutional capability / readiness`
         },
         phaseNotes: [
-          { maxM: 5, text: `M0–M5 (Baseline Trap): Heavy reliance on 43 casual/JO personnel and event-by-event EOs masks structural gaps while mandatory compliance sits at 32.9%. Under MODE, Ordinance Annex 1-A and EOC EO Annex 1-C are drafted for validation.` },
-          { maxM: 14, text: `M6–M14 (Policy Delay Window): Enacting the Ordinance and EOC EO triggers HRMO/Budget plantilla reviews. Because permanent hiring takes time (Delay ||), ad-hoc reliance stays elevated initially—the classic policy transition lag where patience is vital.` },
-          { maxM: 30, text: `M15–M30 (Structural Crossover): Permanent division leads (Admin & Training, Research & Planning, Operations & Warning) take hold. Codified SOPs cut crisis improvisations, lifting Mandatory Compliance past 68% while status-quo drift falls toward 27%.` },
-          { maxM: 60, text: `M31–M60 (Institutional Equilibrium): Permanent plantilla and automated MODE protocols dominate. Ad-hoc event fixes drop below 15%, and Mandatory Compliance reaches 92%+—eliminating the Shifting the Burden cycle.` }
+          { maxM: 5, text: `Baseline pattern: recurring workload and event pressure encourage rapid directives and temporary workarounds. Immediate relief is visible; the deeper institutional causes remain. The situational analysis identifies event-by-event decisions and missing formal instruments, not a quantified workforce ratio.` },
+          { maxM: 14, text: `Transition lag: the symptomatic response may still be needed while permanent instruments, staffing arrangements, and procedures are developed. The key test is whether temporary relief is accompanied by sustained investment in the fundamental solution.` },
+          { maxM: 30, text: `Crossover pattern: as approved structures, defined roles, and written procedures become operational, attention to the fundamental solution rises and dependence on workarounds can taper. This is an illustrative trajectory, not a dated implementation forecast.` },
+          { maxM: 60, text: `Reinforcing side-effect avoided: documented capability and institutional memory reduce the need for repeated emergency workarounds. Maintain surge arrangements for genuine events; do not remove them before the fundamental capability is functioning.` }
         ],
-        // Arrays at sample keyframes [M0, M6, M12, M18, M24, M36, M48, M60] interpolated smoothly
         mode: {
-          symptom:     [78, 75, 64, 48, 36, 24, 19, 16],
-          fix:         [74, 70, 56, 38, 26, 16, 12, 10],
-          fundamental: [24, 34, 50, 66, 76, 86, 91, 94],
-          compliance:  [32.9, 41.0, 54.5, 67.0, 76.5, 86.0, 90.5, 93.2]
+          symptom:     [68, 56, 43, 32, 25, 20, 16, 13],
+          fix:         [58, 66, 61, 49, 36, 25, 17, 12],
+          fundamental: [28, 36, 50, 64, 75, 84, 91, 95],
+          compliance:  [33, 39, 50, 62, 73, 83, 90, 94]
         },
         statusquo: {
-          symptom:     [78, 81, 83, 86, 88, 91, 93, 95],
-          fix:         [74, 77, 80, 82, 85, 88, 90, 92],
-          fundamental: [24, 23, 22, 21, 20, 19, 18, 17],
-          compliance:  [32.9, 31.8, 30.2, 28.9, 27.6, 25.8, 24.5, 23.4]
+          symptom:     [68, 64, 66, 72, 79, 86, 92, 96],
+          fix:         [58, 69, 74, 78, 83, 87, 91, 94],
+          fundamental: [28, 25, 22, 19, 16, 13, 10, 8],
+          compliance:  [33, 32, 30, 28, 26, 24, 22, 20]
         }
       },
       growth: {
-        name: `Growth & Underinvestment (RA 12287 Demand vs. Technical Capacity)`,
+        name: `Growth and Underinvestment · demand, capacity, and investment delay`,
         labels: {
-          symptom: `Unmet Mandate Strain`,
-          fix: `Overtime / Surge Stretching`,
-          fundamental: `Technical & Alt-EOC Capacity`,
-          compliance: `Mandatory Compliance (%)`
+          symptom: `Demand / service requirements`,
+          fix: `Perceived need to invest`,
+          fundamental: `Available operational capacity`,
+          compliance: `Capacity investment`
         },
         phaseNotes: [
-          { maxM: 5, text: `M0–M5 (Capacity Ceiling): Expanding RA 12287 anticipatory duties and 85-barangay plan reviews hit a wall of 4 plantilla staff and unrecorded alternate EOC readiness (1.98 / 4.00 IMI).` },
-          { maxM: 14, text: `M6–M14 (Investment Commitment): City-owned MODE hosting with quarterly backup restore drills (MR-10) and PSCP (SOP 3-07) business impact analyses begin relieving digital continuity risks.` },
-          { maxM: 30, text: `M15–M30 (Anticipatory Action Scaling): RA 12287 SOP 6-05 (30%/70% pre-impact tranches) and dedicated GIS/M&E roles turn reactive overtime into structured 3–5 day pre-impact staging.` },
-          { maxM: 60, text: `M31–M60 (Resilient Capacity): Alternate EOC, 85-barangay QA, and technical staff scale smoothly with hazard demand, lifting compliance above 91% and eliminating capacity-led collapse.` }
+          { maxM: 5, text: `Demand pressure begins to outstrip available capacity. For Ormoc, the report documents expanding statutory responsibilities and capacity gaps in staffing, EOC organisation, information management, and coordination. The curves illustrate the archetype; they are not measured workload series.` },
+          { maxM: 14, text: `Need for investment becomes visible, but decisions and implementation take time. Separate the recognition of the gap, budget and plantilla approvals, procurement or recruitment, and the point at which usable capacity is actually available.` },
+          { maxM: 30, text: `Capacity comes online after a delay. The system may temporarily show investment rising before capacity catches up with demand. This lag is why demand and capacity should be plotted separately.` },
+          { maxM: 60, text: `Underinvestment trap avoided: sustained investment allows capacity to approach the service requirement. Without it, constrained performance may suppress demand or expectations, which can then be misread as evidence that further investment is unnecessary.` }
         ],
         mode: {
-          symptom:     [72, 68, 55, 42, 32, 22, 18, 15],
-          fix:         [68, 63, 49, 35, 25, 16, 12, 10],
-          fundamental: [28, 38, 54, 68, 78, 87, 92, 95],
-          compliance:  [32.9, 42.5, 56.0, 68.5, 77.0, 85.5, 89.8, 92.4]
+          symptom:     [34, 45, 58, 68, 75, 80, 84, 88],
+          fix:         [25, 52, 70, 72, 65, 57, 50, 45],
+          fundamental: [28, 34, 47, 62, 73, 82, 89, 94],
+          compliance:  [10, 22, 42, 56, 58, 52, 46, 42]
         },
         statusquo: {
-          symptom:     [72, 76, 81, 85, 89, 93, 96, 97],
-          fix:         [68, 73, 78, 82, 85, 89, 91, 93],
-          fundamental: [28, 27, 26, 25, 24, 22, 21, 20],
-          compliance:  [32.9, 31.5, 29.8, 28.0, 26.5, 24.4, 22.8, 21.5]
+          symptom:     [34, 48, 66, 80, 78, 63, 43, 25],
+          fix:         [25, 54, 78, 86, 48, 22, 12, 7],
+          fundamental: [28, 30, 38, 52, 68, 72, 61, 43],
+          compliance:  [10, 20, 34, 54, 61, 34, 16, 7]
         }
       },
       drifting: {
-        name: `Drifting Goals ("We Responded" vs. 32.9% Statutory Standard)`,
+        name: `Drifting Goals · desired standard versus actual performance`,
         labels: {
-          symptom: `Unclosed Audit Gaps`,
-          fix: `Informal Standard Erosion`,
-          fundamental: `CAPA & Evidence Gate`,
-          compliance: `Mandatory Compliance (%)`
+          symptom: `Actual verified performance`,
+          fix: `Pressure to lower the goal`,
+          fundamental: `Corrective-action effort`,
+          compliance: `Desired standard / goal`
         },
         phaseNotes: [
-          { maxM: 5, text: `M0–M5 (Evidence Gate Shock): IAT v1.7 caps undocumented FGD claims at Score 2 (MR-12), exposing the 32.9% Mandatory Compliance reality behind the informal "we responded" norm.` },
-          { maxM: 14, text: `M6–M14 (CAPA Register Activation): Every unclosed indicator and AAR finding enters append-only Form ME-F05 with named owners, delay timelines, and Vault document requirements.` },
-          { maxM: 30, text: `M15–M30 (PDCA Locking): The two-event recurrence escalation rule forces root-cause CDRRMC decisions on persistent gaps, halting informal goal drift.` },
-          { maxM: 60, text: `M31–M60 (Audited Standard Culture): Annual IAT cycles compare verified Vault records year-over-year, sustaining >93% compliance anchored to statutory law rather than memory.` }
+          { maxM: 5, text: `Lower-goal loop dominant: an enduring performance gap creates pressure to relax the working standard. The legal and approved IAT standard must not be redefined to match weak performance. The filed mandatory-compliance baseline is 32.9% (33.3% when B2.7 is treated as not applicable).` },
+          { maxM: 14, text: `The corrective-action loop is activated when the gap is treated as a signal for action rather than a reason to lower expectations. Each gap needs an owner, corrective action, due date, and evidence of closure.` },
+          { maxM: 30, text: `Corrective action takes time to change actual performance. The goal line remains anchored while actual verified performance improves; this is the desired alternative to goal erosion.` },
+          { maxM: 60, text: `Sustained improvement: actual performance approaches the unchanged standard through verified actions. The BOT is illustrative and does not predict that Ormoc will reach a particular compliance percentage by a particular month.` }
         ],
         mode: {
-          symptom:     [76, 69, 54, 40, 29, 20, 15, 12],
-          fix:         [70, 58, 42, 28, 19, 12, 9, 7],
-          fundamental: [25, 40, 58, 72, 82, 89, 93, 96],
-          compliance:  [32.9, 44.0, 59.0, 71.5, 80.5, 88.0, 92.0, 94.5]
+          symptom:     [33, 39, 48, 58, 67, 76, 84, 90],
+          fix:         [35, 28, 20, 14, 10, 7, 5, 4],
+          fundamental: [18, 42, 65, 75, 70, 58, 45, 35],
+          compliance:  [90, 90, 90, 90, 90, 90, 90, 90]
         },
         statusquo: {
-          symptom:     [76, 78, 81, 83, 86, 89, 91, 93],
-          fix:         [70, 74, 78, 82, 85, 89, 92, 94],
-          fundamental: [25, 24, 23, 22, 21, 19, 18, 17],
-          compliance:  [32.9, 31.2, 29.4, 27.9, 26.2, 24.0, 22.1, 20.8]
+          symptom:     [33, 33, 32, 31, 29, 27, 25, 23],
+          fix:         [35, 48, 60, 68, 74, 80, 84, 88],
+          fundamental: [18, 14, 11, 9, 7, 6, 5, 4],
+          compliance:  [90, 84, 77, 69, 62, 56, 51, 47]
         }
       },
       conflation: {
-        name: `ICS–EOC Mandate Conflation (Field Confusion vs. SOP 4-05 Hub)`,
+        name: `ICS–EOC mandate conflation · command friction and corrective boundary`,
         labels: {
-          symptom: `Command Friction & Delays`,
-          fix: `Direct EOC Field Overrides`,
-          fundamental: `SOP 4-05 Interface Maturity`,
-          compliance: `Mandatory Compliance (%)`
+          symptom: `Command friction and delays`,
+          fix: `Informal field overrides`,
+          fundamental: `SOP 4-05 interface maturity`,
+          compliance: `Institutional readiness index`
         },
         phaseNotes: [
-          { maxM: 5, text: `M0–M5 (B6.1 Score 1 Baseline): Undefined ICS–EOC boundary creates risk of EOC personnel bypassing Incident Commanders during escalating events, delaying resource execution.` },
-          { maxM: 14, text: `M6–M14 (SOP 4-05 & Drills): PR-ICS-INTERFACE (7 steps) and Table 4.11 are adopted; drills record step times and shift handovers (EOC-F04) to validate field-vs-hub boundaries.` },
-          { maxM: 30, text: `M15–M30 (Cluster & IMT Interoperability): All resource requests route through EOC Logistics tracking (MR-08), eliminating duplicate dispatches while IC retains tactical control.` },
-          { maxM: 60, text: `M31–M60 (High-Reliability Coordination): Joint annual exercises with OCD Region VIII and neighboring LGUs (SOP 8-02) sustain rapid, conflict-free incident mobilization.` }
+          { maxM: 5, text: `Baseline pattern: an undefined ICS–EOC interface can produce conflicting direction, duplicated requests, or delayed resource execution. This is an archetype illustration grounded in the IAT-identified interface gap.` },
+          { maxM: 14, text: `Boundary design: clarify that the Incident Commander retains tactical field command while the EOC supports information, coordination, resources, and executive escalation.` },
+          { maxM: 30, text: `Validation: tabletop and functional exercises test whether requests and decisions follow the agreed interface, and whether handovers and logs preserve accountability.` },
+          { maxM: 60, text: `Institutionalised coordination: the interface is sustained through training, exercises, after-action reviews, and revision control rather than relying on individual interpretation.` }
         ],
         mode: {
           symptom:     [82, 68, 48, 34, 24, 17, 13, 11],
           fix:         [75, 56, 36, 22, 15, 10, 8, 6],
           fundamental: [20, 42, 62, 76, 84, 90, 94, 96],
-          compliance:  [32.9, 45.0, 61.0, 73.0, 81.5, 88.5, 92.2, 94.0]
+          compliance:  [33, 45, 61, 73, 82, 89, 93, 95]
         },
         statusquo: {
           symptom:     [82, 84, 86, 88, 90, 92, 94, 95],
           fix:         [75, 78, 81, 83, 86, 88, 90, 91],
           fundamental: [20, 19, 19, 18, 17, 16, 15, 15],
-          compliance:  [32.9, 32.0, 30.8, 29.5, 28.4, 26.8, 25.4, 24.2]
+          compliance:  [33, 32, 31, 30, 28, 27, 25, 24]
         }
       }
     };
@@ -2253,12 +2253,12 @@
         badge: `Layer 3 · Underlying Structures`,
         badgeClass: `role-tag--compliance`,
         title: `Underlying Structures: Legal Charters, Staffing & Boundaries`,
-        desc: `Beneath visible trends lie four structural gaps driving all four system archetypes: no enabling department ordinance, no formal EOC Executive Order, an undefined ICS–EOC boundary, and a 4/47 permanent plantilla ratio.`,
+        desc: `Beneath visible trends lie four structural gaps shaping the archetypes: no adopted CDRRMO institutionalisation ordinance, no formal EOC establishment instrument, an undefined ICS–EOC interface, and unfilled plantilla positions with no approved EOC three-deep roster.`,
         drivers: [
           `IAT A1.1 (Score 2): CDRRMO operates by Executive Order rather than a Sangguniang Panlungsod ordinance with JMC 2014-1 divisions.`,
           `IAT B1.1 (Score 2): Absence of a formal City EOC Establishment EO under NDRRMC Memo No. 131, s. 2018.`,
           `IAT B6.1 (Score 1, High): Undefined ICS–EOC command boundary risking tactical overreach.`,
-          `IAT A2.3 (Score 2): 43 of 47 personnel reported as casual/job-order, creating succession & continuity risk.`
+          `IAT A2 indicators identify organisational and staffing gaps; the assessment does not establish a 43-of-47 casual/job-order workforce ratio.`
         ],
         remedy: `Enact Annex 1-A (CDRRMO Ordinance), Annex 1-C (EOC EO), SOP 4-05 (ICS–EOC Interface), and ORG-SOP-01 (Workforce Plan) alongside Annex 1-F Master RACI.`,
         chips: [`Annex 1-A`, `Annex 1-C`, `SOP 4-05`, `IAT B6.1`]
@@ -2858,6 +2858,22 @@
       const model = BOT_MODELS[appState.botArchetype];
       if (!svg || !model) return;
 
+      const seriesMeta = [
+        { key: `symptom`, badge: `1`, cls: `pol-minus` },
+        { key: `fix`, badge: `2`, cls: `` },
+        { key: `fundamental`, badge: `3`, cls: `pol-plus` },
+        { key: `compliance`, badge: `4`, cls: `` }
+      ];
+      const legend = document.getElementById(`bot-series-legend`);
+      if (legend) legend.innerHTML = seriesMeta.map((m) => `<span class="legend-item"><span class="pol-badge ${m.cls}">${m.badge}</span> ${model.labels[m.key]}</span>`).join(``);
+      const titleMap = {
+        symptom: document.getElementById(`tel-symptom-title`),
+        fix: document.getElementById(`tel-fix-title`),
+        fundamental: document.getElementById(`tel-fund-title`),
+        compliance: document.getElementById(`tel-comp-title`)
+      };
+      Object.keys(titleMap).forEach((key) => { if (titleMap[key]) titleMap[key].textContent = model.labels[key]; });
+
       const padL = 56, padR = 24, padT = 24, padB = 42;
       const W = 840, H = 360;
       const plotW = W - padL - padR;
@@ -2868,7 +2884,7 @@
 
       // Gridlines
       const yTicks = [0, 25, 50, 75, 100];
-      const gridMarkup = yTicks.map((t) => {
+      const gridMarkup = `<text x="${padL}" y="13" font-family="var(--font-label)" font-size="10.5" fill="var(--on-surface-variant)">Normalized illustrative index (0–100)</text>` + yTicks.map((t) => {
         const y = yScale(t);
         return `
           <line x1="${padL}" y1="${y}" x2="${W - padR}" y2="${y}" stroke="var(--outline-variant)" stroke-width="${t === 0 ? 1.5 : 1}"></line>
@@ -2879,19 +2895,19 @@
       const xTicks = [0, 12, 24, 36, 48, 60];
       const xAxisMarkup = xTicks.map((m) => {
         const x = xScale(m);
-        const yrLabel = m === 0 ? `M0 (2026)` : `M${m} (Yr ${m / 12})`;
+        const yrLabel = m === 0 ? `M0 (Nov 2026)` : `M${m} (+${m / 12}y)`;
         return `
           <line x1="${x}" y1="${padT}" x2="${x}" y2="${H - padB}" stroke="var(--outline-variant)" stroke-dasharray="3 3" stroke-width="1"></line>
           <text x="${x}" y="${H - 16}" text-anchor="middle" font-family="var(--font-label)" font-size="11" fill="var(--on-surface-variant)">${yrLabel}</text>
         `;
       }).join(``);
 
-      // Baseline reference line at 32.9% Mandatory Compliance
+      // The filed mandatory-compliance baseline is shown only on the Drifting Goals model.
       const baseY = yScale(32.9);
-      const baselineMarkup = `
+      const baselineMarkup = appState.botArchetype === `drifting` ? `
         <line x1="${padL}" y1="${baseY.toFixed(1)}" x2="${W - padR}" y2="${baseY.toFixed(1)}" stroke="var(--data-context)" stroke-dasharray="6 4" stroke-width="1.3"></line>
-        <text x="${W - padR - 4}" y="${(baseY - 5).toFixed(1)}" text-anchor="end" font-family="var(--font-label)" font-size="10.5" fill="var(--on-surface-variant)">32.9% IAT Baseline</text>
-      `;
+        <text x="${W - padR - 4}" y="${(baseY - 5).toFixed(1)}" text-anchor="end" font-family="var(--font-label)" font-size="10.5" fill="var(--on-surface-variant)">32.9% filed mandatory baseline</text>
+      ` : ``;
 
       // Lines
       let linesMarkup = ``;
@@ -2956,18 +2972,20 @@
       const tfun = document.getElementById(`tel-fund-note`);
       const tc = document.getElementById(`tel-comp`);
 
-      if (ts) ts.textContent = Math.round(valSym);
+      if (ts) ts.textContent = `${Math.round(valSym)} / 100`;
       if (tsn) tsn.textContent = model.labels.symptom;
-      if (tf) tf.textContent = Math.round(valFix);
+      if (tf) tf.textContent = `${Math.round(valFix)} / 100`;
       if (tfn) tfn.textContent = model.labels.fix;
-      if (tfu) tfu.textContent = Math.round(valFun);
+      if (tfu) tfu.textContent = `${Math.round(valFun)} / 100`;
       if (tfun) tfun.textContent = model.labels.fundamental;
-      if (tc) tc.textContent = valCom.toFixed(1) + `%`;
+      if (tc) tc.textContent = `${valCom.toFixed(0)} / 100`;
+      const compNote = document.getElementById(`tel-comp-note`);
+      if (compNote) compNote.textContent = appState.botArchetype === `drifting` ? `Illustrative desired standard (normalized); filed baseline remains 32.9%` : `Illustrative normalized index (0–100), not an observed measure`;
 
       const phaseEl = document.getElementById(`bot-phase-note`);
       if (phaseEl) {
         const note = model.phaseNotes.find((p) => curM <= p.maxM) || model.phaseNotes[model.phaseNotes.length - 1];
-        phaseEl.textContent = note.text;
+        phaseEl.textContent = note.text + (appState.botRegime === `compare` ? ` Readout marker shows the intervention-pathway value; the dashed series show the status-quo comparison.` : ``);
       }
     }
 
