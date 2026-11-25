@@ -96,6 +96,8 @@ MOO_TITLES = {
     'MOO Ch.5': 'Recovery, Rehabilitation and Build Back Better', 'MOO Ch.6': 'DRRM Financing, Resource Management and Accountability',
     'MOO Ch.7': 'Monitoring, Evaluation, Knowledge Management and Continuous Improvement',
     'MOO Ch.8': 'Stakeholder Engagement and Institutional Partnerships',
+    'MOO Ch.9': 'Public Awareness, Community Resilience and Capacity Development',
+    'MOO Ch.10': 'Institutional Sustainability, Deep Resilience and Recognition',
     'EOC Ch.1': 'Legal Basis', 'EOC Ch.2': 'Concept of Operations and Activation', 'EOC Ch.3': 'Facility, Site and Continuity',
     'EOC Ch.4': 'Communications and Sector Coordination', 'EOC Ch.5': 'Organization, Staffing and Public Information',
     'EOC Ch.6': 'Information Management and Reporting', 'EOC Ch.7': 'Coordination and Resource Management',
@@ -415,7 +417,24 @@ CHAPTERS = {  # legacy code -> (new code, chapter no, primary area, also areas, 
     'MOO Ch.6': ('Chapter 6', 6, 1, [7], 'DRRM Financing, Resource Management and Accountability'),
     'MOO Ch.7': ('Chapter 7', 7, 10, [3], 'Monitoring, Evaluation, Knowledge Management and Continuous Improvement'),
     'MOO Ch.8': ('Chapter 8', 8, 1, [3, 7], 'Stakeholder Engagement and Institutional Partnerships'),
+    # 1.31.0: Chapters 9 and 10 exist only in the Consolidated Draft 1.0 (12 Nov 2026). Chapter 9 serves area 3
+    # (capacity), also 5 (public information) and 8 (inclusion); Chapter 10 serves area 1, also 9 (digital
+    # continuity) and 10 (continuous improvement).
+    'MOO Ch.9': ('Chapter 9', 9, 3, [5, 8], 'Public Awareness, Community Resilience and Capacity Development'),
+    'MOO Ch.10': ('Chapter 10', 10, 1, [9, 10], 'Institutional Sustainability, Deep Resilience and Recognition'),
 }
+# Chapters with no earlier draft: no v0.1 skeleton; their first version is the Consolidated Draft.
+CONSOLIDATED_ONLY = {'MOO Ch.9', 'MOO Ch.10'}
+
+# 1.31.0: the Consolidated Draft 1.0 (12 Nov 2026), split by scripts/split_consolidated_md.py, loads as a new
+# draft version of each chapter, the Introduction and a new Annex A. Earlier versions and the child annexes,
+# SOPs and forms stay: protocols and indicator links point at them. A child is retired only after a diff shows
+# its text is identical in the consolidated chapter. These versions are written to seed parts 41a_ onward.
+CONSOLIDATED_LABEL = 'Consolidated Draft 1.0'
+CONSOLIDATED_DIR = ROOT / 'reference' / 'moo' / 'consolidated'
+CONSOLIDATED_FILES = {'00_Introduction.md': 'MOO Ch.0', **{f'{n:02d}_Chapter_{n}.md': f'MOO Ch.{n}' for n in range(1, 11)},
+                      '11_Annex_A.md': 'MOO Annex A'}
+ANNEX_A = ('MOO Annex A', 'Annex A', 'Master Procedure Register')
 # 1.18 (ADR-032): the four MOO shells (old Ch.6 capacity, Ch.7 M&E, Ch.8 recovery, Ch.9 partnerships) are
 # gone — their codes now carry the drafted Chapters 5-8 (CHAPTERS above), so only the EOC merges remain.
 MERGED = {  # legacy shell -> functional area
@@ -424,6 +443,12 @@ MERGED = {  # legacy shell -> functional area
 }
 LEGACY_TITLES = {ANNEX_JD: 'Job descriptions', 'MOO Annex 1-0': 'Chapter 1 Implementation Package: document control and annex register'}
 RETIRED = {ANNEX_JD: 'MOO Ch.2', 'MOO Annex 1-0': 'MOO Ch.1'}  # merged into a chapter (JDs; package control is in Ch.1 v1.0)
+
+
+def _ch910_inds(doc: str) -> list[str]:
+    from ch9_10_registry import CH9_PROCEDURES, CH10_PROCEDURES, CH910_META
+    return list(dict.fromkeys(i for p in CH9_PROCEDURES + CH10_PROCEDURES if p['doc'] == doc
+                              for i in CH910_META[p['code']][3]))
 
 
 def new_code(code: str) -> str:
@@ -762,7 +787,8 @@ def main():
                              chapter_no=no, aliases=[code] + [k for k, v in RETIRED.items() if v == code and k == ANNEX_JD],
                              also_areas=also))
             extra = {'MOO Ch.3': _CH3_INDS, 'MOO Ch.5': _CH5REC_INDS, 'MOO Ch.6': _CH6_INDS,
-                     'MOO Ch.7': _CH7_INDS, 'MOO Ch.8': _CH8_INDS}.get(code, [])
+                     'MOO Ch.7': _CH7_INDS, 'MOO Ch.8': _CH8_INDS,
+                     'MOO Ch.9': _ch910_inds('MOO Ch.9'), 'MOO Ch.10': _ch910_inds('MOO Ch.10')}.get(code, [])
             doc_links += [dict(document_id=did, indicator_id=i) for i in dict.fromkeys([i['id'] for i in inds] + extra)]
         else:
             parent = uid('doc', RETIRED[code]) if code in RETIRED else area_id[MERGED[code]]
@@ -777,6 +803,8 @@ def main():
             versions.append(dict(id=uid('docver', code, 'v0.9 consolidated draft'), document_id=did, label='v0.9 consolidated draft',
                                  body_md=(ROOT / 'reference' / 'moo' / 'Annex_1_00_package_control.md').read_text(encoding='utf-8'),
                                  change_note='Chapter 1 consolidated draft v0.9 (31 Oct 2026)', status='draft'))
+            continue
+        if code in CONSOLIDATED_ONLY:
             continue
         body = [f'# {code} – {MOO_TITLES.get(code, LEGACY_TITLES.get(code))}', '',
                 '> Skeleton generated from IAT v1.1. Replace each requirement with the City\'s procedure, standard or form.', '',
@@ -815,6 +843,22 @@ def main():
         versions.append(dict(id=uid('docver', code, label), document_id=did, label=label, body_md=body,
                              change_note=f'Loaded from reference/moo/{fname} ({where}, {label})',
                              status='draft'))
+    # 4. Consolidated Draft 1.0 (1.31.0): one new version per chapter, the Introduction and Annex A.
+    code, nc, title = ANNEX_A
+    sort += 1
+    docs.append(dict(id=uid('doc', code), manual='MOO', kind='annex', code=nc, title=title, parent_id=uid('doc', 'MOO Ch.0'),
+                     summary='Whole-Manual register of every SOP, its owner and its MODE template (Consolidated Draft 1.0).',
+                     status='draft', sort=sort, current_version_id=None, area_no=1, chapter_no=None,
+                     aliases=[code], also_areas=[]))
+    consolidated = []
+    for fname, code in CONSOLIDATED_FILES.items():
+        path = CONSOLIDATED_DIR / fname
+        if not path.exists():
+            raise SystemExit(f'Missing {path.relative_to(ROOT)}: run python3 scripts/split_consolidated_md.py')
+        consolidated.append(dict(id=uid('docver', code, CONSOLIDATED_LABEL), document_id=uid('doc', code),
+                                 label=CONSOLIDATED_LABEL, body_md=path.read_text(encoding='utf-8'),
+                                 change_note=f'Loaded from reference/moo/consolidated/{fname} (split from MOO_Consolidated_v1.0.md, 12 Nov 2026)',
+                                 status='draft'))
     for d in docs:
         if d['kind'] == 'chapter' and d['status'] != 'superseded' and d['id'] != uid('doc', 'MOO Ch.0'):
             n = sum(1 for x in docs if x['parent_id'] == d['id'] and x['status'] != 'superseded')
@@ -836,7 +880,12 @@ def main():
         v['body_md'] = re.sub(r'\(doc:([^)]+)\)', link, v['body_md'])
     doc_links = [l for l in doc_links if l['document_id'] not in superseded]
     out['superseded_documents'] = superseded
-    out['moo_documents'], out['moo_versions'], out['moo_document_indicators'] = docs, versions, doc_links
+    out['moo_documents'], out['moo_document_indicators'] = docs, doc_links
+    # The database gets every version (seed parts NN_ and 41a_ onward). The offline bundle keeps only the newest
+    # version of each document: with the consolidated chapters, all versions would take reference.json past the
+    # 4 MB PWA precache limit (vite.config.ts). Older versions stay readable online in the Library.
+    out['moo_versions'] = versions  # written to SQL; trimmed in main() before reference.json
+    out['_consolidated_versions'] = consolidated
 
     def doc_home(code):  # merged shells hand their protocols to the area outline
         return uid('doc', f'Area {MERGED[code]}') if code in MERGED else uid('doc', code)
@@ -848,9 +897,11 @@ def main():
     from sop_registry import CH6_FORMS, CH6_PROCEDURES  # 1.18: Chapter 6 v1.1 (renumbered from Ch.5 v1.0)
     from sop_registry import CH5REC_PROCEDURES, CH7_PROCEDURES, CH8_PROCEDURES  # 1.18: Chapters 5 (recovery), 7 and 8
     from sop_registry import CH578_FORMS  # 1.29.0 (ADR-046): the forms those chapters' steps already name
-    FORMS = FORMS + CH3_FORMS + CH4_FORMS + CH6_FORMS + CH578_FORMS
+    from ch9_10_registry import CH9_PROCEDURES, CH10_PROCEDURES, CH910_FORMS, CH910_META  # 1.31.0: Chapters 9 and 10
+    META.update(CH910_META)
+    FORMS = FORMS + CH3_FORMS + CH4_FORMS + CH6_FORMS + CH578_FORMS + CH910_FORMS
     WORKFLOWS = (WORKFLOWS + CH3_WORKFLOWS + CH4_PROTOCOLS + CH6_PROCEDURES
-                 + CH5REC_PROCEDURES + CH7_PROCEDURES + CH8_PROCEDURES)
+                 + CH5REC_PROCEDURES + CH7_PROCEDURES + CH8_PROCEDURES + CH9_PROCEDURES + CH10_PROCEDURES)
     known_inds = {i['id'] for i in out['indicators']}
     out['form_templates'] = [dict(id=uid('form', c), code=c, title=t, purpose=pu, document_id=doc_home(d),
                                   schema=_json.dumps({'fields': flds}, ensure_ascii=False), status='draft', rev=1)
@@ -880,6 +931,9 @@ def main():
             steps.append(dict(id=uid('pstep', p['code'], str(seq)), template_id=tid, seq=seq, instruction=instr,
                               is_critical=crit, requires_note=note, due_offset_minutes=due, form_code=form))
     out['protocol_templates'], out['protocol_steps'] = tpls, steps
+    late_codes = {c for c, *_ in CH910_FORMS} | {p['code'] for p in CH9_PROCEDURES + CH10_PROCEDURES}
+    out['_late_codes'] = sorted(late_codes)
+    out['_late_ids'] = sorted(t['id'] for t in tpls if t['code'] in late_codes)
     if unbuilt_forms:
         print(f'note: {len(unbuilt_forms)} Manual forms named on steps have no template yet; '
               'those steps use STEP-RECORD:')
@@ -890,9 +944,15 @@ def main():
                                        timing=tm, seq=i)
                                   for i, (s, t, r, lo, tm, h) in enumerate(AA_TEMPLATES, 1)]
 
+    write_sql(out)
+    consolidated = out.pop('_consolidated_versions')
+    out.pop('_late_codes'); out.pop('_late_ids')
+    newest = {}
+    for v in out['moo_versions'] + consolidated:  # loaded in order, so the last one per document is the newest
+        newest[v['document_id']] = v
+    out['moo_versions'] = list(newest.values())
     (ROOT / 'src' / 'data').mkdir(parents=True, exist_ok=True)
     (ROOT / 'src' / 'data' / 'reference.json').write_text(json.dumps(out, ensure_ascii=False, indent=1))
-    write_sql(out)
     print({k: len(v) for k, v in out.items()})
 
 
@@ -1041,19 +1101,27 @@ def statements(o):
     # Versions belong to the Library workflow once loaded (drafts get edited, reviewed, approved).
     st += version_statements(o['moo_versions'])
     st += upsert_chunks('moo_document_indicators', o['moo_document_indicators'], ['document_id', 'indicator_id'], cast={'document_id': '::uuid'})
-    # Forms before the steps that name them. Fields are written on first load only: afterwards the Library
-    # workflow (draft, approve) owns them, as for manual versions.
-    st += upsert_chunks('form_templates', o['form_templates'], 'id',
-                        cast={'id': '::uuid', 'document_id': '::uuid', 'schema': '::jsonb'}, keep=('status', 'rev', 'schema'))
-    st += upsert_chunks('protocol_templates', o['protocol_templates'], 'id',
-                        cast={'id': '::uuid', 'document_id': '::uuid', 'owner_role': '::public.app_role'},
-                        keep=('status', 'template_rev'))  # template_rev is bumped by the step trigger
-    st += upsert_chunks('protocol_steps', o['protocol_steps'], 'id', cast={'id': '::uuid', 'template_id': '::uuid'})
+    late = set(o.get('_late_codes', ()))  # 1.31.0: Chapter 9 and 10 templates go to parts 41a_ onward
+    st += template_statements([r for r in o['form_templates'] if r['code'] not in late],
+                              [r for r in o['protocol_templates'] if r['code'] not in late],
+                              [r for r in o['protocol_steps'] if r['template_id'] not in o.get('_late_ids', ())])
     st += upsert_chunks('aa_action_templates', o['aa_action_templates'], 'id', cast={'id': '::uuid'})
     return st
 
 
-CHECK_SQL = """-- Expected: 140 | 18 | 935 | 71 | 54 | 329 | 29 | 10 | 140 | 79
+def template_statements(forms, tpls, steps):
+    # Forms before the steps that name them. Fields are written on first load only: afterwards the Library
+    # workflow (draft, approve) owns them, as for manual versions.
+    st = upsert_chunks('form_templates', forms, 'id',
+                       cast={'id': '::uuid', 'document_id': '::uuid', 'schema': '::jsonb'}, keep=('status', 'rev', 'schema'))
+    st += upsert_chunks('protocol_templates', tpls, 'id',
+                        cast={'id': '::uuid', 'document_id': '::uuid', 'owner_role': '::public.app_role'},
+                        keep=('status', 'template_rev'))  # template_rev is bumped by the step trigger
+    st += upsert_chunks('protocol_steps', steps, 'id', cast={'id': '::uuid', 'template_id': '::uuid'})
+    return st
+
+
+CHECK_SQL = """-- Expected: 140 | 18 | 935 | 71 | 70 | 412 | 29 | 10 | 140 | 95
 select (select count(*) from public.iat_indicators)         as indicators,
        (select count(*) from public.master_requirements)    as requirements,
        (select count(*) from public.indicator_requirements) as indicator_links,
@@ -1070,13 +1138,7 @@ HEADER = ('-- GENERATED by scripts/generate_seed.py from reference/*.xlsx — do
           '-- Reference data only. No personal data. Protocols and AA items are DRAFT for CDRRMO validation.\n')
 
 
-def write_sql(o):
-    st = statements(o)
-    seed_dir = ROOT / 'supabase' / 'seed'
-    seed_dir.mkdir(parents=True, exist_ok=True)
-    (seed_dir / 'seed.sql').write_text(HEADER + 'begin;\n\n' + ''.join(t for _, t in st) + 'commit;\n')
-
-    # Pack statements into parts, in order (parents before children).
+def _pack(st):
     parts, cur, lines, size = [], [], 0, 0
     for tbl, t in st:
         n, b = t.count('\n'), len(t.encode())
@@ -1084,6 +1146,49 @@ def write_sql(o):
             parts.append(cur); cur, lines, size = [], 0, 0
         cur.append((tbl, t)); lines += n; size += b
     parts.append(cur)
+    return parts
+
+
+def write_late(o, part_dir):
+    """1.31.0: parts 41a_ onward, run after every NN_ part (and after 37_raci to 40_, which need the earlier
+    templates): first the Chapter 9 and 10 forms, templates and steps, then the Consolidated Draft 1.0
+    versions. Kept out of the NN_ parts so their numbering, and the order of 37_raci, do not move.
+    Same rules as the other rows: inserted once, never overwrite an edited or approved text."""
+    for old in part_dir.glob('41?_*.sql'):
+        old.unlink()
+    late = set(o['_late_codes'])
+    groups = [('ch9_ch10_templates', 'Chapter 9 and 10 forms, protocols and workflows (draft, not yet validated)',
+               _pack(template_statements([r for r in o['form_templates'] if r['code'] in late],
+                                         [r for r in o['protocol_templates'] if r['code'] in late],
+                                         [r for r in o['protocol_steps'] if r['template_id'] in o['_late_ids']]))),
+              ('consolidated_manual', 'Consolidated Draft 1.0 of the Manual (12 Nov 2026)',
+               _pack(version_statements(o['_consolidated_versions'])))]
+    n = sum(len(p) for *_, p in groups)
+    assert n <= 26, 'more than 26 late parts; raise PART_MAX_BYTES or use another prefix'
+    i = 0
+    for name, about, parts in groups:
+        for part in parts:
+            letter = chr(97 + i); i += 1
+            body = (HEADER + f'-- Part 41{letter} ({i} of {n}): {about}.\n'
+                    '-- Run after parts 01 to 40. A part can be run again safely.\n'
+                    'begin;\n\n' + ''.join(t for _, t in part) + 'commit;\n')
+            (part_dir / f'41{letter}_{name}.sql').write_text(body)
+    print(f'late parts: {n} (41a-41{chr(96 + n)})')
+
+
+def write_sql(o):
+    st = statements(o)
+    seed_dir = ROOT / 'supabase' / 'seed'
+    seed_dir.mkdir(parents=True, exist_ok=True)
+    late = set(o['_late_codes'])
+    cons = template_statements([r for r in o['form_templates'] if r['code'] in late],
+                               [r for r in o['protocol_templates'] if r['code'] in late],
+                               [r for r in o['protocol_steps'] if r['template_id'] in o['_late_ids']])
+    cons += version_statements(o['_consolidated_versions'])
+    (seed_dir / 'seed.sql').write_text(HEADER + 'begin;\n\n' + ''.join(t for _, t in st + cons) + 'commit;\n')
+
+    # Pack statements into parts, in order (parents before children).
+    parts = _pack(st)
     part_dir = seed_dir / 'parts'
     part_dir.mkdir(exist_ok=True)
     # Remove only the parts this script writes (NN_seed.sql). Parts made by other generators,
@@ -1100,6 +1205,7 @@ def write_sql(o):
             body += '\n' + CHECK_SQL
         (part_dir / f'{i:02d}_seed.sql').write_text(body)
     print(f'seed: {len(st)} statements in {total} parts')
+    write_late(o, part_dir)
 
 
 if __name__ == '__main__':

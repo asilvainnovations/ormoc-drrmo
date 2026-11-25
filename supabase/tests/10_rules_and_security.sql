@@ -940,7 +940,17 @@ select tests.expect_eq('the nine Chapter 3 workflows are loaded with their forms
   '9 19');
 select tests.expect_eq('kinds split incident protocols from management workflows',
   (select string_agg(kind || ':' || n, ' ' order by kind) from (select kind, count(*) n from public.protocol_templates group by kind) k),
-  'protocol:20 workflow:34');  -- 1.29.0: SOP 5-01 (WF-REC-FRAMEWORK) is a workflow
+  'protocol:21 workflow:49');  -- 1.29.0: SOP 5-01 is a workflow; 1.31.0: Ch.9 and Ch.10 add 1 protocol, 15 workflows
+-- 1.31.0: Chapters 9 and 10 (Consolidated Draft 1.0): one draft template per SOP, every step on a built form.
+select tests.expect_eq('Chapter 9 and 10 templates are loaded as drafts in their categories',
+  (select string_agg(category || ':' || n, ' ' order by category) from (select category, count(*) n from public.protocol_templates
+     where code like 'WF-SOP9-%' or code like 'WF-SOP10-%' or code = 'PR-LEADERSHIP-TRANSITION' group by category) k),
+  'capacity:9 continuity:2 sustainability:5');
+select tests.expect_eq('every Chapter 9 and 10 step records on a form template',
+  (select count(*)::text from public.protocol_steps s join public.protocol_templates t on t.id = s.template_id
+     left join public.form_templates f on f.code = s.form_code
+    where (t.code like 'WF-SOP9-%' or t.code like 'WF-SOP10-%' or t.code = 'PR-LEADERSHIP-TRANSITION') and f.id is null),
+  '0');
 -- 1.29.0 (ADR-046): Ch.7 and Ch.8 workflows have their own categories; every step that names a Manual form records on it.
 select tests.expect_eq('Chapter 7 sits in learning and Chapter 8 in partnerships',
   (select string_agg(category || ':' || n, ' ' order by category) from (select category, count(*) n from public.protocol_templates

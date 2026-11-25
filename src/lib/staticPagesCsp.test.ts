@@ -5,7 +5,7 @@ import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
 const PUBLIC = join(__dirname, '..', '..', 'public');
-const PAGES = ['systems-diagnosis.html'];
+const PAGES = ['systems-diagnosis.html', 'systems-diagnosis-archetypes.html'];
 
 describe('static pages work under script-src self', () => {
   for (const page of PAGES) {

@@ -370,7 +370,7 @@ on conflict (id) do update set hazard_code = excluded.hazard_code, sector = excl
 
 commit;
 
--- Expected: 140 | 18 | 935 | 71 | 54 | 329 | 29 | 10 | 140 | 79
+-- Expected: 140 | 18 | 935 | 71 | 70 | 412 | 29 | 10 | 140 | 95
 select (select count(*) from public.iat_indicators)         as indicators,
        (select count(*) from public.master_requirements)    as requirements,
        (select count(*) from public.indicator_requirements) as indicator_links,

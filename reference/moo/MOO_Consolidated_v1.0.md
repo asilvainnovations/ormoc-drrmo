@@ -7534,7 +7534,7 @@ A recovery programme builds trust only if people know what is planned, when it w
 |-----------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Principles      | One communication protocol for all offices; one spokesperson; manage expectations with proactive messages about delays and beneficiary selection; a feedback mechanism with responses; a regular release schedule with consistent data.                               |
 | Core messages   | Roles of government, communities and partners; sector priorities; priority PPAs and targets; governing policies; available funds; start and completion dates; implementation issues and how they are being resolved; how communities can take part; overall progress. |
-| Materials       | Plain-language notices in Cebuano and Waray where needed, accessible formats, barangay posters, radio scripts and progress snapshots.                                                                                                                                 |
+| Materials       | Plain-language notices in Ormocanon (Bisaya) and Waray where needed, accessible formats, barangay posters, radio scripts and progress snapshots.                                                                                                                                 |
 | Channels        | Barangay assemblies, BDRRMC meetings, City public information channels, local radio, social media, and the feedback desk and hotline.                                                                                                                                 |
 | Snapshot report | A short, regular summary of the main recovery issues and trends for the Mayor and CDRRMC, shared with City offices so that all work from the same figures.                                                                                                            |
 
@@ -14264,7 +14264,7 @@ The baseline shows activity without measurement (Figure 9.1). Domain A7 (Prepare
 | B7.2   | EOC staff trained (EOC operations, ICS, information management) with records (M, w2)                 | 2         | Medium (6.0) | ICS all levels, EOC management and MDM courses still needed.                                                                                                                      |
 | A7.9   | BDRRMCs account for residents of affected puroks within 12 hours, shown in a drill or event (GP, w2) | 1         | Medium (6.0) | No drill or AAR record of purok welfare checks; headcounts are informal.                                                                                                          |
 | A7.3   | BDRRMC functionality across 85 barangays assessed, with a support plan (GP, w2)                      | 2         | Medium (4.0) | FGD self-score of 3 lowered to 2; functionality matrix to be validated.                                                                                                           |
-| A6.4   | Warnings in the local language and accessible formats (GP, w2)                                       | 2         | Medium (4.0) | FGD self-score of 4 lowered to 2; sample advisories in Cebuano and accessible formats to be validated.                                                                            |
+| A6.4   | Warnings in the local language and accessible formats (GP, w2)                                       | 2         | Medium (4.0) | FGD self-score of 4 lowered to 2; sample advisories in Ormocanon (Bisaya) and accessible formats to be validated.                                                                            |
 | A2.10  | Skills inventory across CDRRMO, partner offices and barangays, updated within 12 months (GP, w1)     | 1         | Low (3.0)    | No skills inventory.                                                                                                                                                              |
 | A7.8   | Annual refresher cycle for responders, EOC staff and BDRRMC members (GP, w1)                         | 1         | Low (3.0)    | No refresher cycle set.                                                                                                                                                           |
 | A7.6   | Inclusive DRRM, with sector representatives confirming engagement (M, w2)                            | 3         | Low (3.0)    | IPGDO on the CDRRMC; inclusive EWS, IEC and children's programmes planned in the CDP; sector confirmation not yet gathered.                                                       |
@@ -14315,7 +14315,7 @@ Intended results:
 
 3.  An annual exercise programme, from NSED drills to an EOC functional exercise and a full-scale exercise, is run and evaluated (A7.2, B7.3).
 
-4.  An IEC programme with annual reach targets per barangay is delivered in Cebuano and accessible formats (A6.4, A6.6), under an approved risk communication plan (A6.5).
+4.  An IEC programme with annual reach targets per barangay is delivered in Ormocanon (Bisaya) and accessible formats (A6.4, A6.6), under an approved risk communication plan (A6.5).
 
 5.  All 85 BDRRMCs are assessed for functionality each year, low-functioning barangays receive a support package (A7.3), and each barangay can account for residents of affected puroks within 12 hours (A7.9).
 
@@ -14409,7 +14409,7 @@ The IEC programme sets, for each year, the messages, audiences, channels and rea
 
 ### 6.2 Local Language and Accessible Formats
 
-Messages are written in Cebuano as spoken in Ormoc, with English where needed, and tested with residents before use (A6.4). Each core message has accessible versions: Filipino Sign Language video (RA 11106), large-print and pictorial versions, plain-language audio, and visual alerts for Deaf and hard-of-hearing residents. Where a message relays an official PAGASA or PHIVOLCS product, the translation keeps its meaning and the original wording is kept on file (Chapter 4).
+Messages are written in Ormocanon (Bisaya), with English where needed, and tested with residents before use (A6.4). Each core message has accessible versions: Filipino Sign Language video (RA 11106), large-print and pictorial versions, plain-language audio, and visual alerts for Deaf and hard-of-hearing residents. Where a message relays an official PAGASA or PHIVOLCS product, the translation keeps its meaning and the original wording is kept on file (Chapter 4).
 
 ### 6.3 Risk Communication Plan and Public Information Officer
 
@@ -14915,7 +14915,7 @@ Each SOP has a control block and a step table. Every step states the actor (a po
 <tr class="header">
 <th>2. Develop materials</th>
 <th>Administration and Training with sector groups</th>
-<th><p>Write in Cebuano; produce FSL, large-print, pictorial and audio versions; test with residents.</p>
+<th><p>Write in Ormocanon (Bisaya); produce FSL, large-print, pictorial and audio versions; test with residents.</p>
 <p>Decision: Understood by test groups?</p></th>
 <th><p>In: Messages</p>
 <p>Out: Tested materials</p></th>
@@ -15516,7 +15516,7 @@ Findings go to the CAPA register under Chapter 7 (SOP 7-05).
 | 3       | Run the first combined skills inventory and TNA; approve the 2027 City DRRM training plan with refresher dates.                                                      | Administration and Training; HRMO      | A2.10, A7.1, A7.8      | First quarter 2027             |
 | 4       | Hold the first EOC functional exercise and an anticipatory action tabletop exercise.                                                                                 | CDRRMO; EOC roster                     | B7.3                   | Before the 2027 typhoon season |
 | 5       | Add a timed purok welfare check to the next hazard-specific drill in at least the most exposed barangays.                                                            | CDRRMO; BDRRMCs                        | A7.9                   | Next drill                     |
-| 6       | Designate the PIO and approve the risk communication plan; produce FSL and Cebuano versions of core messages.                                                        | Mayor; CDRRMO; City Information Office | A6.5, A6.4             | First half of 2027             |
+| 6       | Designate the PIO and approve the risk communication plan; produce FSL and Ormocanon (Bisaya) versions of core messages.                                                        | Mayor; CDRRMO; City Information Office | A6.5, A6.4             | First half of 2027             |
 | 7       | Open the volunteer registry with insurance and deployment rules; file the signed CPR-RIMT MOA.                                                                       | Administration and Training            | A2.8                   | First quarter 2027             |
 | 8       | Hold the first sector consultation.                                                                                                                                  | CDRRMO; IPGDO; PDAO; OSCA              | A7.6                   | Before the 2027 IAT cycle      |
 | 9       | Platform: add training records, skills inventory, BDRRMC functionality and volunteer registry tables with role-limited access; load templates for SOPs 9-01 to 9-09. | Platform data custodian                | MR-04, MR-09           | With the next release          |
@@ -15685,7 +15685,7 @@ Republic Act No. 12076. (2024). *Ligtas Pinoy Centers Act*.
 | 8       | Security arrangement                                                                             | DPMS Vol. 2                      |                   |
 | 9       | Kitchen, storage and waste management                                                            | DSWD standards                   |                   |
 | 10      | Power backup and communications                                                                  | Chapter 4                        |                   |
-| 11      | Signage in Cebuano and accessible formats                                                        | RA 11106; section 6              |                   |
+| 11      | Signage in Ormocanon (Bisaya) and accessible formats                                                        | RA 11106; section 6              |                   |
 | 12      | Designated as an evacuation centre in a City issuance; if a school, used only as a last resort   | RA 10821; RA 12076               |                   |
 
 *Note. Items are drawn from the sources named; the full requirements of RA 12076 and its IRR and of DSWD standards are to be checked against their current texts before the first audit.*

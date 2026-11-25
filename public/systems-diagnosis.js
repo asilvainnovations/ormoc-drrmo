@@ -6,7 +6,7 @@
       shifting: {
         id: `shifting`,
         code: `ARCHETYPE A`,
-        title: `Shifting the Burden (Fixes that Fail)`,
+        title: `Shifting the Burden`,
         summary: `Rising operational disruptions trigger ad-hoc Executive Orders and reliance on temporary staffing (HRMO validation required) (Loop B1). While this relieves immediate crisis pressure, it erodes urgency for passing a JMC 2014-1 department ordinance and written SOPs (Loop B2) and drives Side-Effect Loop R1: institutional compliance decay (32.9% baseline).`,
         loops: [
           { id: `all`, label: `All Loops` },
@@ -215,7 +215,7 @@
       conflation: {
         id: `conflation`,
         code: `ARCHETYPE D`,
-        title: `ICS–EOC Mandate Conflation`,
+        title: `Fixes That Fail: ICS–EOC Mandate Conflation`,
         summary: `Captured in IAT B6.1 (Score 1, High Priority). As incident complexity climbs, demand for EOC coordination increases. Without a codified ICS–EOC boundary, the EOC risks usurping field tactical command (Loop R2: Escalation), creating chain-of-command confusion and resource misalignment. SOP 4-05 restores Balancing Loop B2.`,
         loops: [
           { id: `all`, label: `All Loops` },
@@ -474,7 +474,7 @@
         }
       },
       conflation: {
-        name: `ICS–EOC Mandate Conflation (Field Confusion vs. SOP 4-05 Hub)`,
+        name: `Fixes That Fail (ICS–EOC Mandate Conflation vs. SOP 4-05)`,
         labels: {
           symptom: `Command Friction & Delays`,
           fix: `Direct EOC Field Overrides`,

@@ -80,6 +80,9 @@ from (values
                                                       where proname = 'apply_manual_correction' and pronamespace = 'public'::regnamespace)),
   ('20261120003700_drrm_thematic_placement',  exists (select 1 from pg_constraint
                                                       where conname = 'protocol_templates_category_check'
-                                                        and pg_get_constraintdef(oid) like '%partnerships%'))
+                                                        and pg_get_constraintdef(oid) like '%partnerships%')),
+  ('20261125003800_capacity_sustainability_categories', exists (select 1 from pg_constraint
+                                                      where conname = 'protocol_templates_category_check'
+                                                        and pg_get_constraintdef(oid) like '%sustainability%'))
 ) as m(migration, present)
 order by m.migration;
