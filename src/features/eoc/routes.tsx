@@ -11,6 +11,7 @@ import { DeclarationPage } from './aa/DeclarationPage';
 import { FundsPage } from './aa/FundsPage';
 import { RosterPage } from './RosterPage';
 import { RiskPage } from './RiskPage';
+import HazardMapPage from './map/HazardMapPage';
 import { lazy, Suspense } from 'react';
 import { Loading } from '@/components/ui';
 
@@ -33,8 +34,7 @@ export default function EocRoutes() {
       <Route path="plans" element={<Navigate to="/eoc" replace />} />
       <Route path="roster" element={<RosterPage />} />
       <Route path="map" element={<Suspense fallback={<Loading />}><MapPage /></Suspense>} />
-      {/* 1.16.0: Hazard maps moved to Assess; old links still work. */}
-      <Route path="hazard-maps" element={<Navigate to="/assess/hazard-maps" replace />} />
+      <Route path="hazard-maps" element={<HazardMapPage />} />
       <Route path="aa" element={<AaHomePage />} />
       <Route path="aa/pdra/new" element={<PdraNewPage />} />
       <Route path="aa/pdra/:id" element={<PdraViewPage />} />
