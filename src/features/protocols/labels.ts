@@ -8,11 +8,12 @@ export const CATEGORY: Record<ProtocolCategory, string> = {
   risk_information: 'Risk Information and Critical Facilities (Ch.3)', risk_planning: 'CDRA, DRRM Planning and Barangay Plans (Ch.3)',
   contingency_planning: 'Contingency Planning (Ch.3)', continuity: 'Public Service Continuity and Lifelines',
   learning: 'Monitoring, Evaluation and Learning (Ch.7)', partnerships: 'Partnerships and Mutual Aid (Ch.8)',
+  capacity: 'Capacity Development and Community Resilience (Ch.9)', sustainability: 'Institutional Sustainability and Recognition (Ch.10)',
 };
 
 /** Workflows are the office's management cycles (ADR-016); protocols are the operational procedures. */
 export const WORKFLOW_CATEGORIES: ProtocolCategory[] = ['council', 'governance', 'workforce', 'budget', 'response_clusters',
-  'geospatial', 'risk_information', 'risk_planning', 'contingency_planning', 'continuity', 'learning', 'partnerships'];
+  'geospatial', 'risk_information', 'risk_planning', 'contingency_planning', 'continuity', 'learning', 'partnerships', 'capacity', 'sustainability'];
 /** Mirrors the kind set by migration 20261108002000: incident protocols vs management workflows. The template's own
  *  kind wins (1.29.0: SOP 7-04 is a protocol in a workflow category; SOP 5-01 is a workflow in a protocol one). */
 export const isWorkflow = (c: ProtocolCategory) => WORKFLOW_CATEGORIES.includes(c);
@@ -41,7 +42,7 @@ export const THEMATIC: { key: ThematicArea; label: string; short: string; about:
     categories: ['risk_information', 'risk_planning', 'geospatial', 'budget', 'warning'] },
   { key: 'preparedness', label: 'Disaster Preparedness', short: 'Preparedness',
     about: 'Build the capacity of institutions and communities to respond: the CDRRMC and CDRRMO, EOC designations and duty, contingency and continuity plans, partnerships, exercises and learning.',
-    categories: ['governance', 'council', 'workforce', 'daily_operations', 'contingency_planning', 'continuity', 'partnerships', 'learning'] },
+    categories: ['governance', 'council', 'workforce', 'daily_operations', 'contingency_planning', 'continuity', 'partnerships', 'learning', 'capacity', 'sustainability'] },
   { key: 'response', label: 'Disaster Response and Early Recovery', short: 'Response and Early Recovery',
     about: 'Act before and during an event to save lives and meet basic needs: forecast-based early action, EOC activation, ICS interface, evacuation, resource requests, response clusters and SitReps.',
     categories: ['anticipatory_action', 'eoc', 'response_clusters', 'reporting'] },
@@ -56,10 +57,10 @@ export const AREA_SHORT = Object.fromEntries(THEMATIC.map((t) => [t.key, t.short
 /** Where a form belongs (1.29.0): the thematic area of the steps that record on it, the most-used first.
  *  A form no step uses yet falls back to the area of its Manual chapter. STEP-RECORD is shared by every area. */
 const CHAPTER_AREA: Record<string, ThematicArea> = {
-  '1': 'preparedness', '2': 'preparedness', '3': 'prevention', '4': 'response', '5': 'recovery', '6': 'prevention', '7': 'preparedness', '8': 'preparedness',
+  '1': 'preparedness', '2': 'preparedness', '3': 'prevention', '4': 'response', '5': 'recovery', '6': 'prevention', '7': 'preparedness', '8': 'preparedness', '9': 'preparedness', '10': 'preparedness',
 };
 export function chapterArea(docCode: string | null | undefined): ThematicArea | null {
-  const m = docCode?.match(/(?:Chapter|Ch\.|Area)\s*(\d)/i);
+  const m = docCode?.match(/(?:Chapter|Ch\.|Area)\s*(\d+)/i);
   const n = m?.[1];
   if (!n) return null;
   if (/^Area/i.test(docCode ?? '')) return n === '4' ? 'response' : n === '6' ? 'prevention' : null;

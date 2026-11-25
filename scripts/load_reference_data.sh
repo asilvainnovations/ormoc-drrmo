@@ -4,7 +4,7 @@
 # Replaces pasting 40+ files into the Supabase SQL editor. In order, and stopping at the first error:
 #   1. preflight   connect; every migration in migration_status.sql must show "applied"
 #   2. cleanup     supabase/cleanup/*.sql (release cleanup scripts; each is safe to run again)
-#   3. seed        supabase/seed/parts/*.sql in file-name order (01..26, 26a..26d, 27.., 37_raci, 38_eoc_capability, 38a–38c_eoc_assessment, 39_indicator_links)
+#   3. seed        supabase/seed/parts/*.sql in file-name order (01..26, 26a..26d, 27.., 37_raci, 38_eoc_capability, 38a–38c_eoc_assessment, 39_indicator_links, 40_manual_governance, 41a_ch9_ch10_templates, 41b–41w_consolidated_manual)
 #   4. IAT update  supabase/seed/operational/07_iat_v1_7_update.sql (safe to run again; skip with --no-iat-update)
 #   5. verify      every reference row in src/data/reference.json, every RACI matrix/activity in part 37,
 #                  EOC assessment items (38a), eoc_cap_items (38), and indicator links (39) are in the database
