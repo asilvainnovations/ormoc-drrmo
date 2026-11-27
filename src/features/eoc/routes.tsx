@@ -11,6 +11,7 @@ import { DeclarationPage } from './aa/DeclarationPage';
 import { FundsPage } from './aa/FundsPage';
 import { RosterPage } from './RosterPage';
 import { RiskPage } from './RiskPage';
+import { CoordinationPage } from './CoordinationPage';
 import HazardMapPage from './map/HazardMapPage';
 import { lazy, Suspense } from 'react';
 import { Loading } from '@/components/ui';
@@ -23,6 +24,9 @@ export default function EocRoutes() {
     <Routes>
       <Route index element={<BoardPage />} />
       <Route path="log" element={<LogbookPage />} />
+      {/* 1.32.0: team coordination on the current activation. /eoc/monitoring is the DDRiVE-M name. */}
+      <Route path="coordination" element={<CoordinationPage />} />
+      <Route path="monitoring" element={<Navigate to="/eoc/coordination" replace />} />
       <Route path="sitreps" element={<SitrepsPage />} />
       <Route path="sitreps/:id" element={<SitrepEditor />} />
       <Route path="requests" element={<RequestsPage />} />

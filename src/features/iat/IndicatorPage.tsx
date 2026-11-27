@@ -16,6 +16,7 @@ import { useCycleData, isEditable } from './data';
 import { tip } from '@/components/Tooltip';
 import { RefText } from '@/components/RefText';
 import { ModeLinksSection } from '@/components/ModeLinks';
+import { ConversationPanel } from '@/components/ConversationPanel';
 import { VaultForIndicator } from '@/features/vault/VaultPages';
 import { EVIDENCE_CHECK, EVIDENCE_CHECK_HELP, EVIDENCE_CHECK_TONE, EVIDENCE_KIND, RESPONSE_STATUS, RESPONSE_TONE } from './labels';
 
@@ -221,6 +222,13 @@ export function IndicatorPage() {
         </aside>
       </div>
 
+      {/* 1.32.0 (ADR-040): assessor and validator discussion; locks when the response is validated. */}
+      {resp && (
+        <div className="mt-6">
+          <ConversationPanel parentKind="response" parentId={resp.id} label={ind.id}
+            about="Discuss the score and evidence with the assessor, validator and lead office. The conversation locks when the response is validated." />
+        </div>
+      )}
       <EvidenceSheet open={evOpen} onClose={() => setEvOpen(false)} cycleId={data.cycle.id} indicatorId={ind.id} existing={resp} />
     </div>
   );

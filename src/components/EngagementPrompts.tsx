@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Download, X, Smartphone, ShieldCheck } from 'lucide-react';
 import { useAuth } from '@/lib/auth';
+import { tip } from '@/components/Tooltip';
 
 type InstallPromptEvent = Event & { prompt: () => Promise<void>; userChoice: Promise<{ outcome: 'accepted' | 'dismissed'; platform: string }> };
 type InstallGuide = { title: string; steps: string[]; action: string };
@@ -112,6 +113,13 @@ export function EngagementPrompts() {
     if (choice.outcome === 'accepted') closeInstall();
   };
 
+  useEffect(() => {
+    if (!modal) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') { if (modal === 'install') closeInstall(); else closeAccount(); } };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  });
+
   if (!modal) return null;
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/70 p-4 backdrop-blur-sm"
@@ -120,7 +128,7 @@ export function EngagementPrompts() {
         className="relative w-full max-w-md overflow-hidden rounded-2xl border border-white/15 bg-white text-slate-900 shadow-2xl">
         <div className="bg-gradient-to-br from-[#0F3D66] via-[#14598A] to-[#0B2946] px-6 pb-7 pt-6 text-white">
           <button type="button" onClick={modal === 'install' ? closeInstall : closeAccount}
-            aria-label="Close" className="absolute right-4 top-4 rounded-full p-2 text-white/80 hover:bg-white/15 hover:text-white">
+            aria-label="Close" {...tip('Close this message. Escape also closes it')} className="absolute right-4 top-4 rounded-full p-2 text-white/80 hover:bg-white/15 hover:text-white">
             <X size={20} />
           </button>
           <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-white/15">
@@ -145,23 +153,23 @@ export function EngagementPrompts() {
               <ol className="space-y-2 text-sm text-slate-600">
                 {guide.steps.map((step, index) => <li key={step} className="flex gap-3"><span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-blue-50 text-xs font-bold text-[#14598A]">{index + 1}</span><span className="pt-0.5">{step}</span></li>)}
               </ol>
-              {installEvent && <button type="button" onClick={() => void install()}
+              {installEvent && <button type="button" onClick={() => void install()} {...tip('Install MODE on this device. Your browser asks you to confirm')}
                 className="min-h-12 w-full rounded-xl bg-[#0F3D66] px-4 py-3 text-sm font-bold text-white shadow-md transition hover:bg-[#14598A] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0F3D66]">
                 <Download size={17} className="mr-2 inline" />Install MODE now
               </button>}
               <p className="text-center text-xs text-slate-500">{installEvent ? 'Your browser will ask you to confirm.' : guide.action}</p>
-              <button type="button" onClick={closeInstall} className="w-full py-2 text-sm font-semibold text-slate-500 hover:text-slate-800">Maybe later</button>
+              <button type="button" onClick={closeInstall} {...tip('Hide this message on this device')} className="w-full py-2 text-sm font-semibold text-slate-500 hover:text-slate-800">Maybe later</button>
             </>
           ) : (
             <>
               <div className="rounded-xl bg-blue-50 p-3 text-sm leading-relaxed text-blue-950">
                 <strong>Built for Ormoc’s DRRM and EOC teams.</strong> Your account connects you to the workspace. New accounts require administrator approval before City records become available.
               </div>
-              <button type="button" onClick={() => { closeAccount(); navigate('/login?mode=signin'); }}
+              <button type="button" onClick={() => { closeAccount(); navigate('/login?mode=signin'); }} {...tip('Sign in with your MODE account')}
                 className="min-h-12 w-full rounded-xl bg-[#0F3D66] px-4 py-3 text-sm font-bold text-white shadow-md transition hover:bg-[#14598A]">Sign in</button>
-              <button type="button" onClick={() => { closeAccount(); navigate('/login?mode=signup'); }}
+              <button type="button" onClick={() => { closeAccount(); navigate('/login?mode=signup'); }} {...tip('Create an account. An administrator approves it before City records open')}
                 className="min-h-12 w-full rounded-xl border border-[#0F3D66] px-4 py-3 text-sm font-bold text-[#0F3D66] transition hover:bg-blue-50">Create an account</button>
-              <button type="button" onClick={closeAccount} className="w-full py-1 text-sm font-semibold text-slate-500 hover:text-slate-800">Continue exploring</button>
+              <button type="button" onClick={closeAccount} {...tip('Keep browsing the public pages')} className="w-full py-1 text-sm font-semibold text-slate-500 hover:text-slate-800">Continue exploring</button>
             </>
           )}
         </div>

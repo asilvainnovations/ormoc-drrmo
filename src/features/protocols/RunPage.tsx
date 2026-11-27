@@ -17,6 +17,7 @@ import type { FormValues, ProtocolRunStep, StepStatus } from '@/types';
 import { compactForm, formProblems, isQuickRecord } from '@/domain/forms';
 import { StepForm, FormRecord } from './StepForm';
 import { isWorkflow } from './labels';
+import { ConversationPanel } from '@/components/ConversationPanel';
 
 export function RunPage() {
   const { runId } = useParams();
@@ -119,6 +120,11 @@ export function RunPage() {
           );
         })}
       </ol>
+      {/* 1.32.0 (ADR-040): discuss this run; the thread locks when the run is completed or stopped. */}
+      <div className="mt-6">
+        <ConversationPanel parentKind="protocol_run" parentId={run.id} label={run.title}
+          about="Discuss this run with the EOC team. Record decisions in the steps and the logbook. The conversation locks when the run is completed or stopped." />
+      </div>
       <Sheet open={abortOpen} onClose={() => setAbortOpen(false)} title="Stop this protocol"
         footer={<><Button tip="Go back to the run" variant="secondary" onClick={() => setAbortOpen(false)}>Keep running</Button><Button tip="Stop the run with the reason given" variant="danger" disabled={!abortWhy.trim()} onClick={abort}>Stop protocol</Button></>}>
         <Field label="Reason" hint="Recorded in the run history.">{(id, d) => <Textarea id={id} aria-describedby={d} value={abortWhy} onChange={(e) => setAbortWhy(e.target.value)} />}</Field>

@@ -28,6 +28,7 @@ export const EOC_TABS = [
   { to: '/eoc/hazard-maps', label: 'Hazard Maps', tip: 'City hazard-map sheets and map interpretation tools for barangay-level reference' },
   { to: '/eoc/risk', label: 'Risk', tip: 'Risk picture: likelihood and severity matrix and the Ten-Year Plan risk profile' },
   { to: '/eoc/barangays', label: 'Barangays', tip: 'All 85 barangays by cluster, coloured by their latest report. Tap one to record a status' },
+  { to: '/eoc/coordination', label: 'Coordination', tip: 'Team messages, check-ins and the check-in call for the current activation' },
   { to: '/eoc/log', label: 'Logbook', tip: 'Time-stamped record of everything that happens. Entries cannot be edited, only corrected' },
   { to: '/eoc/requests', label: 'Requests', tip: 'Resource requests from request to delivery' },
   { to: '/eoc/resources', label: 'Resources', tip: 'What the City has: equipment, vehicles and stocks, checked against the national minimum list' },

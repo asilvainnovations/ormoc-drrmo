@@ -86,7 +86,8 @@ describe('Roster', () => {
     const p: EocPosition = { id: 'p1', code: 'EOC-MGR', title: 'EOC Manager', section: 'command', min_level: 'blue', cluster_code: null, required_depth: 3, sort: 1, is_active: true, version: 1 } as EocPosition;
     await db.eoc_positions.put(p);
     wrap(<RosterPage />);
-    expect(await screen.findByText('EOC Manager')).toBeTruthy();
+    // Shown twice since 1.30: in its section and in "Staffing gaps by function".
+    expect((await screen.findAllByText('EOC Manager')).length).toBeGreaterThan(0);
     fireEvent.click((await screen.findAllByText('Add name'))[0]!.closest('button')!);
     fireEvent.change(await screen.findByLabelText(/Name and position/), { target: { value: 'Juan Dela Cruz, Operations Officer' } });
     fireEvent.click(btn('Save'));

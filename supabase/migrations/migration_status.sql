@@ -83,6 +83,8 @@ from (values
                                                         and pg_get_constraintdef(oid) like '%partnerships%')),
   ('20261125003800_capacity_sustainability_categories', exists (select 1 from pg_constraint
                                                       where conname = 'protocol_templates_category_check'
-                                                        and pg_get_constraintdef(oid) like '%sustainability%'))
+                                                        and pg_get_constraintdef(oid) like '%sustainability%')),
+  ('20261128003900_eoc_coordination',         exists (select 1 from pg_proc
+                                                      where proname = 'eoc_call_checkin' and pronamespace = 'public'::regnamespace))
 ) as m(migration, present)
 order by m.migration;

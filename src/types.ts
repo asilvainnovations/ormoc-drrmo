@@ -389,10 +389,15 @@ export interface ConversationThread extends Versioned {
   resolved_by?: string | null; resolved_at?: string | null;
   created_by?: string | null; created_at?: string;
 }
-/** Append-only. Corrections are new rows. */
+/** 1.32.0. Urgent: EOC Manager or CDRRMO Head on EOC threads. */
+export type MessagePriority = 'routine' | 'priority' | 'urgent';
+/** checkin = a fixed answer to a call; checkin_call = made only through eoc_call_checkin (online). */
+export type MessageKind = 'message' | 'checkin' | 'checkin_call';
+/** Append-only. Corrections are new rows. Rows pulled before 1.32.0 have no priority or kind: read them as routine messages. */
 export interface ConversationMessage {
   id: string; thread_id: string; body: string; in_reply_to: string | null;
   author_id?: string | null; created_at: string;
+  priority?: MessagePriority; kind?: MessageKind;
 }
 
 // ---------------------------------------------------- Indicator links, flags, training runs (1.21.0, ADR-036/037)
