@@ -1,3 +1,4 @@
+import { BehavioralDesignGuide } from '@/components/BehavioralDesignGuide';
 import { useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
@@ -53,6 +54,7 @@ export function ActionPlanPage() {
 
   return (
     <div className="page">
+      <BehavioralDesignGuide area="IAT improvement action planning" motivation="The institutional assessment should lead to measurable capability improvements, not stop at scores and maturity charts." ability="Translate high- and medium-priority gaps into bounded actions with a responsible office, responsible person or position, target date and resource source." prompt="When a gap is validated, assign an owner and due date, review progress at the agreed interval, attach completion evidence and verify the result before closing the action." actionHref="/assess" actionLabel="Return to assessment cycle" boundary="An action marked done is not independently verified by that status alone. Preserve evidence and verification; do not confuse activity completion with demonstrated capability." />
       <PageHeader title="Improvement Action Plan" back={`/assess/${data.cycle.id}`}
         subtitle="High and medium gaps, highest priority first. Each action routes to the manual chapter that fixes it." />
       {gaps.length === 0 ? <EmptyState title="No high or medium gaps yet" body="Gaps appear here as indicators are scored." /> : (

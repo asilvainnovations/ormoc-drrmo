@@ -1,4 +1,5 @@
 // Validation overview (1.24.0): the first screen of the workspace. Counts come from the tracker tables on this device.
+import { BehavioralDesignGuide } from '@/components/BehavioralDesignGuide';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { Link } from 'react-router-dom';
 import { db } from '@/lib/db';
@@ -37,6 +38,7 @@ export function OverviewPage() {
   const pct = snap.items.total ? Math.round((100 * snap.items.closed) / snap.items.total) : 0;
   return (
     <div>
+      <BehavioralDesignGuide area="Manual governance overview" motivation="A shared view of validation, decisions and unresolved dependencies helps the CDRRMO coordinate institutional action rather than count platform activity." ability="Use the consolidated tracker, decision log, workshop agenda and stakeholder matrix as linked sources of work." prompt="Prioritise critical and urgent issues, assign one lead validator, clarify the requested response and due date, then monitor evidence and closure criteria." actionHref="/governance/reviews" actionLabel="Open priority review queue" boundary="The tracker is a controlled validation baseline, not an approved City policy instrument. Proposed office assignments must be confirmed." />
       <WorkspaceHead eyebrow="Ormoc CDRRMO and EOC" title="Validation workspace" subtitle="Track what needs evidence, who needs to decide, and what is ready to close."
         aside={<Pill>{snap.items.total} register items</Pill>} />
       {snap.items.total === 0 ? <Panel title="Nothing loaded yet">The Validation Tracker arrives with the next reference-data sync.</Panel> : <>

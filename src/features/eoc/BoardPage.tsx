@@ -1,5 +1,6 @@
 // EOC Board (1.25.0): the operation as one picture. Alert level, five numbers, the 85 barangays as coloured tiles, and the short
 // list of what needs attention now. Everything else is one tap away in the tabs.
+import { BehavioralDesignGuide } from '@/components/BehavioralDesignGuide';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
@@ -79,6 +80,7 @@ export function BoardPage() {
 
   return (
     <div className="page">
+      <BehavioralDesignGuide area="EOC operations" motivation="Timely coordination protects life safety, supports continuity and gives the EOC Manager a defensible Common Operating Picture." ability="Use verified situation reports, current activation status, resource requests, warning information and approved SOPs; identify the operational owner and escalation route." prompt="When a trigger, critical gap, overdue report or life-safety request appears, assign an owner, required response and review time. Record the decision and operational evidence." actionHref="/eoc" actionLabel="Open EOC operations" boundary="Operational decisions remain with the duly authorised EOC Manager, Incident Commander or competent City authority. MODE prompts and records; they do not confer command authority." />
       <PageHeader title="EOC Operations" subtitle="Level changes need a connection and the EOC Manager or CDRRMO Head." />
       <Tabs items={EOC_TABS} />
 

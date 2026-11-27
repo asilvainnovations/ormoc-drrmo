@@ -1,6 +1,7 @@
 // The interactive RACI board (ADR-033): search the Manual's RACI matrices (Annex 1-F and
 // Chapters 1-10) and the manual document-governance matrix, see who is Responsible / Accountable / Consulted / Informed
 // colour-coded, and — for the CDRRMO Head — adjust assignments online.
+import { BehavioralDesignGuide } from '@/components/BehavioralDesignGuide';
 import { useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
@@ -103,6 +104,7 @@ export function RaciboardPage() {
   if (!data) return <Loading />;
   return (
     <div className="page">
+      <BehavioralDesignGuide area="RACI and role clarity" motivation="Clear accountability prevents duplicated work, missed hand-offs and decisions being made by offices without authority." ability="Check the activity, one accountable role, responsible implementers, consulted offices and informed recipients; verify assignments against the actual EO, plantilla and approved Manual." prompt="When an assignment is missing, duplicated or inconsistent with an approved instrument, route it for review and record the proposed correction and source authority." actionHref="/raci" actionLabel="Review responsibility matrix" boundary="RACI describes workflow responsibility; it does not create statutory, executive, legislative or incident-command authority. Proposed designations remain unconfirmed until verified." />
       <PageHeader title="RACI Board" back="/today"
         subtitle="Who is Responsible, Accountable, Consulted and Informed — from the Manual’s RACI matrices (Annex 1-F and Chapters 1-10) and the manual review cycle." />
       <div className="mb-4 max-w-xl">

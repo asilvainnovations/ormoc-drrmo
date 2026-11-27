@@ -1,5 +1,6 @@
 // Resource requests as a board (1.25.0): four columns from Requested to Delivered, each card one tap from its next step. A new
 // request is item chips, a quantity stepper and who needs it, so nobody has to compose a sentence in an emergency.
+import { BehavioralDesignGuide } from '@/components/BehavioralDesignGuide';
 import { useMemo, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import clsx from 'clsx';
@@ -75,6 +76,7 @@ export function RequestsPage() {
   const ready = f.item.trim() && f.party.trim() && f.qty > 0;
   return (
     <div className="page">
+      <BehavioralDesignGuide area="Resource request coordination" motivation="Timely, prioritised requests help the EOC protect life safety, close critical response gaps and use scarce resources accountably." ability="Check the request details, priority, availability, approval and mobilisation status; clarify quantities, units, destination and receiving office." prompt="When a request is submitted or its status changes, the assigned coordinator confirms receipt, routes it to the authorised approver or resource custodian, and records the response and fulfilment evidence." actionHref="/eoc/requests" actionLabel="Review resource requests" boundary="Request, recommendation, approval and mobilisation are distinct states. Only the authorised role approves or commits resources." />
       <PageHeader title="Resource Requests" subtitle="Requested, approved, on the way, delivered. Only the EOC Manager approves or rejects."
         actions={operator && <Button tip="Record a new resource request" icon={Plus} onClick={() => setOpen(true)}>New request</Button>} />
       <Tabs items={EOC_TABS} />
