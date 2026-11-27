@@ -1,3 +1,4 @@
+import { BehavioralDesignGuide } from '@/components/BehavioralDesignGuide';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
@@ -40,6 +41,7 @@ export function NotificationsPage() {
 
   return (
     <div className="page">
+      <BehavioralDesignGuide area="Notifications and follow-through" motivation="Timely cues help the responsible office respond to changed conditions, deadlines, evidence requests and operational exceptions." ability="Open the linked record, read the requested action and use the destination workflow to respond. Read marks and device preferences are not completion evidence." prompt="Act when the notice points to an overdue action, sync failure, open request or active protocol. Record the response in the source workflow, not merely by dismissing the notice." actionHref="/settings/notifications" actionLabel="Review notices" boundary="Notifications are prompts, not decisions or proof of action. The source record remains authoritative for status, owner, evidence and closure." />
       <PageHeader title="Notifications" back="/settings"
         subtitle="Built from the records on this device: EOC level, declarations, sync problems, open requests, running protocols and overdue actions. Choices and read marks stay on this device." />
 
