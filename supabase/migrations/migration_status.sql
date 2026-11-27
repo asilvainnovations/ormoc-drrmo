@@ -85,6 +85,8 @@ from (values
                                                       where conname = 'protocol_templates_category_check'
                                                         and pg_get_constraintdef(oid) like '%sustainability%')),
   ('20261128003900_eoc_coordination',         exists (select 1 from pg_proc
-                                                      where proname = 'eoc_call_checkin' and pronamespace = 'public'::regnamespace))
+                                                      where proname = 'eoc_call_checkin' and pronamespace = 'public'::regnamespace)),
+  ('20261128004000_eoc_modules_by_scenario',  exists (select 1 from pg_attribute
+                                                      where attrelid = 'public.camp_reports'::regclass and attname = 'families_apart' and not attisdropped))
 ) as m(migration, present)
 order by m.migration;

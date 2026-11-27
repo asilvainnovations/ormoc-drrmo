@@ -42,7 +42,7 @@ PLANS = [
      'Flash flood', 'Hours', 'Red straight from an orange or red heavy-rainfall warning; usually below the 72-hour declaration floor, so city early action applies.',
      'to_prepare', None, None, None, None,
      dict(operations='on', planning='on', logistics='on', cluster_desks='lead'),
-     dict(SRR='on', CCCM='on', HEALTH='standby', FNFI='standby'), 'red'),
+     dict(SRR='lead', CCCM='lead', HEALTH='standby', FNFI='standby'), 'red'),  # 1.33.0: SRR and CCCM lead
     ('CP-LANDSLIDE', 'Contingency plan for landslides in the uplands', 'rain_landslide',
      'Landslide, uplands (rain or earthquake)', 'Hours to none', 'Blue on rainfall thresholds; Red if there are mass casualties or barangays are cut off. The IMT leads on site.',
      'to_prepare', None, None, None, None,
@@ -61,6 +61,25 @@ PLANS = [
      'to_prepare', None, None, None, None,
      dict(operations='on', planning='on', cluster_desks='lead'), dict(LAO='lead', SRR='lead', HEALTH='standby'), 'red'),
 ]
+
+# 1.33.0: hazards each plan covers (hazards.code), to suggest a plan for the hazard named when the level is raised.
+# Extreme heat and disease have no mapping on purpose (no plan; no biological hazard code).
+PLAN_HAZARDS = {
+    'CP-FLOOD-LUNOP': ['tropical_cyclone', 'storm_surge', 'flood'],
+    'CP-EARTHQUAKE': ['earthquake', 'tsunami'],
+    'CP-FLASHFLOOD': ['flash_flood'],
+    'CP-LANDSLIDE': ['rain_landslide'],
+    'CP-DROUGHT': ['drought'],
+    'CP-INDUSTRIAL': ['industrial'],
+    'CP-DISEASE': [],
+}
+
+# 1.33.0: notes on activation items (plan, kind, item). Flash flood leads are anchored on the CSWD districts and the
+# City evacuation centres (CDRRMO "DISTRICT Clusters" and "City Evacuation Center" lists, Nov 2026).
+ITEM_NOTES = {
+    ('CP-FLASHFLOOD', 'cluster', 'CCCM'): 'Lead. Anchored on the six CSWD districts: each District Camp Coordinator runs the centres in that district. Current City centres: Dolores (District 1), Curva and Margen (District 2), Danhug (District 4). Families move and stay together.',
+    ('CP-FLASHFLOOD', 'cluster', 'SRR'): 'Lead. CDRRMO rescue team with BFP and partners, deployed by CSWD district so rescue, transport and centre intake match. Families are moved together.',
+}
 
 # code, title, section, min level, cluster
 POSITIONS = [

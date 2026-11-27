@@ -31,3 +31,13 @@ describe('nextSubmission', () => {
   });
   it('is null without a cut-off', () => { expect(nextSubmission(undefined)).toBeNull(); });
 });
+
+describe('families together on the board (1.33.0)', () => {
+  it('raises one item for separated children, carer separations and split families', async () => {
+    const { attentionItems } = await import('./boardAttention');
+    const base = { activeEvent: true, silentPriority: [], lifeSafetyAwaiting: 0, campsOverCapacity: 0, evacCountsMissing: 0, nextSitrep: null };
+    const a = attentionItems({ ...base, familyUnity: { children: 2, carers: 1, families: 0 } });
+    expect(a).toEqual([{ id: 'family', tone: 'bad', text: 'Families together: 2 children unaccompanied or separated, 1 person apart from their carer', to: '/tools/echo/dashboard' }]);
+    expect(attentionItems({ ...base, familyUnity: { children: 0, carers: 0, families: 0 } })).toEqual([]);
+  });
+});

@@ -12,6 +12,7 @@ import { FundsPage } from './aa/FundsPage';
 import { RosterPage } from './RosterPage';
 import { RiskPage } from './RiskPage';
 import { CoordinationPage } from './CoordinationPage';
+import { PlanPage, ScenariosPage } from './ScenariosPage';
 import HazardMapPage from './map/HazardMapPage';
 import { lazy, Suspense } from 'react';
 import { Loading } from '@/components/ui';
@@ -35,7 +36,9 @@ export default function EocRoutes() {
       {/* 1.25.0: the cluster view lives on the Barangays screen; old links still work. */}
       <Route path="liaison" element={<Navigate to="/eoc/barangays" replace />} />
       <Route path="risk" element={<RiskPage />} />
-      <Route path="plans" element={<Navigate to="/eoc" replace />} />
+      {/* 1.33.0: Figure 1.7, modules by contingency scenario, and each plan's CP template. */}
+      <Route path="plans" element={<ScenariosPage />} />
+      <Route path="plans/:code" element={<PlanPage />} />
       <Route path="roster" element={<RosterPage />} />
       <Route path="map" element={<Suspense fallback={<Loading />}><MapPage /></Suspense>} />
       <Route path="hazard-maps" element={<HazardMapPage />} />

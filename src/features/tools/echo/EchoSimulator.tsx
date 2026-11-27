@@ -15,7 +15,7 @@ import { Sheet } from '@/components/Sheet';
 import { useToast } from '@/components/Toast';
 import { tip } from '@/components/Tooltip';
 import {
-  BENCHMARKS, HAZARDS, LEAD_TIMES, RA12076_CHECKS, SOURCES, bathingNeedJmc, exerciseAlerts, exercisePhase, fmt, importExercise, malesOf, movement,
+  BENCHMARKS, FAMILY_UNITY_RULES, HAZARDS, LEAD_TIMES, RA12076_CHECKS, SOURCES, bathingNeedJmc, exerciseAlerts, exercisePhase, fmt, importExercise, malesOf, movement,
   newExercise, populationProblems, scenarioPopulation, selectedSite, spaceCheck, toiletCheck, utilisation, waterCheck,
   type EchoModule, type Exercise, type SourceKey, type TrainingSite,
 } from '@/domain/echo';
@@ -37,7 +37,12 @@ export const PROTECT_CHECKS = ['Planning data by age, sex and disability; Indige
   'Child-friendly space and the child protection referral pathway (RA 10821)', 'Women-friendly and breastfeeding spaces with privacy',
   'Confidential GBV response and referral protocols', 'Family tracing and reunification through the authorised process',
   'Support and reasonable accommodation for older persons (RA 9994)', 'Respect for culture, language and the rights of Indigenous Peoples (RA 8371)',
-  'Accessible complaints and feedback channels'];
+  'Accessible complaints and feedback channels',
+  // 1.33.0: families stay together (RA 10821 Sec. 4(d), 6; JMC 02 s. 2021; CPMS 2019).
+  'Each family in one partitioned bay; no family split between rooms or centres',
+  'Every child arrives with a responsible adult; separated children stay with the relative caring for them',
+  'Unaccompanied children referred to the CSWDO; no transfer out of the camp without a social worker’s best-interest assessment',
+  'Persons with disability and older persons stay with their carer in an accessible ground-level family bay'];
 export const MONITOR_CHECKS = ['Update aggregate population, arrivals, departures and household counts', 'Monitor water quantity, quality, access and queuing',
   'Inspect toilets, bathing, lighting, drainage and waste daily', 'Track food, nutrition and health service gaps', 'Participatory safety mapping',
   'Review feedback, actions and referrals confidentially', 'Coordinate service providers; record gaps and duplication', 'Review hazard exposure and site safety after each warning'];
@@ -550,6 +555,10 @@ export function Standards() {
   const by = (src: SourceKey) => BENCHMARKS.filter((b) => b.source === src);
   return (
     <div className="space-y-4">
+      <Card title="Families stay together">
+        <p className="mb-2 text-sm text-muted">No Philippine instrument requires families to be split in evacuation centres. JMC 02 s. 2021 allocates space by family (DAFAC), and RA 10821 has children evacuate with a responsible person. Separate rooms are service spaces, not sleeping quarters. The JMC p. 23 clause on unaccompanied and separated children is applied only after a social worker’s best-interest assessment.</p>
+        <ul className="space-y-2 text-sm">{FAMILY_UNITY_RULES.map((r) => <li key={r.key}>{r.text} <span className="text-xs text-muted">({r.ref})</span></li>)}</ul>
+      </Card>
       <Notice tone="warn" title="Keep sources distinct">The JMC indicators, the Sphere benchmarks and the RA 12076 requirements are not interchangeable. The JMC's 52 L per person per day (prolonged stay) is not Sphere's 15 L (initial phase); the JMC toilet ratios are not RA 12076's facility standard. Confirm the applicable, stricter requirement with the technical offices. Legal readings need City Legal or OCD confirmation. The official texts govern.</Notice>
       <div className="grid gap-4 lg:grid-cols-2">
         <Card title="Philippine legal framework">
