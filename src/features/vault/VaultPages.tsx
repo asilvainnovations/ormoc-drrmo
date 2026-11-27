@@ -1,3 +1,4 @@
+import { BehavioralDesignGuide } from '@/components/BehavioralDesignGuide';
 import { useMemo, useState, type ReactNode } from 'react';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
@@ -56,6 +57,7 @@ export function VaultPage() {
 
   return (
     <div className="page">
+      <BehavioralDesignGuide area="Evidence and document custody" motivation="Traceable, authentic source records support sound validation, lawful decisions and defensible Manual content." ability="Capture issuer, document number, date, source location, version, access classification and linked Manual or indicator references; use the official copy where available." prompt="When a review or decision requires evidence, attach or reference the authoritative record, identify its custodian and date, and notify the lead validator that it is ready for checking." actionHref="/vault" actionLabel="Open evidence vault" boundary="Uploading a file does not establish authenticity or validate a claim. Access, retention, privacy and approval rules continue to apply; restricted records must remain role-protected." />
       <PageHeader title="Document Vault" subtitle="Laws, guidelines, City issuances, plans and records, in one place for Document Review and the manuals."
         actions={<Button icon={Plus} onClick={() => setAdding({ indicatorIds: ind ? [ind] : [], refKey: ref ?? undefined })} tip="Add a document: upload a file, link the official copy, or record where the paper original is kept">Add document</Button>} />
       <Tabs items={VAULT_TABS} />
