@@ -230,5 +230,8 @@
   ],
   "fit": "city boundary (ICP, affine)",
   "median_m": 80.6
- }
+ },
+  "context_slope": {"corners": [[124.470981, 11.192149], [124.791099, 11.190402], [124.789491, 10.925361], [124.469659, 10.927065]], "size": [1800, 1462], "frame": [52, 35, 2595, 2100], "rmse_e_m": 6.2, "rmse_n_m": 4.0, "ticks": 18, "m_per_px": [13.749, 14.199], "datum": "Luzon 1911 (towgs84 -133,-77,-51), UTM 51N", "outline_check_median_m": {"luzon1911": 117, "wgs84": 177}},
+  "context_topography": {"corners": [[124.47601, 11.190835], [124.780779, 11.189175], [124.779196, 10.926862], [124.474698, 10.928482]], "size": [1800, 1513], "frame": [44, 34, 2550, 2140], "rmse_e_m": 1.9, "rmse_n_m": 3.6, "ticks": 12, "m_per_px": [13.283, 13.779], "datum": "Luzon 1911 (towgs84 -133,-77,-51), UTM 51N", "outline_check_median_m": {"luzon1911": 279, "wgs84": 304}},
+  "context_zoning": {"corners": [[124.555061, 11.064829], [124.66324, 11.064252], [124.662774, 10.981458], [124.554626, 10.982029]], "size": [2000, 1626], "frame": [43, 43, 2553, 2084], "rmse_e_m": 1.8, "rmse_n_m": 1.2, "ticks": 20, "m_per_px": [4.709, 4.487], "datum": "Luzon 1911 (towgs84 -133,-77,-51), UTM 51N", "outline_check_median_m": {"luzon1911": 14, "wgs84": 85}}
 }

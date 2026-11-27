@@ -33,10 +33,9 @@ import type {
 
 import { EOC_TABS, HAZARD_FILTER } from './labels';
 
-import {
-  RiskMatrixChart,
-  type RiskMatrixItem,
-} from './RiskMatrixChart';
+import { CityRiskPicture, HowToRead, RiskRegister } from './CityRisk';
+import { buildRegister } from '@/domain/cityRisk';
+import { POTENTIAL_DAMAGES_BN } from '@/data/ldrrmpRisk';
 
 import { LdrrmpRiskProfile } from './LdrrmpRiskProfile';
 
@@ -88,6 +87,7 @@ export function RiskPage() {
     return {
       risks,
       matrix,
+      plans: await db.contingency_plans.toArray(),
     };
   }, []);
 
@@ -137,28 +137,11 @@ export function RiskPage() {
     }));
   }, []);
 
-  /**
-   * FIX: Adapt DDRiVE city scores to the RiskMatrixChart contract.
-   *
-   * DDRiVE uses:
-   *   likelihood: number
-   *   severity: number
-   *
-   * RiskMatrixChart requires:
-   *   likelihood: number
-   *   impact: number
-   *
-   * Severity represents the impact dimension in the chart.
-   *
-   * Do not pass ddrive_risk_matrix directly to the chart.
-   * Those records describe classification bands, not chart cells.
-   */
-  const matrixItems: RiskMatrixItem[] = (city?.risks ?? []).map(
-    ({ likelihood, severity }) => ({
-      likelihood,
-      impact: severity,
-    }),
-  );
+  // 1.35.0: the integrated register joins each scored hazard to its barangays, plans and the Plan's damages.
+  const register = city && profiles
+    ? buildRegister(city.risks, city.matrix, city.plans, profiles.map((r) => r.p), profiles.flatMap((r) => (r.h ? [r.h] : [])),
+      profiles.flatMap((r) => (r.f ? [r.f] : [])), POTENTIAL_DAMAGES_BN)
+    : [];
 
   // ------------------------------------------------------------
   // Barangay search and hazard filtering
@@ -266,13 +249,8 @@ export function RiskPage() {
           ====================================================== */}
 
       <Section title="City Risk Picture">
-        <RiskMatrixChart
-          items={matrixItems}
-          title="City Risk Matrix"
-          description="ISO 31000-inspired 5×5 likelihood and impact visualization. Scores are calculated from available DDRiVE city risk records."
-          ariaLabel="City risk matrix showing likelihood against impact"
-          showCounts
-        />
+        <CityRiskPicture risks={city?.risks ?? []} matrix={city?.matrix ?? []} />
+        <HowToRead entries={register} />
 
         <LdrrmpRiskProfile />
 
@@ -284,6 +262,10 @@ export function RiskPage() {
             here, so trend arrows are intentionally not inferred.
           </p>
         )}
+      </Section>
+
+      <Section title="Integrated Risk Register">
+        <RiskRegister entries={register} />
       </Section>
 
       {/* ======================================================
