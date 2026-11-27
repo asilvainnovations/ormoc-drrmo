@@ -1,3 +1,4 @@
+import { BehavioralDesignGuide } from '@/components/BehavioralDesignGuide';
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
@@ -65,6 +66,7 @@ export function RunPage() {
 
   return (
     <div className="page">
+      <BehavioralDesignGuide area="SOP and protocol execution" motivation="Consistent execution of approved procedures reduces omission, clarifies hand-offs and preserves an auditable operational record." ability="Follow the versioned steps, complete required forms, record notes and evidence, and use the escalation or not-applicable path only with an explanation." prompt="A protocol run begins from its defined trigger. Critical steps and due times guide the operator; completion is available only after required steps and records are closed." actionHref="/drrm/protocols" actionLabel="Open SOP registry" boundary="Only approved protocols govern live operations. A workflow run records execution; it does not replace command authority, official warnings or competent decisions." />
       <PageHeader title={run.title} back={backTo}
         subtitle={`${run.context_type === 'drill' ? 'Drill. ' : ''}Started ${fmtDateTime(run.started_at)}. ${done} of ${steps.length} steps closed.`}
         actions={active && <>
