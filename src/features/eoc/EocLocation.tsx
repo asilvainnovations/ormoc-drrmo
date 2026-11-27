@@ -1,7 +1,7 @@
 // EOC location card for the Board (ADR-015). Reads a fixed record that ships with the app, so it
 // shows offline. Maps open outside the app; nothing is framed and the CSP is unchanged.
 import { Copy, Download, MapPin, Navigation, Smartphone } from 'lucide-react';
-import { Badge, Button, ButtonAnchor, KeyValue, Notice, Section } from '@/components/ui';
+import { Badge, Button, ButtonAnchor, KeyValue, Section } from '@/components/ui';
 import { useToast } from '@/components/Toast';
 import { alternateEoc, primaryEoc, type EocSite } from '@/data/eoc-site';
 import { fmtDms, fmtLatLng, geoUri, googleDirectionsUrl, googleMapsUrl, osmUrl, plainLatLng } from '@/lib/geo';
@@ -46,13 +46,6 @@ export function EocLocation() {
           tip="Copy the EOC coordinates to paste into a radio log, SMS or report">Copy coordinates</Button>
       </div>
 
-      {!site.confirmed && (
-        <div className="mt-4">
-          <Notice tone="info" title="Position not yet confirmed">
-            Taken from a map placemark, not a survey. The CDRRMO confirms it before it is cited in the Manual of Operations or shared with OCD VIII.
-          </Notice>
-        </div>
-      )}
     </Section>
   );
 }

@@ -32,9 +32,9 @@ describe('EOC location card', () => {
     expect(container.querySelector('iframe')).toBeNull();
   });
 
-  it('says plainly that the position and the alternate EOC still need the CDRRMO', () => {
+  it('shows the confirmed position and that the alternate EOC is still to be recorded', () => {
     const { getByText } = render(<EocLocation />);
-    expect(getByText('To be confirmed')).toBeTruthy();
+    expect(getByText('Confirmed')).toBeTruthy();
     expect(getByText('Not yet recorded')).toBeTruthy();
   });
 });

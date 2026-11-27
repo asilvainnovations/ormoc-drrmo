@@ -32,6 +32,7 @@ import {
 import type { ConversationMessage } from '@/types';
 import { Block, Ring, Tile } from './kit';
 import { EOC_TABS } from './labels';
+import { Conversations } from './Conversations';
 
 const EOC_ROLES = ['eoc_manager', 'eoc_staff', 'duty_officer', 'cdrrmo_head', 'admin'] as const;
 
@@ -40,7 +41,7 @@ export function CoordinationPage() {
   return (
     <div className="page">
       <PageHeader title="Coordination"
-        subtitle="Messages, check-ins and the check-in call for the current activation. They lock when the activation ends." />
+        subtitle="Messages, check-ins and the check-in call for the current activation, and every conversation you can read." />
       <Tabs items={EOC_TABS} />
       {!activation ? (
         <EmptyState title="The EOC is at White level"
@@ -49,6 +50,7 @@ export function CoordinationPage() {
       ) : (
         <ActivationCoordination activationId={activation.id} level={level} startedAt={activation.started_at} />
       )}
+      <div className="mt-5"><Conversations /></div>
     </div>
   );
 }

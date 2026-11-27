@@ -9,7 +9,8 @@
 // file and the KML. If the City wants the CDRRMO to edit sites itself, move this to a table
 // (see ADR-015, "Later").
 //
-// The position is a placemark, not a survey. The elevation is Google Earth's terrain value.
+// The position is a Google Earth placemark, confirmed by the CDRRMO on 28 Nov 2026 (1.34.1). The elevation is Google
+// Earth's terrain value, not surveyed.
 
 export type EocSiteRole = 'primary' | 'alternate';
 
@@ -37,8 +38,8 @@ export const EOC_SITES: EocSite[] = [
     lng: 124.6042871572453,
     elevationM: 7.471268260529933,
     kml: '/eoc-site/Ormoc_City_EOC.kml',
-    source: 'Google Earth placemark, 6 Nov 2026',
-    confirmed: false,
+    source: 'Google Earth placemark, 6 Nov 2026; position confirmed by the CDRRMO, 28 Nov 2026',
+    confirmed: true,
   },
   // Alternate EOC: not yet recorded. The EOC Capability Assessment Checklist and MR-10 expect
   // one. Add it here (role 'alternate') with its own KML when the CDRRMO names the site.

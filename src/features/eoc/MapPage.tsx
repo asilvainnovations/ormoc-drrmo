@@ -22,10 +22,10 @@ import { addLayer, addPoint, loadLayer, markOfficial, parseCoord, supersedeLayer
 import { CONDITION, EOC_TABS, LAYER_GROUP, LAYER_VALIDATION, POINT_KIND, POINT_STATUS } from './labels';
 import { CITY_REFERENCE_MAPS } from './map/referenceMaps';
 import { HAZARD_MAPS } from './map/hazardMaps';
+import { CONTEXT_MAPS } from './map/contextMaps';
 import { Slider } from '@/components/ui/slider';
 
 const empty = { type: 'FeatureCollection' as const, features: [] as unknown[] };
-const CONTEXT_REFERENCE_MAPS = CITY_REFERENCE_MAPS.filter((item) => ['zoning', 'slope', 'topography'].includes(item.id));
 
 
 export default function MapPage() {
@@ -41,6 +41,7 @@ export default function MapPage() {
   const [baseProblem, setBaseProblem] = useState<string | null>(null);
   const [shown, setShown] = useState<Record<string, boolean>>({});
   const [hz, setHz] = useState<Record<string, boolean>>({});
+  const [cx, setCx] = useState<Record<string, boolean>>({});
   const [opac, setOpac] = useState<Record<string, number>>({});
   const [show, setShow] = useState({ barangays: true, points: true });
   const [busy, setBusy] = useState(false);
@@ -65,6 +66,8 @@ export default function MapPage() {
     m.addControl(new maplibregl.ScaleControl({unit:'metric'}),'bottom-left');
     m.on('error',(e)=>{if(/pmtiles|404|Failed to fetch|NetworkError/i.test(String(e.error?.message??'')))setBaseProblem('Part of the City basemap could not be read.');});
     m.on('load',()=>{
+      // 1.34.1: City context sheets (slope, zoning, topography), georeferenced like the hazard sheets and drawn under them.
+      for(const cm of CONTEXT_MAPS){m.addSource(`cx-${cm.code}`,{type:'image',url:cm.file,coordinates:cm.corners});m.addLayer({id:`cx-${cm.code}`,type:'raster',source:`cx-${cm.code}`,layout:{visibility:'none'},paint:{'raster-opacity':0.7,'raster-fade-duration':0}});}
       // Hazard sheets (ADR-028): georeferenced images, hidden until switched on, drawn under the operational dots.
       for(const hm of [...HAZARD_MAPS].reverse()){m.addSource(`hz-${hm.code}`,{type:'image',url:hm.file,coordinates:hm.corners});m.addLayer({id:`hz-${hm.code}`,type:'raster',source:`hz-${hm.code}`,layout:{visibility:'none'},paint:{'raster-opacity':0.75,'raster-fade-duration':0}});}
       m.addSource('barangays',{type:'geojson',data:empty as never});
@@ -85,6 +88,7 @@ export default function MapPage() {
   useEffect(()=>{if(ready)(map.current?.getSource('points') as GeoJSONSource|undefined)?.setData(pointsFc as never);},[ready,pointsFc]);
   useEffect(()=>{if(ready)(map.current?.getSource('barangays') as GeoJSONSource|undefined)?.setData(brgyFc as never);},[ready,brgyFc]);
   useEffect(()=>{const m=map.current;if(!ready||!m)return;for(const hm of HAZARD_MAPS){const id=`hz-${hm.code}`;if(!m.getLayer(id))continue;m.setLayoutProperty(id,'visibility',hz[hm.code]?'visible':'none');m.setPaintProperty(id,'raster-opacity',(opac[hm.code]??75)/100);}},[ready,hz,opac]);
+  useEffect(()=>{const m=map.current;if(!ready||!m)return;for(const cm of CONTEXT_MAPS){const id=`cx-${cm.code}`;if(!m.getLayer(id))continue;m.setLayoutProperty(id,'visibility',cx[cm.code]?'visible':'none');m.setPaintProperty(id,'raster-opacity',(opac[`cx-${cm.code}`]??70)/100);}},[ready,cx,opac]);
   useEffect(()=>{const m=map.current;if(!ready||!m)return;for(const id of ['barangays'])if(m.getLayer(id))m.setLayoutProperty(id,'visibility',show.barangays?'visible':'none');for(const id of ['points','points-label'])if(m.getLayer(id))m.setLayoutProperty(id,'visibility',show.points?'visible':'none');},[ready,show]);
   const toggleLayer=async(l:GeoLayer)=>{
     const m=map.current;if(!m||!ready)return;const id=`layer-${l.id}`;
@@ -105,7 +109,7 @@ export default function MapPage() {
     <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_20rem]">
       <div>
         <div ref={box} className="h-[68vh] min-h-[24rem] w-full overflow-hidden rounded-control border border-line bg-sunken" role="region" aria-label="Interactive Geo-COP map of Ormoc City"/>
-        <p className="mt-2 text-xs text-muted">Hazard sheets are the City's source maps placed on the map; each shows its own legend and source. Ring colour on points: green field-verified, ochre pending. Barangay dots show the latest report in this event. WGS 84 (EPSG:4326).</p>
+        <p className="mt-2 text-xs text-muted">Hazard, terrain and zoning sheets are the City's source maps placed on the map; each shows its own legend and source. Ring colour on points: green field-verified, ochre pending. Barangay dots show the latest report in this event. WGS 84 (EPSG:4326).</p>
       </div>
       <aside aria-label="Map layers" className="space-y-4 rounded-sheet border border-line bg-surface p-4 shadow-raised lg:max-h-[68vh] lg:overflow-y-auto">
         <div>
@@ -120,15 +124,17 @@ export default function MapPage() {
         </div>
 
         <div>
-          <h2 className="mb-2 text-lg font-extrabold">City reference layers</h2>
-          <p className="mb-2 text-xs text-muted">Zoning, slope and topography are supplied here as static reference sheets, not georeferenced overlays. Open the full-resolution sheet to inspect its original legend, scale and date. Confirm zoning with CPDO and terrain interpretation with the responsible technical office before operational or site decisions.</p>
-          <ul className="space-y-3">{CONTEXT_REFERENCE_MAPS.map((item)=><li key={item.id} className="rounded-control border border-line p-3">
-            <div className="flex flex-wrap items-center justify-between gap-2">
-              <div><p className="font-semibold">{item.title}</p><p className="text-xs text-muted">{item.description}</p></div>
-              <a href={item.href} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-tap items-center rounded-control border border-line px-3 text-sm font-semibold hover:bg-sky-soft" aria-label={`Open full resolution ${item.title}`}>Open sheet</a>
-            </div>
-            <p className="mt-2 text-xs text-muted">{item.caution}</p>
-          </li>)}</ul>
+          <h2 className="mb-2 text-lg font-extrabold">Terrain and land use</h2>
+          <p className="mb-2 text-xs text-muted">CPDO sheets placed on the map from their own UTM grid (Luzon 1911 datum). Reference, not survey: confirm zoning with CPDO and terrain with the City Engineer before a site decision.</p>
+          <ul className="space-y-3">{CONTEXT_MAPS.map((c)=>{const sheet=CITY_REFERENCE_MAPS.find((r)=>r.id===c.code);return <li key={c.code}>
+            <Checkbox checked={!!cx[c.code]} onChange={()=>setCx((o)=>({...o,[c.code]:!o[c.code]}))} tip={`${c.source}. Fit error about ${Math.round(c.accuracy_m)} m.`}><span className="font-semibold">{c.title}</span></Checkbox>
+            {cx[c.code]&&<div className="mt-2 space-y-2 pl-7">
+              <div className="flex items-center gap-2"><span className="w-14 text-xs text-muted">Opacity</span><Slider value={[opac[`cx-${c.code}`]??70]} min={10} max={100} step={5} thumbLabel={`Opacity of ${c.title}`} thumbTip="Drag to make the sheet more or less see-through" onValueChange={([v])=>setOpac((o)=>({...o,[`cx-${c.code}`]:v!}))}/><span className="w-9 text-right text-xs tabular-nums">{opac[`cx-${c.code}`]??70}%</span></div>
+              <ul className="flex flex-wrap gap-x-3 gap-y-1 text-xs">{c.legend.map((l)=><li key={l.label} className="flex items-center gap-1.5"><span className="inline-block h-3 w-3 rounded-sm border border-line" style={{background:l.color}}/>{l.label}</li>)}</ul>
+              {c.note&&<p className="text-xs text-muted">{c.note}</p>}
+              {sheet&&<a href={sheet.href} target="_blank" rel="noopener noreferrer" data-tip="Open the full printed sheet with its own legend, scale and date" className="text-xs font-semibold text-sky underline">Open the printed sheet</a>}
+            </div>}
+          </li>;})}</ul>
         </div>
         <div>
           <h2 className="mb-2 text-lg font-extrabold">Operations</h2>
