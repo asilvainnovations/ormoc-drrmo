@@ -29,8 +29,21 @@ export interface RiskMatrixItem {
   impact: number;
 }
 
+/** A precomputed matrix row/cell, as produced by the EOC data layer or buildMatrix(). */
+export interface RiskMatrixRow {
+  likelihood: number;
+  impact: number;
+  score: number;
+  count: number;
+}
+
 export interface RiskMatrixChartProps {
-  items: RiskMatrixItem[];
+  /** Items to plot; prefer this on new call sites. */
+  items?: RiskMatrixItem[];
+  /** @deprecated Alias for items, kept for existing call sites such as RiskPage. */
+  risks?: RiskMatrixItem[];
+  /** Precomputed cells with counts; when provided, the chart renders them as-is. */
+  matrix?: RiskMatrixRow[];
   /** Show a count badge on cells that contain items. Default true. */
   showCounts?: boolean;
   title?: string;
@@ -55,7 +68,7 @@ export const levelClass = (level: string) =>
   level === 'Critical' ? 'bg-red-100 text-red-900' : level === 'High' ? 'bg-orange-100 text-orange-900' : level === 'Medium' ? 'bg-amber-100 text-amber-900' : 'bg-emerald-100 text-emerald-900';
 
 /** Build the 5×5 grid rows, top row = likelihood 5 down to bottom row = likelihood 1. */
-export const buildMatrix = (items: RiskMatrixItem[]) =>
+export const buildMatrix = (items: RiskMatrixItem[]): RiskMatrixRow[] =>
   Array.from({ length: 5 }, (_, i) =>
     Array.from({ length: 5 }, (_, j) => {
       const likelihood = 5 - i;
@@ -64,20 +77,24 @@ export const buildMatrix = (items: RiskMatrixItem[]) =>
         likelihood,
         impact,
         score: likelihood * impact,
-        level: levelForScore(likelihood * impact),
         count: items.filter((r) => clamp15(r.likelihood) === likelihood && clamp15(r.impact) === impact).length,
       };
-    }));
+    })).flat();
 
 export const RiskMatrixChart: React.FC<RiskMatrixChartProps> = ({
   items,
+  risks,
+  matrix,
   showCounts = true,
   title = 'Risk matrix (likelihood × impact)',
   description,
   ariaLabel = 'Risk matrix: likelihood 5 to 1 by impact 1 to 5',
   className,
 }) => {
-  const matrix = useMemo(() => buildMatrix(items), [items]);
+  const source = items ?? risks ?? [];
+  const computed = useMemo(() => buildMatrix(source), [source]);
+  // A precomputed matrix (e.g. aggregated in the EOC data layer) wins over deriving one from items.
+  const cells = matrix && matrix.length ? matrix : computed;
 
   return (
     <div className={className}>
@@ -86,7 +103,7 @@ export const RiskMatrixChart: React.FC<RiskMatrixChartProps> = ({
       <div className="grid grid-cols-[auto_1fr] gap-2 items-center">
         <span className="text-[10px] font-bold text-slate-500 [writing-mode:vertical-rl] rotate-180">Likelihood (5 → 1)</span>
         <div className="grid grid-cols-5 gap-1" role="table" aria-label={ariaLabel}>
-          {matrix.flat().map((c) => (
+          {cells.map((c) => (
             <div
               key={`${c.likelihood}-${c.impact}`}
               role="cell"
