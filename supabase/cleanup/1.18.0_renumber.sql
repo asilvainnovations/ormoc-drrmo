@@ -28,10 +28,12 @@ delete from public.protocol_templates where id in (
   'a6f9ffbc-06b0-50f5-9b7c-e7d54d8e2986'::uuid
 );
 
--- 3. Indicator links of removed documents.
+-- 3. Indicator links of removed documents. 1.34.0: since the consolidated Manual (1.27), id 57e7eec1 is the drafted
+-- Chapter 9 (Public Awareness, Community Resilience and Capacity Development) with its WF-SOP9 templates. Steps 3 and 5
+-- touch only the legacy outline, so a re-run no longer deletes the live chapter (it failed on protocol_templates).
 delete from public.moo_document_indicators where document_id in (
   '57e7eec1-e655-50fd-8bc4-e7b956b654fc'::uuid
-);
+) and not exists (select 1 from public.moo_documents d where d.id = document_id and d.code = 'Chapter 9');
 
 -- 4. Version rows that 1.18 no longer generates.
 delete from public.moo_versions where id in (
@@ -43,7 +45,7 @@ delete from public.moo_versions where id in (
 -- 5. Removed documents: the four legacy shells and any doc 1.18 no longer seeds.
 delete from public.moo_documents where id in (
   '57e7eec1-e655-50fd-8bc4-e7b956b654fc'::uuid
-);
+) and code is distinct from 'Chapter 9';
 
 commit;
 -- 5b. The Introduction doc row itself renumbers in place by deterministic id: code 'Chapter 0' becomes

@@ -87,6 +87,12 @@ from (values
   ('20261128003900_eoc_coordination',         exists (select 1 from pg_proc
                                                       where proname = 'eoc_call_checkin' and pronamespace = 'public'::regnamespace)),
   ('20261128004000_eoc_modules_by_scenario',  exists (select 1 from pg_attribute
-                                                      where attrelid = 'public.camp_reports'::regclass and attname = 'families_apart' and not attisdropped))
+                                                      where attrelid = 'public.camp_reports'::regclass and attname = 'families_apart' and not attisdropped)),
+  -- Added 28 Nov 2026 (CI: "41 of 43 applied"): the CSWD district migrations of 23 Nov.
+  ('20261123000000_add_district_id_to_barangays', exists (select 1 from pg_attribute
+                                                      where attrelid = 'public.barangays'::regclass and attname = 'district_id' and not attisdropped)),
+  ('20261123000100_correct_cswd_district_assignments', coalesce(col_description('public.barangays'::regclass,
+                                                      (select attnum from pg_attribute where attrelid = 'public.barangays'::regclass and attname = 'district_id'))
+                                                      like 'CSWD social-welfare district%', false))
 ) as m(migration, present)
 order by m.migration;

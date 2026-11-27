@@ -16,14 +16,15 @@
 // RiskPage.test.tsx — tests for the EOC risk page's matrix chart.
 // Uses plain Vitest matchers only; the repo does not ship @testing-library/jest-dom types.
 // Extend this file with page-level tests (register table, filters, add-risk dialog) as the page grows.
-import { render, screen } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
+import { cleanup, render, screen } from '@testing-library/react';
+import { afterEach, describe, expect, it } from 'vitest';
 import RiskMatrixChart, { buildMatrix, levelForScore, scoreFor } from './RiskMatrixChart';
 import type { RiskMatrixItem } from './RiskMatrixChart';
 
 const risk = (likelihood: number, impact: number): RiskMatrixItem => ({ likelihood, impact });
 
 describe('RiskMatrixChart', () => {
+  afterEach(cleanup); // no Vitest globals, so Testing Library does not clean up between tests on its own
   it('renders a 5×5 grid of 25 cells', () => {
     render(<RiskMatrixChart items={[]} />);
     expect(screen.getAllByRole('cell')).toHaveLength(25);
