@@ -1,5 +1,6 @@
 // Validation workshop (1.15.0; Methodology v1.1 section 6): the queue a validator works through, with progress by
 // domain. Opening an indicator shows its evidence and the validate step. Works offline on synced data.
+import { BehavioralDesignGuide } from '@/components/BehavioralDesignGuide';
 import { useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { MonitorPlay, Printer } from 'lucide-react';
@@ -27,6 +28,7 @@ export function ValidationPage() {
 
   return (
     <div className="page">
+      <BehavioralDesignGuide area="Institutional assessment validation" motivation="Validated scores and evidence establish a credible institutional baseline and direct improvement effort to the gaps that matter." ability="Open the indicator, inspect its evidence and scoring basis, then confirm or revise the score with a reason. Keep assessor and validator roles distinct." prompt="When an indicator is submitted, the designated validator checks the source evidence, records confirmed or revised, explains the basis and identifies any follow-up evidence or action." actionHref="/assess" actionLabel="Open assessment cycles" boundary="A validated score is an evidence-based assessment finding, not proof that a corrective action is complete. Improvement actions require an owner, resources, target date and verification." />
       <PageHeader title="Validation Workshop" back={`/assess/${data.cycle.id}`}
         subtitle={`${data.cycle.name}. Validators check each score against its evidence, then confirm it or revise it with a reason. The person who set a score does not validate it.`}
         actions={<>
