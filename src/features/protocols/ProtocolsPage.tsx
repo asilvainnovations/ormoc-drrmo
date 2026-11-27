@@ -1,3 +1,4 @@
+import { BehavioralDesignGuide } from '@/components/BehavioralDesignGuide';
 import type React from 'react';
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
@@ -77,6 +78,7 @@ export function ProtocolsPage({ kind }: { kind: 'workflows' | 'protocols' }) {
 
   return (
     <div className="page">
+      <BehavioralDesignGuide area="SOP registry and readiness" motivation="Staff need to know which procedure applies, who owns it and whether its version is approved before acting." ability="Filter by SOP code, trigger, process owner and approval status; inspect prerequisites, forms, critical steps and linked RACI activities." prompt="Before a run, confirm that the SOP is approved and applicable, identify the responsible operator and trigger, and open a run with the correct operational context." actionHref="/drrm" actionLabel="Open DRRM workflows" boundary="Draft and retired procedures are not live operational authority. Use approved versions and preserve the run record." />
       <DrrmHeader />
       <StatusLegend subject={kind === 'workflows' ? 'Each workflow' : 'Each protocol'} />
       {data && total > 0 && (
