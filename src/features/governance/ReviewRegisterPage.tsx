@@ -74,6 +74,22 @@ export function ReviewRegisterPage() {
               <DialogTitle className="text-xl font-extrabold">{open.title}</DialogTitle>
               <DialogDescription className="flex flex-wrap gap-2 pt-1"><Pill tone={PRIORITY_TONE[open.priority]}>{PRIORITY[open.priority].label}</Pill><Pill tone={STATUS_TONE[open.review_status]}>{REVIEW_STATUS[open.review_status]}</Pill><Pill>{VALIDATION_STATUS[open.validation_status]}</Pill></DialogDescription>
             </DialogHeader>
+            <section aria-label="Behavioural action prompt" className="rounded-panel border border-action/30 bg-sky-soft/30 p-4">
+              <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-muted">B = MAP · specific action prompt</p>
+              <h3 className="mt-1 font-bold text-ink">What response is required from this lead validator?</h3>
+              <dl className="mt-3 grid gap-3 text-sm sm:grid-cols-2">
+                <div><dt className="text-xs font-bold text-muted">WHO · responsible lead</dt><dd className="mt-1">{open.lead_office ?? 'Lead office not recorded — assign before issuing the prompt.'}{open.lead_position ? ` · ${open.lead_position}` : ''}</dd></div>
+                <div><dt className="text-xs font-bold text-muted">WHY · institutional relevance</dt><dd className="mt-1">{open.description ?? 'Confirm the institutional or operational reason with the lead validator.'}</dd></div>
+                <div><dt className="text-xs font-bold text-muted">WHAT · exact scope</dt><dd className="mt-1">{[open.title, open.chapter_ref, open.section_ref].filter(Boolean).join(' · ')}</dd></div>
+                <div><dt className="text-xs font-bold text-muted">HOW · criteria and support</dt><dd className="mt-1">{open.required_action ?? 'Required review method is not specified; clarify before assignment.'}</dd></div>
+                <div><dt className="text-xs font-bold text-muted">WHEN · response timing</dt><dd className="mt-1">{open.workshop_slot ?? 'No due date recorded — agree and record a response date with the lead office.'}</dd></div>
+                <div><dt className="text-xs font-bold text-muted">EXPECTED RESPONSE</dt><dd className="mt-1">Lead validator recommendation with supporting evidence and source reference.</dd></div>
+              </dl>
+              <div className="mt-3 border-t border-line pt-3 text-sm">
+                <span className="font-bold">NEXT · closure pathway: </span>
+                {open.closure_test ?? 'Manual editor disposition and any required competent-authority decision must be recorded before closure.'}
+              </div>
+            </section>
             <dl className="space-y-3 text-sm">
               {([['Issue', open.description], ['Required action', open.required_action], ['Closure test', open.closure_test], ['Chapter and section', [open.chapter_ref, open.section_ref].filter(Boolean).join(', ')], ['Lead', [open.lead_office, open.lead_position].filter(Boolean).join(', ')], ['Source', [open.source_register, open.source_used].filter(Boolean).join(' · ')], ['Workshop', open.workshop_slot], ['Notes', open.notes]] as const).filter(([, v]) => v).map(([k, v]) => (
                 <div key={k} className="border-t border-line pt-3"><dt className="text-[11px] font-extrabold uppercase tracking-wide text-muted">{k}</dt><dd className="mt-1 leading-relaxed text-ink">{v}</dd></div>
