@@ -1,4 +1,5 @@
 // Validation register (1.24.0): searchable table with a detail panel. Reads Dexie; closing an item is an online action.
+import { BehavioralDesignGuide } from '@/components/BehavioralDesignGuide';
 import { useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
@@ -34,6 +35,7 @@ export function ReviewRegisterPage() {
   if (!items) return <Loading />;
   return (
     <div>
+      <BehavioralDesignGuide area="Manual review and validation" motivation="The 69 consolidated open validation items protect legal accuracy, operational feasibility, public safety and institutional accountability." ability="Each tracker item identifies its Manual locator, lead validator, priority, required action, source and closure test. Supporting offices provide evidence; the lead validator recommends a disposition." prompt="The named lead office reviews the cited provision, records a recommendation and evidence reference, and returns it by the agreed workshop or assigned due date. The Manual editor records disposition; competent authority decides where required." actionHref="/governance/reviews" actionLabel="Work the validation register" boundary="A review recommendation is not formal approval. Close only after the lead recommendation, evidence, editor disposition and any required competent-authority decision are recorded." />
       <WorkspaceHead eyebrow={`${items.length} consolidated items · baseline`} title="Validation register" subtitle="One accountable lead per row. Status is never presumed validated."
         aside={<Pill tone="blue">{rows.length} shown</Pill>} />
       <div className="mb-4 flex flex-wrap gap-2">
