@@ -1269,7 +1269,15 @@ insert into public.offices (id,code,name,kind) values
 ('3d6a7312-a568-5afb-b01a-ffa7c191c933'::uuid,'PNP','Ormoc City Police Office (PNP)','national_agency'),
 ('a959da6b-0663-5c20-a845-861cfaeeb94e'::uuid,'BFP','Bureau of Fire Protection, Ormoc City','national_agency'),
 ('6fbbd3fb-13c8-5020-8c85-1b81bf41ffeb'::uuid,'PRC','Philippine Red Cross, Ormoc Chapter','cso'),
-('ed2c4a4d-e740-5ff8-ad6c-fadc9c563a51'::uuid,'LIGA','Liga ng mga Barangay, Ormoc Chapter','barangay')
+('ed2c4a4d-e740-5ff8-ad6c-fadc9c563a51'::uuid,'LIGA','Liga ng mga Barangay, Ormoc Chapter','barangay'),
+('e4fef0e2-3c07-5e94-8028-300de575055d'::uuid,'CLO','City Legal Office','city_office'),
+('5ba6e757-0008-50ec-8f5a-9d220d1f282f'::uuid,'HRMO','Human Resource Management Office','city_office'),
+('7b8b4c72-1b36-50b0-8872-8d65ac2f95f3'::uuid,'ICT','City ICT Office','city_office'),
+('b7a73a70-2705-58c9-8924-edbe97e57313'::uuid,'DPO','City Data Protection Officer','city_office'),
+('fe809604-d92e-50a8-ada5-f0ee4e1c61dd'::uuid,'SP','Sangguniang Panlungsod and SP Secretariat','city_office'),
+('fb14d75b-e38d-5f58-82e5-89d71bc59868'::uuid,'TREAS','City Treasury Office','city_office'),
+('9366280b-302c-58e6-8b72-dfd6091bf609'::uuid,'SEC','Office of the City Secretary','city_office'),
+('94fd8974-e4d2-5549-a1b6-e9b343be3317'::uuid,'DILG-VIII','DILG Region VIII and the City LGOO','national_agency')
 on conflict (id) do update set code = excluded.code, name = excluded.name, kind = excluded.kind;
 
 insert into public.indicator_lead_offices (indicator_id,office_id) values

@@ -58,6 +58,7 @@ export function WorkspaceHead({ eyebrow, title, subtitle, aside }: { eyebrow: st
   }), []);
   const tabs = [
     { to: '/governance', label: 'Overview', end: true },
+    { to: '/governance/follow-through', label: 'Follow-Through' },
     { to: '/governance/reviews', label: 'Register', n: counts?.reviews },
     { to: '/governance/decisions', label: 'Decisions', n: counts?.decisions },
     { to: '/governance/workshop', label: 'Workshop', n: counts?.sessions },

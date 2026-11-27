@@ -1,6 +1,8 @@
 import { BehavioralDesignGuide } from '@/components/BehavioralDesignGuide';
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { itemsForProcedure } from '@/domain/bmap';
+import { UnderValidation } from '@/features/governance/UnderValidation';
 import { useLiveQuery } from 'dexie-react-hooks';
 import clsx from 'clsx';
 import { Check, CircleSlash, SkipForward, Undo2 } from 'lucide-react';
@@ -29,6 +31,7 @@ export function RunPage() {
   const run = useLiveQuery(() => (runId ? db.protocol_runs.get(runId) : undefined), [runId]);
   const steps = useLiveQuery(() => (runId ? db.protocol_run_steps.where('run_id').equals(runId).sortBy('seq') : []), [runId], []);
   const template = useLiveQuery(() => (run ? db.protocol_templates.get(run.template_id) : undefined), [run?.template_id]);
+  const validation = useLiveQuery(async () => (template ? itemsForProcedure(await db.manual_review_items.toArray(), template) : []), [template?.id], []);
   const backTo = template && isWorkflow(template.category) ? '/drrm' : '/drrm/protocols';
   const [notes, setNotes] = useState<Record<string, string>>({});
   const [forms, setForms] = useState<Record<string, FormValues>>({});
@@ -75,6 +78,7 @@ export function RunPage() {
         </>} />
       {run.status === 'completed' && <Notice tone="ok" title="Completed">{`Completed ${fmtDateTime(run.completed_at)}.`}</Notice>}
       {run.status === 'aborted' && <Notice tone="bad" title="Stopped">{run.abort_reason}</Notice>}
+      <UnderValidation items={validation} what="procedure" />
       <ol className="space-y-3">
         {steps.map((s) => {
           const due = dueState(s, now);

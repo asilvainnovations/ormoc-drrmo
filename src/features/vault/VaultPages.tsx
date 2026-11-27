@@ -1,6 +1,7 @@
 import { BehavioralDesignGuide } from '@/components/BehavioralDesignGuide';
 import { useMemo, useState, type ReactNode } from 'react';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { UnderValidation } from '@/features/governance/UnderValidation';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { Download, ExternalLink, FileText, FolderLock, Pencil, Plus, Search, X } from 'lucide-react';
 import { db } from '@/lib/db';
@@ -125,7 +126,9 @@ export function VaultDocumentPage() {
     const inds = await db.iat_indicators.where('id').anyOf(d.indicator_ids).toArray();
     const cycle = (await db.assessment_cycles.orderBy('cycle_year').reverse().toArray()).find((c) => c.status !== 'archived');
     const who = d.uploaded_by ? await db.profiles.get(d.uploaded_by) : undefined;
-    return { d, inds, cycle, who };
+    // 1.34.0: validation items that cite this document as their evidence.
+    const evidenceFor = (await db.manual_review_items.toArray()).filter((i) => i.evidence_vault_id === d.id);
+    return { d, inds, cycle, who, evidenceFor };
   }, [id]);
   if (!data) return <Loading />;
   const { d } = data;
@@ -149,6 +152,7 @@ export function VaultDocumentPage() {
             className="inline-flex min-h-tap items-center gap-2 rounded-control border border-line bg-surface px-4 font-semibold hover:border-sky hover:bg-sky-soft"><ExternalLink className="h-5 w-5" aria-hidden />Open link</a>}
           {canEdit && <Button variant="secondary" icon={Pencil} onClick={() => setEditing(true)} tip="Change the details or the linked indicators">Edit</Button>}
         </>} />
+      <UnderValidation items={data.evidenceFor} what="document" heading="Cited as evidence for validation" />
       <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_22rem] lg:gap-10">
         <div>
           {d.summary && <p className="mb-6 max-w-prose text-lg leading-7">{d.summary}</p>}

@@ -38,3 +38,16 @@ describe('notifications (1.29.0, ADR-046)', () => {
     expect(visibleNotices(n, { ...EMPTY_PREFS, muted: { protocols: true } })).toEqual([]);
   });
 });
+
+describe('validation tasks (1.34.0)', () => {
+  it('prompts with the steps waiting on this person and flags the late ones', () => {
+    const n = buildNotices({ ...quiet, validation: { waiting: ['VR-046', 'OD-08'], late: ['VR-046'], escalated: 0 } });
+    expect(n).toHaveLength(1);
+    expect(n[0]).toMatchObject({ kind: 'validation', tone: 'warn', to: '/governance' });
+    expect(n[0].body).toContain('VR-046');
+  });
+  it('escalates to coordinators', () => {
+    const n = buildNotices({ ...quiet, validation: { waiting: [], late: [], escalated: 2 } });
+    expect(n[0]).toMatchObject({ id: 'validation-escalated', tone: 'bad' });
+  });
+});

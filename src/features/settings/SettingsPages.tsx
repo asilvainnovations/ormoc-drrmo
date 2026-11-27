@@ -60,6 +60,7 @@ export function SettingsPage() {
         <p className="font-semibold">{profile?.full_name || 'Name not set'}</p>
         <p className="text-muted">{email}{profile?.position ? `, ${profile.position}` : ''}</p>
         <p className="mt-2 flex flex-wrap gap-1.5">{roles.map((r) => <Badge key={r}>{ROLE_LABEL[r]}</Badge>)}</p>
+        <OfficeLine officeId={profile?.office_id ?? null} focal={roles.includes('lead_office_focal')} />
         <p className="mt-3"><TextLink to="/auth/reset" tip="Choose a new password for this account">Change password</TextLink></p>
         <p className="mt-1"><TextLink to="/settings/apps" tip="See and withdraw the other City systems you allowed to sign you in with this account; administrators and the CDRRMO Head also approve apps here">Connected apps</TextLink></p>
       </Section>
@@ -267,7 +268,7 @@ export function UsersPage() {
           <div className="mt-2 flex flex-wrap gap-2">{ALL_ROLES.map((r) => (
             <Checkbox tip={u.id === userId && r === 'admin' ? 'You cannot remove your own administrator role' : `${u.roles.includes(r) ? 'Remove' : 'Grant'} the ${ROLE_LABEL[r]} role`} key={r}
               checked={u.roles.includes(r)} onChange={() => { if (!(u.id === userId && r === 'admin')) void toggle(u, r); }}>{ROLE_LABEL[r]}</Checkbox>))}</div>
-          <Field label="Office" optional hint="Needed for lead-office focal persons (Part C indicators of their office).">
+          <Field label="Office" optional hint="Needed for lead-office focal persons: their office's Part C indicators and Manual validation tasks reach them through it.">
             {(id, d) => <Select id={id} aria-describedby={d} value={u.office_id ?? ''} onChange={(e) => void setOffice(u, e.target.value)}>
               <option value="">No office</option>
               {offices.map((o) => <option key={o.id} value={o.id}>{o.code} {o.name}</option>)}
@@ -380,4 +381,11 @@ export function AboutPage() {
       </div>
     </div>
   );
+}
+
+/** 1.34.0 (B = MAP): validation tasks reach a person through their office. Without one, no prompt can reach them. */
+function OfficeLine({ officeId, focal }: { officeId: string | null; focal: boolean }) {
+  const office = useLiveQuery(async () => (officeId ? (await db.offices.get(officeId)) ?? null : null), [officeId], null);
+  if (office) return <p className="mt-2 text-sm">Office: <b>{office.name}</b>. Validation tasks led by {office.code} come to you. <TextLink to="/governance" size="sm" tip="See the validation steps waiting on your office">Your tasks</TextLink></p>;
+  return <p className={`mt-2 text-sm ${focal ? 'font-semibold text-warn' : 'text-muted'}`}>No office is set on your account{focal ? ', so validation tasks for your office cannot reach you. Ask the administrator to set it.' : '.'}</p>;
 }

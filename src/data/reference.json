@@ -7519,6 +7519,54 @@
    "code": "LIGA",
    "name": "Liga ng mga Barangay, Ormoc Chapter",
    "kind": "barangay"
+  },
+  {
+   "id": "e4fef0e2-3c07-5e94-8028-300de575055d",
+   "code": "CLO",
+   "name": "City Legal Office",
+   "kind": "city_office"
+  },
+  {
+   "id": "5ba6e757-0008-50ec-8f5a-9d220d1f282f",
+   "code": "HRMO",
+   "name": "Human Resource Management Office",
+   "kind": "city_office"
+  },
+  {
+   "id": "7b8b4c72-1b36-50b0-8872-8d65ac2f95f3",
+   "code": "ICT",
+   "name": "City ICT Office",
+   "kind": "city_office"
+  },
+  {
+   "id": "b7a73a70-2705-58c9-8924-edbe97e57313",
+   "code": "DPO",
+   "name": "City Data Protection Officer",
+   "kind": "city_office"
+  },
+  {
+   "id": "fe809604-d92e-50a8-ada5-f0ee4e1c61dd",
+   "code": "SP",
+   "name": "Sangguniang Panlungsod and SP Secretariat",
+   "kind": "city_office"
+  },
+  {
+   "id": "fb14d75b-e38d-5f58-82e5-89d71bc59868",
+   "code": "TREAS",
+   "name": "City Treasury Office",
+   "kind": "city_office"
+  },
+  {
+   "id": "9366280b-302c-58e6-8b72-dfd6091bf609",
+   "code": "SEC",
+   "name": "Office of the City Secretary",
+   "kind": "city_office"
+  },
+  {
+   "id": "94fd8974-e4d2-5549-a1b6-e9b343be3317",
+   "code": "DILG-VIII",
+   "name": "DILG Region VIII and the City LGOO",
+   "kind": "national_agency"
   }
  ],
  "indicator_lead_offices": [

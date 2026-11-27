@@ -3,6 +3,9 @@
 import { BehavioralDesignGuide } from '@/components/BehavioralDesignGuide';
 import { useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { useLiveQuery } from 'dexie-react-hooks';
+import { db } from '@/lib/db';
+import { UnderValidation } from '@/features/governance/UnderValidation';
 import { MonitorPlay, Printer } from 'lucide-react';
 import { Badge, ButtonLink, EmptyState, Field, Input, List, ListRow, Loading, Meter, PageHeader, Section, Select } from '@/components/ui';
 import { Separator } from '@/components/ui/separator';
@@ -14,7 +17,12 @@ import { EVIDENCE_CHECK, EVIDENCE_CHECK_TONE, RESPONSE_STATUS, RESPONSE_TONE } f
 
 const pct = (n: number, d: number) => (d ? `${Math.round((n / d) * 100)}%` : '—');
 
+// 1.34.0 (B = MAP): register items about the IAT baseline (scores, evidence, pending rows) sit beside the scores they affect.
+const IAT_ITEM = /\bIAT\b|score|baseline|indicator/i;
+
 export function ValidationPage() {
+  const iatItems = useLiveQuery(async () => (await db.manual_review_items.toArray())
+    .filter((i) => [i.issue_type, i.title, i.task].some((t) => t && IAT_ITEM.test(t))), [], []);
   const { cycleId } = useParams();
   const data = useCycleData(cycleId);
   const [f, setF] = useState<QueueFilter>({ part: 'all', status: 'submitted', evidence: 'all', text: '' });
@@ -36,6 +44,7 @@ export function ValidationPage() {
           <ButtonLink tip="A large-screen view of the results and validation progress, for the session room" to={`/assess/${data.cycle.id}/validate/board`} icon={MonitorPlay}>Results board</ButtonLink>
         </>} />
 
+      <UnderValidation items={iatItems} what="assessment" heading="Validation register items on the IAT baseline" />
       <Section title="Progress">
         <div className="grid gap-4 sm:grid-cols-3">
           {[['Parts A and B', ab], ['Part C, interface', c]].map(([label, t]) => {

@@ -485,6 +485,7 @@ export type GovernanceDisposition = 'accepted' | 'revised' | 'rejected' | 'defer
 export interface ManualGovernanceStakeholder extends Versioned {
   source_key: string; institution: string; role_in_validation: string | null; responsibility: string | null;
   relevant_chapters: string | null; criticality: GovernancePriority; designation_status: string | null;
+  office_codes?: string[];
   source_workbook?: string | null; source_sheet?: string | null; import_batch_id?: string | null; created_at?: string;
 }
 
@@ -496,6 +497,14 @@ export interface ManualReviewItem extends Versioned {
   closure_test: string | null; disposition: GovernanceDisposition | null; closed_at: string | null; closed_by: string | null;
   notes: string | null; source_workbook?: string | null; source_sheet?: string | null; source_row?: number | null;
   import_batch_id?: string | null; status_raw?: string | null; created_at?: string;
+  // 1.34.0 B = MAP: routing, the Validation Task Locator (Ability) and the lead's response (Behaviour)
+  lead_office_codes?: string[]; chapter_version?: string | null; issue_type?: string | null; sop_ref?: string | null;
+  artefact_ref?: string | null; printed_pages?: string | null; task?: string | null; supporting_offices?: string | null;
+  evidence_expected?: string | null; closure_criterion?: string | null; needs_authority?: boolean; due_date?: string | null;
+  recommendation?: string | null; recommended_at?: string | null; recommended_by?: string | null;
+  evidence_ref?: string | null; evidence_vault_id?: string | null; authority_ref?: string | null;
+  assigned_at?: string | null; assigned_by?: string | null; acknowledged_at?: string | null; acknowledged_by?: string | null;
+  evidence_verified_at?: string | null; evidence_verified_by?: string | null; evidence_note?: string | null;
 }
 
 export interface OutstandingDecision extends Versioned {
@@ -505,6 +514,9 @@ export interface OutstandingDecision extends Versioned {
   supporting_validators: string | null; manual_coverage: string | null; evidence_required: string | null;
   decision_status: DecisionStatus; target_date: string | null; target_workshop: string | null;
   decision_reference: string | null; decision_date: string | null; disposition: GovernanceDisposition | null; decided_by: string | null;
+  owner_office_codes?: string[]; supporting_office_codes?: string[];
+  owner_response?: string | null; owner_response_at?: string | null; owner_response_by?: string | null; evidence_ref?: string | null;
+  assigned_at?: string | null; assigned_by?: string | null; acknowledged_at?: string | null; acknowledged_by?: string | null;
   source_workbook?: string | null; source_sheet?: string | null; source_row?: number | null;
   import_batch_id?: string | null; status_raw?: string | null; created_at?: string;
 }

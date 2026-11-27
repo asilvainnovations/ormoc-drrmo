@@ -6,7 +6,7 @@ import type reference from '@/data/reference.json';
 import { db, getMeta, setMeta } from './db';
 import { DEFAULT_AA_PARAMS } from '@/domain/aa';
 
-export const REFERENCE_VERSION = 'iat-1.7/2026-11-12-intro-v1.1';
+export const REFERENCE_VERSION = 'iat-1.7/2026-11-28-offices-bmap';
 
 type Ref = typeof reference;
 

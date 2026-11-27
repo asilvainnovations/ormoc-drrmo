@@ -37,7 +37,9 @@ describe('families together on the board (1.33.0)', () => {
     const { attentionItems } = await import('./boardAttention');
     const base = { activeEvent: true, silentPriority: [], lifeSafetyAwaiting: 0, campsOverCapacity: 0, evacCountsMissing: 0, nextSitrep: null };
     const a = attentionItems({ ...base, familyUnity: { children: 2, carers: 1, families: 0 } });
-    expect(a).toEqual([{ id: 'family', tone: 'bad', text: 'Families together: 2 children unaccompanied or separated, 1 person apart from their carer', to: '/tools/echo/dashboard' }]);
+    expect(a).toEqual([{ id: 'family', tone: 'bad', text: 'Families together: 2 children unaccompanied or separated, 1 person apart from their carer', to: '/tools/echo/dashboard',
+      who: 'CSWDO protection desk', response: 'Reunite, or record the care arrangement; keep the family or carer together.' }]);
+    expect(a[0].who).toBeTruthy(); // 1.34.0: every item says who acts
     expect(attentionItems({ ...base, familyUnity: { children: 0, carers: 0, families: 0 } })).toEqual([]);
   });
 });

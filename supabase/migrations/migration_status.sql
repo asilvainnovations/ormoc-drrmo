@@ -93,6 +93,8 @@ from (values
                                                       where attrelid = 'public.barangays'::regclass and attname = 'district_id' and not attisdropped)),
   ('20261123000100_correct_cswd_district_assignments', coalesce(col_description('public.barangays'::regclass,
                                                       (select attnum from pg_attribute where attrelid = 'public.barangays'::regclass and attname = 'district_id'))
-                                                      like 'CSWD social-welfare district%', false))
+                                                      like 'CSWD social-welfare district%', false)),
+  ('20261128004100_bmap_validation',          exists (select 1 from pg_proc
+                                                      where proname = 'verify_review_evidence' and pronamespace = 'public'::regnamespace))
 ) as m(migration, present)
 order by m.migration;

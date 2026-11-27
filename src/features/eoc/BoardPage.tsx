@@ -3,6 +3,7 @@
 import { BehavioralDesignGuide } from '@/components/BehavioralDesignGuide';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { tip } from '@/components/Tooltip';
 import { useLiveQuery } from 'dexie-react-hooks';
 import clsx from 'clsx';
 import { ClipboardPen } from 'lucide-react';
@@ -164,7 +165,8 @@ export function BoardPage() {
           <Block title="Needs attention now">
             {attention.length === 0 ? <p className="font-semibold text-ok">Nothing flagged. {activation ? 'Keep consolidating.' : 'No active event.'}</p> : (
               <ul className="space-y-2">{attention.map((a) => (
-                <li key={a.id}><Link to={a.to} className={clsx('block rounded-control border px-3 py-2 text-sm font-bold', TONE[a.tone])}>{a.text}</Link></li>))}
+                <li key={a.id}><Link to={a.to} {...tip(a.response ?? a.text)} className={clsx('block rounded-control border px-3 py-2 text-sm font-bold', TONE[a.tone])}>{a.text}
+                  {a.who && <span className="mt-0.5 block text-xs font-semibold opacity-80">{a.who} · {a.response}</span>}</Link></li>))}
               </ul>
             )}
           </Block>

@@ -6,7 +6,7 @@
  *  per-kind on/off choices stay on this device only. */
 import type { EocLevel } from '@/types';
 
-export type NoticeKind = 'eoc' | 'declaration' | 'coordination' | 'sync' | 'requests' | 'protocols' | 'actions';
+export type NoticeKind = 'eoc' | 'declaration' | 'coordination' | 'sync' | 'requests' | 'protocols' | 'actions' | 'validation';
 export type NoticeTone = 'bad' | 'warn' | 'info';
 
 export interface Notice {
@@ -30,6 +30,7 @@ export const NOTICE_KINDS: { kind: NoticeKind; label: string; about: string }[] 
   { kind: 'requests', label: 'Resource Requests', about: 'Life-safety and urgent requests not yet delivered.' },
   { kind: 'protocols', label: 'Running Protocols', about: 'Protocols and drills still running on any device.' },
   { kind: 'actions', label: 'Overdue Actions', about: 'Improvement actions past their target date (assessment roles).' },
+  { kind: 'validation', label: 'Validation Tasks', about: 'Manual validation steps waiting on you or your office, and those overdue.' },
 ];
 
 export interface NoticeInput {
@@ -43,6 +44,8 @@ export interface NoticeInput {
   overdueActions: number | null;
   /** 1.32.0: the current activation's coordination thread, as this user sees it. Optional so older callers keep working. */
   coordination?: { checkinDue: boolean; callAt: string | null; urgent: { id: string; created_at: string }[] } | null;
+  /** 1.34.0 B = MAP: validation steps waiting on this person (their office's, or coordination steps), and how many are late. */
+  validation?: { waiting: string[]; late: string[]; escalated: number } | null;
 }
 
 const OPEN_REQUEST = new Set(['requested', 'approved', 'mobilized']);
@@ -99,6 +102,18 @@ export function buildNotices(i: NoticeInput): Notice[] {
     out.push({ id: 'actions', kind: 'actions', tone: 'warn',
       title: `${i.overdueActions} improvement action${i.overdueActions === 1 ? '' : 's'} overdue`,
       body: 'Past the target date in the action plan.', to: '/assess', signature: String(i.overdueActions), at: null });
+  }
+  const v = i.validation;
+  if (v && v.waiting.length > 0) {
+    out.push({ id: 'validation', kind: 'validation', tone: v.late.length ? 'warn' : 'info',
+      title: `${v.waiting.length} validation step${v.waiting.length === 1 ? '' : 's'} waiting on you`,
+      body: v.late.length ? `${v.late.length} past the response date: ${v.late.slice(0, 3).join(', ')}${v.late.length > 3 ? '…' : ''}.` : `Next: ${v.waiting.slice(0, 3).join(', ')}.`,
+      to: '/governance', signature: [...v.waiting].sort().join(',') + '|' + v.late.length, at: null });
+  }
+  if (v && v.escalated > 0) {
+    out.push({ id: 'validation-escalated', kind: 'validation', tone: 'bad',
+      title: `${v.escalated} validation task${v.escalated === 1 ? '' : 's'} more than 3 days overdue`,
+      body: 'Raise with the lead office head or the CDRRMO Head.', to: '/governance/follow-through', signature: String(v.escalated), at: null });
   }
   return out;
 }
