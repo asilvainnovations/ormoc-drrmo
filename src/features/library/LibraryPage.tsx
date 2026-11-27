@@ -1,3 +1,4 @@
+import { BehavioralDesignGuide } from '@/components/BehavioralDesignGuide';
 import { useState, type ReactNode } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { ChevronDown } from 'lucide-react';
@@ -113,6 +114,7 @@ export function LibraryPage() {
 
   return (
     <div className="page">
+      <BehavioralDesignGuide area="Manual and controlled library" motivation="Accurate, current and traceable procedures help staff act consistently and prevent draft language from being mistaken for approved policy." ability="Use document status, version history, section locators, source citations and linked validation items to review the exact controlled text." prompt="When a validation item identifies a correction, link the review ID, cite the source and reason, submit the proposed change for review, and route the revised draft to the authorised approver." actionHref="/library" actionLabel="Open controlled library" boundary="Edits to a working draft do not amend approved City policy. Approval and publication remain with the competent authority and the documented document-control process." />
       <PageHeader title="Library" subtitle="The CDRRMO Manual of Operations chapter by chapter, with each chapter's SOPs, forms and annexes, and the EOC Manual alongside. The approved manuals remain the legal documents." />
       <Tabs items={LIB_TABS} />
       <div className="mb-6 max-w-md">
