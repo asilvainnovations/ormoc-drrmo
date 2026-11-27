@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it } from 'vitest';
-import { cleanup, render, screen } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { db } from '@/lib/db';
 import GovernanceRoutes from './routes';
@@ -22,5 +22,10 @@ describe('validation workspace', () => {
     expect(await screen.findByRole('table')).toBeTruthy();
     expect(await screen.findByText('Confirm the EOC order')).toBeTruthy();
     expect(screen.getAllByText('Critical & urgent').length).toBeGreaterThan(0);
+    expect(screen.getByText(/Motivation · why/)).toBeTruthy();
+    fireEvent.click(screen.getByText('Confirm the EOC order'));
+    expect(await screen.findByText(/WHO · responsible lead/)).toBeTruthy();
+    expect(screen.getByText(/Lead office not recorded/)).toBeTruthy();
+    expect(screen.getByText(/EXPECTED RESPONSE/)).toBeTruthy();
   });
 });
