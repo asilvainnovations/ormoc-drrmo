@@ -1,4 +1,5 @@
 // Validation Workshop Agenda — ADR-043 Slice 1.
+import { BehavioralDesignGuide } from '@/components/BehavioralDesignGuide';
 import { Link } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '@/lib/db';
@@ -18,6 +19,7 @@ export function WorkshopPage() {
 
   return (
     <div className="space-y-4">
+      <BehavioralDesignGuide area="Validation workshop coordination" motivation="Structured sessions make cross-office review manageable and ensure legal, technical and operational issues reach the right validators." ability="Use the agenda, chapter coverage, named lead validators, key questions and expected outputs to prepare each session." prompt="Before each session, issue a specific assignment and evidence request; during the session record recommendations, unresolved issues and decisions; after it assign follow-up owners and due dates." actionHref="/governance/reviews" actionLabel="Open review follow-ups" boundary="Workshop attendance or discussion is not validation. Record the evidence, lead recommendation, editor disposition and competent-authority decision separately." />
       <WorkspaceHead eyebrow="Workshop agenda" title="Validation Workshop" subtitle="Twelve-session agenda for the validation window. Session times and venue to be confirmed by the Secretariat." />
 
       <div className="flex flex-wrap gap-2 text-sm">
