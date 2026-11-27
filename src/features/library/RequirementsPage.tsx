@@ -1,3 +1,4 @@
+import { BehavioralDesignGuide } from '@/components/BehavioralDesignGuide';
 import { RefText } from '@/components/RefText';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '@/lib/db';
@@ -13,6 +14,7 @@ export function RequirementsPage() {
   }, []);
   return (
     <div className="page">
+      <BehavioralDesignGuide area="Requirements and evidence traceability" motivation="A provision is operationally useful only when its mandate, required evidence and responsible office can be traced." ability="Follow requirement-to-indicator, Manual and source links; distinguish missing evidence from a negative finding or an unassessed field." prompt="When a requirement is not evidenced, create a specific evidence request to the custodian with source, acceptable evidence, due date and reviewer." actionHref="/vault" actionLabel="Open evidence vault" boundary="A linked document is not automatically authentic or sufficient. The designated validator checks relevance, currency, authority and provenance." />
       <PageHeader title="Master Requirements" subtitle="From the Master Requirements and Traceability workbook v1.1. Each requirement says what the assessment checks, what the manuals must contain and what this platform must do." />
       <Tabs items={LIB_TABS} />
       <div className="space-y-6">
