@@ -1,3 +1,4 @@
+import { BehavioralDesignGuide } from '@/components/BehavioralDesignGuide';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { tip } from '@/components/Tooltip';
 import { STRINGS, useLang, useT, type Lang } from '@/lib/i18n';
@@ -53,6 +54,7 @@ export function SettingsPage() {
   const { profile, email, roles, has } = useAuth();
   return (
     <div className="page">
+      <BehavioralDesignGuide area="Account, access and readiness" motivation="Reliable access, correct role assignment and secure device practices enable staff to complete assigned institutional work." ability="Review your account and roles, maintain secure sign-in, check connectivity and sync health, and understand which settings are device-local." prompt="Before a review session or operational duty, confirm access and sync status. Escalate missing permissions or failed sync through the administrator and record the issue in the appropriate support route." actionHref="/settings/sync" actionLabel="Check sync and readiness" boundary="Preferences and account settings support action but do not grant institutional authority. Role changes and connected-app approvals follow the access-control process." />
       <PageHeader title="Settings" />
       <Section title="Your Account">
         <p className="font-semibold">{profile?.full_name || 'Name not set'}</p>
