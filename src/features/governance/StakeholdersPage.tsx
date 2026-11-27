@@ -1,6 +1,7 @@
 // Stakeholder Action Workspace — ADR-043.
 // Assignments are surfaced only when the Validation Tracker explicitly names the institution.
 // This page coordinates review; it does not confer statutory, approval or decision authority.
+import { BehavioralDesignGuide } from '@/components/BehavioralDesignGuide';
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
@@ -88,6 +89,7 @@ export function StakeholdersPage() {
 
   return (
     <div className="space-y-4">
+      <BehavioralDesignGuide area="Stakeholder review assignments" motivation="The right institution must review the issue within its mandate; role clarity reduces delays and prevents authority being assumed." ability="Use the explicit lead office, supporting validators, chapter references and designation status to route review requests." prompt="Send a bounded assignment stating who acts, why, the exact Manual provision, evidence or criteria, due date and expected response; follow up and route unresolved authority questions." actionHref="/governance/reviews" actionLabel="Open assigned review items" boundary="Stakeholder matching supports coordination only. Proposed response-cluster leads and unconfirmed designations are not treated as formal appointments." />
       <WorkspaceHead
         eyebrow="Stakeholder action workspace"
         title="Stakeholders & validation assignments"
