@@ -56,6 +56,21 @@ describe('public header and footer', () => {
   });
 });
 
+describe('the City Mayor on the home page (1.32.1)', () => {
+  it('quotes the Ten-Year Plan word for word, with a round photo, the source and PPAs spelled out', () => {
+    at(<PublicHome />);
+    const fig = screen.getByRole('figure', { name: /Lucy Torres-Gomez/ });
+    expect(fig.textContent).toContain('I foresee the development of more focused, targeted and advanced PPAs to address the gaps of Ormoc City’s disaster resilience.');
+    expect(within(fig).getByText('City Mayor of Ormoc')).toBeTruthy();
+    expect(fig.textContent).toContain('Ormoc City DRRM Ten-Year Plan (2023–2032), p. 2');
+    expect(fig.textContent).toContain('it is not a statement about MODE');
+    expect(within(fig).getByTitle('Programs, Projects and Activities').textContent).toBe('PPAs');
+    const img = within(fig).getByRole('img', { name: 'Lucy Torres-Gomez, City Mayor of Ormoc' });
+    expect(img.className).toContain('rounded-full');
+    expect(img.getAttribute('src')).toBe('/brand/mayor-lucy-torres-gomez-192.jpg');
+  });
+});
+
 describe('contacts come from site settings', () => {
   it('Support lists technical support and privacy requests at their own addresses, and no personal address', () => {
     const { container } = at(<SupportPage />);
@@ -104,7 +119,12 @@ describe('authority boundary and claims', () => {
   });
   it('public copy makes no endorsement, warning-service or live-score claims', () => {
     const texts: string[] = [];
-    for (const el of [<PublicHome key="h" />, <AboutPage key="a" />, <SupportPage key="s" />]) { const { container } = at(el); texts.push(container.textContent ?? ''); cleanup(); }
+    for (const el of [<PublicHome key="h" />, <AboutPage key="a" />, <SupportPage key="s" />]) {
+      const { container } = at(el);
+      // 1.32.1: the attributed quotation from the Ten-Year Plan is the one allowed mention of the Mayor; it says it is not about MODE.
+      container.querySelectorAll('figure[aria-labelledby="mayor-quote-by"]').forEach((f) => f.remove());
+      texts.push(container.textContent ?? ''); cleanup();
+    }
     const all = texts.join(' ') + FAQS.map((f) => f.answer).join(' ');
     expect(all).not.toMatch(/endorse/i);
     expect(all).not.toMatch(/Mayor/i);

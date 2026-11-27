@@ -1149,6 +1149,26 @@ def _pack(st):
     return parts
 
 
+def preflight_docs(text, doc_ids):
+    """1.32.1: a late part used to stop on a foreign-key error when part 05 (moo_documents) had not been run
+    again after a release added chapters there (28 Nov 2026: 41a, 41b, 41u, 41w on production). Check first
+    and say which part to run."""
+    import re
+    need = sorted({u for u in re.findall(r"'([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})'::uuid", text)} & doc_ids)
+    if not need:
+        return ''
+    arr = ','.join(f"'{u}'" for u in need)
+    return ("-- Stop with a plain message if a Manual section this part needs is not loaded yet.\n"
+            "do $$ declare missing int; begin\n"
+            f"  select count(*) into missing from unnest(array[{arr}]::uuid[]) as need(id)\n"
+            "   where not exists (select 1 from public.moo_documents d where d.id = need.id);\n"
+            "  if missing > 0 then\n"
+            "    raise exception '% Manual section(s) for this part are not loaded. Run seed part 05_seed.sql, then 34_seed.sql, then this part again.', missing\n"
+            "      using errcode = '23503';\n"
+            "  end if;\n"
+            "end $$;\n\n")
+
+
 def write_late(o, part_dir):
     """1.31.0: parts 41a_ onward, run after every NN_ part (and after 37_raci to 40_, which need the earlier
     templates): first the Chapter 9 and 10 forms, templates and steps, then the Consolidated Draft 1.0
@@ -1165,13 +1185,15 @@ def write_late(o, part_dir):
                _pack(version_statements(o['_consolidated_versions'])))]
     n = sum(len(p) for *_, p in groups)
     assert n <= 26, 'more than 26 late parts; raise PART_MAX_BYTES or use another prefix'
+    doc_ids = {d['id'] for d in o['moo_documents']}
     i = 0
     for name, about, parts in groups:
         for part in parts:
             letter = chr(97 + i); i += 1
+            text = ''.join(t for _, t in part)
             body = (HEADER + f'-- Part 41{letter} ({i} of {n}): {about}.\n'
                     '-- Run after parts 01 to 40. A part can be run again safely.\n'
-                    'begin;\n\n' + ''.join(t for _, t in part) + 'commit;\n')
+                    'begin;\n\n' + preflight_docs(text, doc_ids) + text + 'commit;\n')
             (part_dir / f'41{letter}_{name}.sql').write_text(body)
     print(f'late parts: {n} (41a-41{chr(96 + n)})')
 
