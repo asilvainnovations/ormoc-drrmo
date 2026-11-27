@@ -129,6 +129,18 @@ function DecisionRow({ item }: { item: OutstandingDecision }) {
       {item.target_workshop && (
         <p className="text-xs text-muted">Target workshop: {item.target_workshop}</p>
       )}
+      <details className="mt-2 rounded-control border border-line bg-sunken/30 p-3">
+        <summary className="min-h-tap cursor-pointer text-xs font-bold text-ink">Show decision action prompt · B = MAP</summary>
+        <dl className="mt-3 grid gap-2 text-xs sm:grid-cols-2">
+          <div><dt className="font-bold text-muted">WHO · accountable owner</dt><dd className="mt-1">{item.accountable_owner_office}</dd></div>
+          <div><dt className="font-bold text-muted">AUTHORITY · competent decision-maker</dt><dd className="mt-1">{item.decision_authority_office ?? 'Not recorded — confirm before routing'} · {AUTHORITY_STATUS[item.authority_status]}</dd></div>
+          <div><dt className="font-bold text-muted">WHY / WHAT · decision required</dt><dd className="mt-1">{item.question}</dd></div>
+          <div><dt className="font-bold text-muted">HOW · evidence and consultation</dt><dd className="mt-1">{item.evidence_required ?? 'Evidence requirement not recorded'}{item.supporting_validators ? ` · Supporting validators: ${item.supporting_validators}` : ''}</dd></div>
+          <div><dt className="font-bold text-muted">WHEN · target</dt><dd className="mt-1">{item.target_date ?? item.target_workshop ?? 'No target date recorded — agree with the owner'}</dd></div>
+          <div><dt className="font-bold text-muted">EXPECTED RESPONSE</dt><dd className="mt-1">Formal decision, recorded disposition, decision reference and decision date.</dd></div>
+        </dl>
+        <p className="mt-3 border-t border-line pt-2 text-xs"><strong>NEXT · </strong>Update the decision status only after the competent authority's outcome and supporting record are captured.</p>
+      </details>
     </li>
   );
 }
