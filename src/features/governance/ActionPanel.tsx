@@ -151,7 +151,7 @@ export function ItemActions({ item, viewer }: { item: ManualReviewItem; viewer: 
 
       {(next === 'close' || (stage === 'awaiting_authority' && viewer.roles.some((r) => r === 'validator' || r === 'cdrrmo_head' || r === 'admin'))) && (
         <Box title="Record the disposition and close" note={item.closure_criterion ?? 'Close only with the recommendation, verified evidence, the disposition and any required authority decision.'}>
-          <Chips label="Disposition" value={disp} onChange={setDisp} options={DISPOSITIONS.map((v) => ({ v, label: v[0].toUpperCase() + v.slice(1), tip: DISPOSITION_TIP[v] }))} />
+          <Chips label="Disposition" value={disp} onChange={setDisp} options={DISPOSITIONS.map((v) => ({ v, label: v.charAt(0).toUpperCase() + v.slice(1), tip: DISPOSITION_TIP[v] }))} />
           {item.needs_authority && <Input value={authRef} maxLength={300} onChange={(e) => setAuthRef(e.target.value)} placeholder="Authority decision: ordinance, EO, resolution or minutes, and date" {...tip('This item needs the competent authority’s decision before it closes')} />}
           <Button tip="Close the item with this disposition" busy={busy} disabled={!disp || (item.needs_authority && !authRef.trim() && disp !== 'deferred' && disp !== 'superseded')}
             onClick={() => disp && void run(() => closeItem(item, disp, authRef.trim(), ''), `${item.source_tracker_id} closed`)}>Close {item.source_tracker_id}</Button>
@@ -208,7 +208,7 @@ export function DecisionActions({ decision, viewer }: { decision: OutstandingDec
       )}
       {(next === 'record_decision' || (viewer.roles.some((r) => r === 'cdrrmo_head' || r === 'admin') && stage !== 'closed' && stage !== 'deferred' && next !== 'assign')) && (
         <Box title="Record the decision" note={`Only once ${decision.decision_authority_office ?? 'the competent authority'} has decided, with its formal reference.`}>
-          <Chips label="Disposition" value={disp} onChange={setDisp} options={DISPOSITIONS.map((v) => ({ v, label: v[0].toUpperCase() + v.slice(1), tip: DISPOSITION_TIP[v] }))} />
+          <Chips label="Disposition" value={disp} onChange={setDisp} options={DISPOSITIONS.map((v) => ({ v, label: v.charAt(0).toUpperCase() + v.slice(1), tip: DISPOSITION_TIP[v] }))} />
           <div className="grid gap-2 sm:grid-cols-[1fr_11rem]">
             <Input value={ref} onChange={(e) => setRef(e.target.value)} placeholder="EO, resolution, memo or minutes number" {...tip('The formal decision reference')} />
             <Input type="date" value={date} onChange={(e) => setDate(e.target.value)} {...tip('Date of the decision (today if left blank)')} />

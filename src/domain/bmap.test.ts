@@ -35,7 +35,7 @@ describe('routing', () => {
   it('keeps the same list as app.office_codes_in() in the migration', () => {
     const sql = readFileSync('supabase/migrations/20261128004100_bmap_validation.sql', 'utf8');
     const block = sql.slice(sql.indexOf('create or replace function app.office_codes_in'), sql.indexOf(') as m(code, re)'));
-    const inSql = [...block.matchAll(/\('([A-Z-]+)', '([^']+)'\)/g)].map((m) => [m[1], m[2].replace(/\\\\/g, '\\')]);
+    const inSql = [...block.matchAll(/\('([A-Z-]+)', '([^']+)'\)/g)].map((m) => [m[1], (m[2] ?? '').replace(/\\\\/g, '\\')]);
     expect(inSql).toEqual(OFFICE_PATTERNS.map(([c, p]) => [c, p]));
   });
 });

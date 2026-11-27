@@ -130,8 +130,8 @@ export function CoordinationPage() {
             <div key={code} className="grid items-center gap-2 py-1 text-xs font-bold" style={{ gridTemplateColumns: '6rem 1fr 3rem' }}>
               <span className="truncate text-ink">{code}</span>
               <span className="flex h-3 overflow-hidden rounded-full bg-sunken" role="img" aria-label={`${code}: ${o.open} open, ${o.late} late`}>
-                <span className="bg-warn" style={{ width: `${(100 * o.late) / byOffice[0][1].open}%` }} />
-                <span className="bg-sky" style={{ width: `${(100 * (o.open - o.late)) / byOffice[0][1].open}%` }} />
+                <span className="bg-warn" style={{ width: `${(100 * o.late) / (byOffice[0]?.[1].open ?? 1)}%` }} />
+                <span className="bg-sky" style={{ width: `${(100 * (o.open - o.late)) / (byOffice[0]?.[1].open ?? 1)}%` }} />
               </span>
               <span className="text-right font-data">{o.open}</span>
             </div>
