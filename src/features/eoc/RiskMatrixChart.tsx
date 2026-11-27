@@ -1,74 +1,110 @@
-// City risk picture: a likelihood x severity heat grid with each DDRiVE hazard plotted, a ranked list beside it, and the
-// evidence for the selected hazard underneath. Desk scores only; every one is pending working-session validation.
-import { useMemo, useState } from 'react';
-import clsx from 'clsx';
-import { buildMatrix } from '@/domain/riskMatrix';
-import type { DdriveCityRisk, DdriveRiskMatrixRow } from '@/types';
+// MODE Ormoc City — Emergency Operations Center (EOC)
+// Copyright 2026 Alvin M. Silva
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
-const CELL: Record<string, string> = {
-  'Very Low': 'bg-ok-soft text-ok', Low: 'bg-sky-soft text-sky', Moderate: 'bg-warn-soft text-warn', High: 'bg-bad-soft text-bad', 'Very High': 'bg-bad/30 text-bad',
-};
-const PILL: Record<string, string> = { 'Very Low': 'bg-ok-soft text-ok', Low: 'bg-sky-soft text-sky', Moderate: 'bg-warn-soft text-warn', High: 'bg-bad-soft text-bad', 'Very High': 'bg-bad text-on-strong' };
-const range = (min: number, max: number) => (min === 0 ? `0–${max}` : `${min}–${max}`);
+import React, { useMemo } from 'react';
 
-export function RiskMatrixChart({ risks, matrix }: { risks: DdriveCityRisk[]; matrix: DdriveRiskMatrixRow[] }) {
-  const grid = useMemo(() => buildMatrix(matrix, risks), [matrix, risks]);
-  const ranked = useMemo(() => [...risks].sort((a, b) => b.ranking - a.ranking || b.severity - a.severity), [risks]);
-  const [sel, setSel] = useState<string | null>(null);
-  const selected = ranked.find((r) => r.hazard_event === sel) ?? null;
-  const num = (r: DdriveCityRisk) => ranked.indexOf(r) + 1;
-  if (!risks.length || !matrix.length) return <p className="text-muted">The DDRiVE city scores arrive with the next reference-data sync.</p>;
+/**
+ * RiskMatrixChart — the organisation's 5×5 risk matrix (ISO 31000 likelihood × impact),
+ * refactored out of the Diagnosis module's RiskRegister for reuse in the EOC.
+ * Each cell shows the score (likelihood × impact) and, optionally, how many items sit in it.
+ */
+
+/** Anything the matrix can place on the grid: a register risk, a DDRiVE hazard event, etc. */
+export interface RiskMatrixItem {
+  /** Likelihood on the organisation's 1–5 scale. */
+  likelihood: number;
+  /** Impact on the organisation's 1–5 scale (severity class). */
+  impact: number;
+}
+
+export interface RiskMatrixChartProps {
+  items: RiskMatrixItem[];
+  /** Show a count badge on cells that contain items. Default true. */
+  showCounts?: boolean;
+  title?: string;
+  description?: string;
+  ariaLabel?: string;
+  className?: string;
+}
+
+const clamp15 = (n: number) => Math.min(5, Math.max(1, Math.round(Number.isFinite(n) ? n : 1)));
+
+/** Score for a cell: likelihood × impact, both clamped to 1–5. */
+export const scoreFor = (likelihood: number, impact: number) => clamp15(likelihood) * clamp15(impact);
+
+/** Risk level for a score, following the organisation's risk criteria (Settings → Organisation). */
+export const levelForScore = (score: number): 'Critical' | 'High' | 'Medium' | 'Low' =>
+  score >= 20 ? 'Critical' : score >= 12 ? 'High' : score >= 6 ? 'Medium' : 'Low';
+
+export const cellClass = (score: number) =>
+  score >= 20 ? 'bg-red-600' : score >= 12 ? 'bg-orange-500' : score >= 6 ? 'bg-amber-400 text-slate-900' : 'bg-emerald-600';
+
+export const levelClass = (level: string) =>
+  level === 'Critical' ? 'bg-red-100 text-red-900' : level === 'High' ? 'bg-orange-100 text-orange-900' : level === 'Medium' ? 'bg-amber-100 text-amber-900' : 'bg-emerald-100 text-emerald-900';
+
+/** Build the 5×5 grid rows, top row = likelihood 5 down to bottom row = likelihood 1. */
+export const buildMatrix = (items: RiskMatrixItem[]) =>
+  Array.from({ length: 5 }, (_, i) =>
+    Array.from({ length: 5 }, (_, j) => {
+      const likelihood = 5 - i;
+      const impact = j + 1;
+      return {
+        likelihood,
+        impact,
+        score: likelihood * impact,
+        level: levelForScore(likelihood * impact),
+        count: items.filter((r) => clamp15(r.likelihood) === likelihood && clamp15(r.impact) === impact).length,
+      };
+    }));
+
+export const RiskMatrixChart: React.FC<RiskMatrixChartProps> = ({
+  items,
+  showCounts = true,
+  title = 'Risk matrix (likelihood × impact)',
+  description,
+  ariaLabel = 'Risk matrix: likelihood 5 to 1 by impact 1 to 5',
+  className,
+}) => {
+  const matrix = useMemo(() => buildMatrix(items), [items]);
 
   return (
-    <div className="grid gap-5 lg:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)]">
-      <div>
-        <div className="grid grid-cols-[auto_repeat(5,minmax(0,1fr))] gap-1" role="group" aria-label="Risk matrix: likelihood against severity">
-          {grid.cells.map((row, ri) => (
-            <div key={ri} className="contents">
-              <div className="flex items-center justify-end pr-2 text-right text-[11px] font-bold text-muted">{range(grid.likelihood[ri]!.min, grid.likelihood[ri]!.max)}</div>
-              {row.map((cell, ci) => (
-                <div key={ci} className={clsx('flex min-h-[4.5rem] flex-col justify-between rounded-control p-1.5', CELL[cell.label] ?? 'bg-sunken text-muted')}>
-                  <span className="text-[10px] font-extrabold opacity-80">{cell.band}</span>
-                  <div className="flex flex-wrap gap-1">
-                    {cell.hazards.map((h) => (
-                      <button key={h.hazard_event} type="button" onClick={() => setSel(h.hazard_event === sel ? null : h.hazard_event)} aria-label={`${h.hazard_event}, ${h.label} risk`} aria-pressed={sel === h.hazard_event}
-                        className={clsx('inline-flex h-7 w-7 items-center justify-center rounded-full border-2 text-xs font-extrabold', sel === h.hazard_event ? 'border-ink bg-ink text-paper' : 'border-ink/70 bg-surface text-ink')}>{num(h)}</button>
-                    ))}
-                  </div>
-                </div>
-              ))}
+    <div className={className}>
+      <h3 className="font-montserrat font-bold text-lg mb-1">{title}</h3>
+      {description && <p className="text-xs text-slate-500 mb-3">{description}</p>}
+      <div className="grid grid-cols-[auto_1fr] gap-2 items-center">
+        <span className="text-[10px] font-bold text-slate-500 [writing-mode:vertical-rl] rotate-180">Likelihood (5 → 1)</span>
+        <div className="grid grid-cols-5 gap-1" role="table" aria-label={ariaLabel}>
+          {matrix.flat().map((c) => (
+            <div
+              key={`${c.likelihood}-${c.impact}`}
+              role="cell"
+              data-testid={`cell-${c.likelihood}-${c.impact}`}
+              className={`${cellClass(c.score)} aspect-square rounded-lg flex flex-col items-center justify-center text-white`}
+              aria-label={`Likelihood ${c.likelihood}, impact ${c.impact}: score ${c.score}, ${c.count} item${c.count === 1 ? '' : 's'}`}
+            >
+              <span className="text-xs font-bold">{c.score}</span>
+              {showCounts && c.count > 0 && (
+                <span className="text-[10px] mt-0.5 px-1 rounded bg-black/30" data-testid={`count-${c.likelihood}-${c.impact}`}>{c.count}</span>
+              )}
             </div>
           ))}
-          <div />
-          {grid.severity.map((s) => <div key={s.min} className="pt-1 text-center text-[11px] font-bold text-muted">{range(s.min, s.max)}</div>)}
         </div>
-        <p className="mt-2 text-center text-xs font-bold text-muted">Severity (0–100) →</p>
-        <p className="text-xs font-bold text-muted">↑ Likelihood (0–10)</p>
       </div>
-
-      <div>
-        <ol className="space-y-1" aria-label="Hazards, highest risk first">
-          {ranked.map((r) => (
-            <li key={r.hazard_event}>
-              <button type="button" onClick={() => setSel(r.hazard_event === sel ? null : r.hazard_event)} aria-pressed={sel === r.hazard_event}
-                className={clsx('flex min-h-tap w-full items-center gap-3 rounded-control px-2 text-left hover:bg-sky-soft/60', sel === r.hazard_event && 'bg-sky-soft')}>
-                <span className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full border-2 border-ink/70 text-xs font-extrabold text-ink">{num(r)}</span>
-                <span className="min-w-0 flex-1 text-sm font-semibold leading-tight text-ink">{r.hazard_event}</span>
-                <span className={clsx('shrink-0 rounded-full px-2.5 py-1 text-[11px] font-extrabold', PILL[r.label] ?? 'bg-sunken text-muted')}>{r.label}</span>
-              </button>
-            </li>
-          ))}
-        </ol>
-        {selected && (
-          <div className="mt-4 rounded-sheet border border-line bg-surface p-4 text-sm" aria-live="polite">
-            <p className="font-extrabold text-ink">{selected.hazard_event} <span className="font-normal text-muted">· {selected.hazard_family}</span></p>
-            <p className="mt-1 text-muted">Likelihood {selected.likelihood} of 10, severity {selected.severity} of 100, vulnerability {selected.vulnerability_rating ?? 'not rated'}. Band {selected.band}.</p>
-            {selected.evidence_anchor && <p className="mt-2 leading-relaxed text-ink">{selected.evidence_anchor}</p>}
-            {selected.response_measures && <p className="mt-2 text-xs text-muted">Response measures: {selected.response_measures}</p>}
-            {selected.validation_status && <p className="mt-1 text-xs text-muted">Status: {selected.validation_status}</p>}
-          </div>
-        )}
-      </div>
+      <div className="text-center text-[10px] font-bold text-slate-500 mt-2">Impact (1 → 5)</div>
     </div>
   );
-}
+};
+
+export default RiskMatrixChart;
