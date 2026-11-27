@@ -1,4 +1,5 @@
 
+import { BehavioralDesignGuide } from '@/components/BehavioralDesignGuide';
 import { useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 
@@ -242,6 +243,7 @@ export function RiskPage() {
 
   return (
     <div className="page">
+      <BehavioralDesignGuide area="Risk intelligence and risk-informed action" motivation="Validated hazard and exposure information helps the City prioritise preparedness, protective action and resilience investments." ability="Review source provenance, assessment confidence, barangay profiles and the distinction between missing, unassessed and zero values." prompt="When a risk finding affects a plan or operational threshold, request validation from the named technical custodian, record the source and date, and route recommendations to the authorised decision-maker." actionHref="/governance/reviews" actionLabel="Route a data validation issue" boundary="DDRiVE and risk visualisations are decision support, not automatic warning or evacuation triggers. Official agency products and approved procedures govern." />
       <PageHeader
         title="Risk Intelligence"
         subtitle="DDRiVE — Data-Driven Risk and Vulnerability Estimation. Desk assessment v1.2 (9 Nov 2026); aggregate data only."
