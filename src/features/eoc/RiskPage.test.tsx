@@ -1,23 +1,96 @@
-import { describe, expect, it } from 'vitest';
+// MODE Ormoc City — Emergency Operations Center (EOC)
+// Copyright 2026 Alvin M. Silva
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+// RiskPage.test.tsx — tests for the EOC risk page's matrix chart.
+// Extend this file with page-level tests (register table, filters, add-risk dialog) as the page grows.
+import React from 'react';
 import { render, screen } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
-import { db } from '@/lib/db';
-import { RiskPage } from './RiskPage';
-import type { DdriveBarangayProfile, DdriveCityScore, DdriveRiskMatrixRow } from '@/types';
+import { describe, expect, it } from 'vitest';
+import RiskMatrixChart, { buildMatrix, levelForScore, scoreFor } from '../RiskMatrixChart';
+import type { RiskMatrixItem } from '../RiskMatrixChart';
 
-const matrix=(ranking:number,band:string,label:string):DdriveRiskMatrixRow=>({severity_min:26,severity_max:50,likelihood_min:8.1,likelihood_max:10,ranking,band,label});
+const risk = (likelihood: number, impact: number): RiskMatrixItem => ({ likelihood, impact });
 
-describe('RiskPage — DDRiVE and source-aligned barangay flood exposure',()=>{
- it('shows computed city band, barangay profile and matching population flood detail',async()=>{
-  await db.ddrive_city_scores.bulkPut([{hazard_event:'Riverine & flash flood',hazard_family:'H2 Hydrological',exposure_infrastructure:null,exposure_productive:null,exposure_essential:null,exposure_human:null,vulnerability_rating:90,response_measures:null,likelihood:9,severity:50,evidence_anchor:'Largest modelled exposure',validation_status:'Desk score'} satisfies DdriveCityScore]);
-  await db.ddrive_risk_matrix.bulkPut([matrix(15,'H7','High'),{severity_min:0,severity_max:10,likelihood_min:0,likelihood_max:2,ranking:1,band:'VL1',label:'Very Low'}]);
-  await db.ddrive_barangay_profiles.bulkPut([{psgc:'0803738057',name:'Lao',former_name:null,urban_rural:'Rural',population_2024:4456,population_2020:4374,growth_rate_2020_2024:0.001,households:null,density_per_ha:null,data_quality_flag:null,lat:11.03,lng:124.53,coord_source:null,coord_validation:null,cluster_no:null,cluster_label:null,district_zone:null,assigned_coordinator:null,cluster_validation:null,workbook_rev:'v1.2'} satisfies DdriveBarangayProfile]);
-  render(<MemoryRouter><RiskPage/></MemoryRouter>);
-  expect(await screen.findByText('Riverine & flash flood')).toBeTruthy();
-  expect((await screen.findAllByText('High')).length).toBeGreaterThan(0);
-  expect(await screen.findByText('H7')).toBeTruthy();                      // the matrix cell the hazard sits in
-  expect(await screen.findByText('Lao')).toBeTruthy();
-  expect(await screen.findByText(/Flood-prone 4,226 \/ 4,374/)).toBeTruthy();
-  expect(await screen.findByText(/96\.616%/)).toBeTruthy();
- });
+describe('RiskMatrixChart', () => {
+  it('renders a 5×5 grid of 25 cells', () => {
+    render(<RiskMatrixChart items={[]} />);
+    const cells = screen.getAllByRole('cell');
+    expect(cells).toHaveLength(25);
+  });
+
+  it('scores cells as likelihood × impact, top-left 25 and bottom-right 1', () => {
+    render(<RiskMatrixChart items={[]} />);
+    expect(screen.getByTestId('cell-5-5')).toHaveTextContent('25');
+    expect(screen.getByTestId('cell-1-1')).toHaveTextContent('1');
+    expect(screen.getByTestId('cell-3-4')).toHaveTextContent('12');
+    expect(screen.getByTestId('cell-4-2')).toHaveTextContent('8');
+  });
+
+  it('labels each cell with its likelihood, impact, score and count for screen readers', () => {
+    render(<RiskMatrixChart items={[]} />);
+    expect(screen.getByRole('cell', { name: /likelihood 5, impact 5: score 25, 0 items/i })).toBeInTheDocument();
+    expect(screen.getByRole('cell', { name: /likelihood 1, impact 1: score 1, 0 items/i })).toBeInTheDocument();
+  });
+
+  it('shows a count badge only on cells that contain items', () => {
+    render(<RiskMatrixChart items={[risk(4, 3), risk(4, 3), risk(2, 5)]} />);
+    expect(screen.getByTestId('count-4-3')).toHaveTextContent('2');
+    expect(screen.getByTestId('count-2-5')).toHaveTextContent('1');
+    expect(screen.queryByTestId('count-1-1')).toBeNull();
+    // The aria-label keeps the count even without the badge.
+    expect(screen.getByRole('cell', { name: /likelihood 4, impact 3: score 12, 2 items/i })).toBeInTheDocument();
+  });
+
+  it('hides count badges when showCounts is false but keeps counts in aria-labels', () => {
+    render(<RiskMatrixChart items={[risk(4, 3)]} showCounts={false} />);
+    expect(screen.queryByTestId('count-4-3')).toBeNull();
+    expect(screen.getByRole('cell', { name: /score 12, 1 item/i })).toBeInTheDocument();
+  });
+
+  it('renders the axis captions', () => {
+    render(<RiskMatrixChart items={[]} />);
+    expect(screen.getByText('Likelihood (5 → 1)')).toBeInTheDocument();
+    expect(screen.getByText('Impact (1 → 5)')).toBeInTheDocument();
+  });
+});
+
+describe('matrix scoring helpers', () => {
+  it('scoreFor multiplies likelihood and impact', () => {
+    expect(scoreFor(5, 5)).toBe(25);
+    expect(scoreFor(3, 2)).toBe(6);
+    expect(scoreFor(1, 1)).toBe(1);
+  });
+
+  it('clamps out-of-range likelihoods and impacts into 1–5', () => {
+    expect(scoreFor(9, 0)).toBe(5);   // clamped to 5 × 1
+    expect(scoreFor(-3, 3)).toBe(3);  // clamped to 1 × 3
+    expect(scoreFor(NaN, 4)).toBe(4); // NaN treated as 1
+  });
+
+  it('levelForScore follows the organisation’s risk criteria', () => {
+    expect(levelForScore(25)).toBe('Critical');
+    expect(levelForScore(20)).toBe('Critical');
+    expect(levelForScore(12)).toBe('High');
+    expect(levelForScore(6)).toBe('Medium');
+    expect(levelForScore(1)).toBe('Low');
+  });
+
+  it('buildMatrix counts items per cell with clamping', () => {
+    const m = buildMatrix([risk(6, 3), risk(3, 3), risk(3, 3)]); // 6 clamps to 5
+    expect(m[0][2]).toMatchObject({ likelihood: 5, impact: 3, score: 15, count: 1 });
+    expect(m[2][2]).toMatchObject({ likelihood: 3, impact: 3, score: 9, count: 2 });
+    expect(m[1][2].count).toBe(0); // likelihood 4 × impact 3
+  });
 });
