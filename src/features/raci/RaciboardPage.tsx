@@ -12,7 +12,7 @@ import { tip } from '@/components/Tooltip';
 import { Badge, EmptyState, Input, Loading, Notice, PageHeader, Section, TextLink } from '@/components/ui';
 import type { RaciAssignment } from '@/types';
 import { DUTIES, DUTY_ORDER, RACI_CAVEAT } from './labels';
-import { buildBoard, searchBoard, type BoardActivity } from './raci';
+import { accountableIssues, buildBoard, searchBoard, type BoardActivity } from './raci';
 import { EditAssignmentSheet, type AssignmentDraft } from './EditAssignmentSheet';
 
 function Chip({ row, onEdit }: { row: RaciAssignment; onEdit?: () => void }) {
@@ -119,6 +119,7 @@ export function RaciboardPage() {
         ))}
       </div>
       <Notice tone="info">{RACI_CAVEAT}</Notice>
+      <AccountabilityPrompt issues={accountableIssues(data)} onPick={(code) => setParams({ q: code }, { replace: true })} />
       {board.length === 0 && (
         <EmptyState title="No matching RACI entries" body="Try a protocol code (e.g. PR-PDRA), an activity (e.g. convene), or an office." />
       )}
@@ -135,5 +136,28 @@ export function RaciboardPage() {
       </p>
       <EditAssignmentSheet draft={draft} onClose={() => setDraft(null)} />
     </div>
+  );
+}
+
+/** 1.34.0 (B = MAP): an activity with no Accountable, or with several, is a prompt for the CDRRMO to clarify, not a
+ *  rule MODE enforces (Annex 1-F: "normally one"). Says who resolves it, against what, and what comes back. */
+function AccountabilityPrompt({ issues, onPick }: { issues: BoardActivity[]; onPick: (q: string) => void }) {
+  if (issues.length === 0) return null;
+  const none = issues.filter((a) => a.accountableCount === 0).length;
+  return (
+    <section aria-label="Accountability to clarify" className="mt-4 rounded-panel border border-warn/40 bg-warn/5 p-4 text-sm">
+      <h2 className="font-extrabold text-ink">{issues.length} activit{issues.length === 1 ? 'y needs' : 'ies need'} one Accountable office</h2>
+      <p className="mt-1 text-muted">{none} with none, {issues.length - none} with more than one.
+        <b> Who:</b> the CDRRMO, with the offices named. <b>How:</b> check the EO, the approved plantilla and the Manual table.
+        <b> Response:</b> one Accountable office, with the instrument that gives it the role. <b>Next:</b> the Manual editor revises the RACI table; a designation stays proposed until the competent authority issues it.</p>
+      <div className="mt-2 flex flex-wrap gap-2">
+        {issues.slice(0, 12).map((a) => (
+          <button key={a.activity.id} type="button" onClick={() => onPick(a.activity.sop_ref ?? a.activity.activity)} {...tip(`Show "${a.activity.activity}" on the board`)}
+            className="min-h-tap rounded-full border border-line bg-surface px-3 text-xs font-semibold text-ink hover:border-sky">
+            {a.activity.activity.slice(0, 48)} · {a.accountableCount === 0 ? 'no A' : `${a.accountableCount} A`}
+          </button>
+        ))}
+      </div>
+    </section>
   );
 }

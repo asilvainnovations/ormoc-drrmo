@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { itemsForDocument } from '@/domain/bmap';
+import { UnderValidation } from '@/features/governance/UnderValidation';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { FilePen, PencilLine } from 'lucide-react';
 import { db } from '@/lib/db';
@@ -29,7 +31,8 @@ export function DocumentPage() {
     const cycle = (await db.assessment_cycles.orderBy('cycle_year').reverse().toArray())[0];
     const responses = cycle ? await db.responses.where('cycle_id').equals(cycle.id).toArray() : [];
     const protocols = (await db.protocol_templates.toArray()).filter((p) => p.document_id === doc.id);
-    return { doc, versions, indicators: indicators.filter(Boolean), byInd: new Map(responses.map((r) => [r.indicator_id, r])), cycle, protocols };
+    const validation = itemsForDocument(await db.manual_review_items.toArray(), doc);
+    return { validation, doc, versions, indicators: indicators.filter(Boolean), byInd: new Map(responses.map((r) => [r.indicator_id, r])), cycle, protocols };
   }, [id]);
   const [viewId, setViewId] = useState<string | null>(null);
   const [edit, setEdit] = useState<{ label: string; body: string; note: string } | null>(null);
@@ -68,6 +71,7 @@ export function DocumentPage() {
           {canCorrect && versions[0] && <Button tip="Add, delete or revise text, or add or replace a figure, in one section. Every correction is logged" icon={PencilLine} onClick={() => setCorrecting(true)}>Correct this chapter</Button>}
           {isAuthor && <Button variant="secondary" tip="Write a new draft version of this section. Published versions stay unchanged" icon={FilePen} onClick={startEdit}>New version</Button>}
         </div>} />
+      <UnderValidation items={data.validation} what="document" />
       <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_20rem] lg:gap-10">
         <article>
           {shown ? (

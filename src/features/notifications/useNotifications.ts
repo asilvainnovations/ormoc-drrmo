@@ -5,6 +5,8 @@ import { useAuth } from '@/lib/auth';
 import { useActiveDeclaration, useEocStatus, usePending } from '@/lib/hooks';
 import { actionSummary, todaySections } from '@/domain/dashboard';
 import { checkinDue, latestCall } from '@/domain/coordination';
+import { decisionFollowUp, decisionNextAction, isCoordinator, itemFollowUp, itemNextAction } from '@/domain/bmap';
+import { useViewer } from '@/features/governance/actions';
 import { buildNotices, EMPTY_PREFS, isUnread, markRead, visibleNotices, type Notice, type NoticePrefs } from '@/domain/notifications';
 
 /** Read marks and on/off choices live on this device only (ADR-046). Storage can be missing or full; the app
@@ -35,6 +37,7 @@ export function useNotifications() {
   const decl = useActiveDeclaration();
   const pending = usePending(userId);
   const prefs = useNoticePrefs();
+  const viewer = useViewer();
   const seesActions = todaySections(roles).actions;
   const extra = useLiveQuery(async () => {
     const requests = await db.resource_requests.where('status').anyOf('requested', 'approved', 'mobilized').toArray();
@@ -58,13 +61,24 @@ export function useNotifications() {
         };
       }
     }
-    return { requests, running, overdue, coordination };
-  }, [seesActions, activation?.id, userId], { requests: [], running: [], overdue: null, coordination: null });
+    // 1.34.0: validation steps waiting on this person (B = MAP prompt).
+    const [items, decisions] = [await db.manual_review_items.toArray(), await db.outstanding_decisions.toArray()];
+    const rows = [
+      ...items.map((x) => ({ id: x.source_tracker_id, next: itemNextAction(x, viewer), f: itemFollowUp(x).state })),
+      ...decisions.map((x) => ({ id: x.source_decision_id, next: decisionNextAction(x, viewer), f: decisionFollowUp(x).state })),
+    ];
+    const waiting = rows.filter((r) => r.next);
+    const validation = {
+      waiting: waiting.map((r) => r.id), late: waiting.filter((r) => r.f === 'overdue' || r.f === 'escalated').map((r) => r.id),
+      escalated: isCoordinator(viewer) ? rows.filter((r) => r.f === 'escalated').length : 0,
+    };
+    return { requests, running, overdue, coordination, validation };
+  }, [seesActions, activation?.id, userId, viewer.officeCode, viewer.roles.join()], { requests: [], running: [], overdue: null, coordination: null, validation: null });
 
   const all = buildNotices({
     level, activation: activation ? { id: activation.id, started_at: activation.started_at } : null,
     declaration: decl ? { id: decl.id, status: decl.status as 'requested' | 'recommended' | 'declared', updated_at: decl.updated_at } : null,
-    pending, requests: extra.requests, running: extra.running, overdueActions: extra.overdue, coordination: extra.coordination,
+    pending, requests: extra.requests, running: extra.running, overdueActions: extra.overdue, coordination: extra.coordination, validation: extra.validation,
   });
   const notices = visibleNotices(all, prefs);
   const unread = notices.filter((n) => isUnread(n, prefs));

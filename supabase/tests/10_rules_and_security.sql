@@ -1515,6 +1515,79 @@ select tests.expect_error('carer separations cannot exceed persons with disabili
   $$insert into public.camp_reports (centre_id, phase, families, persons, older, pwd, carer_separations)
     values ('e1000000-0000-0000-0000-000000000001', 'open', 20, 80, 1, 1, 3)$$, '23514');
 
+-- 1.34.0 B = MAP: the office that must act can answer in MODE; closure follows the tracker's criterion.
+reset role;
+select tests.expect_eq('the tracker''s leads route to office codes',
+  array_to_string(app.office_codes_in('CPDO / City Secretary / DILG CLGOO'), ','), 'CPDO,DILG-VIII,SEC');
+select tests.expect_eq('every review item and decision reaches at least one office',
+  ((select count(*) from public.manual_review_items where lead_office_codes = '{}')
+   + (select count(*) from public.outstanding_decisions where owner_office_codes = '{}'))::text, '0');
+select tests.expect_eq('decisions take their due date from the target workshop',
+  (select count(*) from public.outstanding_decisions where target_date is null)::text, '0');
+select tests.expect_eq('the locator gives every item its task and closure criterion',
+  (select count(*) from public.manual_review_items where task is null or closure_criterion is null)::text, '0');
+select tests.login('00000000-0000-0000-0000-000000000010');
+select tests.expect_error('a viewer cannot assign validation tasks',
+  $$select public.assign_validation_tasks(array(select id from public.manual_review_items where lead_office = 'CPDO'), null, current_date + 3)$$, '42501');
+select tests.login('00000000-0000-0000-0000-000000000011');
+select tests.expect_error('a task cannot be given a response date already past',
+  $$select public.assign_validation_tasks(array(select id from public.manual_review_items where lead_office = 'CPDO'), null, current_date - 1)$$, '22023');
+select tests.expect_eq('the CDRRMO Head assigns the CPDO items and decision with a response date',
+  public.assign_validation_tasks(array(select id from public.manual_review_items where lead_office = 'CPDO'),
+    array(select id from public.outstanding_decisions where source_decision_id = 'OD-08'), current_date + 3)::text,
+  ((select count(*) from public.manual_review_items where lead_office = 'CPDO') + 1)::text);
+select tests.expect_error('a plain update cannot move the response date',
+  $$update public.manual_review_items set due_date = current_date + 30 where lead_office = 'CPDO'$$, '42501');
+select tests.login('00000000-0000-0000-0000-00000000000f');
+select tests.expect_ok('the CPDO focal person acknowledges the assignment',
+  $$select public.acknowledge_validation_task('item', (select id from public.manual_review_items where lead_office = 'CPDO' order by source_tracker_id limit 1))$$);
+select tests.expect_error('the CPDO focal person cannot acknowledge a City Legal Office task',
+  $$select public.acknowledge_validation_task('item', (select id from public.manual_review_items where lead_office = 'City Legal Office' order by source_tracker_id limit 1))$$, '42501');
+select tests.expect_error('the CPDO focal person cannot answer for the City Legal Office',
+  $$select public.record_review_response((select id from public.manual_review_items where lead_office = 'City Legal Office' order by source_tracker_id limit 1), 'Agree')$$, '42501');
+select tests.expect_ok('the CPDO focal person records the recommendation on a CPDO item',
+  $$select public.record_review_response((select id from public.manual_review_items where lead_office = 'CPDO' order by source_tracker_id limit 1), 'Keep the matrix with CPDO; reporting calendar quarterly.')$$);
+select tests.expect_eq('a recommendation without evidence waits on evidence and is stamped with who and when',
+  (select review_status || ':' || (recommended_by = '00000000-0000-0000-0000-00000000000f')::text || ':' || (recommended_at is not null)::text
+     from public.manual_review_items where lead_office = 'CPDO' order by source_tracker_id limit 1), 'pending_evidence:true:true');
+select tests.login('00000000-0000-0000-0000-00000000000c');
+select tests.expect_error('a plain update cannot write the recommendation, even by a validator',
+  $$update public.manual_review_items set recommendation = 'forged' where lead_office = 'CPDO'$$, '42501');
+select tests.expect_error('an item cannot close without the evidence reference',
+  $$update public.manual_review_items set review_status = 'closed', disposition = 'accepted'
+     where id = (select id from public.manual_review_items where lead_office = 'CPDO' order by source_tracker_id limit 1)$$, '42501');
+select tests.expect_ok('the CDRRMO validator adds the evidence reference on the lead''s behalf',
+  $$select public.record_review_response((select id from public.manual_review_items where lead_office = 'CPDO' order by source_tracker_id limit 1), null, 'CPDO memo 2026-118, signed 1 Dec 2026')$$);
+select tests.expect_error('the item cannot close before a validator verifies the evidence',
+  $$update public.manual_review_items set review_status = 'closed', disposition = 'accepted'
+     where id = (select id from public.manual_review_items where lead_office = 'CPDO' order by source_tracker_id limit 1)$$, '42501');
+select tests.expect_error('rejecting evidence needs the reason',
+  $$select public.verify_review_evidence((select id from public.manual_review_items where lead_office = 'CPDO' order by source_tracker_id limit 1), false)$$, '22023');
+select tests.expect_ok('a validator who did not recommend verifies the evidence',
+  $$select public.verify_review_evidence((select id from public.manual_review_items where lead_office = 'CPDO' order by source_tracker_id limit 1), true, 'Signed memo seen')$$);
+select tests.expect_ok('with recommendation, verified evidence and disposition the item closes',
+  $$update public.manual_review_items set review_status = 'closed', disposition = 'accepted'
+     where id = (select id from public.manual_review_items where lead_office = 'CPDO' order by source_tracker_id limit 1)$$);
+select public.record_review_response((select id from public.manual_review_items where needs_authority and lead_office = 'City Legal Office' order by source_tracker_id limit 1),
+  'Amend the ordinance', 'Draft ordinance v2');
+select tests.expect_error('an item that needs the competent authority cannot close on recommendation and evidence alone',
+  $$update public.manual_review_items set review_status = 'closed', disposition = 'revised'
+     where id = (select id from public.manual_review_items where needs_authority and lead_office = 'City Legal Office' order by source_tracker_id limit 1)$$, '42501');
+select tests.expect_eq('with recommendation and evidence, an authority item waits on the decision',
+  (select review_status from public.manual_review_items where needs_authority and lead_office = 'City Legal Office' order by source_tracker_id limit 1), 'pending_decision');
+select tests.expect_error('the validator who recommended cannot verify their own evidence',
+  $$select public.verify_review_evidence((select id from public.manual_review_items where needs_authority and lead_office = 'City Legal Office' order by source_tracker_id limit 1), true)$$, '42501');
+select tests.expect_ok('a deferred item closes with its disposition alone',
+  $$update public.manual_review_items set review_status = 'closed', disposition = 'deferred', notes = 'After the workshop'
+     where id = (select id from public.manual_review_items where review_status = 'open' order by source_tracker_id desc limit 1)$$);
+select tests.login('00000000-0000-0000-0000-00000000000f');
+select tests.expect_error('the CPDO focal person cannot answer the City Legal Office''s decision',
+  $$select public.record_decision_response((select id from public.outstanding_decisions where source_decision_id = 'OD-01'), 'Yes')$$, '42501');
+select tests.expect_ok('the decision owner''s office records its response',
+  $$select public.record_decision_response((select id from public.outstanding_decisions where source_decision_id = 'OD-08'), 'CPDO accepts the M&E matrix ownership.', 'CPDO note')$$);
+select tests.expect_eq('the decision moves to in progress',
+  (select decision_status from public.outstanding_decisions where source_decision_id = 'OD-08'), 'in_progress');
+
 reset role;
 select tests.expect_eq('audit trail recorded', ((select count(*) from public.audit_log) > 50)::text, 'true');
 \o

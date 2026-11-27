@@ -7,11 +7,18 @@ import { db } from '@/lib/db';
 import { tip } from '@/components/Tooltip';
 import { Badge, EmptyState, Input, Loading, Section } from '@/components/ui';
 import type { DecisionStatus, GovernancePriority, OutstandingDecision } from '@/types';
-import { WorkspaceHead } from './kit';
+import { WorkspaceHead, Pill } from './kit';
+import { PromptCard } from '@/components/PromptCard';
+import { FOLLOW_UP_LABEL, NEXT_LABEL, decisionFollowUp, decisionNextAction, decisionPrompt, mandateByOffice, type Viewer } from '@/domain/bmap';
+import { DecisionActions, FOLLOW_TONE } from './ActionPanel';
+import { useViewer } from './actions';
 import { AUTHORITY_STATUS, DECISION_STATUS, GOVERNANCE_CAVEAT, PRIORITY } from './labels';
 
 export function DecisionsPage() {
   const items = useLiveQuery(() => db.outstanding_decisions.orderBy('source_decision_id').toArray(), []);
+  const viewer = useViewer();
+  const stakeholders = useLiveQuery(() => db.manual_governance_stakeholders.toArray(), [], []);
+  const mandates = useMemo(() => mandateByOffice(stakeholders), [stakeholders]);
   const [q, setQ] = useState('');
   const [status, setStatus] = useState<DecisionStatus | 'all'>('all');
   const [priority, setPriority] = useState<GovernancePriority | 'all'>('all');
@@ -94,7 +101,7 @@ export function DecisionsPage() {
       ) : (
         <ul className="divide-y divide-line rounded-panel border border-line bg-surface">
           {filtered.map((d: OutstandingDecision) => (
-            <DecisionRow key={d.id} item={d} />
+            <DecisionRow key={d.id} item={d} viewer={viewer} mandates={mandates} />
           ))}
         </ul>
       )}
@@ -103,8 +110,10 @@ export function DecisionsPage() {
   );
 }
 
-function DecisionRow({ item }: { item: OutstandingDecision }) {
+function DecisionRow({ item, viewer, mandates }: { item: OutstandingDecision; viewer: Viewer; mandates: Map<string, string> }) {
   const p = PRIORITY[item.priority];
+  const f = decisionFollowUp(item);
+  const next = decisionNextAction(item, viewer);
   return (
     <li className="px-4 py-3">
       <div className="flex flex-wrap items-center gap-2">
@@ -114,6 +123,8 @@ function DecisionRow({ item }: { item: OutstandingDecision }) {
         <Badge tone={item.authority_status === 'confirmed' ? 'ok' : 'warn'}>
           {AUTHORITY_STATUS[item.authority_status]}
         </Badge>
+        <Pill tone={FOLLOW_TONE[f.state]}>{FOLLOW_UP_LABEL[f.state]}{item.target_date ? ` · ${item.target_date}` : ''}</Pill>
+        {next && <Pill tone="blue">Your step: {NEXT_LABEL[next]}</Pill>}
       </div>
       <p className="mt-1 font-medium leading-snug">{item.question}</p>
       <p className="mt-0.5 text-sm text-muted">
@@ -129,17 +140,12 @@ function DecisionRow({ item }: { item: OutstandingDecision }) {
       {item.target_workshop && (
         <p className="text-xs text-muted">Target workshop: {item.target_workshop}</p>
       )}
-      <details className="mt-2 rounded-control border border-line bg-sunken/30 p-3">
-        <summary className="min-h-tap cursor-pointer text-xs font-bold text-ink">Show decision action prompt · B = MAP</summary>
-        <dl className="mt-3 grid gap-2 text-xs sm:grid-cols-2">
-          <div><dt className="font-bold text-muted">WHO · accountable owner</dt><dd className="mt-1">{item.accountable_owner_office}</dd></div>
-          <div><dt className="font-bold text-muted">AUTHORITY · competent decision-maker</dt><dd className="mt-1">{item.decision_authority_office ?? 'Not recorded — confirm before routing'} · {AUTHORITY_STATUS[item.authority_status]}</dd></div>
-          <div><dt className="font-bold text-muted">WHY / WHAT · decision required</dt><dd className="mt-1">{item.question}</dd></div>
-          <div><dt className="font-bold text-muted">HOW · evidence and consultation</dt><dd className="mt-1">{item.evidence_required ?? 'Evidence requirement not recorded'}{item.supporting_validators ? ` · Supporting validators: ${item.supporting_validators}` : ''}</dd></div>
-          <div><dt className="font-bold text-muted">WHEN · target</dt><dd className="mt-1">{item.target_date ?? item.target_workshop ?? 'No target date recorded — agree with the owner'}</dd></div>
-          <div><dt className="font-bold text-muted">EXPECTED RESPONSE</dt><dd className="mt-1">Formal decision, recorded disposition, decision reference and decision date.</dd></div>
-        </dl>
-        <p className="mt-3 border-t border-line pt-2 text-xs"><strong>NEXT · </strong>Update the decision status only after the competent authority's outcome and supporting record are captured.</p>
+      <details className="mt-2 rounded-control border border-line bg-sunken/30 p-3" open={!!next}>
+        <summary className="min-h-tap cursor-pointer text-xs font-bold text-ink" {...tip('Who acts, by when, and what they return')}>Action prompt and response</summary>
+        <div className="mt-3 space-y-3">
+          <PromptCard prompt={decisionPrompt(item, mandates)} />
+          <DecisionActions key={`${item.id}-${item.version}`} decision={item} viewer={viewer} />
+        </div>
       </details>
     </li>
   );

@@ -11,7 +11,16 @@ export interface AttentionInput {
   evacCountsMissing: number;           // barangays evacuating or affected without counts
   nextSitrep: { time: string; minutes: number } | null;
 }
-export interface AttentionItem { id: string; tone: 'bad' | 'warn' | 'info'; text: string; to: string }
+/** 1.34.0 (B = MAP): who is expected to act and what response closes the item, so the board prompts an action. */
+export interface AttentionItem { id: string; tone: 'bad' | 'warn' | 'info'; text: string; to: string; who?: string; response?: string }
+const ACT: Record<string, { who: string; response: string }> = {
+  ls: { who: 'EOC Manager, with Logistics', response: 'Approve, partly approve or refuse, with the reason, then track delivery.' },
+  silent: { who: 'EOC operations staff', response: 'Reach the BDRRMC; log the report, or "no contact" with the time tried.' },
+  camps: { who: 'CCCM lead (CSWDO), with the camp manager', response: 'Open an overflow site or transfer families together; log the decision.' },
+  family: { who: 'CSWDO protection desk', response: 'Reunite, or record the care arrangement; keep the family or carer together.' },
+  counts: { who: 'Barangay focal person, through EOC staff', response: 'Enter families and persons, or mark them as not reported.' },
+  sitrep: { who: 'Planning Section', response: 'Submit the SitRep to DILG VIII by the cut-off.' },
+};
 
 const plural = (n: number, one: string, many = `${one}s`) => `${n} ${n === 1 ? one : many}`;
 
@@ -31,7 +40,7 @@ export function attentionItems(i: AttentionInput): AttentionItem[] {
   }
   if (i.evacCountsMissing > 0) out.push({ id: 'counts', tone: 'warn', text: `${plural(i.evacCountsMissing, 'barangay')} reporting without evacuee counts`, to: '/eoc/barangays' });
   if (i.activeEvent && i.nextSitrep && i.nextSitrep.minutes <= 120) out.push({ id: 'sitrep', tone: 'info', text: `SitRep to the Province due ${i.nextSitrep.time}`, to: '/eoc/sitreps' });
-  return out;
+  return out.map((a) => ({ ...a, ...ACT[a.id] }));
 }
 
 /** The next SitRep submission time (HH:MM, Manila) after `now`, from the level's am/pm cut-offs. */

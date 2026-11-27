@@ -497,6 +497,15 @@ OFFICES = [  # code, name, kind
     ('BFP', 'Bureau of Fire Protection, Ormoc City', 'national_agency'),
     ('PRC', 'Philippine Red Cross, Ormoc Chapter', 'cso'),
     ('LIGA', 'Liga ng mga Barangay, Ormoc Chapter', 'barangay'),
+    # 1.34.0: lead validators named in the Validation Tracker (B = MAP routing needs every office that must act)
+    ('CLO', 'City Legal Office', 'city_office'),
+    ('HRMO', 'Human Resource Management Office', 'city_office'),
+    ('ICT', 'City ICT Office', 'city_office'),
+    ('DPO', 'City Data Protection Officer', 'city_office'),
+    ('SP', 'Sangguniang Panlungsod and SP Secretariat', 'city_office'),
+    ('TREAS', 'City Treasury Office', 'city_office'),
+    ('SEC', 'Office of the City Secretary', 'city_office'),
+    ('DILG-VIII', 'DILG Region VIII and the City LGOO', 'national_agency'),
 ]
 LEAD_MAP = {  # Part C lead-office text fragment -> office code
     'CDRRMO': 'CDRRMO', 'Chamber of Commerce': 'CHAMBER', 'utility providers': 'UTILITIES', 'CENRO': 'CENRO',

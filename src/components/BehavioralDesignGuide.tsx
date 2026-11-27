@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { ArrowRight, BellRing, Target, Wrench } from 'lucide-react';
 
 export interface BehavioralDesignGuideProps {
@@ -26,6 +26,8 @@ export function BehavioralDesignGuide({
   actionLabel,
   boundary,
 }: BehavioralDesignGuideProps) {
+  // A link back to the page it sits on helps no one act; show it only when it goes somewhere else.
+  const here = useLocation().pathname.replace(/\/$/, '') === actionHref.replace(/\/$/, '');
   return (
     <section
       aria-label={`Behavioural design guidance for ${area}`}
@@ -54,12 +56,13 @@ export function BehavioralDesignGuide({
       </div>
       <div className="flex flex-col gap-2 border-t border-line px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
         <p className="max-w-3xl text-xs leading-relaxed text-muted">{boundary ?? 'Record the requested action, responsible office, evidence, response and next step. A prompt is not proof of completion or approval.'}</p>
-        <Link
+        {!here && <Link
           to={actionHref}
+          data-tip={`${actionLabel}: the next place to act`}
           className="inline-flex min-h-tap shrink-0 items-center justify-center gap-2 rounded-control bg-action px-3 py-2 text-xs font-bold text-white transition hover:-translate-y-0.5 hover:shadow-raised focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-action focus-visible:ring-offset-2"
         >
           {actionLabel}<ArrowRight className="h-3.5 w-3.5" aria-hidden />
-        </Link>
+        </Link>}
       </div>
     </section>
   );
