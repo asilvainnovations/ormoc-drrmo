@@ -1,4 +1,5 @@
 // Outstanding Decisions Register — ADR-043 Slice 1.
+import { BehavioralDesignGuide } from '@/components/BehavioralDesignGuide';
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
@@ -32,6 +33,7 @@ export function DecisionsPage() {
 
   return (
     <div className="space-y-4">
+      <BehavioralDesignGuide area="Institutional decision log" motivation="Outstanding decisions require a clear accountable owner and a separate, verified decision authority to prevent recommendations being mistaken for approvals." ability="Review the question, supporting validators, Manual coverage, evidence requirement and authority status before routing the matter." prompt="When evidence and recommendations are ready, route the item to the competent decision authority, record the signed decision reference and date, and update the disposition." actionHref="/governance/reviews" actionLabel="Review linked validation items" boundary="The accountable owner coordinates the decision; the legally competent authority decides. Never mark a decision complete without its formal reference and evidence." />
       <WorkspaceHead eyebrow="Decision log" title="Outstanding Decisions" subtitle="One accountable owner per decision. Decision authority is recorded separately. Source IDs OD-01…OD-18." />
 
       <div className="flex flex-wrap gap-2 text-sm">
