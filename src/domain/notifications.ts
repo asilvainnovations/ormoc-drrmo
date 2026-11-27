@@ -6,7 +6,7 @@
  *  per-kind on/off choices stay on this device only. */
 import type { EocLevel } from '@/types';
 
-export type NoticeKind = 'eoc' | 'declaration' | 'sync' | 'requests' | 'protocols' | 'actions';
+export type NoticeKind = 'eoc' | 'declaration' | 'coordination' | 'sync' | 'requests' | 'protocols' | 'actions';
 export type NoticeTone = 'bad' | 'warn' | 'info';
 
 export interface Notice {
@@ -25,6 +25,7 @@ export interface Notice {
 export const NOTICE_KINDS: { kind: NoticeKind; label: string; about: string }[] = [
   { kind: 'eoc', label: 'EOC Level', about: 'The EOC is at Blue or Red level.' },
   { kind: 'declaration', label: 'Declarations', about: 'A State of Imminent Disaster is requested, recommended or in force.' },
+  { kind: 'coordination', label: 'EOC Coordination', about: 'A check-in call you have not answered, and urgent messages on the current activation.' },
   { kind: 'sync', label: 'Sync Problems', about: 'Records the server refused or that someone else edited first.' },
   { kind: 'requests', label: 'Resource Requests', about: 'Life-safety and urgent requests not yet delivered.' },
   { kind: 'protocols', label: 'Running Protocols', about: 'Protocols and drills still running on any device.' },
@@ -40,6 +41,8 @@ export interface NoticeInput {
   running: { id: string; started_at: string }[];
   /** Overdue improvement actions, or null when this user does not see actions. */
   overdueActions: number | null;
+  /** 1.32.0: the current activation's coordination thread, as this user sees it. Optional so older callers keep working. */
+  coordination?: { checkinDue: boolean; callAt: string | null; urgent: { id: string; created_at: string }[] } | null;
 }
 
 const OPEN_REQUEST = new Set(['requested', 'approved', 'mobilized']);
@@ -59,6 +62,16 @@ export function buildNotices(i: NoticeInput): Notice[] {
         : d.status === 'requested' ? 'Declaration requested from RDRRMC VIII' : 'RDRRMC recommends a declaration',
       body: 'Open the anticipatory action board for the clock and the actions due.',
       to: '/eoc', signature: `${d.id}:${d.status}`, at: d.updated_at ?? null });
+  }
+  const co = i.coordination;
+  if (co?.checkinDue && co.callAt) {
+    out.push({ id: 'coordination', kind: 'coordination', tone: 'bad', title: 'The EOC called a check-in',
+      body: 'Open Coordination and tap where you are.', to: '/eoc/coordination', signature: `call:${co.callAt}`, at: co.callAt });
+  } else if (co && co.urgent.length > 0) {
+    const last = [...co.urgent].sort((a, b) => a.created_at.localeCompare(b.created_at)).at(-1)!;
+    out.push({ id: 'coordination', kind: 'coordination', tone: 'warn',
+      title: `${co.urgent.length} urgent coordination message${co.urgent.length === 1 ? '' : 's'}`,
+      body: 'On the current activation.', to: '/eoc/coordination', signature: `urgent:${last.id}`, at: last.created_at });
   }
   const stuck = i.pending.failed + i.pending.conflicts;
   if (stuck > 0) {

@@ -134,4 +134,6 @@ export const TABLE = Object.fromEntries(TABLES.map((t) => [t.name, t])) as Recor
 /** Tables pushed to the UI live through Supabase Realtime. */
 export const REALTIME_TABLES = ['eoc_activations', 'logbook_entries', 'sitreps', 'barangay_reports', 'resource_requests', 'declarations', 'aa_actions', 'vault_documents',
   'activation_clusters', 'eoc_designations', 'contingency_plans', 'geo_reference_points', 'geo_layers', 'form_templates',
-  'evacuation_centers', 'camp_reports', 'camp_feedback'];
+  'evacuation_centers', 'camp_reports', 'camp_feedback',
+  // 1.32.0: the Coordination screen updates when a message or a check-in arrives.
+  'conversation_threads', 'conversation_messages'];

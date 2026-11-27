@@ -1381,6 +1381,83 @@ select tests.login('00000000-0000-0000-0000-000000000010');  -- viewer
 select tests.expect_rows('active users read the corrections log',
   $$select count(*) from public.manual_corrections where document_id = 'b0000000-0000-0000-0000-000000000001'$$, 2);
 
+-- ---------------------------------------------------------------- 1.32.0 EOC coordination
+-- Conversations on the current activation: messages save (no version column), resolve works (one touch trigger),
+-- the lock cascade on deactivation works, urgent is for the EOC Manager or Head, check-in answers are fixed chips,
+-- and a check-in call is an online authority action with a five-minute spacing.
+select tests.login('00000000-0000-0000-0000-00000000000d');  -- EOC Manager
+select public.set_eoc_level('blue', 'Coordination test (1.32.0)', 'tropical_cyclone')
+ where not exists (select 1 from public.eoc_activations where ended_at is null);
+select tests.login('00000000-0000-0000-0000-000000000013');  -- EOC staff
+select tests.expect_ok('EOC staff open the coordination thread of the current activation',
+  $$insert into public.conversation_threads (id, parent_kind, parent_id, title, status)
+    values ('c1000000-0000-0000-0000-000000000001', 'eoc_activation',
+            (select id from public.eoc_activations where ended_at is null), 'EOC coordination', 'open')$$);
+select tests.expect_ok('EOC staff post a routine message',
+  $$insert into public.conversation_messages (thread_id, body) values ('c1000000-0000-0000-0000-000000000001', 'Generator fuel at 60 percent')$$);
+select tests.expect_eq('the server stamps the author',
+  (select author_id::text from public.conversation_messages where body = 'Generator fuel at 60 percent'), '00000000-0000-0000-0000-000000000013');
+select tests.expect_ok('EOC staff post a priority message',
+  $$insert into public.conversation_messages (thread_id, body, priority) values ('c1000000-0000-0000-0000-000000000001', 'Road to Lake Danao closed', 'priority')$$);
+select tests.expect_error('EOC staff cannot post an urgent message',
+  $$insert into public.conversation_messages (thread_id, body, priority) values ('c1000000-0000-0000-0000-000000000001', 'All report now', 'urgent')$$, '42501');
+select tests.expect_ok('EOC staff check in with a fixed answer',
+  $$insert into public.conversation_messages (thread_id, body, kind) values ('c1000000-0000-0000-0000-000000000001', 'At the EOC', 'checkin')$$);
+select tests.expect_error('a check-in answer must be one of the fixed choices',
+  $$insert into public.conversation_messages (thread_id, body, kind) values ('c1000000-0000-0000-0000-000000000001', 'somewhere', 'checkin')$$, '42501');
+select tests.expect_error('a check-in call cannot be posted as an ordinary message',
+  $$insert into public.conversation_messages (thread_id, body, kind, priority) values ('c1000000-0000-0000-0000-000000000001', 'Check in', 'checkin_call', 'urgent')$$, '42501');
+select tests.expect_error('EOC staff cannot call a check-in',
+  $$select public.eoc_call_checkin((select id from public.eoc_activations where ended_at is null), null)$$, '42501');
+select tests.expect_error('EOC staff cannot lock a thread by hand',
+  $$update public.conversation_threads set status = 'locked' where id = 'c1000000-0000-0000-0000-000000000001'$$, '42501');
+select tests.login('00000000-0000-0000-0000-000000000010');  -- viewer
+select tests.expect_rows('a viewer does not read EOC coordination', $$select count(*) from public.conversation_messages$$, 0);
+select tests.login('00000000-0000-0000-0000-00000000000d');  -- EOC Manager
+select tests.expect_ok('the EOC Manager posts an urgent message',
+  $$insert into public.conversation_messages (thread_id, body, priority) values ('c1000000-0000-0000-0000-000000000001', 'Red level expected at 18:00', 'urgent')$$);
+select tests.expect_ok('the EOC Manager calls a check-in',
+  $$select public.eoc_call_checkin((select id from public.eoc_activations where ended_at is null), 'Report to your desk')$$);
+select tests.expect_eq('the call is one urgent message by the caller on the same thread',
+  (select count(*)::text || ' ' || min(priority) || ' ' || min(author_id::text) from public.conversation_messages
+    where thread_id = 'c1000000-0000-0000-0000-000000000001' and kind = 'checkin_call'), '1 urgent 00000000-0000-0000-0000-00000000000d');
+select tests.expect_error('a second call within five minutes is refused',
+  $$select public.eoc_call_checkin((select id from public.eoc_activations where ended_at is null), null)$$, '55000');
+select tests.expect_ok('the EOC Manager resolves the thread',
+  $$update public.conversation_threads set status = 'resolved', version = (select version from public.conversation_threads where id = 'c1000000-0000-0000-0000-000000000001')
+     where id = 'c1000000-0000-0000-0000-000000000001'$$);
+select tests.expect_error('a resolved thread takes no new message',
+  $$insert into public.conversation_messages (thread_id, body) values ('c1000000-0000-0000-0000-000000000001', 'late note')$$, '42501');
+reset role;
+update public.conversation_messages set created_at = now() - interval '6 minutes' where kind = 'checkin_call';
+select tests.login('00000000-0000-0000-0000-000000000011');  -- CDRRMO Head
+select tests.expect_ok('a check-in call reopens a resolved thread',
+  $$select public.eoc_call_checkin((select id from public.eoc_activations where ended_at is null), null)$$);
+select tests.expect_eq('the thread is open again with two calls',
+  (select t.status || ' ' || (select count(*) from public.conversation_messages m where m.thread_id = t.id and m.kind = 'checkin_call')::text
+     from public.conversation_threads t where t.id = 'c1000000-0000-0000-0000-000000000001'), 'open 2');
+select tests.expect_error('messages are never edited',
+  $$update public.conversation_messages set body = 'changed' where thread_id = 'c1000000-0000-0000-0000-000000000001'$$, '42501');
+select tests.expect_ok('ending the activation still works with an open thread',
+  $$select public.set_eoc_level('white', 'Coordination test ends (1.32.0)')$$);
+select tests.expect_eq('the thread locked with its activation',
+  (select status from public.conversation_threads where id = 'c1000000-0000-0000-0000-000000000001'), 'locked');
+select tests.expect_error('a locked thread takes no new message',
+  $$insert into public.conversation_messages (thread_id, body) values ('c1000000-0000-0000-0000-000000000001', 'after the end')$$, '42501');
+reset role;
+select tests.expect_eq('every public table refuses writes from read-only apps (ADR-010)',
+  (select count(*)::text from pg_class c join pg_namespace n on n.oid = c.relnamespace
+    where n.nspname = 'public' and c.relkind = 'r'
+      and not exists (select 1 from pg_trigger g where g.tgrelid = c.oid and g.tgname = 'aa0_block_oauth_client_writes')), '0');
+select set_config('request.jwt.claims', '{"client_id":"client-dashboard-01"}', false);
+select tests.login('00000000-0000-0000-0000-00000000000d');  -- EOC Manager, through a read-only app
+select tests.expect_error('a read-only app cannot post a coordination message',
+  $$insert into public.conversation_threads (parent_kind, parent_id, status)
+    values ('protocol_run', (select id from public.protocol_runs limit 1), 'open')$$, '42501');
+reset role; select set_config('request.jwt.claims', '', false);
+select tests.expect_eq('anonymous callers cannot call a check-in',
+  has_function_privilege('anon', 'public.eoc_call_checkin(uuid, text)', 'execute')::text, 'false');
+
 reset role;
 select tests.expect_eq('audit trail recorded', ((select count(*) from public.audit_log) > 50)::text, 'true');
 \o

@@ -4,6 +4,7 @@ import { db } from '@/lib/db';
 import { useAuth } from '@/lib/auth';
 import { useActiveDeclaration, useEocStatus, usePending } from '@/lib/hooks';
 import { actionSummary, todaySections } from '@/domain/dashboard';
+import { checkinDue, latestCall } from '@/domain/coordination';
 import { buildNotices, EMPTY_PREFS, isUnread, markRead, visibleNotices, type Notice, type NoticePrefs } from '@/domain/notifications';
 
 /** Read marks and on/off choices live on this device only (ADR-046). Storage can be missing or full; the app
@@ -44,13 +45,26 @@ export function useNotifications() {
       const actions = cycle ? await db.actions.where('cycle_id').equals(cycle.id).toArray() : [];
       overdue = actionSummary(actions, new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Manila' })).overdue;
     }
-    return { requests, running, overdue };
-  }, [seesActions], { requests: [], running: [], overdue: null });
+    // 1.32.0: the current activation's coordination thread (readable by EOC roles only, so others get none).
+    let coordination: { checkinDue: boolean; callAt: string | null; urgent: { id: string; created_at: string }[] } | null = null;
+    if (activation) {
+      const thread = (await db.conversation_threads.where('[parent_kind+parent_id]').equals(['eoc_activation', activation.id]).toArray())
+        .find((t) => t.status !== 'locked');
+      if (thread) {
+        const msgs = await db.conversation_messages.where('thread_id').equals(thread.id).toArray();
+        coordination = {
+          checkinDue: checkinDue(msgs, userId), callAt: latestCall(msgs)?.created_at ?? null,
+          urgent: msgs.filter((m) => m.priority === 'urgent' && m.author_id !== userId).map((m) => ({ id: m.id, created_at: m.created_at })),
+        };
+      }
+    }
+    return { requests, running, overdue, coordination };
+  }, [seesActions, activation?.id, userId], { requests: [], running: [], overdue: null, coordination: null });
 
   const all = buildNotices({
     level, activation: activation ? { id: activation.id, started_at: activation.started_at } : null,
     declaration: decl ? { id: decl.id, status: decl.status as 'requested' | 'recommended' | 'declared', updated_at: decl.updated_at } : null,
-    pending, requests: extra.requests, running: extra.running, overdueActions: extra.overdue,
+    pending, requests: extra.requests, running: extra.running, overdueActions: extra.overdue, coordination: extra.coordination,
   });
   const notices = visibleNotices(all, prefs);
   const unread = notices.filter((n) => isUnread(n, prefs));
