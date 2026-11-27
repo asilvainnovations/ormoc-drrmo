@@ -4,6 +4,16 @@
 -- Run after parts 01 to 40. A part can be run again safely.
 begin;
 
+-- Stop with a plain message if a Manual section this part needs is not loaded yet.
+do $$ declare missing int; begin
+  select count(*) into missing from unnest(array['11fd6dcf-233f-59ef-9607-d25f0953ebe4','57e7eec1-e655-50fd-8bc4-e7b956b654fc']::uuid[]) as need(id)
+   where not exists (select 1 from public.moo_documents d where d.id = need.id);
+  if missing > 0 then
+    raise exception '% Manual section(s) for this part are not loaded. Run seed part 05_seed.sql, then 34_seed.sql, then this part again.', missing
+      using errcode = '23503';
+  end if;
+end $$;
+
 insert into public.form_templates (id,code,title,purpose,document_id,schema,status,rev) values
 ('800e5909-7f22-5df1-8bf9-84c8a84edad3'::uuid,'CAP-F01','DRRM skills inventory','Chapter 9 CAP-F01 (SOP 9-01). Counts by skill, office and barangay; blank means "not reported".','57e7eec1-e655-50fd-8bc4-e7b956b654fc'::uuid,'{"fields": [{"key": "unit", "label": "Office (CDRRMO division, City office or barangay)", "type": "text", "required": true}, {"key": "skill", "label": "Skill", "type": "select", "required": true, "options": ["ICS", "Basic life support / first aid", "Water search and rescue", "Collapsed structure search and rescue", "CCCM", "RDANA", "Early warning", "GIS", "Psychosocial first aid", "Other"]}, {"key": "count", "label": "People with the skill", "type": "integer", "required": true, "min": 0}, {"key": "last_trained", "label": "Most recent training", "type": "date", "required": false}, {"key": "lapsed", "label": "Refresher lapsed", "type": "integer", "required": false, "hint": "Number of people past their refresher date", "min": 0}]}'::jsonb,'draft',1),
 ('5e893536-ccb6-5114-904a-11777f2588cc'::uuid,'CAP-F02','Annual City DRRM training plan entry','Chapter 9 CAP-F02 (SOP 9-01). One course per entry; every course has an evaluation method.','57e7eec1-e655-50fd-8bc4-e7b956b654fc'::uuid,'{"fields": [{"key": "course", "label": "Course", "type": "text", "required": true}, {"key": "target_group", "label": "Target group", "type": "multiselect", "required": true, "options": ["CDRRMO staff", "EOC staff", "City offices", "BDRRMC", "Schools", "Health facilities", "Volunteers", "Partners"]}, {"key": "gap_source", "label": "Gap source", "type": "select", "required": true, "options": ["Competency matrix (Annex 9-B)", "IAT gap", "AAR finding", "Lapsed refresher", "Post-election orientation"]}, {"key": "provider", "label": "Provider", "type": "text", "required": true}, {"key": "month", "label": "Planned month", "type": "select", "required": true, "options": ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]}, {"key": "cost", "label": "Estimated cost (PHP)", "type": "integer", "required": false, "min": 0}, {"key": "evaluation", "label": "Evaluation method", "type": "select", "required": true, "options": ["Written test", "Practical assessment", "Drill observation", "Pre- and post-test", "Attendance only"]}, {"key": "ldrrmfip_line", "label": "LDRRMFIP line", "type": "text", "required": false}]}'::jsonb,'draft',1),

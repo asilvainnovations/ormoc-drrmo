@@ -236,6 +236,30 @@ export function PublicHome() {
         </div>
       </section>
 
+      {/* 1.32.1: the City Mayor's message in the Ormoc City DRRM Ten-Year Plan (2023-2032), p. 2, quoted word for word. */}
+      <figure aria-labelledby="mayor-quote-by" className="mt-10 flex flex-col items-center gap-6 rounded-sheet border border-line bg-surface p-6 shadow-raised sm:flex-row sm:items-center md:p-8">
+        <picture className="shrink-0">
+          <source type="image/webp" srcSet="/brand/mayor-lucy-torres-gomez-192.webp 1x, /brand/mayor-lucy-torres-gomez-384.webp 2x" />
+          <img src="/brand/mayor-lucy-torres-gomez-192.jpg" srcSet="/brand/mayor-lucy-torres-gomez-192.jpg 1x, /brand/mayor-lucy-torres-gomez-384.jpg 2x"
+            width={144} height={144} loading="lazy" decoding="async" alt="Lucy Torres-Gomez, City Mayor of Ormoc"
+            className="h-28 w-28 rounded-full object-cover ring-4 ring-accent ring-offset-2 ring-offset-surface md:h-36 md:w-36" />
+        </picture>
+        <div className="min-w-0 text-center sm:text-left">
+          <blockquote className="font-display text-xl font-semibold leading-snug text-ink md:text-2xl">
+            <p>
+              <span aria-hidden className="mr-1 text-accent">&ldquo;</span>I foresee the development of more focused, targeted and advanced{' '}
+              <abbr title="Programs, Projects and Activities" className="cursor-help no-underline decoration-dotted hover:underline">PPAs</abbr>{' '}
+              to address the gaps of Ormoc City&rsquo;s disaster resilience.<span aria-hidden className="ml-0.5 text-accent">&rdquo;</span>
+            </p>
+          </blockquote>
+          <figcaption id="mayor-quote-by" className="mt-4">
+            <span className="block font-bold text-ink">Lucy Torres-Gomez</span>
+            <span className="block text-sm text-muted">City Mayor of Ormoc</span>
+            <span className="mt-1 block text-xs text-muted">Message from the Mayor, <cite className="not-italic">Ormoc City DRRM Ten-Year Plan (2023&ndash;2032)</cite>, p. 2. PPAs: programs, projects and activities. Quoted from the City&rsquo;s plan; it is not a statement about MODE.</span>
+          </figcaption>
+        </div>
+      </figure>
+
       <section aria-labelledby="why" className="pt-12">
         <h2 id="why" className="text-3xl font-bold">Why MODE matters</h2>
         <p className="mt-3 max-w-3xl text-lg font-semibold">From institutional guidance to coordinated action. From operational learning to continuous improvement.</p>
