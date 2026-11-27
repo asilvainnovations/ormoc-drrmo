@@ -19,6 +19,7 @@ import type { EocLevel } from '@/types';
 import { setEocLevel } from './actions';
 import { parseSitrepCop, COP_GROUPS, type CopField } from '@/domain/sitrepCompose';
 import { EocLocation } from './EocLocation';
+import { ModulesPanel } from './ModulesPanel';
 import { QuickLogSheet } from './QuickLogSheet';
 import { Block, Legend, Ring, Tile } from './kit';
 import { BarangayGrid } from './BarangayPicture';
@@ -71,6 +72,7 @@ export function BoardPage() {
     silentPriority: (pic?.rows ?? []).filter((r) => r.cond === 'silent' && r.priority != null).sort((a, b) => a.priority! - b.priority!).slice(0, 10).map((r) => r.b.name),
     lifeSafetyAwaiting: data?.open.filter((r) => r.priority === 'life_safety' && r.status === 'requested').length ?? 0,
     campsOverCapacity: data?.camps.overCapacity ?? 0,
+    familyUnity: data ? { children: data.camps.unaccompaniedChildren + data.camps.separatedChildren, carers: data.camps.carerSeparations, families: data.camps.familiesApart } : undefined,
     evacCountsMissing: evac.notReported,
     nextSitrep: nextSubmission(pic?.cutoff),
   });
@@ -119,6 +121,8 @@ export function BoardPage() {
           {canChangeLevel(roles) && !online && <p className="w-full text-sm">Changing the level needs a connection.</p>}
         </div>
       </section>
+
+      <ModulesPanel activation={activation} />
 
       <div className="mb-5 grid grid-cols-2 gap-3 lg:grid-cols-5">
         <Tile label="Barangays reporting" value={`${reporting}`} hint={`of ${total}${pic?.window.kind === 'event' ? ' this activation' : ' in 24 h'}`} to="/eoc/barangays">

@@ -22,6 +22,7 @@ const SCREENS = [
   { to: '/drrm/forms', label: 'Forms', icon: FileText, keys: 'records registers' },
   { to: '/eoc', label: 'EOC board', icon: RadioTower, keys: 'alert level white blue red activation' },
   { to: '/eoc/log', label: 'EOC logbook', icon: RadioTower, keys: 'log entry significant events' },
+  { to: '/eoc/plans', label: 'Scenarios and contingency plan templates', icon: RadioTower, keys: 'figure 1.7 modules activated contingency plan CP forms guidebook typhoon flash flood earthquake' },
   { to: '/eoc/coordination', label: 'EOC coordination and check-in', icon: RadioTower, keys: 'messages team chat monitoring check in roll call urgent broadcast' },
   { to: '/eoc/sitreps', label: 'SitReps', icon: RadioTower, keys: 'situation report DILG' },
   { to: '/eoc/aa', label: 'Anticipatory action', icon: Siren, keys: 'PDRA state of imminent disaster RA 12287' },

@@ -1458,6 +1458,63 @@ reset role; select set_config('request.jwt.claims', '', false);
 select tests.expect_eq('anonymous callers cannot call a check-in',
   has_function_privilege('anon', 'public.eoc_call_checkin(uuid, text)', 'execute')::text, 'false');
 
+-- ---------------------------------------------------------------- 1.33.0 EOC modules by scenario, family unity
+reset role;
+select tests.expect_eq('the typhoon plan covers tropical cyclone, storm surge and flood (Figure 1.7 row 1)',
+  (select array_to_string(hazard_codes, ',') from public.contingency_plans where code = 'CP-FLOOD-LUNOP'), 'tropical_cyclone,storm_surge,flood');
+select tests.expect_eq('the earthquake plan also covers tsunami',
+  (select ('tsunami' = any (hazard_codes))::text from public.contingency_plans where code = 'CP-EARTHQUAKE'), 'true');
+select tests.expect_eq('flash flood: SRR and CCCM lead, Health and FNFI on standby',
+  (select string_agg(i.item_code || ':' || i.state, ' ' order by i.item_code) from public.cp_activation_items i
+     join public.contingency_plans p on p.id = i.plan_id where p.code = 'CP-FLASHFLOOD' and i.item_kind = 'cluster'),
+  'CCCM:lead FNFI:standby HEALTH:standby SRR:lead');
+select tests.expect_eq('flash flood CCCM is anchored on the CSWD districts and the City centres',
+  (select (i.note like '%six CSWD districts%' and i.note like '%Dolores (District 1)%')::text from public.cp_activation_items i
+     join public.contingency_plans p on p.id = i.plan_id where p.code = 'CP-FLASHFLOOD' and i.item_code = 'CCCM'), 'true');
+select tests.expect_error('a plan cannot name an unknown hazard',
+  $$update public.contingency_plans set hazard_codes = array['meteor'] where code = 'CP-DROUGHT'$$, '23503');
+select tests.expect_eq('the main hazard is always among the covered hazards',
+  (select ('drought' = any (hazard_codes))::text from public.contingency_plans where code = 'CP-DROUGHT'), 'true');
+
+select tests.login('00000000-0000-0000-0000-00000000000d');  -- EOC Manager
+select public.set_eoc_level('white', 'reset for 1.33.0 tests') where exists (select 1 from public.eoc_activations where ended_at is null);
+select public.set_eoc_level('blue', 'Typhoon forecast landfall (1.33.0 test)', 'tropical_cyclone');
+select tests.expect_ok('the EOC Manager activates the typhoon plan at Blue on the Mayor''s authority',
+  $$select public.activate_contingency_plan((select id from public.contingency_plans where code = 'CP-FLOOD-LUNOP'), 'Mayor''s instruction, 08:10')$$);
+select tests.expect_eq('the logbook records the authority',
+  (select (entry like '%Authority: Mayor''s instruction, 08:10%')::text from public.logbook_entries
+    where category = 'decision' and entry like 'Contingency plan activated: Enhanced Contingency Plan for flood%' order by created_at desc limit 1), 'true');
+select tests.expect_eq('at Blue, Operations waits on standby and Planning is on',
+  (select string_agg(item_code || ':' || state, ' ' order by item_code) from public.activation_clusters
+    where activation_id = (select id from public.eoc_activations where ended_at is null) and item_kind = 'module' and item_code in ('operations','planning')),
+  'operations:standby planning:on');
+select public.set_eoc_level('red', 'Signal No. 2 (1.33.0 test)');
+select tests.expect_eq('at Red, Operations switches on',
+  (select state from public.activation_clusters where activation_id = (select id from public.eoc_activations where ended_at is null)
+     and item_kind = 'module' and item_code = 'operations'), 'on');
+select public.set_eoc_level('blue', 'Signal lowered (1.33.0 test)');
+select tests.expect_eq('back at Blue, Red-only modules return to standby and Blue modules stay on',
+  (select string_agg(item_code || ':' || state, ' ' order by item_code) from public.activation_clusters
+    where activation_id = (select id from public.eoc_activations where ended_at is null) and item_kind = 'module'
+      and item_code in ('operations','finance_admin','planning','logistics')),
+  'finance_admin:standby logistics:on operations:standby planning:on');
+select tests.expect_ok('the expired earthquake plan can still be activated',
+  $$select public.activate_contingency_plan((select id from public.contingency_plans where code = 'CP-EARTHQUAKE'))$$);
+select tests.expect_eq('the logbook says the plan expired, not that it was never adopted',
+  (select (entry like '%The plan expired on 31 Dec 2025%')::text from public.logbook_entries
+    where category = 'decision' and entry like 'Contingency plan activated: Enhanced Contingency Plan for Earthquake%' order by created_at desc limit 1), 'true');
+select public.set_eoc_level('white', 'end of 1.33.0 tests');
+
+select tests.expect_ok('a camp report counts separated and unaccompanied children and carer separations',
+  $$insert into public.camp_reports (centre_id, phase, families, persons, children, older, pwd, separated_children, unaccompanied_children, carer_separations, families_apart)
+    values ('e1000000-0000-0000-0000-000000000001', 'open', 20, 80, 30, 5, 3, 2, 1, 1, 0)$$);
+select tests.expect_error('separated and unaccompanied children cannot exceed the children counted',
+  $$insert into public.camp_reports (centre_id, phase, families, persons, children, separated_children, unaccompanied_children)
+    values ('e1000000-0000-0000-0000-000000000001', 'open', 20, 80, 2, 2, 1)$$, '23514');
+select tests.expect_error('carer separations cannot exceed persons with disability and older persons',
+  $$insert into public.camp_reports (centre_id, phase, families, persons, older, pwd, carer_separations)
+    values ('e1000000-0000-0000-0000-000000000001', 'open', 20, 80, 1, 1, 3)$$, '23514');
+
 reset role;
 select tests.expect_eq('audit trail recorded', ((select count(*) from public.audit_log) > 50)::text, 'true');
 \o

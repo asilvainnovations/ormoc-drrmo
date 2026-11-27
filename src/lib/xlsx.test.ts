@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { strFromU8, unzipSync } from 'fflate';
-import { xlsxBytes } from './xlsx';
+import { xlsxBytes, xlsxWorkbookBytes } from './xlsx';
 
 describe('xlsxBytes', () => {
   it('builds a readable single-sheet workbook', () => {
@@ -29,5 +29,23 @@ describe('xlsxBytes', () => {
 
   it('rejects layouts wider than 26 columns', () => {
     expect(() => xlsxBytes({ name: 'x', rows: [Array.from({ length: 27 }, () => 'y')] })).toThrow();
+  });
+
+  it('builds several sheets with formula cells (1.33.0)', () => {
+    const files = unzipSync(xlsxWorkbookBytes([
+      { name: 'CP Form 8 SRR', rows: [['Resource', 'Need', 'Have', 'Gaps'], ['Rescue boats', 10, 8, { f: 'MAX(0,B2-C2)' }]] },
+      { name: 'CP Form 9', rows: [['SRR', { f: "'CP Form 8 SRR'!D2" }]] },
+    ]));
+    expect(Object.keys(files)).toContain('xl/worksheets/sheet2.xml');
+    expect(strFromU8(files['xl/worksheets/sheet1.xml']!)).toContain('<c r="D2"><f>MAX(0,B2-C2)</f></c>');
+    expect(strFromU8(files['xl/worksheets/sheet2.xml']!)).toContain("<f>'CP Form 8 SRR'!D2</f>");
+    const wb = strFromU8(files['xl/workbook.xml']!);
+    expect(wb).toContain('name="CP Form 9" sheetId="2" r:id="rId2"');
+    expect(wb).toContain('fullCalcOnLoad="1"');
+    expect(strFromU8(files['[Content_Types].xml']!)).toContain('/xl/worksheets/sheet2.xml');
+  });
+
+  it('refuses duplicate sheet names', () => {
+    expect(() => xlsxWorkbookBytes([{ name: 'A', rows: [] }, { name: 'a', rows: [] }])).toThrow();
   });
 });

@@ -13,7 +13,8 @@ import { uuid } from '@/lib/ids';
 import { useAuth } from '@/lib/auth';
 import { canChangeLevel, canOperate, currentLevel, currentReportWindow } from '@/domain/eoc';
 import {
-  AUTHORITY_PHASES, RA12076_CHECKS, campReportProblems, centreScreening, fmt, latestPerCentre, parseWhole, spaceCheck, toiletCheck, utilisation, waterCheck,
+  AUTHORITY_PHASES, RA12076_CHECKS, campReportProblems, centreScreening, familyUnityAlerts, fmt, latestPerCentre, parseWhole, schoolStay, spaceCheck, toiletCheck,
+  utilisation, waterCheck,
 } from '@/domain/echo';
 import { fmtDateTime, relative } from '@/lib/time';
 import { Badge, Button, ChoiceGroup, EmptyState, Field, Input, List, ListRow, Loading, Meter, Notice, PageHeader, Section, Select, Tabs, Textarea } from '@/components/ui';
@@ -110,7 +111,8 @@ function CentreForm({ open, onClose, initial }: { open: boolean; onClose: () => 
 
 // ------------------------------------------------------------------------------------------- camp report form
 type CountKey = 'families' | 'persons' | 'female' | 'male' | 'children' | 'older' | 'pwd' | 'pregnant_lactating' | 'ip' | 'arrivals' | 'departures'
-  | 'water_l_day' | 'toilets_functional' | 'bathing_functional' | 'referrals_cp' | 'referrals_gbv' | 'referrals_health';
+  | 'water_l_day' | 'toilets_functional' | 'bathing_functional' | 'referrals_cp' | 'referrals_gbv' | 'referrals_health'
+  | 'separated_children' | 'unaccompanied_children' | 'carer_separations' | 'families_apart';
 const COUNT_FIELDS: [CountKey, string][] = [
   ['families', 'Families'], ['persons', 'Persons'], ['female', 'Women and girls'], ['male', 'Men and boys'], ['children', 'Children (0–17)'],
   ['older', 'Older persons (60+)'], ['pwd', 'Persons with disability'], ['pregnant_lactating', 'Pregnant and lactating women'], ['ip', 'Indigenous Peoples'],
@@ -118,6 +120,13 @@ const COUNT_FIELDS: [CountKey, string][] = [
 ];
 const WASH_FIELDS: [CountKey, string][] = [['water_l_day', 'Safe water (L per day)'], ['toilets_functional', 'Working toilets'], ['bathing_functional', 'Working bathing facilities']];
 const REF_FIELDS: [CountKey, string][] = [['referrals_cp', 'Child protection referrals'], ['referrals_gbv', 'GBV referrals'], ['referrals_health', 'Health or MHPSS referrals']];
+// 1.33.0: families stay together (RA 10821 Sec. 4(d), 6; JMC 02 s. 2021; CPMS 2019). Counts only.
+const FAMILY_FIELDS: [CountKey, string, string][] = [
+  ['separated_children', 'Separated children', 'Apart from parents or usual caregiver but with another adult relative. They stay in that relative’s family bay.'],
+  ['unaccompanied_children', 'Unaccompanied children', 'No parent, caregiver or adult relative. Refer to the CSWDO; no transfer out without a social worker’s assessment.'],
+  ['carer_separations', 'Persons apart from their carer', 'Persons with disability or older persons not housed with the family member or carer who supports them.'],
+  ['families_apart', 'Families not housed together', 'Families whose members are in different rooms or centres.'],
+];
 
 function ReportForm({ centre, last, activationId, open, onClose }: { centre: EvacuationCentre; last: CampReport | null; activationId: string | null; open: boolean; onClose: () => void }) {
   const { roles } = useAuth();
@@ -125,7 +134,7 @@ function ReportForm({ centre, last, activationId, open, onClose }: { centre: Eva
   const authority = canChangeLevel(roles);
   const [phase, setPhase] = useState<CampPhase>(last && last.phase !== 'closed' ? (last.phase === 'opening' ? 'open' : last.phase) : 'opening');
   // Each report starts blank: nothing is carried over (a blank is "not reported"), except the services for reference.
-  const [v, setV] = useState<Record<CountKey, string>>(() => Object.fromEntries([...COUNT_FIELDS, ...WASH_FIELDS, ...REF_FIELDS].map(([k]) => [k, ''])) as Record<CountKey, string>);
+  const [v, setV] = useState<Record<CountKey, string>>(() => Object.fromEntries([...COUNT_FIELDS, ...WASH_FIELDS, ...REF_FIELDS, ...FAMILY_FIELDS].map(([k]) => [k, ''])) as Record<CountKey, string>);
   const [services, setServices] = useState<Record<string, 'yes' | 'partial' | 'no'>>(last?.services ?? {});
   const [needs, setNeeds] = useState('');
   const [authRef, setAuthRef] = useState('');
@@ -134,7 +143,7 @@ function ReportForm({ centre, last, activationId, open, onClose }: { centre: Eva
   const [busy, setBusy] = useState(false);
   const submit = async () => {
     const parsed: Partial<Record<CountKey, number | null>> = {};
-    for (const [k, label] of [...COUNT_FIELDS, ...WASH_FIELDS, ...REF_FIELDS]) {
+    for (const [k, label] of [...COUNT_FIELDS, ...WASH_FIELDS, ...REF_FIELDS, ...FAMILY_FIELDS]) {
       const x = parseWhole(v[k]);
       if (x === 'invalid') { setProblems([`${label}: enter a whole number, 0 or more, or leave it blank if not reported.`]); return; }
       parsed[k] = x;
@@ -146,6 +155,8 @@ function ReportForm({ centre, last, activationId, open, onClose }: { centre: Eva
       arrivals: parsed.arrivals ?? null, departures: parsed.departures ?? null, water_l_day: parsed.water_l_day ?? null,
       toilets_functional: parsed.toilets_functional ?? null, bathing_functional: parsed.bathing_functional ?? null, services,
       referrals_cp: parsed.referrals_cp ?? null, referrals_gbv: parsed.referrals_gbv ?? null, referrals_health: parsed.referrals_health ?? null,
+      separated_children: parsed.separated_children ?? null, unaccompanied_children: parsed.unaccompanied_children ?? null,
+      carer_separations: parsed.carer_separations ?? null, families_apart: parsed.families_apart ?? null,
       unmet_needs: needs.trim() || null, authority_ref: authRef.trim() || null, remarks: remarks.trim() || null, created_at: new Date().toISOString(),
     };
     const p = campReportProblems(r);
@@ -196,6 +207,11 @@ function ReportForm({ centre, last, activationId, open, onClose }: { centre: Eva
           <p className="mb-2 text-sm text-muted">Referrals go through the confidential pathways of the CSWDO, the WCPD and the CHO. Record only how many.</p>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
             {REF_FIELDS.map(([k, label]) => <Field key={k} label={label}>{(id) => <Input id={id} inputMode="numeric" value={v[k]} onChange={(e) => setV({ ...v, [k]: e.target.value })} />}</Field>)}
+          </div></fieldset>
+        <fieldset><legend className="mb-2 font-semibold">Families together</legend>
+          <p className="mb-2 text-sm text-muted">Each family stays in one bay: children with their parents or the relative caring for them, persons with disability and older persons with their carer. Count anyone apart; leave blank if not checked.</p>
+          <div className="grid grid-cols-2 gap-3">
+            {FAMILY_FIELDS.map(([k, label, hint]) => <Field key={k} label={label} hint={hint}>{(id, d) => <Input id={id} aria-describedby={d} inputMode="numeric" value={v[k]} onChange={(e) => setV({ ...v, [k]: e.target.value })} />}</Field>)}
           </div></fieldset>
         <Field label="Unmet needs" optional hint="What is short and how much, for the EOC dashboard. No personal details.">
           {(id, d) => <Textarea id={id} aria-describedby={d} maxLength={1000} value={needs} onChange={(e) => setNeeds(e.target.value)} />}</Field>
@@ -331,6 +347,9 @@ export function EchoCentre() {
   const sp = spaceCheck(last?.persons ?? null, c.covered_area_m2);
   const t = last ? toiletCheck(last, { male: null, female: null, accessible: null, total: last.toilets_functional }, 'short') : null;
   const u = utilisation(last?.persons ?? null, c.capacity_persons);
+  // Days since this centre's latest opening, while it is still open (RA 10821 Sec. 5 and JMC VI.I limits for schools).
+  const opening = history.find((r) => r.phase === 'opening');
+  const daysOpen = last && last.phase !== 'closed' && opening ? (Date.now() - Date.parse(opening.reported_at)) / 86_400_000 : null;
   const training = c.verification_status === 'training';
   const setStatus = async (s: EvacuationCentre['verification_status']) => {
     try { await updateOnline('evacuation_centers', c, { verification_status: s }, s === 'field_verified' ? 'Field verification' : 'Retiring a centre'); toast(s === 'field_verified' ? 'Field verification recorded' : 'Centre retired from the inventory'); }
@@ -371,6 +390,11 @@ export function EchoCentre() {
                   <div key={k as string}><dt className="text-muted">{k}</dt><dd className="font-data font-semibold">{fmt(val as number | null)}</dd></div>
                 ))}
               </dl>
+              {familyUnityAlerts(last).map((x) => <Notice key={x} tone="bad" title="Families together">{x}</Notice>)}
+              {c.kind === 'school_last_resort' && (() => {
+                const st = schoolStay(daysOpen, false);
+                return st ? <Notice tone={st.tone === 'ok' ? 'info' : st.tone} title="School as evacuation centre">{st.text}</Notice> : null;
+              })()}
               {last.unmet_needs && <Notice tone="warn" title="Unmet needs">{last.unmet_needs}</Notice>}
               <div className="flex flex-wrap gap-1">{SERVICES.map((s) => last.services[s.key] && (
                 <Badge key={s.key} tone={last.services[s.key] === 'yes' ? 'ok' : last.services[s.key] === 'partial' ? 'warn' : 'bad'}>{s.label}: {last.services[s.key]}</Badge>))}</div>

@@ -26,7 +26,9 @@ export const SITE_CRITERIA: SiteCriterion[] = [
   { key: 'water', group: 'services', text: 'Safe water within 500 m; room for toilets, bathing and laundry by sex, with accessible units; waste segregation area.', source: 'jmc', ref: 'VII, WASH' },
   { key: 'facilities', group: 'services', text: 'Space for a kitchen, health station, isolation area, breastfeeding room, storage and standby power.', source: 'ra12076', ref: 'Sec. 4(c)' },
   { key: 'access', group: 'access', text: 'Reachable by road in all weather by trucks and ambulances; the route screened on this map and confirmed by field teams.', source: 'jmc', ref: 'Camp set-up' },
-  { key: 'protection', group: 'protection', text: 'Lighting, security, separate toilets by sex, child- and women-friendly spaces; persons with disability and older persons near services.', source: 'jmc', ref: 'Protection; VII' },
+  { key: 'protection', group: 'protection', text: 'Lighting, security, separate toilets by sex, child- and women-friendly spaces as day service spaces; persons with disability and older persons near services, with their family or carer.', source: 'jmc', ref: 'Protection; VII' },
+  // 1.33.0: families stay together. Plan space by family, never by sex or age dormitories.
+  { key: 'families', group: 'space', text: 'Room for one partitioned bay per family (household size × 3.5 m²), including accessible ground-level family bays near the accessible toilets where a person with disability or an older person stays with their carer. No dormitories by sex or age.', source: 'jmc', ref: 'VII.1(c); IX.B.4.b, p. 23' },
   { key: 'schools', group: 'protection', text: 'Schools and child development centres only when no other place is available; open spaces and gyms before classrooms; as brief as possible, with a written report to DepEd and DILG if use will exceed 15 days.', source: 'ra10821', ref: 'Sec. 5' },
   { key: 'tenure', group: 'tenure', text: 'Public land or a written agreement with the owner (as with the City–Robinsons Land MOA, Dec 2023); the use stays a proposal until the CDRRMC endorses it.', source: 'local', ref: 'City practice' },
 ];

@@ -138,6 +138,8 @@ export type PlanStatus = 'to_prepare' | 'draft' | 'adopted' | 'expired' | 'retir
 export interface ContingencyPlan extends Versioned {
   code: string; title: string; hazard_code: string | null; scenario: string | null; warning_time: string | null; activation_triggers: string | null;
   status: PlanStatus; adopted_ref: string | null; adopted_on: string | null; valid_until: string | null; vault_document_id: string | null;
+  /** 1.33.0: hazards the plan covers (hazards.code); the main hazard_code is always among them. */
+  hazard_codes?: string[];
 }
 export type ItemKind = 'cluster' | 'module';
 export interface CpActivationItem extends Versioned {
@@ -462,6 +464,8 @@ export interface CampReport {
   water_l_day: number | null; toilets_functional: number | null; bathing_functional: number | null;
   services: Record<string, 'yes' | 'partial' | 'no'>; referrals_cp: number | null; referrals_gbv: number | null; referrals_health: number | null;
   unmet_needs: string | null; authority_ref: string | null; remarks: string | null; reported_by?: string | null; created_at: string;
+  /** 1.33.0 family unity (RA 10821 Sec. 4(d), 6; CPMS 2019). Counts only. Older rows have none: read as not reported. */
+  separated_children?: number | null; unaccompanied_children?: number | null; carer_separations?: number | null; families_apart?: number | null;
 }
 export type FeedbackCategory = 'access_inclusion' | 'wash' | 'safety_privacy' | 'child_protection_referral' | 'gbv_referral' | 'health_mhpss' | 'food_nfi' | 'information' | 'other';
 export interface CampFeedback extends Versioned {

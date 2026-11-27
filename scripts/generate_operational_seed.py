@@ -530,20 +530,23 @@ def eoc_structure_sql():
                        for k, (c, n, nl, lo, m) in enumerate(E.CLUSTERS, 1)),
            'on conflict (code) do nothing;', '',
            'insert into public.contingency_plans (id, code, title, hazard_code, scenario, warning_time, activation_triggers, status, '
-           'adopted_ref, adopted_on, valid_until, vault_document_id) values']
+           'adopted_ref, adopted_on, valid_until, vault_document_id, hazard_codes) values']
     rows, items = [], []
     for (code, title, hz, scen, warn, trig, st, ref, on, until, vkey, mods, cls, lvl) in E.PLANS:
         pid = uid('cplan', code)
         vdoc = f"{lit(uid('vault', vkey))}::uuid" if vkey else 'null'
         rows.append(f"({lit(pid)}::uuid, {lit(code)}, {lit(title)}, {lit(hz)}, {lit(scen)}, {lit(warn)}, {lit(trig)}, {lit(st)}, "
-                    f"{lit(ref)}, {lit(on)}::date, {lit(until)}::date, (select id from public.vault_documents where id = {vdoc}))")
+                    f"{lit(ref)}, {lit(on)}::date, {lit(until)}::date, (select id from public.vault_documents where id = {vdoc}), "
+                    f"array[{', '.join(lit(h) for h in E.PLAN_HAZARDS.get(code, []))}]::text[])")
         for m, state in mods.items():
             ml = 'blue' if (lvl == 'blue' or m in E.BLUE_MODULES) else 'red'
-            items.append(f"({lit(uid('cpitem', code, 'module', m))}::uuid, {lit(pid)}::uuid, 'module', {lit(m)}, {lit(state)}, '{ml}')")
+            items.append(f"({lit(uid('cpitem', code, 'module', m))}::uuid, {lit(pid)}::uuid, 'module', {lit(m)}, {lit(state)}, '{ml}', "
+                         f"{lit(E.ITEM_NOTES.get((code, 'module', m)))})")
         for c, state in cls.items():
-            items.append(f"({lit(uid('cpitem', code, 'cluster', c))}::uuid, {lit(pid)}::uuid, 'cluster', {lit(c)}, {lit(state)}, '{lvl}')")
+            items.append(f"({lit(uid('cpitem', code, 'cluster', c))}::uuid, {lit(pid)}::uuid, 'cluster', {lit(c)}, {lit(state)}, '{lvl}', "
+                         f"{lit(E.ITEM_NOTES.get((code, 'cluster', c)))})")
     out += [',\n'.join(rows), 'on conflict (code) do nothing;', '',
-            'insert into public.cp_activation_items (id, plan_id, item_kind, item_code, state, min_level) values',
+            'insert into public.cp_activation_items (id, plan_id, item_kind, item_code, state, min_level, note) values',
             ',\n'.join(items), 'on conflict (plan_id, item_kind, item_code) do nothing;', '',
             'insert into public.eoc_positions (id, code, title, section, min_level, cluster_code, sort) values',
             ',\n'.join(f"({lit(uid('eocpos', c))}::uuid, {lit(c)}, {lit(t)}, {lit(sec)}, '{lv}', {lit(cl)}, {k})"

@@ -6,6 +6,8 @@ export interface AttentionInput {
   silentPriority: string[];            // barangay names, highest DDRiVE priority first, that have not reported
   lifeSafetyAwaiting: number;          // life-safety requests still at "requested"
   campsOverCapacity: number;
+  /** 1.33.0: children unaccompanied or separated, persons apart from their carer, families not together (ECHO). */
+  familyUnity?: { children: number; carers: number; families: number };
   evacCountsMissing: number;           // barangays evacuating or affected without counts
   nextSitrep: { time: string; minutes: number } | null;
 }
@@ -21,6 +23,12 @@ export function attentionItems(i: AttentionInput): AttentionItem[] {
     out.push({ id: 'silent', tone: 'warn', text: `${plural(i.silentPriority.length, 'high-risk barangay', 'high-risk barangays')} not yet reporting: ${shown}${i.silentPriority.length > 3 ? '…' : ''}`, to: '/eoc/barangays' });
   }
   if (i.campsOverCapacity > 0) out.push({ id: 'camps', tone: 'bad', text: `${plural(i.campsOverCapacity, 'evacuation centre')} over capacity`, to: '/tools/echo/camps' });
+  const fu = i.familyUnity;
+  if (fu && fu.children + fu.carers + fu.families > 0) {
+    const parts = [fu.children && plural(fu.children, 'child', 'children') + ' unaccompanied or separated', fu.carers && plural(fu.carers, 'person') + ' apart from their carer',
+      fu.families && plural(fu.families, 'family', 'families') + ' not housed together'].filter(Boolean);
+    out.push({ id: 'family', tone: 'bad', text: `Families together: ${parts.join(', ')}`, to: '/tools/echo/dashboard' });
+  }
   if (i.evacCountsMissing > 0) out.push({ id: 'counts', tone: 'warn', text: `${plural(i.evacCountsMissing, 'barangay')} reporting without evacuee counts`, to: '/eoc/barangays' });
   if (i.activeEvent && i.nextSitrep && i.nextSitrep.minutes <= 120) out.push({ id: 'sitrep', tone: 'info', text: `SitRep to the Province due ${i.nextSitrep.time}`, to: '/eoc/sitreps' });
   return out;

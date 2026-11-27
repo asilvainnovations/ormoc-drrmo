@@ -119,3 +119,52 @@ describe('ECHO operational records', () => {
       .toContain('School: last resort only (RA 10821).');
   });
 });
+
+describe('family unity (1.33.0)', () => {
+  it('never advises splitting a family when a centre is full', async () => {
+    const src = (await import('node:fs')).readFileSync('src/domain/echo.ts', 'utf8');
+    expect(src).not.toMatch(/split the movement/);
+    expect(src).toMatch(/move whole families there together/);
+  });
+  it('rules: family bay, separated child stays with the relative, carer with the person, social-worker gate', async () => {
+    const { FAMILY_UNITY_RULES } = await import('./echo');
+    const text = FAMILY_UNITY_RULES.map((r) => r.text).join(' ');
+    expect(text).toMatch(/one partitioned bay/);
+    expect(text).toMatch(/stays in that relative’s family bay/);
+    expect(text).toMatch(/best-interest assessment, never an automatic rule/);
+    expect(text).toMatch(/sleeps with the family or carer/);
+    expect(text).not.toMatch(/dormitor(y|ies) (for|by) (men|women|children)/i);
+  });
+  it('alerts on separated and unaccompanied children, carer separations and split families; quiet when none', async () => {
+    const { familyUnityAlerts } = await import('./echo');
+    const a = familyUnityAlerts({ separated_children: 2, unaccompanied_children: 1, carer_separations: 1, families_apart: 3 });
+    expect(a).toHaveLength(4);
+    expect(a[0]).toMatch(/^1 unaccompanied child: refer to the CSWDO.*RA 10821 Sec\. 6/);
+    expect(a[1]).toMatch(/^2 separated children: keep each with the relative/);
+    expect(a[3]).toMatch(/^3 families are not housed together/);
+    expect(familyUnityAlerts({})).toEqual([]);
+  });
+  it('school stay: JMC 3 and 15 days, RA 10821 Sec. 5 documentation', async () => {
+    const { schoolStay } = await import('./echo');
+    expect(schoolStay(2, false)?.tone).toBe('ok');
+    expect(schoolStay(4, false)?.tone).toBe('warn');
+    expect(schoolStay(2, true)?.text).toMatch(/RA 10821 Sec\. 5/);
+    expect(schoolStay(16, false)).toMatchObject({ tone: 'bad' });
+    expect(schoolStay(null, false)).toBeNull();
+  });
+  it('a report cannot count more separated children than children', async () => {
+    const { campReportProblems } = await import('./echo');
+    const base = { centre_id: 'c', activation_id: null, reported_at: '2026-11-28T00:00:00Z', phase: 'open' as const, families: 5, persons: 20, female: null, children: 2,
+      older: 1, pwd: 0, water_l_day: null, toilets_functional: null, bathing_functional: null, unmet_needs: null };
+    expect(campReportProblems({ ...base, separated_children: 2, unaccompanied_children: 1 })).toContain('Separated and unaccompanied children cannot be more than the children counted.');
+    expect(campReportProblems({ ...base, carer_separations: 2 })).toContain('Persons apart from their carer cannot be more than persons with disability and older persons counted.');
+    expect(campReportProblems({ ...base, separated_children: 1, carer_separations: 1, families_apart: 1 })).toEqual([]);
+  });
+  it('totals add family-unity counts across open centres only', async () => {
+    const { campTotals } = await import('./echo');
+    const r = (id: string, phase: 'open' | 'closed', sep: number) => ({ centre_id: id, activation_id: null, reported_at: 'x', phase, families: 1, persons: 4, female: null,
+      children: 2, older: 0, pwd: 0, water_l_day: null, toilets_functional: null, bathing_functional: null, unmet_needs: null, separated_children: sep, families_apart: 1 });
+    const t = campTotals([r('a', 'open', 1), r('b', 'open', 1), r('c', 'closed', 2)], new Map());
+    expect(t).toMatchObject({ separatedChildren: 2, familiesApart: 2, unaccompaniedChildren: 0 });
+  });
+});

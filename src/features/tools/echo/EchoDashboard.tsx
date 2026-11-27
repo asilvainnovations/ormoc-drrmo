@@ -105,6 +105,9 @@ export function EchoDashboard() {
         <span className="text-sm text-muted">{data.activation ? `Activation since ${fmtDateTime(data.window.from)}` : 'No activation: reports from the last 24 hours'}</span>
         {totals.overCapacity > 0 && <Badge tone="bad">{totals.overCapacity} over capacity</Badge>}
         {totals.waterBelowSphere > 0 && <Badge tone="warn">{totals.waterBelowSphere} below 15 L water</Badge>}
+        {totals.unaccompaniedChildren + totals.separatedChildren > 0 && <Badge tone="bad">{totals.unaccompaniedChildren} unaccompanied, {totals.separatedChildren} separated children</Badge>}
+        {totals.carerSeparations > 0 && <Badge tone="bad">{totals.carerSeparations} apart from their carer</Badge>}
+        {totals.familiesApart > 0 && <Badge tone="warn">{totals.familiesApart} families not together</Badge>}
         {view.rows.some((x) => x.stale) && <Badge tone="warn">{view.rows.filter((x) => x.stale).length} report{view.rows.filter((x) => x.stale).length > 1 ? 's' : ''} older than {STALE_HOURS} h</Badge>}
       </div>
 

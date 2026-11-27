@@ -43,8 +43,50 @@ export const BENCHMARKS: Benchmark[] = [
   { key: 'settlement_sphere', label: 'Camp-type settlement area', value: '45 m² per person; 30 m² where communal services are outside', source: 'sphere',
     where: 'Shelter and settlement standard 2', note: 'Total site area, not building floor area.' },
   { key: 'toilet_dpms', label: 'Toilets for men and women', value: '1 to 50', source: 'dpms', where: 'Evacuation centre minimum standards, p. 14' },
-  { key: 'room_dpms', label: 'Families per evacuation room', value: '6 families per 40 m² room', source: 'dpms', where: 'Evacuation centre minimum standards, p. 15' },
+  { key: 'room_dpms', label: 'Families per evacuation room', value: '6 families per 40 m² room', source: 'dpms', where: 'Evacuation centre minimum standards, p. 15',
+    note: 'About 6.7 m² per family: below 3.5 m² per person for any family of two or more. Plan family bays at household size × 3.5 m² (JMC VII.1(c)). Where the Minimum Standards give the ground floor to pregnant women, persons with disability, children and older persons, give it to their whole family.' },
+  { key: 'family_bay_jmc', label: 'Space allocation unit', value: 'One partitioned bay per family (DAFAC)', source: 'jmc', where: 'VII.A.2(b), VIII.D; IX.B.4.b, p. 23',
+    note: 'Capacity is counted in families. Families are never split between rooms or centres to fit a count.' },
+  { key: 'school_jmc', label: 'Schools as evacuation centres', value: 'At most 3 days (short-term); at most 15 days (medium and long-term)', source: 'jmc', where: 'VI.I, p. 7',
+    note: 'RA 10821 Sec. 5: only where no other place is available; gyms and open areas before classrooms; written documentation to DepEd and DILG when use is expected to pass 15 days.' },
 ];
+
+// ---------------------------------------------------------------------------------------------- family unity (1.33.0)
+/** Families stay together. The family registered on one DAFAC is the unit for sleeping space; separate rooms are service or
+ *  activity spaces that a child, person with disability or older person enters with their family or carer, never sleeping
+ *  quarters that split them off. The JMC p. 23 clause that sends orphaned, unaccompanied and separated children out of the
+ *  camp is applied only after a registered social worker's best-interest assessment (RA 10821 Sec. 3(k), 6, 12; CPMS 13.3.6). */
+export const FAMILY_UNITY_RULES = [
+  { key: 'unit', text: 'The family on one DAFAC is the unit for space. Assign each family one partitioned bay; never split a family between rooms or centres to fit a count.', ref: 'JMC 02 s. 2021 VII.A.2(b), VIII.D, IX.B.4.b' },
+  { key: 'space', text: 'Size each bay at household size × 3.5 m². Within the bay, separate bedding or screens for older girls and boys; no dormitories by sex or age.', ref: 'JMC VII.1(c); CPMS 2019 27.3.2, 27.1.29' },
+  { key: 'arrival', text: 'At arrival, record the responsible adult with every child. Children evacuate with a responsible person.', ref: 'RA 10821 Sec. 4(d); CPMS 13.1.11' },
+  { key: 'separated', text: 'A separated child (with a grandparent, aunt or other relative) stays in that relative’s family bay. Report to the CSWDO and the Camp Management Committee.', ref: 'RA 10821 Sec. 3(k), 6' },
+  { key: 'unaccompanied', text: 'An unaccompanied child goes to the CSWDO for tracing and interim care. A transfer out of the camp follows a registered social worker’s best-interest assessment, never an automatic rule.', ref: 'RA 10821 Sec. 6, 12; JMC p. 23; CPMS 13.3.6' },
+  { key: 'carer', text: 'A person with disability or an older person sleeps with the family or carer who supports them, in an accessible ground-level family bay near the accessible toilets. No separate “special needs” sleeping room.', ref: 'Ormoc policy from JMC VI.G and IASC Disability Guidelines 2019; RA 12076 Sec. 4(c)(2)' },
+  { key: 'services', text: 'Child-friendly and women-friendly spaces, breastfeeding and prayer rooms are day service spaces: children are checked in and out to their registered caregiver; infants stay with their mother.', ref: 'JMC VIII.G.6–8; RA 12076 Sec. 4(c)(5), (7); CPMS 28.3.4' },
+  { key: 'isolation', text: 'Isolation: a caregiver may accompany a child, a person with disability or an older person, with protective equipment and the CHO’s infection check.', ref: 'JMC VI.L, Annex 2 (Ormoc protocol choice)' },
+  { key: 'move', text: 'When a centre is full, move whole families together to the next centre, by purok or barangay, and record where each family went.', ref: 'JMC IX.B.2.a; RA 10821 Sec. 4(a)' },
+] as const;
+
+/** RA 10821 Sec. 5 and JMC VI.I: how long a school has been an evacuation centre, and what that requires. */
+export function schoolStay(daysOpen: number | null, expectedLongStay: boolean): { tone: 'ok' | 'warn' | 'bad'; text: string } | null {
+  if (daysOpen === null || !Number.isFinite(daysOpen) || daysOpen < 0) return null;
+  if (daysOpen > 15) return { tone: 'bad', text: `A school has been used for ${Math.floor(daysOpen)} days, past the JMC limit of 15 days. Send the RA 10821 Sec. 5 written documentation to DepEd and DILG and plan the transfer of families together.` };
+  if (expectedLongStay) return { tone: 'warn', text: 'Use is expected to pass 15 days: send the RA 10821 Sec. 5 written documentation to DepEd and DILG now and prepare another site.' };
+  if (daysOpen > 3) return { tone: 'warn', text: `A school has been used for ${Math.floor(daysOpen)} days, past the JMC short-term limit of 3 days. Move families together to a non-school site if one is available.` };
+  return { tone: 'ok', text: 'School in use within the JMC short-term limit of 3 days. Prefer gyms and open areas to classrooms.' };
+}
+
+/** Family-unity alerts from the counts of one report or of the totals. Counts only; never names. */
+export function familyUnityAlerts(c: { separated_children?: number | null; unaccompanied_children?: number | null; carer_separations?: number | null; families_apart?: number | null }): string[] {
+  const out: string[] = [];
+  const v = (x: number | null | undefined) => (typeof x === 'number' && x > 0 ? x : 0);
+  if (v(c.unaccompanied_children)) out.push(`${v(c.unaccompanied_children)} unaccompanied child${v(c.unaccompanied_children) > 1 ? 'ren' : ''}: refer to the CSWDO for tracing and interim care (RA 10821 Sec. 6). No transfer out of the camp without a social worker’s best-interest assessment.`);
+  if (v(c.separated_children)) out.push(`${v(c.separated_children)} separated child${v(c.separated_children) > 1 ? 'ren' : ''}: keep each with the relative caring for them, in that family’s bay, and report to the CSWDO for tracing.`);
+  if (v(c.carer_separations)) out.push(`${v(c.carer_separations)} person${v(c.carer_separations) > 1 ? 's' : ''} with disability or older person${v(c.carer_separations) > 1 ? 's' : ''} apart from their carer: reunite them in an accessible family bay.`);
+  if (v(c.families_apart)) out.push(`${v(c.families_apart)} famil${v(c.families_apart) > 1 ? 'ies are' : 'y is'} not housed together: reassign whole families to one bay or one centre.`);
+  return out;
+}
 
 // ---------------------------------------------------------------------------------------------- numbers
 export const SPHERE_WATER_L = 15;
@@ -288,7 +330,7 @@ export function exerciseAlerts(e: Exercise): Alert[] {
     a.push({ tone: 'bad', title: `${e.movement.unaccounted} not accounted for`, body: 'Report through the authorised tracing and reunification process. No names in ECHO.', module: 'evacuation' });
   if (!site) { a.push({ tone: 'warn', title: 'No centre selected', body: 'Select a training site or a centre from the City inventory.', module: 'centres' }); return a; }
   const u = utilisation(persons, site.capacity);
-  if (u !== null && u > 1) a.push({ tone: 'bad', title: 'Centre capacity exceeded', body: `Projected ${fmt(persons)} against a capacity of ${fmt(site.capacity)}. Open another centre or split the movement.`, module: 'centres' });
+  if (u !== null && u > 1) a.push({ tone: 'bad', title: 'Centre capacity exceeded', body: `Projected ${fmt(persons)} against a capacity of ${fmt(site.capacity)}. Open another centre and move whole families there together, by purok or barangay; never split a family to fit a count.`, module: 'centres' });
   const sp = spaceCheck(persons, site.area_m2);
   if (sp.meets === false) a.push({ tone: 'warn', title: 'Covered space below 3.5 m² per person (Sphere)', body: `Needs ${fmt(sp.need)} m²; the site has ${fmt(site.area_m2)} m² (about ${fmt(sp.capacityAtStandard)} persons at the standard).`, module: 'camp' });
   const w = waterCheck(persons, e.camp.water_l_day);
@@ -324,6 +366,7 @@ export const AUTHORITY_PHASES: CampPhase[] = ['opening', 'closing', 'closed'];
 
 export interface CampReportLike extends Population {
   centre_id: string; activation_id: string | null; reported_at: string; phase: CampPhase;
+  separated_children?: number | null; unaccompanied_children?: number | null; carer_separations?: number | null; families_apart?: number | null;
   water_l_day: number | null; toilets_functional: number | null; bathing_functional: number | null; unmet_needs: string | null;
 }
 
@@ -343,17 +386,21 @@ export function latestPerCentre<R extends CampReportLike>(reports: R[], from: st
 export interface CampTotals {
   centresOpen: number; families: number; persons: number; familiesNotReported: number; personsNotReported: number;
   children: number; older: number; pwd: number; female: number; pregnant: number; overCapacity: number; waterBelowSphere: number;
+  /** 1.33.0 family unity (counts only; blank counts as not reported). */
+  separatedChildren: number; unaccompaniedChildren: number; carerSeparations: number; familiesApart: number;
 }
 /** Totals inside evacuation centres. Closed centres do not count; a blank count is listed, not added as zero. */
 export function campTotals(latest: CampReportLike[], capacity: Map<string, number | null>): CampTotals {
   const t: CampTotals = { centresOpen: 0, families: 0, persons: 0, familiesNotReported: 0, personsNotReported: 0, children: 0, older: 0, pwd: 0, female: 0,
-    pregnant: 0, overCapacity: 0, waterBelowSphere: 0 };
+    pregnant: 0, overCapacity: 0, waterBelowSphere: 0, separatedChildren: 0, unaccompaniedChildren: 0, carerSeparations: 0, familiesApart: 0 };
   for (const r of latest) {
     if (r.phase === 'closed') continue;
     t.centresOpen++;
     if (n(r.families) === null) t.familiesNotReported++; else t.families += r.families!;
     if (n(r.persons) === null) t.personsNotReported++; else t.persons += r.persons!;
     t.children += n(r.children) ?? 0; t.older += n(r.older) ?? 0; t.pwd += n(r.pwd) ?? 0; t.female += n(r.female) ?? 0; t.pregnant += n(r.pregnant_lactating) ?? 0;
+    t.separatedChildren += n(r.separated_children) ?? 0; t.unaccompaniedChildren += n(r.unaccompanied_children) ?? 0;
+    t.carerSeparations += n(r.carer_separations) ?? 0; t.familiesApart += n(r.families_apart) ?? 0;
     const u = utilisation(r.persons, capacity.get(r.centre_id) ?? null);
     if (u !== null && u > 1) t.overCapacity++;
     if (waterCheck(r.persons, r.water_l_day).meetsSphere === false) t.waterBelowSphere++;
@@ -375,6 +422,12 @@ export function campReportProblems(r: CampReportLike & { authority_ref?: string 
   if (AUTHORITY_PHASES.includes(r.phase) && !(r.authority_ref ?? '').trim())
     out.push('Opening, closing and closure record an authorised decision: give the authority reference (order, memo or logbook entry).');
   if (r.phase === 'open' && n(r.persons) === null) out.push('An open centre needs a persons count. Enter 0 if no one has arrived yet.');
+  const nn = (x: number | null | undefined) => (typeof x === 'number' ? x : 0);
+  if (n(r.children) !== null && nn(r.separated_children) + nn(r.unaccompanied_children) > r.children!)
+    out.push('Separated and unaccompanied children cannot be more than the children counted.');
+  if ((n(r.pwd) !== null || n(r.older) !== null) && nn(r.carer_separations) > nn(r.pwd) + nn(r.older))
+    out.push('Persons apart from their carer cannot be more than persons with disability and older persons counted.');
+  if (n(r.families) !== null && nn(r.families_apart) > r.families!) out.push('Families not housed together cannot be more than the families counted.');
   if ((r.unmet_needs ?? '').length > 1000) out.push('Keep unmet needs under 1,000 characters.');
   if ((r.remarks ?? '').length > 500) out.push('Keep remarks under 500 characters.');
   return out;

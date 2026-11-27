@@ -24,6 +24,7 @@ import { tip } from '@/components/Tooltip';
 import { ButtonLink, EmptyState, Field, Input, List, ListRow, Notice, PageHeader, Tabs } from '@/components/ui';
 import { ConversationPanel, ensureThread, useThread } from '@/components/ConversationPanel';
 import { manilaToday } from '@/domain/structure';
+import { activeSections, hasModuleSet, liveModules } from '@/domain/scenarios';
 import { LEVEL_INFO } from '@/domain/eoc';
 import {
   canCallCheckin, CHECKIN_ANSWERS, checkinDue, checkinRoll, coordinationStats, nextCallAt, positionActiveAt, type CheckinAnswer,
@@ -60,12 +61,16 @@ function ActivationCoordination({ activationId, level, startedAt }: { activation
   const messages = useMemo(() => data?.messages ?? [], [data]);
   const roster = useLiveQuery(async () => {
     const today = manilaToday();
-    const positions = (await db.eoc_positions.toArray()).filter((p) => p.is_active && positionActiveAt(level, p.min_level));
+    // 1.33.0: with a plan activated, only the sections of the modules it switched on are expected; otherwise the level rule.
+    const items = await db.activation_clusters.where('activation_id').equals(activationId).toArray();
+    const sections = hasModuleSet(items) ? activeSections(liveModules(items)) : null;
+    const positions = (await db.eoc_positions.toArray()).filter((p) => p.is_active
+      && (sections ? sections.has(p.section) && positionActiveAt(level, p.min_level) : positionActiveAt(level, p.min_level)));
     const open = new Set(positions.map((p) => p.id));
     const designations = (await db.eoc_designations.toArray())
       .filter((d) => d.status === 'approved' && (d.valid_until === null || d.valid_until >= today) && open.has(d.position_id) && d.person_id);
-    return { positions: positions.length, expected: [...new Set(designations.map((d) => d.person_id!))] };
-  }, [level], { positions: 0, expected: [] as string[] });
+    return { positions: positions.length, expected: [...new Set(designations.map((d) => d.person_id!))], byPlan: !!sections };
+  }, [level, activationId], { positions: 0, expected: [] as string[], byPlan: false });
   const running = useLiveQuery(() => db.protocol_runs.where('status').equals('running').toArray(), [], []);
 
   const stats = coordinationStats(messages);
@@ -107,7 +112,7 @@ function ActivationCoordination({ activationId, level, startedAt }: { activation
               </Ring>
               <p className="text-sm text-muted">
                 {roll.expected
-                  ? `${roll.expected} people are designated to the ${roster.positions} positions staffed at ${info.name} level.`
+                  ? `${roll.expected} people are designated to the ${roster.positions} positions ${roster.byPlan ? 'in the modules the plan switched on' : `staffed at ${info.name} level`}.`
                   : `No approved designations for positions staffed at ${info.name} level. Answers still show here.`}
               </p>
             </div>
