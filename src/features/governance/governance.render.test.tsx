@@ -52,4 +52,19 @@ describe('validation workspace', () => {
     expect(await screen.findByText('Waiting for another validator to check the evidence.')).toBeTruthy();
     expect(screen.queryByText('Verify the evidence')).toBeNull();
   });
+
+  it('draws Validation Intelligence: one bar per item, colour modes and the item details', async () => {
+    await as(['validator'], 'cdrrmo');
+    await db.manual_review_items.bulkPut([
+      { ...base, chapter_version: 'Ch. 1 v1.3', lead_office: 'City Legal Office / SP', section_ref: '§4.5; §6.2; Table 1.7; Annex 1-I', sop_ref: 'GOV-03', issue_type: 'Existing provision — legal/institutional evidence requires validation' },
+      { ...base, id: 'i2', source_tracker_id: 'VR-002', title: 'CDRRMC composition', priority: 'important', chapter_version: 'Ch. 4 v1.1', lead_office: 'OCD VIII' },
+    ]);
+    at('/intelligence');
+    expect(await screen.findByRole('heading', { name: 'Validation Intelligence' })).toBeTruthy();
+    expect(screen.getByRole('img', { name: /Radial chart of 2 validation items in 2 chapters/ })).toBeTruthy();
+    expect(screen.getByRole('radio', { name: 'Stakeholder' })).toBeTruthy();
+    expect(screen.getAllByText('Confirm the EOC order').length).toBeGreaterThan(0);
+    fireEvent.click(screen.getByRole('button', { name: /VR-002/ }));
+    expect(screen.getByRole('link', { name: 'Open in the register' }).getAttribute('href')).toBe('/governance/reviews?item=VR-002');
+  });
 });

@@ -5,12 +5,14 @@ import { DecisionsPage } from './DecisionsPage';
 import { WorkshopPage } from './WorkshopPage';
 import { StakeholdersPage } from './StakeholdersPage';
 import { CoordinationPage } from './CoordinationPage';
+import { IntelligencePage } from './IntelligencePage';
 
 /** Manual Governance workspace (ADR-043 Slice 1). Protected under AppShell. */
 export default function GovernanceRoutes() {
   return (
     <Routes>
       <Route index element={<OverviewPage />} />
+      <Route path="intelligence" element={<IntelligencePage />} />
       <Route path="follow-through" element={<CoordinationPage />} />
       <Route path="reviews" element={<ReviewRegisterPage />} />
       <Route path="decisions" element={<DecisionsPage />} />
