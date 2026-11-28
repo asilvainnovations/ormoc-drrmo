@@ -25,14 +25,16 @@ type NavItem = {
 };
 const NAV: NavItem[] = [
   { to: '/today', k: 'nav.today', label: 'Today', icon: House, end: true, tip: 'Your day: alerts, quick actions, running protocols and latest log' },
-  // Validation follows Today in the primary desktop navigation; it remains rail-only on phones to protect thumb navigation.
-  { to: '/governance', k: 'nav.governance', label: 'Validation', icon: Scale, tip: 'Review register, outstanding decisions and the validation workshop', rail: true },
-  { to: '/assess', k: 'nav.assess', label: 'Assess', icon: ClipboardCheck, tip: 'Institutional Assessment Tool: score indicators with evidence and plan improvements' },
+  // 1.36.1: the focus is validation, so Validation takes Assess's place in the phone tab bar.
+  // Tab order on phones and the rail: Today, Validation, EOC, DRRM, Library, Vault.
+  { to: '/governance', k: 'nav.governance', label: 'Validation', icon: Scale, tip: 'Review register, outstanding decisions and the validation workshop' },
+  { to: '/eoc', k: 'nav.eoc', label: 'EOC', icon: RadioTower, tip: 'Emergency Operations Center: level, logbook, SitReps, requests and anticipatory action' },
   // 1.29.0 (ADR-046): "Protocols" becomes "DRRM" — workflows, protocols and forms by thematic area.
   { to: '/drrm', k: 'nav.protocols', label: 'DRRM', icon: ListChecks, tip: 'DRRM workflows, protocols and forms by thematic area, to run live or as drills' },
-  { to: '/eoc', k: 'nav.eoc', label: 'EOC', icon: RadioTower, tip: 'Emergency Operations Center: level, logbook, SitReps, requests and anticipatory action' },
   { to: '/library', k: 'nav.library', label: 'Library', icon: BookOpen, tip: 'The Manual of Operations and EOC Manual, with traceability to the indicators' },
   { to: '/vault', k: 'nav.vault', label: 'Vault', icon: FolderLock, tip: 'Document Vault: laws, guidelines and documents for Document Review', vault: true },
+  // Desktop rail only from 1.36.1; on phones Assess opens from Today (assessment cards) and the search (Institutional assessment).
+  { to: '/assess', k: 'nav.assess', label: 'Assess', icon: ClipboardCheck, tip: 'Institutional Assessment Tool: score indicators with evidence and plan improvements', rail: true },
   // Desktop rail only; on phones the Today screen links to Tools (the tab bar holds six).
   { to: '/tools', k: 'nav.tools', label: 'Tools', icon: Wrench, tip: 'ICS exercises, continuity planning, Gawad KALASAG readiness, HazardHunterPH, GeoAnalyticsPH, Zoom Earth and DDRiVE-M', rail: true },
 ];
@@ -168,14 +170,14 @@ export function AppShell() {
 
       {/* Phone tab bar: thumb reach */}
       <nav aria-label="Main" className="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-surface pb-safe-b lg:hidden print:hidden">
-        <ul className={clsx('grid', tabs.length === 6 ? 'grid-cols-6' : 'grid-cols-5')}>
+        <ul className={clsx('mx-auto grid max-w-xl', tabs.length === 6 ? 'grid-cols-6' : 'grid-cols-5')}>
           {tabs.map(({ to, k, icon: Icon, end, tip: t }) => (
-            <li key={to}>
-              <NavLink to={to} end={end} {...tip(t)} className={({ isActive }) => clsx('flex min-h-[3.5rem] flex-col items-center justify-center gap-0.5 font-data text-[0.8125rem] font-semibold',
+            <li key={to} className="min-w-0">
+              <NavLink to={to} end={end} {...tip(t)} className={({ isActive }) => clsx('flex min-h-[3.5rem] min-w-0 flex-col items-center justify-center gap-0.5 px-0.5 font-data text-[0.75rem] font-semibold min-[380px]:text-[0.8125rem]',
                 isActive ? 'text-ink' : 'text-muted')}>
                 {({ isActive }) => (<>
-                  <span className={clsx('flex h-7 w-11 items-center justify-center rounded-full', isActive && 'bg-sky-soft text-action ring-1 ring-accent')}><Icon className="h-5 w-5" aria-hidden /></span>
-                  {tNav(k)}
+                  <span className={clsx('flex h-7 w-11 max-w-full items-center justify-center rounded-full', isActive && 'bg-sky-soft text-action ring-1 ring-accent')}><Icon className="h-5 w-5" aria-hidden /></span>
+                  <span className="block max-w-full truncate">{tNav(k)}</span>
                 </>)}
               </NavLink>
             </li>

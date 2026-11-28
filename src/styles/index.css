@@ -13,6 +13,12 @@
 @layer base {
   html { -webkit-text-size-adjust: 100%; }
   body { @apply bg-paper text-ink font-sans antialiased; }
+  /* 1.36.1 mobile-first guard: one wide element must never widen the installed PWA sideways. On a phone that grows the
+     layout viewport, so fixed bars (status band, tab bar) stretch past the screen and get cut off. `clip` (not `hidden`)
+     keeps position: sticky working because it does not create a scroll container. Components must still fit on their
+     own; this is the safety net, not the fix. */
+  html, body { overflow-x: clip; max-width: 100%; }
+  img, svg, video, canvas { max-width: 100%; }
   :focus-visible { outline: 3px solid rgb(var(--focus)); outline-offset: 2px; }
   h1, h2, h3 { @apply font-display; text-wrap: balance; letter-spacing: -0.01em; }
   /* Figures line up in tables, timers and counts. */
@@ -25,6 +31,8 @@
   .page { @apply mx-auto w-full max-w-page px-4 pb-28 pt-4 lg:px-8 lg:pb-12; }
   /* 1.29.0 (ADR-046): with the rail folded to icons the page takes the width it frees (15rem − 4rem). */
   @media (min-width: 1024px) { [data-rail='collapsed'] .page { max-width: 83rem; } }
+  /* Long URLs, emails and citations wrap instead of widening a phone screen. */
+  .prose-doc { overflow-wrap: anywhere; }
   .prose-doc h1 { @apply mb-3 text-2xl font-bold; }
   .prose-doc h2 { @apply mb-2 mt-6 text-xl font-bold; }
   .prose-doc h3 { @apply mb-2 mt-4 text-lg font-bold; }
