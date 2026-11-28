@@ -33,9 +33,9 @@ function LanguageRow() {
   ];
   return (
     <div className="mb-3 rounded-control border border-line bg-surface px-3 py-2">
-      <div className="flex items-center justify-between gap-3">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <span className="font-semibold">{t('settings.language')}</span>
-        <span className="flex gap-2" role="group" aria-label={t('settings.language')}>
+        <span className="flex flex-wrap gap-2" role="group" aria-label={t('settings.language')}>
           {choices.map((c) => (
             <button key={c.value} type="button" onClick={() => setLang(c.value)} aria-pressed={lang === c.value}
               {...tip(`${STRINGS[c.value]['settings.language.about']}`)}

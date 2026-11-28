@@ -119,11 +119,13 @@ function YourTasks({ items, decisions, viewer }: { items: ManualReviewItem[]; de
       {rows.length === 0 ? <p className="text-sm text-muted">Nothing is waiting on you.</p> : (
         <ul className="divide-y divide-line">
           {rows.slice(0, 8).map((r) => (
-            <li key={r.id}><Link to={r.to} className="flex min-h-tap items-center gap-3 py-2 hover:bg-sky-soft/40" {...tip(`Open ${r.id}`)}>
+            <li key={r.id}><Link to={r.to} className="flex min-h-tap flex-wrap items-center gap-x-3 gap-y-1 py-2 hover:bg-sky-soft/40 sm:flex-nowrap" {...tip(`Open ${r.id}`)}>
               <span className="w-14 shrink-0 font-data text-xs text-muted">{r.id}</span>
               <span className="min-w-0 flex-1 truncate text-sm font-semibold text-ink">{r.title}</span>
-              <Pill tone="blue">{NEXT_LABEL[r.next!]}</Pill>
-              <Pill tone={FOLLOW_TONE[r.f.state]}>{r.f.reason}</Pill>
+              <span className="flex w-full min-w-0 flex-wrap gap-1 pl-[4.25rem] sm:w-auto sm:shrink-0 sm:flex-nowrap sm:pl-0">
+                <Pill tone="blue">{NEXT_LABEL[r.next!]}</Pill>
+                <Pill tone={FOLLOW_TONE[r.f.state]}>{r.f.reason}</Pill>
+              </span>
             </Link></li>
           ))}
           {rows.length > 8 && <li className="py-2 text-xs text-muted"><Link to="/governance/reviews?scope=act" className="font-bold text-sky underline" {...tip('See every item waiting on you')}>{rows.length - 8} more</Link></li>}

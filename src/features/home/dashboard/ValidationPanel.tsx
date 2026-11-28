@@ -15,10 +15,10 @@ import { Ring } from '@/features/eoc/kit';
 
 function Figure({ label, value, hint, tone }: { label: string; value: string; hint?: string; tone?: 'bad' | 'warn' }) {
   return (
-    <div className="rounded-control bg-sunken/60 p-3">
-      <p className="text-xs text-muted">{label}</p>
-      <p className={`font-data text-2xl font-bold ${tone === 'bad' ? 'text-bad' : tone === 'warn' ? 'text-warn' : 'text-ink'}`}>{value}</p>
-      {hint && <p className="mt-0.5 text-xs text-muted">{hint}</p>}
+    <div className="min-w-0 rounded-control bg-sunken/60 p-3">
+      <p className="text-xs leading-snug text-muted">{label}</p>
+      <p className={`whitespace-nowrap font-data text-2xl font-bold ${tone === 'bad' ? 'text-bad' : tone === 'warn' ? 'text-warn' : 'text-ink'}`}>{value}</p>
+      {hint && <p className="mt-0.5 text-xs leading-snug text-muted">{hint}</p>}
     </div>
   );
 }
@@ -32,8 +32,8 @@ export default function ValidationPanel() {
   const pct = d && d.items.total ? Math.round((100 * d.items.closed) / d.items.total) : 0;
   return (
     <Card className="mb-6">
-      <CardHeader className="flex-row items-start justify-between space-y-0 pb-2">
-        <div>
+      <CardHeader className="flex-row items-start justify-between gap-3 space-y-0 pb-2">
+        <div className="min-w-0">
           <CardTitle className="flex items-center gap-2 text-lg text-ink"><Scale className="h-5 w-5 text-sky" aria-hidden />Validation</CardTitle>
           <CardDescription>What the operations drafts still need before the workshop: reviews, decisions and sessions.</CardDescription>
         </div>
@@ -43,12 +43,14 @@ export default function ValidationPanel() {
         {!d ? <div className="space-y-2" aria-hidden><Skeleton className="h-5 w-3/4" /><Skeleton className="h-5 w-1/2" /></div> : empty ? (
           <p className="text-muted">The validation register arrives with the next reference-data sync.</p>
         ) : (
-          <div className="flex flex-wrap items-center gap-6">
+          // Mobile-first (1.36.1): ring and figures stack on phones; side by side once there is room. The figure grid used to be
+          // flex-1 (basis 0), so the row never wrapped: on a phone it was crushed to a sliver and widened the whole page.
+          <div className="flex flex-col gap-5 md:flex-row md:flex-wrap md:items-center md:gap-6">
             <div className="flex items-center gap-4">
-              <Ring value={d.items.closed} max={d.items.total || 1} size={96}>{pct}%</Ring>
-              <div><p className="font-data text-2xl font-bold">{d.items.closed} of {d.items.total}</p><p className="text-sm text-muted">review items closed</p></div>
+              <Ring value={d.items.closed} max={d.items.total || 1} size={88}>{pct}%</Ring>
+              <div className="min-w-0"><p className="font-data text-2xl font-bold">{d.items.closed} of {d.items.total}</p><p className="text-sm text-muted">review items closed</p></div>
             </div>
-            <div className="grid min-w-0 flex-1 grid-cols-2 gap-2 lg:grid-cols-4">
+            <div className="grid w-full grid-cols-2 gap-2 md:w-auto md:min-w-[20rem] md:flex-1 xl:grid-cols-4">
               <Figure label="Open items" value={String(d.items.open)} hint={`${d.items.deferred} deferred`} />
               <Figure label="Critical, still open" value={String(d.items.criticalOpen)} tone={d.items.criticalOpen > 0 ? 'bad' : undefined} />
               <Figure label="Decisions waiting" value={`${d.decisions.forDecision} of ${d.decisions.total}`} hint={`${d.decisions.decided} decided`} tone={d.decisions.criticalForDecision > 0 ? 'warn' : undefined} />

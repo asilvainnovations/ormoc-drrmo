@@ -151,7 +151,7 @@ function Frame({ title, description, path, children }: { title: string; descript
       <main id="public-main" tabIndex={-1} className="mx-auto max-w-page px-4 py-10 outline-none">{children}</main>
       <div className="px-4"><InstallPrompt /></div>
       <footer className="border-t border-line bg-surface">
-        <div className="mx-auto grid max-w-page gap-6 px-4 pb-24 pt-8 md:grid-cols-3 lg:pb-8">
+        <div className="mx-auto grid max-w-page grid-cols-1 gap-6 px-4 pb-24 pt-8 md:grid-cols-3 lg:pb-8">
           <div>
             <p className="font-semibold">{SITE.fullName}</p>
             <p className="mt-2 text-sm text-muted">{SITE.controller}. {SITE.address}.</p>
@@ -205,7 +205,7 @@ export function PublicHome() {
           <img src="/brand/app-banner-1600.jpg" alt="" className="absolute inset-0 h-full w-full object-cover opacity-40" />
         </picture>
         <div className="absolute inset-0 bg-gradient-to-r from-banner via-banner/85 to-banner/40" aria-hidden />
-        <div className="relative grid items-center gap-8 px-6 py-12 md:grid-cols-[1.25fr_.75fr] md:px-12 md:py-16">
+        <div className="relative grid grid-cols-1 items-center gap-8 px-6 py-12 md:grid-cols-[1.25fr_.75fr] md:px-12 md:py-16">
           <div>
             <p className="text-sm font-bold uppercase tracking-widest text-accent-bright">Ormoc City | Disaster risk reduction and emergency operations</p>
             <p className="mt-1 text-sm font-semibold opacity-90">{SITE.name}: {PRODUCT.expansion}</p>
@@ -223,7 +223,7 @@ export function PublicHome() {
               <Badge variant="outline" className="border-on-level/40 text-on-level">NDRRMC Memo 131 s. 2018</Badge>
             </div>
           </div>
-          <div className="grid gap-3">
+          <div className="grid grid-cols-1 gap-3">
             {[{ icon: WifiOff, t: 'Offline-capable', b: 'Entries wait on the device and send when there is signal. Check the sync status.' },
               { icon: ShieldCheck, t: 'Authority stays online', b: 'Approvals and level changes need a connection, so nobody acts on old information.' },
               { icon: ListChecks, t: 'Every step has a record', b: 'Each step closes on its form, with who and when.' }].map(({ icon: Icon, t, b }) => (
@@ -269,7 +269,7 @@ export function PublicHome() {
 
       <section aria-labelledby="supports" className="pt-12">
         <h2 id="supports" className="text-3xl font-bold">What MODE brings together</h2>
-        <ul className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <ul className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {FEATURES.map(({ icon: Icon, title, body }) => (
             <li key={title}>
               <Card className="h-full rounded-sheet transition hover:-translate-y-0.5 hover:border-sky hover:shadow-sheet motion-reduce:hover:translate-y-0">
@@ -286,7 +286,7 @@ export function PublicHome() {
 
       <section aria-labelledby="how" className="pt-12">
         <h2 id="how" className="text-3xl font-bold">How the platform supports improvement</h2>
-        <ol className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <ol className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {CYCLE.map(({ icon: Icon, title, body }, i) => (
             <li key={title} className="relative rounded-sheet border border-line bg-surface p-5 shadow-raised">
               <span className="font-data text-sm font-bold text-accent-ink">Step {i + 1}</span>
@@ -409,7 +409,7 @@ export function SupportPage() {
       <Eyebrow>Help and assistance</Eyebrow>
       <h1 className="mt-2 text-4xl font-extrabold">MODE Support</h1>
       <p className="mt-4 max-w-3xl text-lg text-muted">For help using MODE, account access, accessibility barriers or technical issues, use the channel below. Never send passwords, one-time codes or personal information of affected people by email.</p>
-      <ul className="mt-8 grid gap-4 md:grid-cols-2">
+      <ul className="mt-8 grid grid-cols-1 gap-4 [overflow-wrap:anywhere] md:grid-cols-2">
         {cards.map(({ icon: Icon, title, body }) => (
           <li key={title}><Card className="h-full rounded-sheet"><CardHeader className="pb-2"><span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-sky-soft text-action"><Icon className="h-5 w-5" aria-hidden /></span><CardTitle className="pt-2 text-xl">{title}</CardTitle></CardHeader><CardContent className="text-muted">{body}</CardContent></Card></li>
         ))}
@@ -541,7 +541,7 @@ export function PolicyPage() {
           <AlertDescription>Regularly updated to maintain accuracy, relevance, and alignment with current operational requirements and approved practices.</AlertDescription>
         </Alert>
       )}
-      <div className="mt-8 grid gap-6 lg:grid-cols-[14rem_1fr]">
+      <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-[14rem_minmax(0,1fr)]">
         <nav aria-label="Other policies" className="order-last lg:order-first">
           <p className="mb-2 font-data text-xs font-bold uppercase tracking-widest text-muted">Policies</p>
           <ul className="space-y-1">
@@ -553,7 +553,7 @@ export function PolicyPage() {
           <Separator className="my-4" />
           <p className="text-xs text-muted">Questions: <a href={`mailto:${SITE.dpoEmail}`} {...tip('Write to the data protection contact')} className="underline">{SITE.dpoEmail}</a></p>
         </nav>
-        <article className="prose-doc max-w-3xl rounded-sheet border border-line bg-surface p-6 shadow-raised md:p-8"><PolicyBody slug={p.slug} /></article>
+        <article className="prose-doc min-w-0 max-w-3xl rounded-sheet border border-line bg-surface p-4 shadow-raised sm:p-6 md:p-8"><PolicyBody slug={p.slug} /></article>
       </div>
     </Frame>
   );

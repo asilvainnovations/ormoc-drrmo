@@ -12,7 +12,7 @@ const PILL: Record<PillTone, string> = {
   red: 'bg-bad-soft text-bad', orange: 'bg-warn-soft text-warn', green: 'bg-ok-soft text-ok', blue: 'bg-sky-soft text-sky', grey: 'bg-sunken text-muted',
 };
 export function Pill({ tone = 'grey', children }: { tone?: PillTone; children: ReactNode }) {
-  return <span className={clsx('inline-flex items-center gap-1 whitespace-nowrap rounded-full px-2.5 py-1 text-[11px] font-extrabold', PILL[tone])}>{children}</span>;
+  return <span className={clsx('inline-flex max-w-full items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-extrabold leading-tight sm:whitespace-nowrap', PILL[tone])}>{children}</span>;
 }
 
 export function Panel({ title, note, children, className }: { title?: string; note?: ReactNode; children: ReactNode; className?: string }) {
@@ -67,10 +67,10 @@ export function WorkspaceHead({ eyebrow, title, subtitle, aside }: { eyebrow: st
   ];
   return (
     <header className="mb-6">
-      <div className="mb-5 flex items-end justify-between gap-4">
-        <div>
+      <div className="mb-5 flex flex-wrap items-end justify-between gap-4">
+        <div className="min-w-0">
           <p className="text-[11px] font-extrabold uppercase tracking-[0.12em] text-sky">{eyebrow}</p>
-          <h1 className="mb-1 mt-1 text-3xl font-extrabold tracking-tight text-ink">{title}</h1>
+          <h1 className="mb-1 mt-1 break-words text-2xl font-extrabold sm:text-3xl tracking-tight text-ink">{title}</h1>
           {subtitle && <p className="max-w-prose leading-relaxed text-muted">{subtitle}</p>}
         </div>
         {aside}

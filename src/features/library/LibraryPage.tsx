@@ -35,12 +35,12 @@ function Block({ title, meta, badge, open, children, tipText, accent }: { title:
   const classes = accent ? PILLAR_CLASS[accent] : null;
   return (
     <Collapsible defaultOpen={open} className={`rounded-card border border-line bg-surface${classes ? ` border-l-4 ${classes.edge}` : ''}`}>
-      <CollapsibleTrigger className={`group flex min-h-tap w-full items-start gap-3 rounded-card p-4 text-left hover:bg-sky-soft${classes ? ` ${classes.band}` : ''}`} {...tip(tipText)}>
-        <span className="flex-1">
+      <CollapsibleTrigger className={`group flex min-h-tap w-full flex-wrap items-start gap-x-3 gap-y-2 rounded-card p-4 text-left sm:flex-nowrap hover:bg-sky-soft${classes ? ` ${classes.band}` : ''}`} {...tip(tipText)}>
+        <span className="min-w-0 flex-1 break-words">
           <span className="block font-bold text-ink">{title}</span>
           {meta && <span className="mt-1 block text-sm text-muted">{meta}</span>}
         </span>
-        {badge}
+        {badge && <span className="order-last w-full sm:order-none sm:w-auto sm:shrink-0">{badge}</span>}
         <ChevronDown className="mt-1 h-5 w-5 shrink-0 text-muted transition-transform group-data-[state=open]:rotate-180" aria-hidden />
       </CollapsibleTrigger>
       <CollapsibleContent className="px-4 pb-4">{children}</CollapsibleContent>
